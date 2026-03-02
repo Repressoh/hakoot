@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/react",
+    "ultracite/biome/next"
+  ],
+  "files": {
+    "includes": [
+      "app/**",
+      "components/**",
+      "lib/**",
+      "hooks/**",
+      "i18n/**",
+      "messages/**",
+      "proxy.ts",
+      "drizzle.config.ts",
+      "next.config.ts",
+      "!types"
+    ]
+  }
+}
