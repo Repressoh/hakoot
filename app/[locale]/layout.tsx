@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, JetBrains_Mono, Nunito } from "next/font/google";
+import { Space_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -8,22 +8,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
-const nunito = Nunito({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800", "900"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
+const spaceMono = Space_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -50,7 +38,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html
-      className={`${nunito.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
+      className={spaceMono.variable}
       lang={locale}
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">

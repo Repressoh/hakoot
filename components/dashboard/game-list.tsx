@@ -22,7 +22,7 @@ export async function GameList({ games }: Props) {
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-2xl">
           🎮
         </div>
-        <p className="mt-4 font-bold font-display text-lg">{t("emptyTitle")}</p>
+        <p className="mt-4 font-bold font-display text-lg text-foreground">{t("emptyTitle")}</p>
         <p className="mt-1 max-w-xs text-center text-muted-foreground text-sm">
           {t("emptyDesc")}
         </p>
@@ -35,9 +35,9 @@ export async function GameList({ games }: Props) {
       aria-label="Your games"
       className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3"
     >
-      {games.map((game) => (
+      {games.map((game, i) => (
         <li key={game.id}>
-          <GameCard game={game} />
+          <GameCard game={game} index={i} />
         </li>
       ))}
     </ul>

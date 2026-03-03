@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import {
@@ -101,12 +101,7 @@ export async function POST(
     score,
   });
 
-  if (score > 0) {
-    await db
-      .update(gameParticipant)
-      .set({ totalScore: participant.totalScore + score })
-      .where(eq(gameParticipant.id, participant.id));
-  }
+  // Score is applied to totalScore at reveal time, not here
 
   // Count answers for this step to update host
   const [answerCountRow] = await db
@@ -119,13 +114,61 @@ export async function POST(
     .from(gameParticipant)
     .where(eq(gameParticipant.sessionId, sessionId));
 
+  const answered = answerCountRow?.value ?? 0;
+  const total = totalCountRow?.value ?? 0;
+
   publish(sessionId, {
     type: "answer_received",
-    data: {
-      answered: answerCountRow?.value ?? 0,
-      total: totalCountRow?.value ?? 0,
-    },
+    data: { answered, total },
   });
+
+  // Auto-reveal when every participant has answered
+  if (total > 0 && answered >= total) {
+    const correctIndex =
+      currentStep.choices?.findIndex((c) => c.isCorrect) ?? -1;
+
+    // Conditional update prevents double-publish on concurrent requests
+    const [revealed] = await db
+      .update(gameSession)
+      .set({ answerRevealed: true, updatedAt: new Date() })
+      .where(and(eq(gameSession.id, sessionId), eq(gameSession.answerRevealed, false)))
+      .returning({ id: gameSession.id });
+
+    if (revealed) {
+      // Apply all step scores to participant totals now that the answer is revealed
+      const stepAnswers = await db
+        .select({ participantId: participantAnswer.participantId, score: participantAnswer.score })
+        .from(participantAnswer)
+        .where(eq(participantAnswer.stepId, currentStep.id));
+
+      await Promise.all(
+        stepAnswers
+          .filter((a) => a.score > 0)
+          .map((a) =>
+            db
+              .update(gameParticipant)
+              .set({ totalScore: sql`${gameParticipant.totalScore} + ${a.score}` })
+              .where(eq(gameParticipant.id, a.participantId))
+          )
+      );
+
+      const updatedParticipants = await db
+        .select({ name: gameParticipant.name, totalScore: gameParticipant.totalScore })
+        .from(gameParticipant)
+        .where(eq(gameParticipant.sessionId, sessionId));
+
+      publish(sessionId, {
+        type: "answer_revealed",
+        data: {
+          correctIndex,
+          leaderboard: [...updatedParticipants]
+            .sort((a, b) => b.totalScore - a.totalScore)
+            .slice(0, 10)
+            .map((p, i) => ({ rank: i + 1, name: p.name, score: p.totalScore })),
+        },
+      });
+    }
+  }
 
   return Response.json({ received: true });
 }

@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/routing";
 import { getSessionResults } from "@/lib/actions/session";
 
@@ -39,110 +38,101 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
   const totalCorrect = answers.filter((a) => a.isCorrect).length;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-bold font-display text-2xl">{t("title")}</h1>
-          <p className="text-muted-foreground text-sm">
-            {participants.length} participants · {steps.length} steps
-          </p>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto max-w-5xl px-4 py-8 space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-bold font-display text-2xl text-foreground">{t("title")}</h1>
+            <p className="text-muted-foreground text-sm font-mono">
+              {participants.length} participants · {steps.length} steps
+            </p>
+          </div>
+          <Button asChild variant="outline" className="rounded-xl border-border text-foreground hover:bg-muted/50">
+            <Link href={`/games/${session.gameId}/sessions`}>← Sessions</Link>
+          </Button>
         </div>
-        <Button asChild variant="outline">
-          <Link href={`/games/${session.gameId}/sessions`}>← Sessions</Link>
-        </Button>
-      </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Card className="rounded-xl border-border/50 bg-white shadow-sm">
-          <CardContent className="py-4 text-center">
-            <p className="font-black font-display text-2xl text-primary">
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="surface-raised p-4 text-center">
+            <p className="font-black font-mono text-2xl text-primary text-glow">
               {participants.length}
             </p>
             <p className="text-muted-foreground text-xs">Participants</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-xl border-border/50 bg-white shadow-sm">
-          <CardContent className="py-4 text-center">
-            <p className="font-black font-display text-2xl text-primary">
+          </div>
+          <div className="surface-raised p-4 text-center">
+            <p className="font-black font-mono text-2xl text-primary text-glow">
               {quizSteps.length}
             </p>
             <p className="text-muted-foreground text-xs">Questions</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-xl border-border/50 bg-white shadow-sm">
-          <CardContent className="py-4 text-center">
-            <p className="font-black font-display text-2xl text-emerald-600">
+          </div>
+          <div className="surface-raised p-4 text-center">
+            <p className="font-black font-mono text-2xl text-choice-green">
               {totalAnswered > 0
                 ? Math.round((totalCorrect / totalAnswered) * 100)
                 : 0}
               %
             </p>
             <p className="text-muted-foreground text-xs">Correct Rate</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-xl border-border/50 bg-white shadow-sm">
-          <CardContent className="py-4 text-center">
-            <p className="font-black font-display text-2xl">
+          </div>
+          <div className="surface-raised p-4 text-center">
+            <p className="font-black font-mono text-2xl text-foreground">
               {leaderboard[0]?.score.toLocaleString() ?? 0}
             </p>
             <p className="text-muted-foreground text-xs">Top Score</p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="rounded-xl border-border/50 bg-white shadow-sm lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="font-display">{t("leaderboard")}</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Leaderboard */}
+          <div className="surface-raised p-5">
+            <h2 className="font-display text-foreground mb-3">{t("leaderboard")}</h2>
             {leaderboard.length > 0 ? (
               <Leaderboard entries={leaderboard} />
             ) : (
               <p className="text-muted-foreground text-sm">No participants</p>
             )}
-          </CardContent>
-        </Card>
+          </div>
 
-        <div className="space-y-4 lg:col-span-2">
-          <h2 className="font-display font-semibold text-lg">
-            {t("perQuestion")}
-          </h2>
-          {quizSteps.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              No quiz steps in this game.
-            </p>
-          ) : (
-            quizSteps.map((step, qi) => {
-              const stepAnswers = answers.filter((a) => a.stepId === step.id);
-              const stepTotal = stepAnswers.length;
-              const correctCount = stepAnswers.filter(
-                (a) => a.isCorrect
-              ).length;
+          {/* Per-question breakdown */}
+          <div className="space-y-4 lg:col-span-2">
+            <h2 className="font-display font-semibold text-lg text-foreground">
+              {t("perQuestion")}
+            </h2>
+            {quizSteps.length === 0 ? (
+              <p className="text-muted-foreground text-sm">
+                No quiz steps in this game.
+              </p>
+            ) : (
+              quizSteps.map((step, qi) => {
+                const stepAnswers = answers.filter((a) => a.stepId === step.id);
+                const stepTotal = stepAnswers.length;
+                const correctCount = stepAnswers.filter(
+                  (a) => a.isCorrect
+                ).length;
 
-              const choiceDistribution = (step.choices ?? []).map((c, ci) => ({
-                text: c.text,
-                isCorrect: c.isCorrect,
-                count: stepAnswers.filter((a) => a.choiceIndex === ci).length,
-              }));
+                const choiceDistribution = (step.choices ?? []).map((c, ci) => ({
+                  text: c.text,
+                  isCorrect: c.isCorrect,
+                  count: stepAnswers.filter((a) => a.choiceIndex === ci).length,
+                }));
 
-              return (
-                <Card
-                  className="rounded-xl border-border/50 bg-white shadow-sm"
-                  key={step.id}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-2">
+                return (
+                  <div
+                    className="surface-raised p-5"
+                    key={step.id}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-4">
                       <div>
-                        <p className="mb-1 text-muted-foreground text-xs">
+                        <p className="mb-1 text-muted-foreground text-xs font-mono">
                           Q{qi + 1}
                         </p>
-                        <CardTitle className="font-display font-medium text-base">
+                        <h3 className="font-display font-medium text-base text-foreground">
                           {step.question}
-                        </CardTitle>
+                        </h3>
                       </div>
                       <div className="shrink-0 space-y-0.5 text-right">
-                        <p className="font-bold font-display text-sm">
+                        <p className="font-bold font-mono text-sm text-foreground">
                           {stepTotal > 0
                             ? Math.round((correctCount / stepTotal) * 100)
                             : 0}
@@ -153,8 +143,6 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
                         </p>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
                     <div className="space-y-2.5">
                       {choiceDistribution.map((c, ci) => {
                         const pct =
@@ -169,14 +157,14 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
                               <span
                                 className={
                                   c.isCorrect
-                                    ? "font-medium text-emerald-700 dark:text-emerald-400"
-                                    : ""
+                                    ? "font-medium text-choice-green"
+                                    : "text-foreground"
                                 }
                               >
                                 {c.text}
                                 {c.isCorrect && " ✓"}
                               </span>
-                              <span className="ml-auto text-muted-foreground text-xs tabular-nums">
+                              <span className="ml-auto text-muted-foreground text-xs tabular-nums font-mono">
                                 {c.count}
                               </span>
                             </div>
@@ -188,7 +176,7 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
                                 aria-valuenow={pct}
                                 className={`h-full rounded-full transition-all ${
                                   c.isCorrect
-                                    ? "bg-emerald-500"
+                                    ? "bg-choice-green"
                                     : (CHOICE_BAR_COLORS[ci] ??
                                       "bg-muted-foreground/30")
                                 }`}
@@ -200,11 +188,11 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
                         );
                       })}
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
     </div>

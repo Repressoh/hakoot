@@ -28,14 +28,19 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
         <p className="text-muted-foreground text-sm">{t("inviteCode")}</p>
         <button
           aria-label={`Invite code: ${code}. Click to copy.`}
-          className="cursor-pointer select-all border-none bg-transparent p-0 font-black font-display text-5xl tracking-[0.2em]"
+          className="cursor-pointer select-all border-none bg-transparent p-0 font-bold font-mono text-5xl text-primary tracking-[0.2em] text-glow"
           onClick={copy}
           type="button"
         >
           {code}
         </button>
         <div>
-          <Button onClick={copy} size="sm" variant="outline">
+          <Button
+            className="rounded-xl border-border text-foreground hover:bg-muted/50"
+            onClick={copy}
+            size="sm"
+            variant="outline"
+          >
             {copied ? t("inviteCodeCopied") : t("inviteCodeCopy")}
           </Button>
         </div>
@@ -46,7 +51,7 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
   return (
     <Button
       aria-label={`Invite code: ${code}. Click to copy.`}
-      className="font-bold font-display tracking-widest"
+      className="font-bold font-mono tracking-widest text-primary border-border hover:bg-muted/50 rounded-xl"
       onClick={copy}
       size="sm"
       variant="outline"

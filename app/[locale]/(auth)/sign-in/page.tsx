@@ -12,15 +12,21 @@ export default async function SignInPage() {
   const t = await getTranslations("auth");
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-brand-radial p-4">
-      <div className="w-full max-w-sm space-y-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background bg-grid p-4">
+      {/* Decorative glow */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/8 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 h-48 w-48 rounded-full bg-accent/6 blur-3xl" />
+      </div>
+
+      <div className="relative w-full max-w-sm space-y-6">
         <div className="text-center">
-          <span className="font-black font-display text-3xl text-white tracking-tight">
+          <span className="font-black font-display text-3xl text-primary tracking-tight text-glow">
             Hakoot
           </span>
         </div>
 
-        <div className="rounded-2xl bg-white p-8 shadow-black/10 shadow-xl">
+        <div className="surface-raised p-8">
           <div className="mb-6 space-y-1 text-center">
             <h1 className="font-bold font-display text-foreground text-xl">
               {t("signInTitle")}
@@ -32,10 +38,10 @@ export default async function SignInPage() {
           <SignInForm />
         </div>
 
-        <p className="text-center text-sm text-white/70">
+        <p className="text-center text-sm text-muted-foreground">
           {t("noAccount")}{" "}
           <Link
-            className="font-medium text-white underline underline-offset-4 hover:text-white/90"
+            className="font-medium text-primary underline underline-offset-4 hover:text-primary/80"
             href="/sign-up"
           >
             {t("signUpLink")}

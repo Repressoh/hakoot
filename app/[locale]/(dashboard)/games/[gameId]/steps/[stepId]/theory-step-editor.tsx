@@ -12,26 +12,11 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { ClientCodeBlock } from "@/components/game/client-code-block";
 import { useRouter } from "@/i18n/routing";
 import { updateTheoryStep } from "@/lib/actions/step";
 import type { CodeAnnotation, CodeBlock, GameStep } from "@/lib/db/schema";
 import { formatLineNumbers, parseLineRange } from "@/lib/utils";
-
-// We can't use the async CodeBlock server component in a client editor,
-// so we use a simple code preview here
-function CodePreview({
-  code,
-  language: _language,
-}: {
-  code: string;
-  language: string;
-}) {
-  return (
-    <pre className="overflow-x-auto rounded-lg border border-border bg-muted/50 p-4 font-mono text-sm">
-      <code>{code}</code>
-    </pre>
-  );
-}
 
 interface Props {
   step: GameStep;
@@ -297,7 +282,7 @@ export function TheoryStepEditor({ step }: Props) {
               <Label className="text-muted-foreground text-xs">
                 {t("previewTab")}
               </Label>
-              <CodePreview code={code} language={language} />
+              <ClientCodeBlock code={code} language={language} />
             </div>
           )}
         </div>

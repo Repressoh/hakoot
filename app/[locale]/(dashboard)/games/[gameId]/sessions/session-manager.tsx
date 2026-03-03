@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useRouter } from "@/i18n/routing";
 import { createSession } from "@/lib/actions/session";
 import type { GameSession } from "@/lib/db/schema";
@@ -21,17 +20,15 @@ interface Props {
 
 const statusConfig: Record<string, { border: string; badge: string }> = {
   waiting: {
-    border: "border-t-amber-400",
-    badge:
-      "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+    border: "border-t-choice-yellow",
+    badge: "bg-choice-yellow/15 text-choice-yellow",
   },
   in_progress: {
-    border: "border-t-emerald-400",
-    badge:
-      "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+    border: "border-t-choice-green",
+    badge: "bg-choice-green/15 text-choice-green",
   },
   finished: {
-    border: "border-t-muted",
+    border: "border-t-border",
     badge: "bg-muted text-muted-foreground",
   },
 };
@@ -64,8 +61,12 @@ export function SessionManager({ game, sessions }: Props) {
       </div>
 
       <div className="flex items-center justify-between">
-        <h1 className="font-bold font-display text-xl">Sessions</h1>
-        <Button disabled={creating} onClick={handleCreate}>
+        <h1 className="font-bold font-display text-xl text-foreground">Sessions</h1>
+        <Button
+          className="rounded-xl bg-primary font-bold font-display text-primary-foreground glow-sm hover:brightness-110 press-down"
+          disabled={creating}
+          onClick={handleCreate}
+        >
           {creating ? "Creating..." : t("createSession")}
         </Button>
       </div>
@@ -81,24 +82,22 @@ export function SessionManager({ game, sessions }: Props) {
           {sessions.map((s) => {
             const config = statusConfig[s.status] ?? statusConfig.finished;
             return (
-              <Card
-                className={`rounded-xl border-border/50 border-t-4 bg-white shadow-sm ${config.border}`}
+              <div
+                className={`rounded-xl border border-border border-t-4 bg-card p-4 transition-all hover:glow-border ${config.border}`}
                 key={s.id}
               >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="font-bold font-mono text-lg tracking-widest">
-                      {s.inviteCode}
-                    </CardTitle>
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 font-medium text-xs ${config.badge}`}
-                    >
-                      {t(`sessionStatus.${s.status}`)}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex items-center gap-2 pt-0">
-                  <p className="flex-1 text-muted-foreground text-xs">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-bold font-mono text-lg text-primary tracking-widest">
+                    {s.inviteCode}
+                  </span>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 font-medium text-xs ${config.badge}`}
+                  >
+                    {t(`sessionStatus.${s.status}`)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 pt-0">
+                  <p className="flex-1 text-muted-foreground text-xs font-mono">
                     Created {new Date(s.createdAt).toLocaleDateString()}
                   </p>
                   {s.status !== "finished" && (
@@ -108,7 +107,7 @@ export function SessionManager({ game, sessions }: Props) {
                         gameName={game.title}
                         session={s}
                       />
-                      <Button asChild size="sm">
+                      <Button asChild size="sm" className="rounded-lg bg-primary/10 text-primary hover:bg-primary/20 press-down">
                         <Link href={`/host/session/${s.id}`}>
                           {s.status === "waiting" ? "Open" : "Rejoin"}
                         </Link>
@@ -116,14 +115,14 @@ export function SessionManager({ game, sessions }: Props) {
                     </>
                   )}
                   {s.status === "finished" && (
-                    <Button asChild size="sm" variant="outline">
+                    <Button asChild size="sm" variant="outline" className="rounded-lg border-border text-foreground hover:bg-muted/50">
                       <Link href={`/host/session/${s.id}/results`}>
                         {t("viewResults")}
                       </Link>
                     </Button>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>

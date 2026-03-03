@@ -52,9 +52,10 @@ export function SignUpForm() {
     <div className="space-y-4">
       <form className="space-y-4" noValidate onSubmit={handleSubmit}>
         <div className="space-y-1.5">
-          <Label htmlFor="name">{t("name")}</Label>
+          <Label htmlFor="name" className="text-foreground/80 text-sm">{t("name")}</Label>
           <Input
             autoComplete="name"
+            className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
             id="name"
             name="name"
             placeholder={t("namePlaceholder")}
@@ -63,9 +64,10 @@ export function SignUpForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="email">{t("email")}</Label>
+          <Label htmlFor="email" className="text-foreground/80 text-sm">{t("email")}</Label>
           <Input
             autoComplete="email"
+            className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
             id="email"
             name="email"
             placeholder={t("emailPlaceholder")}
@@ -74,9 +76,10 @@ export function SignUpForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="password">{t("password")}</Label>
+          <Label htmlFor="password" className="text-foreground/80 text-sm">{t("password")}</Label>
           <Input
             autoComplete="new-password"
+            className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
             id="password"
             minLength={8}
             name="password"
@@ -85,19 +88,23 @@ export function SignUpForm() {
             type="password"
           />
         </div>
-        <Button className="w-full" disabled={loading} type="submit">
+        <Button
+          className="w-full h-11 rounded-xl bg-primary font-bold font-display text-primary-foreground glow-primary hover:brightness-110 press-down"
+          disabled={loading}
+          type="submit"
+        >
           {loading ? "..." : t("signUpButton")}
         </Button>
       </form>
 
       <div className="flex items-center gap-3">
-        <Separator className="flex-1" />
-        <span className="text-muted-foreground text-xs">{tc("or")}</span>
-        <Separator className="flex-1" />
+        <Separator className="flex-1 bg-border" />
+        <span className="text-muted-foreground text-xs font-mono">{tc("or")}</span>
+        <Separator className="flex-1 bg-border" />
       </div>
 
       <Button
-        className="w-full gap-2"
+        className="w-full h-11 rounded-xl gap-2 border-border bg-transparent text-foreground hover:bg-muted/50 press-down"
         disabled={googleLoading}
         onClick={handleGoogle}
         type="button"

@@ -12,10 +12,10 @@ interface Props {
   highlightName?: string;
 }
 
-const RANK_COLORS: Record<number, string> = {
-  1: "bg-amber-400 text-amber-950",
-  2: "bg-gray-300 text-gray-700",
-  3: "bg-amber-600 text-white",
+const RANK_ACCENTS: Record<number, string> = {
+  1: "text-choice-yellow",
+  2: "text-muted-foreground",
+  3: "text-choice-red",
 };
 
 const RANK_EMOJIS: Record<number, string> = {
@@ -32,8 +32,8 @@ export function Leaderboard({ entries, highlightName }: Props) {
           className={cn(
             "flex items-center gap-3 rounded-xl p-3 transition-colors",
             highlightName === entry.name
-              ? "bg-primary text-primary-foreground"
-              : "bg-surface-soft",
+              ? "bg-primary/15 border border-primary/30"
+              : "bg-surface-soft border border-transparent",
             entry.rank <= 3 && "font-semibold"
           )}
           key={entry.rank}
@@ -42,13 +42,23 @@ export function Leaderboard({ entries, highlightName }: Props) {
             aria-hidden="true"
             className={cn(
               "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-center text-sm",
-              RANK_COLORS[entry.rank] ?? "bg-muted text-muted-foreground"
+              entry.rank <= 3
+                ? "bg-muted font-bold font-mono"
+                : "bg-muted text-muted-foreground font-mono"
             )}
           >
             {RANK_EMOJIS[entry.rank] ?? entry.rank}
           </span>
-          <span className="flex-1 truncate">{entry.name}</span>
-          <span className="font-mono text-sm tabular-nums">
+          <span className={cn(
+            "flex-1 truncate",
+            highlightName === entry.name ? "text-primary" : "text-foreground"
+          )}>
+            {entry.name}
+          </span>
+          <span className={cn(
+            "font-mono text-sm tabular-nums",
+            RANK_ACCENTS[entry.rank] ?? "text-muted-foreground"
+          )}>
             {entry.score.toLocaleString()}
           </span>
         </li>

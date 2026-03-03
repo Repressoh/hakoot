@@ -48,7 +48,17 @@
     "step2": "Start a session and share the invite code or send email invites.",
     "step3": "Guide participants through the content in real time.",
     "ctaTitle": "Ready to create your first game?",
-    "ctaButton": "Get started for free"
+    "ctaButton": "Get started for free",
+    "systemOnline": "System Online",
+    "makeGame": "Make a game?",
+    "authenticate": "Sign in",
+    "featuresTitle": "Features",
+    "sysStatus": "Sys.Status: ONLINE",
+    "version": "Version:",
+    "insertCode": "Insert Code :_",
+    "playerTag": "Player Tag",
+    "connecting": "CONNECTING...",
+    "enterMatch": "ENTER MATCH"
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -176,7 +186,7 @@
     "theoryLabel": "Read carefully",
     "quizLabel": "Question",
     "submitAnswer": "Submit answer",
-    "waitingReveal": "Answer submitted! Waiting for the host to reveal...",
+    "waitingReveal": "Answer locked in! Waiting for results...",
     "correct": "Correct!",
     "incorrect": "Incorrect",
     "pointsEarned": "+{points} points",

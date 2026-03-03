@@ -48,7 +48,17 @@
     "step2": "Avvia una sessione e condividi il codice d'invito o invia inviti via email.",
     "step3": "Guida i partecipanti attraverso i contenuti in tempo reale.",
     "ctaTitle": "Pronto a creare il tuo primo gioco?",
-    "ctaButton": "Inizia gratis"
+    "ctaButton": "Inizia gratis",
+    "systemOnline": "Sistema Online",
+    "makeGame": "Creare un gioco?",
+    "authenticate": "Accedi",
+    "featuresTitle": "Funzionalità",
+    "sysStatus": "Stato Sis.: ONLINE",
+    "version": "Versione:",
+    "insertCode": "Inserisci Codice :_",
+    "playerTag": "Nome Giocatore",
+    "connecting": "CONNESSIONE...",
+    "enterMatch": "ENTRA IN PARTITA"
   },
   "auth": {
     "signInTitle": "Bentornato",
@@ -176,7 +186,7 @@
     "theoryLabel": "Leggi attentamente",
     "quizLabel": "Domanda",
     "submitAnswer": "Invia risposta",
-    "waitingReveal": "Risposta inviata! In attesa che l'host riveli...",
+    "waitingReveal": "Risposta bloccata! In attesa dei risultati...",
     "correct": "Corretto!",
     "incorrect": "Sbagliato",
     "pointsEarned": "+{points} punti",

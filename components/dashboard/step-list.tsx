@@ -78,12 +78,12 @@ function SortableStepItem({
   return (
     <li
       className={cn(
-        "flex items-center gap-3 rounded-xl border border-border/50 bg-white p-3 shadow-sm",
+        "flex items-center gap-3 rounded-xl border border-border bg-card p-3",
         step.type === "theory"
-          ? "border-l-4 border-l-blue-400"
-          : "border-l-4 border-l-amber-400",
-        "transition-all hover:shadow-md",
-        isDragging && "relative z-50 opacity-50 shadow-lg"
+          ? "border-l-4 border-l-choice-blue"
+          : "border-l-4 border-l-choice-yellow",
+        "transition-all hover:glow-border",
+        isDragging && "relative z-50 opacity-50 glow-primary"
       )}
       ref={setNodeRef}
       style={style}
@@ -119,13 +119,18 @@ function SortableStepItem({
             {t("stepOrder", { number: index + 1 })}
           </span>
           <Badge
-            className="text-xs"
-            variant={step.type === "theory" ? "secondary" : "default"}
+            className={cn(
+              "text-xs",
+              step.type === "theory"
+                ? "bg-choice-blue/15 text-choice-blue border-choice-blue/30"
+                : "bg-choice-yellow/15 text-choice-yellow border-choice-yellow/30"
+            )}
+            variant="outline"
           >
             {step.type === "theory" ? "Theory" : "Quiz"}
           </Badge>
         </div>
-        <p className="mt-0.5 truncate font-medium text-sm">
+        <p className="mt-0.5 truncate font-medium text-sm text-foreground">
           {step.type === "theory"
             ? step.markdownContent?.slice(0, 60) || "Empty theory step"
             : step.question || "Empty quiz step"}
@@ -137,7 +142,7 @@ function SortableStepItem({
         {/* Arrow buttons for accessibility */}
         <Button
           aria-label={t("moveUp")}
-          className="h-7 w-7 p-0"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
           disabled={index === 0}
           onClick={() => onMove(step.id, "up")}
           size="sm"
@@ -147,7 +152,7 @@ function SortableStepItem({
         </Button>
         <Button
           aria-label={t("moveDown")}
-          className="h-7 w-7 p-0"
+          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
           disabled={index === total - 1}
           onClick={() => onMove(step.id, "down")}
           size="sm"
@@ -156,7 +161,7 @@ function SortableStepItem({
           ↓
         </Button>
 
-        <Button asChild className="h-7" size="sm" variant="outline">
+        <Button asChild className="h-7 rounded-lg border-border text-foreground hover:bg-muted/50" size="sm" variant="outline">
           <Link href={`/games/${gameId}/steps/${step.id}`}>
             {t("editStep")}
           </Link>
@@ -166,24 +171,24 @@ function SortableStepItem({
           <AlertDialogTrigger asChild>
             <Button
               aria-label={t("deleteStep")}
-              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               size="sm"
               variant="ghost"
             >
               ×
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="surface-elevated border-border">
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete step?</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="text-foreground">Delete step?</AlertDialogTitle>
+              <AlertDialogDescription className="text-muted-foreground">
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="border-border text-foreground hover:bg-muted/50">Cancel</AlertDialogCancel>
               <AlertDialogAction
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                className="bg-destructive text-white hover:bg-destructive/90"
                 onClick={() => onDelete(step.id)}
               >
                 Delete

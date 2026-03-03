@@ -37,10 +37,10 @@ export function DashboardNav({ user }: Props) {
     .slice(0, 2);
 
   return (
-    <header className="sticky top-0 z-40 border-border/60 border-b bg-white">
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-card/80 backdrop-blur-md">
       <div className="container mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
         <Link
-          className="font-black font-display text-lg text-primary tracking-tight"
+          className="font-black font-display text-lg text-primary tracking-tight text-glow"
           href="/dashboard"
         >
           Hakoot
@@ -53,13 +53,13 @@ export function DashboardNav({ user }: Props) {
             <DropdownMenuTrigger asChild>
               <Button
                 aria-label="User menu"
-                className="h-9 gap-2"
+                className="h-9 gap-2 text-foreground hover:bg-muted/50"
                 size="sm"
                 variant="ghost"
               >
-                <Avatar className="h-7 w-7">
+                <Avatar className="h-7 w-7 ring-1 ring-border">
                   <AvatarImage alt={user.name} src={user.image ?? undefined} />
-                  <AvatarFallback className="bg-primary/10 font-bold font-display text-primary text-xs">
+                  <AvatarFallback className="bg-primary/15 font-bold font-mono text-primary text-xs">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -68,20 +68,20 @@ export function DashboardNav({ user }: Props) {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-48 surface-elevated border-border">
               <div className="px-2 py-1.5">
-                <p className="font-medium text-sm">{user.name}</p>
-                <p className="truncate text-muted-foreground text-xs">
+                <p className="font-medium text-sm text-foreground">{user.name}</p>
+                <p className="truncate text-muted-foreground text-xs font-mono">
                   {user.email}
                 </p>
               </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuItem asChild className="text-foreground focus:bg-muted/50">
                 <Link href="/dashboard">{t("nav.dashboard")}</Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="bg-border" />
               <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive focus:bg-destructive/10"
                 onClick={handleSignOut}
               >
                 {t("nav.signOut")}

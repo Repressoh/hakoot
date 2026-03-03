@@ -83,12 +83,12 @@ export function JoinGameForm({
   }
 
   return (
-    <form className="space-y-4" noValidate onSubmit={handleSubmit}>
+    <form className="space-y-5" noValidate onSubmit={handleSubmit}>
       <Input
         aria-label={t("codeLabel")}
         autoCapitalize="characters"
         autoComplete="off"
-        className="h-14 rounded-xl border-border/60 bg-muted/30 text-center font-mono text-2xl uppercase tracking-[0.25em] placeholder:text-muted-foreground/40 placeholder:tracking-widest focus-visible:ring-primary/30"
+        className="h-14 rounded-2xl border-border bg-muted/50 text-center font-mono text-2xl text-foreground uppercase tracking-[0.3em] placeholder:text-muted-foreground/40 placeholder:tracking-widest focus-visible:ring-primary/50"
         disabled={!!prefilledSessionId && !prefilledCode}
         id="code"
         maxLength={8}
@@ -100,7 +100,7 @@ export function JoinGameForm({
       />
       <Input
         aria-label={t("nameLabel")}
-        className="h-12 rounded-xl border-border/60 bg-muted/30 text-center placeholder:text-muted-foreground/40 focus-visible:ring-primary/30"
+        className="h-12 rounded-2xl border-border bg-muted/50 text-center text-foreground placeholder:text-muted-foreground/40 focus-visible:ring-primary/50"
         disabled={!!prefilledName && !!prefilledToken}
         id="name"
         maxLength={50}
@@ -111,7 +111,7 @@ export function JoinGameForm({
         value={name}
       />
       <Button
-        className="h-12 w-full rounded-xl bg-foreground font-bold font-display text-background text-base hover:bg-foreground/85"
+        className="h-12 w-full rounded-2xl bg-primary font-bold font-display text-primary-foreground text-base glow-primary hover:brightness-110 press-down"
         disabled={loading}
         type="submit"
       >
