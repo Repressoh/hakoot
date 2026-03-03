@@ -1,25 +1,38 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "@/i18n/routing";
-import { updateQuizStep } from "@/lib/actions/step";
-import type { GameStep, QuizChoice } from "@/lib/db/schema";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
 const TIMER_OPTIONS: (number | null)[] = [null, 10, 20, 30, 60, 90, 120];
 
+interface QuizChoice {
+  text: string;
+  isCorrect: boolean;
+}
+
+interface Step {
+  _id: Id<"gameSteps">;
+  type: "theory" | "quiz";
+  question?: string;
+  choices?: QuizChoice[];
+  timeLimitSeconds?: number;
+}
+
 interface Props {
-  step: GameStep;
+  step: Step;
 }
 
 export function QuizStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
-  const router = useRouter();
+  const updateQuiz = useMutation(api.steps.updateQuiz);
   const [saving, setSaving] = useState(false);
 
   const [question, setQuestion] = useState(step.question ?? "");
@@ -60,9 +73,13 @@ export function QuizStepEditor({ step }: Props) {
 
     setSaving(true);
     try {
-      await updateQuizStep(step.id, { question, choices, timeLimitSeconds });
+      await updateQuiz({
+        stepId: step._id,
+        question,
+        choices,
+        timeLimitSeconds: timeLimitSeconds ?? undefined,
+      });
       toast.success("Saved!");
-      router.refresh();
     } catch {
       toast.error("Failed to save");
     } finally {

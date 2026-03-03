@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,13 +14,31 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { ClientCodeBlock } from "@/components/game/client-code-block";
-import { useRouter } from "@/i18n/routing";
-import { updateTheoryStep } from "@/lib/actions/step";
-import type { CodeAnnotation, CodeBlock, GameStep } from "@/lib/db/schema";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { formatLineNumbers, parseLineRange } from "@/lib/utils";
 
+interface CodeAnnotation {
+  lines: number[];
+  label: string;
+  explanation: string;
+}
+
+interface CodeBlock {
+  code: string;
+  language: string;
+  annotations: CodeAnnotation[];
+}
+
+interface Step {
+  _id: Id<"gameSteps">;
+  type: "theory" | "quiz";
+  markdownContent?: string;
+  codeBlock?: CodeBlock;
+}
+
 interface Props {
-  step: GameStep;
+  step: Step;
 }
 
 interface AnnotationForm {
@@ -48,7 +67,7 @@ const LANGUAGES = [
 
 export function TheoryStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
-  const router = useRouter();
+  const updateTheory = useMutation(api.steps.updateTheory);
   const [saving, setSaving] = useState(false);
 
   const [markdown, setMarkdown] = useState(step.markdownContent ?? "");
@@ -90,7 +109,7 @@ export function TheoryStepEditor({ step }: Props) {
   async function handleSave() {
     setSaving(true);
     try {
-      let codeBlock: CodeBlock | null = null;
+      let codeBlock: CodeBlock | undefined = undefined;
       if (hasCodeBlock && code.trim()) {
         const parsedAnnotations: CodeAnnotation[] = annotations
           .filter((a) => a.linesInput && a.label && a.explanation)
@@ -103,9 +122,12 @@ export function TheoryStepEditor({ step }: Props) {
         codeBlock = { code, language, annotations: parsedAnnotations };
       }
 
-      await updateTheoryStep(step.id, { markdownContent: markdown, codeBlock });
+      await updateTheory({
+        stepId: step._id,
+        markdownContent: markdown,
+        codeBlock,
+      });
       toast.success("Saved!");
-      router.refresh();
     } catch {
       toast.error("Failed to save");
     } finally {

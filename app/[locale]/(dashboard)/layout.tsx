@@ -1,21 +1,47 @@
-import { getLocale } from "next-intl/server";
-import { redirect } from "@/i18n/routing";
-import { getSession } from "@/lib/actions/auth";
-import { DashboardNav } from "./dashboard-nav";
+"use client";
 
-export default async function DashboardLayout({
+import { Authenticated, Unauthenticated } from "convex/react";
+import { useQuery } from "convex/react";
+import { useRouter } from "@/i18n/routing";
+import { api } from "@/convex/_generated/api";
+import { DashboardNav } from "./dashboard-nav";
+import { useEffect } from "react";
+
+function AuthRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/sign-in");
+  }, [router]);
+  return null;
+}
+
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
-  const locale = await getLocale();
+  return (
+    <>
+      <Unauthenticated>
+        <AuthRedirect />
+      </Unauthenticated>
+      <Authenticated>
+        <DashboardLayoutInner>{children}</DashboardLayoutInner>
+      </Authenticated>
+    </>
+  );
+}
 
-  if (!session) {
-    redirect({ href: "/sign-in", locale });
+function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
+  const viewer = useQuery(api.users.viewer);
+
+  if (!viewer) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
   }
-
-  const currentUser = session?.user;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -27,9 +53,9 @@ export default async function DashboardLayout({
       </a>
       <DashboardNav
         user={{
-          name: currentUser?.name ?? "",
-          email: currentUser?.email ?? "",
-          image: currentUser?.image ?? null,
+          name: viewer.name ?? "",
+          email: viewer.email ?? "",
+          image: viewer.image ?? null,
         }}
       />
       <main

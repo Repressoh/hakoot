@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,13 +16,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "@/i18n/routing";
-import { createGame } from "@/lib/actions/game";
+import { api } from "@/convex/_generated/api";
 
 export function CreateGameDialog() {
   const t = useTranslations();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const createGame = useMutation(api.games.create);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,13 +36,13 @@ export function CreateGameDialog() {
     ).value;
 
     try {
-      const game = await createGame({
+      const gameId = await createGame({
         title,
         description: description || undefined,
       });
       toast.success(t("dashboard.createSuccess"));
       setOpen(false);
-      router.push(`/games/${game.id}`);
+      router.push(`/games/${gameId}`);
     } catch {
       toast.error(t("common.error"));
     } finally {

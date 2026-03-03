@@ -1,20 +1,23 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
+import type { Id } from "@/convex/_generated/dataModel";
 import { GameCard } from "./game-card";
 
 interface Game {
-  description: string | null;
-  id: string;
+  _id: Id<"games">;
+  description?: string;
   stepCount: number;
   title: string;
-  updatedAt: Date;
+  updatedAt: number;
 }
 
 interface Props {
   games: Game[];
 }
 
-export async function GameList({ games }: Props) {
-  const t = await getTranslations("dashboard");
+export function GameList({ games }: Props) {
+  const t = useTranslations("dashboard");
 
   if (games.length === 0) {
     return (
@@ -36,7 +39,7 @@ export async function GameList({ games }: Props) {
       className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3"
     >
       {games.map((game, i) => (
-        <li key={game.id}>
+        <li key={game._id}>
           <GameCard game={game} index={i} />
         </li>
       ))}

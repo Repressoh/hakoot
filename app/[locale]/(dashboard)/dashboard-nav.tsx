@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,21 +13,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link, useRouter } from "@/i18n/routing";
-import { signOut } from "@/lib/auth-client";
-import type { User } from "@/lib/db/schema";
 
 interface Props {
-  user: Pick<User, "name" | "email" | "image">;
+  user: { name: string; email: string; image: string | null };
 }
 
 export function DashboardNav({ user }: Props) {
   const t = useTranslations();
   const router = useRouter();
+  const { signOut } = useAuthActions();
 
   async function handleSignOut() {
     await signOut();
     router.push("/");
-    router.refresh();
   }
 
   const initials = user.name

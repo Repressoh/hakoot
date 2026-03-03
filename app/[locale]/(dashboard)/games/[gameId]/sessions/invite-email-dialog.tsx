@@ -1,5 +1,6 @@
 "use client";
 
+import { useAction } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -12,7 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import type { GameSession } from "@/lib/db/schema";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 interface InviteEntry {
   email: string;
@@ -21,13 +23,14 @@ interface InviteEntry {
 }
 
 interface Props {
-  gameId: string;
+  gameId: Id<"games">;
   gameName: string;
-  session: GameSession;
+  session: { _id: Id<"gameSessions">; inviteCode: string };
 }
 
 export function InviteEmailDialog({ gameId, session, gameName }: Props) {
   const t = useTranslations("session");
+  const sendInvites = useAction(api.emails.sendInviteEmails);
   const [open, setOpen] = useState(false);
   const [entries, setEntries] = useState<InviteEntry[]>([
     { id: crypto.randomUUID(), name: "", email: "" },
@@ -62,14 +65,13 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
 
     setSending(true);
     try {
-      const res = await fetch(`/api/games/${gameId}/invite`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId: session.id, invites: valid }),
+      const result = await sendInvites({
+        sessionId: session._id,
+        gameId,
+        invites: valid,
       });
-      const data = await res.json();
       toast.success(
-        `Sent ${data.sent} invite${data.sent !== 1 ? "s" : ""}${data.failed > 0 ? `, ${data.failed} failed` : ""}`
+        `Sent ${result.sent} invite${result.sent !== 1 ? "s" : ""}${result.failed > 0 ? `, ${result.failed} failed` : ""}`
       );
       setOpen(false);
     } catch {

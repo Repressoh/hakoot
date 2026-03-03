@@ -1,37 +1,31 @@
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { getGameWithSteps } from "@/lib/actions/game";
-import { getSessionsForGame } from "@/lib/actions/session";
+"use client";
+
+import { useQuery } from "convex/react";
+import { useParams } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { SessionManager } from "./session-manager";
 
-interface Props {
-  params: Promise<{ gameId: string }>;
-}
+export default function SessionsPage() {
+  const { gameId } = useParams<{ gameId: string }>();
+  const game = useQuery(api.games.get, { gameId: gameId as Id<"games"> });
+  const sessions = useQuery(api.sessions.listForGame, { gameId: gameId as Id<"games"> });
 
-async function SessionsContent({ gameId }: { gameId: string }) {
-  const game = await getGameWithSteps(gameId).catch(() => null);
-
-  if (!game) {
-    notFound();
+  if (game === undefined || sessions === undefined) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Loading sessions...</p>
+      </div>
+    );
   }
 
-  const sessions = await getSessionsForGame(gameId);
+  if (game === null) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Game not found</p>
+      </div>
+    );
+  }
 
   return <SessionManager game={game} sessions={sessions} />;
-}
-
-export default async function SessionsPage({ params }: Props) {
-  const { gameId } = await params;
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading sessions...</p>
-        </div>
-      }
-    >
-      <SessionsContent gameId={gameId} />
-    </Suspense>
-  );
 }

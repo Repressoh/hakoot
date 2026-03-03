@@ -1,15 +1,22 @@
-import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
+"use client";
+
+import { useQuery } from "convex/react";
+import { useTranslations } from "next-intl";
 import { CreateGameDialog } from "@/components/dashboard/create-game-dialog";
 import { GameList } from "@/components/dashboard/game-list";
-import { getGames } from "@/lib/actions/game";
+import { api } from "@/convex/_generated/api";
 
-export const metadata: Metadata = { title: "Dashboard" };
+export default function DashboardPage() {
+  const t = useTranslations("dashboard");
+  const games = useQuery(api.games.list);
 
-async function DashboardContent() {
-  const t = await getTranslations("dashboard");
-  const games = await getGames();
+  if (games === undefined) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Loading dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -19,19 +26,5 @@ async function DashboardContent() {
       </div>
       <GameList games={games} />
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
-      }
-    >
-      <DashboardContent />
-    </Suspense>
   );
 }

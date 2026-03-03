@@ -13,8 +13,19 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import type { CodeBlock } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
+
+interface CodeAnnotation {
+  explanation: string;
+  label: string;
+  lines: number[];
+}
+
+export interface CodeBlock {
+  annotations: CodeAnnotation[];
+  code: string;
+  language: string;
+}
 
 interface AnnotatedLine {
   explanation: string;

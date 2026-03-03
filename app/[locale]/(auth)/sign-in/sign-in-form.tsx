@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "@/i18n/routing";
-import { signIn } from "@/lib/auth-client";
 
 export function SignInForm() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
   const router = useRouter();
+  const { signIn } = useAuthActions();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -26,21 +27,23 @@ export function SignInForm() {
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
 
-    const { error } = await signIn.email({ email, password });
-
-    if (error) {
+    try {
+      await signIn("password", { email, password, flow: "signIn" });
+      router.push("/dashboard");
+    } catch {
       toast.error(t("invalidCredentials"));
       setLoading(false);
-      return;
     }
-
-    router.push("/dashboard");
-    router.refresh();
   }
 
   async function handleGoogle() {
     setGoogleLoading(true);
-    await signIn.social({ provider: "google", callbackURL: "/dashboard" });
+    try {
+      await signIn("google", { redirectTo: "/dashboard" });
+    } catch {
+      toast.error("Google sign-in failed");
+      setGoogleLoading(false);
+    }
   }
 
   return (

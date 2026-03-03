@@ -1,21 +1,30 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Link, useRouter } from "@/i18n/routing";
-import { createSession } from "@/lib/actions/session";
-import type { GameSession } from "@/lib/db/schema";
 import { InviteEmailDialog } from "./invite-email-dialog";
 
 interface Game {
-  id: string;
+  _id: Id<"games">;
   title: string;
 }
+
+interface Session {
+  _id: Id<"gameSessions">;
+  inviteCode: string;
+  status: "waiting" | "in_progress" | "finished";
+  _creationTime: number;
+}
+
 interface Props {
   game: Game;
-  sessions: GameSession[];
+  sessions: Session[];
 }
 
 const statusConfig: Record<string, { border: string; badge: string }> = {
@@ -37,12 +46,13 @@ export function SessionManager({ game, sessions }: Props) {
   const t = useTranslations("session");
   const router = useRouter();
   const [creating, setCreating] = useState(false);
+  const createSession = useMutation(api.sessions.create);
 
   async function handleCreate() {
     setCreating(true);
     try {
-      const session = await createSession(game.id);
-      router.push(`/host/session/${session.id}`);
+      const sessionId = await createSession({ gameId: game._id });
+      router.push(`/host/session/${sessionId}`);
     } catch {
       toast.error("Failed to create session");
       setCreating(false);
@@ -54,7 +64,7 @@ export function SessionManager({ game, sessions }: Props) {
       <div className="flex items-center gap-4">
         <Link
           className="text-muted-foreground text-sm hover:text-foreground"
-          href={`/games/${game.id}`}
+          href={`/games/${game._id}`}
         >
           ← {game.title}
         </Link>
@@ -84,7 +94,7 @@ export function SessionManager({ game, sessions }: Props) {
             return (
               <div
                 className={`rounded-xl border border-border border-t-4 bg-card p-4 transition-all hover:glow-border ${config.border}`}
-                key={s.id}
+                key={s._id}
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold font-mono text-lg text-primary tracking-widest">
@@ -98,17 +108,17 @@ export function SessionManager({ game, sessions }: Props) {
                 </div>
                 <div className="flex items-center gap-2 pt-0">
                   <p className="flex-1 text-muted-foreground text-xs font-mono">
-                    Created {new Date(s.createdAt).toLocaleDateString()}
+                    Created {new Date(s._creationTime).toLocaleDateString()}
                   </p>
                   {s.status !== "finished" && (
                     <>
                       <InviteEmailDialog
-                        gameId={game.id}
+                        gameId={game._id}
                         gameName={game.title}
                         session={s}
                       />
                       <Button asChild size="sm" className="rounded-lg bg-primary/10 text-primary hover:bg-primary/20 press-down">
-                        <Link href={`/host/session/${s.id}`}>
+                        <Link href={`/host/session/${s._id}`}>
                           {s.status === "waiting" ? "Open" : "Rejoin"}
                         </Link>
                       </Button>
@@ -116,7 +126,7 @@ export function SessionManager({ game, sessions }: Props) {
                   )}
                   {s.status === "finished" && (
                     <Button asChild size="sm" variant="outline" className="rounded-lg border-border text-foreground hover:bg-muted/50">
-                      <Link href={`/host/session/${s.id}/results`}>
+                      <Link href={`/host/session/${s._id}/results`}>
                         {t("viewResults")}
                       </Link>
                     </Button>

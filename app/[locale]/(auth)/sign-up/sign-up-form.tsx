@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "@/i18n/routing";
-import { signIn, signUp } from "@/lib/auth-client";
 
 export function SignUpForm() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
   const router = useRouter();
+  const { signIn } = useAuthActions();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -27,25 +28,28 @@ export function SignUpForm() {
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
 
-    const { error } = await signUp.email({ name, email, password });
-
-    if (error) {
-      if (error.message?.toLowerCase().includes("already")) {
+    try {
+      await signIn("password", { name, email, password, flow: "signUp" });
+      router.push("/dashboard");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      if (message.toLowerCase().includes("already")) {
         toast.error(t("emailTaken"));
       } else {
-        toast.error(error.message ?? "Sign up failed");
+        toast.error(message || "Sign up failed");
       }
       setLoading(false);
-      return;
     }
-
-    router.push("/dashboard");
-    router.refresh();
   }
 
   async function handleGoogle() {
     setGoogleLoading(true);
-    await signIn.social({ provider: "google", callbackURL: "/dashboard" });
+    try {
+      await signIn("google", { redirectTo: "/dashboard" });
+    } catch {
+      toast.error("Google sign-in failed");
+      setGoogleLoading(false);
+    }
   }
 
   return (

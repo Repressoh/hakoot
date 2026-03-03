@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,23 +11,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/routing";
-import { createQuizStep, createTheoryStep } from "@/lib/actions/step";
 
 interface Props {
-  gameId: string;
+  gameId: Id<"games">;
 }
 
 export function AddStepMenu({ gameId }: Props) {
   const t = useTranslations("gameEditor");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const createTheory = useMutation(api.steps.createTheory);
+  const createQuiz = useMutation(api.steps.createQuiz);
 
   async function addTheory() {
     setLoading(true);
     try {
-      const step = await createTheoryStep(gameId, { markdownContent: "" });
-      router.push(`/games/${gameId}/steps/${step.id}`);
+      const stepId = await createTheory({ gameId, markdownContent: "" });
+      router.push(`/games/${gameId}/steps/${stepId}`);
     } catch {
       toast.error("Failed to create step");
       setLoading(false);
@@ -36,7 +40,8 @@ export function AddStepMenu({ gameId }: Props) {
   async function addQuiz() {
     setLoading(true);
     try {
-      const step = await createQuizStep(gameId, {
+      const stepId = await createQuiz({
+        gameId,
         question: "",
         choices: [
           { text: "", isCorrect: false },
@@ -45,7 +50,7 @@ export function AddStepMenu({ gameId }: Props) {
           { text: "", isCorrect: false },
         ],
       });
-      router.push(`/games/${gameId}/steps/${step.id}`);
+      router.push(`/games/${gameId}/steps/${stepId}`);
     } catch {
       toast.error("Failed to create step");
       setLoading(false);

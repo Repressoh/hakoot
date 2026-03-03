@@ -1,6 +1,17 @@
 import { createHighlighter } from "shiki";
-import type { CodeBlock as CodeBlockType } from "@/lib/db/schema";
 import { CodeBlockViewer } from "./code-block-viewer";
+
+interface CodeAnnotation {
+  explanation: string;
+  label: string;
+  lines: number[];
+}
+
+interface CodeBlockType {
+  annotations: CodeAnnotation[];
+  code: string;
+  language: string;
+}
 
 const SUPPORTED_LANGS = [
   "typescript",

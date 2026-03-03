@@ -1,14 +1,13 @@
-import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
+"use client";
+
+import { useQuery } from "convex/react";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
-import { getSessionResults } from "@/lib/actions/session";
-
-interface Props {
-  params: Promise<{ sessionId: string }>;
-}
 
 const CHOICE_BAR_COLORS = [
   "bg-choice-red",
@@ -17,12 +16,27 @@ const CHOICE_BAR_COLORS = [
   "bg-choice-green",
 ];
 
-async function ResultsContent({ sessionId }: { sessionId: string }) {
-  const results = await getSessionResults(sessionId).catch(() => null);
-  const t = await getTranslations("results");
+export default function SessionResultsPage() {
+  const { sessionId } = useParams<{ sessionId: string }>();
+  const t = useTranslations("results");
+  const results = useQuery(api.sessions.getResults, {
+    sessionId: sessionId as Id<"gameSessions">,
+  });
 
-  if (!results) {
-    notFound();
+  if (results === undefined) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Loading results...</p>
+      </div>
+    );
+  }
+
+  if (results === null) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Results not found</p>
+      </div>
+    );
   }
 
   const { session, participants, answers, steps } = results;
@@ -105,7 +119,7 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
               </p>
             ) : (
               quizSteps.map((step, qi) => {
-                const stepAnswers = answers.filter((a) => a.stepId === step.id);
+                const stepAnswers = answers.filter((a) => a.stepId === step._id);
                 const stepTotal = stepAnswers.length;
                 const correctCount = stepAnswers.filter(
                   (a) => a.isCorrect
@@ -120,7 +134,7 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
                 return (
                   <div
                     className="surface-raised p-5"
-                    key={step.id}
+                    key={step._id}
                   >
                     <div className="flex items-start justify-between gap-2 mb-4">
                       <div>
@@ -196,21 +210,5 @@ async function ResultsContent({ sessionId }: { sessionId: string }) {
         </div>
       </div>
     </div>
-  );
-}
-
-export default async function SessionResultsPage({ params }: Props) {
-  const { sessionId } = await params;
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading results...</p>
-        </div>
-      }
-    >
-      <ResultsContent sessionId={sessionId} />
-    </Suspense>
   );
 }

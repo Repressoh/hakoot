@@ -1,49 +1,17 @@
 "use client";
 
+import { useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MarkdownViewer } from "@/components/game/markdown-viewer";
 import { CHOICE_SHAPES } from "@/components/session/choice-shapes";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Badge } from "@/components/ui/badge";
-import { useSse } from "@/hooks/use-sse";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
-
-interface SessionState {
-  currentAnswer: {
-    choiceIndex: number;
-    isCorrect: boolean;
-    score: number;
-  } | null;
-  currentStep: {
-    id: string;
-    type: string;
-    order: number;
-    markdownContent: string | null;
-    codeBlock: unknown;
-    question: string | null;
-    choices: Array<{ text: string; isCorrect: boolean }> | null;
-    timeLimitSeconds: number | null;
-  } | null;
-  participant: { id: string; name: string; totalScore: number };
-  session: {
-    id: string;
-    status: string;
-    currentStepIndex: number;
-    stepStartedAt: string | null;
-    answerRevealed: boolean;
-    totalSteps: number;
-    gameTitle: string;
-  };
-}
-
-interface LeaderboardEntry {
-  name: string;
-  rank: number;
-  score: number;
-}
 
 const CHOICE_COLORS = [
   { bg: "bg-choice-red", hover: "hover:brightness-110", ring: "ring-choice-red/50" },
@@ -56,96 +24,52 @@ interface Props {
   sessionId: string;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: real-time player view
 export function PlayerSessionView({ sessionId }: Props) {
   const t = useTranslations();
-  const [state, setState] = useState<SessionState | null>(null);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [correctIndex, setCorrectIndex] = useState<number | null>(null);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
-  const sessionIdRef = useRef(sessionId);
-  const stateRef = useRef<SessionState | null>(null);
-
-  const fetchState = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/sessions/${sessionIdRef.current}/state`);
-      if (res.ok) {
-        const data = await res.json() as SessionState;
-        setState(data);
-        stateRef.current = data;
-      }
-    } catch {
-      // ignore
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Get participant token from localStorage
+  const [token, setToken] = useState<string | null>(null);
   useEffect(() => {
-    fetchState();
-    // Polling fallback: keep state in sync even when SSE events are missed
-    const id = setInterval(() => {
-      if (stateRef.current?.session.status === "finished") return;
-      void fetchState();
-    }, 3000);
-    return () => clearInterval(id);
-  }, [fetchState]);
+    const stored = localStorage.getItem(`participantToken_${sessionId}`);
+    setToken(stored);
+  }, [sessionId]);
 
-  useSse(sessionId, {
-    step_changed: useCallback(() => {
-      setCorrectIndex(null);
-      setShowLeaderboard(false);
-      fetchState();
-    }, [fetchState]),
-    answer_revealed: useCallback(
-      (data: Record<string, unknown>) => {
-        const { correctIndex: ci, leaderboard: lb } = data as {
-          correctIndex: number;
-          leaderboard: LeaderboardEntry[];
-        };
-        setCorrectIndex(ci);
-        setLeaderboard(lb);
-        setShowLeaderboard(true);
-        fetchState();
-      },
-      [fetchState]
-    ),
-    session_started: useCallback(() => {
-      fetchState();
-    }, [fetchState]),
-    session_ended: useCallback(() => {
-      fetchState();
-    }, [fetchState]),
+  // Reactive player state from Convex
+  const state = useQuery(
+    api.sessions.getPlayerState,
+    token ? { sessionId: sessionId as Id<"gameSessions">, participantToken: token } : "skip"
+  );
+
+  // Reactive leaderboard
+  const leaderboard = useQuery(api.sessions.getLeaderboard, {
+    sessionId: sessionId as Id<"gameSessions">,
   });
 
+  const submitAnswerMut = useMutation(api.sessions.submitAnswer);
+
   async function submitAnswer(choiceIndex: number) {
-    if (submitting || state?.currentAnswer) {
+    if (submitting || !token || state?.currentAnswer) {
       return;
     }
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/answer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ choiceIndex }),
+      await submitAnswerMut({
+        sessionId: sessionId as Id<"gameSessions">,
+        participantToken: token,
+        choiceIndex,
       });
-      if (res.ok) {
-        await fetchState();
-      } else {
-        const data = await res.json();
-        if (data.error !== "Already answered") {
-          toast.error("Failed to submit answer");
-        }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to submit answer";
+      if (!msg.includes("Already answered")) {
+        toast.error(msg);
       }
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (loading) {
+  if (token === null || state === undefined) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background bg-grid">
         <p className="font-bold font-display text-muted-foreground">
@@ -155,7 +79,7 @@ export function PlayerSessionView({ sessionId }: Props) {
     );
   }
 
-  if (!state) {
+  if (!token || state === null) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background bg-grid">
         <p className="text-muted-foreground">Session not found or access denied.</p>
@@ -164,6 +88,14 @@ export function PlayerSessionView({ sessionId }: Props) {
   }
 
   const { participant, session, currentStep, currentAnswer } = state;
+  const answerRevealed = session.answerRevealed;
+
+  // Derive correct choice index when answer is revealed
+  const correctIndex = answerRevealed && currentStep?.choices
+    ? currentStep.choices.findIndex((c) => c.isCorrect)
+    : null;
+
+  const showLeaderboard = answerRevealed && (leaderboard?.length ?? 0) > 0;
 
   if (session.status === "waiting") {
     return (
@@ -193,7 +125,7 @@ export function PlayerSessionView({ sessionId }: Props) {
   }
 
   if (session.status === "finished") {
-    const myEntry = leaderboard.find((e) => e.name === participant.name);
+    const myEntry = leaderboard?.find((e) => e.name === participant.name);
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background bg-grid p-4 text-center">
         <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
@@ -211,12 +143,12 @@ export function PlayerSessionView({ sessionId }: Props) {
             <p className="text-muted-foreground">
               {t("play.finalRank", {
                 rank: myEntry.rank,
-                total: leaderboard.length,
+                total: leaderboard?.length ?? 0,
               })}
             </p>
           )}
         </div>
-        {leaderboard.length > 0 && (
+        {leaderboard && leaderboard.length > 0 && (
           <div className="relative w-full max-w-sm surface-raised p-6">
             <Leaderboard
               entries={leaderboard}
@@ -248,7 +180,7 @@ export function PlayerSessionView({ sessionId }: Props) {
       </header>
 
       <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-4 p-4">
-        {showLeaderboard && leaderboard.length > 0 && (
+        {showLeaderboard && leaderboard && leaderboard.length > 0 && (
           <div className="surface-raised p-5 space-y-4">
             {currentAnswer && (
               <output
@@ -302,7 +234,7 @@ export function PlayerSessionView({ sessionId }: Props) {
                   !currentAnswer && (
                     <div className="flex justify-center">
                       <CircularTimer
-                        stepStartedAt={session.stepStartedAt}
+                        stepStartedAt={new Date(session.stepStartedAt).toISOString()}
                         timeLimitSeconds={currentStep.timeLimitSeconds}
                       />
                     </div>
@@ -315,7 +247,7 @@ export function PlayerSessionView({ sessionId }: Props) {
                   {currentStep.question}
                 </h2>
 
-                {currentAnswer && (!session.answerRevealed || correctIndex === null) && (
+                {currentAnswer && !answerRevealed && (
                   <div className="flex flex-1 items-center justify-center py-8">
                     <p className="text-center text-muted-foreground text-sm">
                       {t("play.waitingReveal")}
@@ -323,7 +255,7 @@ export function PlayerSessionView({ sessionId }: Props) {
                   </div>
                 )}
 
-                {session.answerRevealed &&
+                {answerRevealed &&
                   correctIndex !== null &&
                   currentAnswer && (
                     <output
@@ -381,7 +313,7 @@ export function PlayerSessionView({ sessionId }: Props) {
                   </div>
                 )}
 
-                {session.answerRevealed && correctIndex !== null && (
+                {answerRevealed && correctIndex !== null && (
                   <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0">
                     {(currentStep.choices ?? []).map((choice, i) => (
                       <li

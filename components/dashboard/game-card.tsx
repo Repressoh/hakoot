@@ -2,6 +2,7 @@
 
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -17,8 +18,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/routing";
-import { deleteGame } from "@/lib/actions/game";
+import { Link } from "@/i18n/routing";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 const STRIPE_COLORS = [
   "bg-primary",
@@ -30,11 +32,11 @@ const STRIPE_COLORS = [
 ];
 
 interface Game {
-  description: string | null;
-  id: string;
+  _id: Id<"games">;
+  description?: string;
   stepCount: number;
   title: string;
-  updatedAt: Date;
+  updatedAt: number;
 }
 
 interface Props {
@@ -45,17 +47,16 @@ interface Props {
 export function GameCard({ game, index = 0 }: Props) {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
-  const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+  const removeGame = useMutation(api.games.remove);
 
   const stripeColor = STRIPE_COLORS[index % STRIPE_COLORS.length];
 
   async function handleDelete() {
     setDeleting(true);
     try {
-      await deleteGame(game.id);
+      await removeGame({ gameId: game._id });
       toast.success(t("deleteSuccess"));
-      router.refresh();
     } catch {
       toast.error("Failed to delete game");
       setDeleting(false);
@@ -91,7 +92,7 @@ export function GameCard({ game, index = 0 }: Props) {
             size="sm"
             variant="ghost"
           >
-            <Link href={`/games/${game.id}`}>{tc("edit")}</Link>
+            <Link href={`/games/${game._id}`}>{tc("edit")}</Link>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>

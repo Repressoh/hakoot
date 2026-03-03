@@ -1,8 +1,11 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "@/i18n/routing";
@@ -25,36 +28,35 @@ export function JoinGameForm({
   const [code, setCode] = useState(prefilledCode ?? "");
   const [name, setName] = useState(prefilledName ?? "");
   const [loading, setLoading] = useState(false);
+  const joinSession = useMutation(api.sessions.join);
+  const joinByCode = useMutation(api.sessions.joinByCode);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs once on mount with prefilled props
   useEffect(() => {
-    if (prefilledSessionId && prefilledName && prefilledToken) {
-      handleJoinBySessionId(prefilledSessionId, prefilledName, prefilledToken);
+    if (prefilledSessionId && prefilledName) {
+      handleJoinBySessionId(
+        prefilledSessionId as Id<"gameSessions">,
+        prefilledName,
+      );
     }
   }, []);
 
   async function handleJoinBySessionId(
-    sessionId: string,
+    sessionId: Id<"gameSessions">,
     joinName: string,
-    token?: string
   ) {
     setLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}/join`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: joinName, inviteToken: token }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        toast.error(data.error ?? t("invalidCode"));
-        return;
-      }
-
+      const result = await joinSession({ sessionId, name: joinName });
+      localStorage.setItem(
+        `participantToken_${sessionId}`,
+        result.participantToken,
+      );
       router.push(`/session/${sessionId}`);
-    } catch {
-      toast.error(t("invalidCode"));
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : t("invalidCode"),
+      );
     } finally {
       setLoading(false);
     }
@@ -63,21 +65,21 @@ export function JoinGameForm({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-
-    const upperCode = code.toUpperCase().trim();
-
     try {
-      const codeRes = await fetch(`/api/sessions/by-code?code=${upperCode}`);
-      if (!codeRes.ok) {
-        toast.error(t("invalidCode"));
-        setLoading(false);
-        return;
-      }
-
-      const { id: sessionId } = await codeRes.json();
-      await handleJoinBySessionId(sessionId, name.trim());
-    } catch {
-      toast.error(t("invalidCode"));
+      const result = await joinByCode({
+        inviteCode: code.trim(),
+        name: name.trim(),
+      });
+      localStorage.setItem(
+        `participantToken_${result.sessionId}`,
+        result.participantToken,
+      );
+      router.push(`/session/${result.sessionId}`);
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : t("invalidCode"),
+      );
+    } finally {
       setLoading(false);
     }
   }

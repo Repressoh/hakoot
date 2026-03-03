@@ -1,7 +1,8 @@
 "use client";
 
+import { useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { MarkdownViewer } from "@/components/game/markdown-viewer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
@@ -9,27 +10,49 @@ import { Leaderboard } from "@/components/session/leaderboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { useSse } from "@/hooks/use-sse";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Link, useRouter } from "@/i18n/routing";
-import type {
-  Game,
-  GameParticipant,
-  GameSession,
-  GameStep,
-} from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
-interface Props {
-  game: Game;
-  initialParticipants: GameParticipant[];
-  session: GameSession;
-  steps: GameStep[];
+interface SessionDoc {
+  _id: Id<"gameSessions">;
+  gameId: Id<"games">;
+  inviteCode: string;
+  status: "waiting" | "in_progress" | "finished";
+  currentStepIndex: number;
+  answerRevealed: boolean;
 }
 
-interface LeaderboardEntry {
+interface GameDoc {
+  _id: Id<"games">;
+  title: string;
+}
+
+interface StepDoc {
+  _id: Id<"gameSteps">;
+  type: "theory" | "quiz";
+  order: number;
+  markdownContent?: string;
+  codeBlock?: { code: string; language: string; annotations: Array<{ label: string; explanation: string; lines: number[] }> };
+  question?: string;
+  choices?: Array<{ text: string; isCorrect: boolean }>;
+  timeLimitSeconds?: number;
+}
+
+interface ParticipantDoc {
+  _id: Id<"gameParticipants">;
   name: string;
-  rank: number;
-  score: number;
+  totalScore: number;
+}
+
+interface Props {
+  data: {
+    session: SessionDoc;
+    game: GameDoc | null;
+    steps: StepDoc[];
+    participants: ParticipantDoc[];
+  };
 }
 
 const CHOICE_BG = [
@@ -39,100 +62,60 @@ const CHOICE_BG = [
   "bg-choice-green text-white",
 ];
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: real-time session view
-export function HostSessionView({
-  session,
-  game,
-  steps,
-  initialParticipants,
-}: Props) {
+export function HostSessionView({ data }: Props) {
   const t = useTranslations();
   const router = useRouter();
 
-  const [status, setStatus] = useState(session.status);
-  const [currentIndex, setCurrentIndex] = useState(session.currentStepIndex);
-  const [participants, setParticipants] = useState(initialParticipants);
-  const [answerRevealed, setAnswerRevealed] = useState(session.answerRevealed);
-  const [answeredCount, setAnsweredCount] = useState(0);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const { session, game, steps, participants } = data;
+  const status = session.status;
+  const currentIndex = session.currentStepIndex;
+  const answerRevealed = session.answerRevealed;
+
   const [advancing, setAdvancing] = useState(false);
   const [revealing, setRevealing] = useState(false);
 
-  const sessionIdRef = useRef(session.id);
-  const statusRef = useRef(status);
-  const answerRevealedRef = useRef(answerRevealed);
-  statusRef.current = status;
-  answerRevealedRef.current = answerRevealed;
+  const advanceMut = useMutation(api.sessions.advance);
+  const revealMut = useMutation(api.sessions.reveal);
 
-  // Polling fallback: refresh answered count when SSE events are missed (e.g. after reconnect)
-  useEffect(() => {
-    const poll = async () => {
-      if (statusRef.current !== "in_progress" || answerRevealedRef.current) return;
-      try {
-        const res = await fetch(`/api/sessions/${sessionIdRef.current}/answers-count`);
-        if (res.ok) {
-          const data = await res.json() as { answered: number; total: number };
-          setAnsweredCount(data.answered);
-        }
-      } catch {
-        // ignore
-      }
-    };
-
-    const id = setInterval(() => { void poll(); }, 3000);
-    return () => clearInterval(id);
-  }, []);
-
-  useSse(session.id, {
-    participant_joined: useCallback((data: Record<string, unknown>) => {
-      const { name } = data as { name: string };
-      setParticipants((prev) => [...prev, { name } as GameParticipant]);
-      toast.info(`${name} joined!`);
-    }, []),
-    answer_received: useCallback((data: Record<string, unknown>) => {
-      const { answered, total } = data as { answered: number; total: number };
-      setAnsweredCount(answered);
-      // When all players have answered, trigger reveal (idempotent — safe to call
-      // even if auto-reveal already fired; it will re-publish the SSE event)
-      if (total > 0 && answered >= total) {
-        fetch(`/api/sessions/${sessionIdRef.current}/reveal`, { method: "POST" }).catch(
-          () => {}
-        );
-      }
-    }, []),
-    answer_revealed: useCallback((data: Record<string, unknown>) => {
-      const { leaderboard: lb } = data as { leaderboard: LeaderboardEntry[] };
-      setAnswerRevealed(true);
-      setLeaderboard(lb);
-      setShowLeaderboard(true);
-    }, []),
-    session_ended: useCallback(() => {
-      setStatus("finished");
-      router.push(`/host/session/${session.id}/results`);
-    }, [router, session.id]),
+  // Reactive answer count
+  const answerCount = useQuery(api.sessions.getAnswerCount, {
+    sessionId: session._id,
   });
+
+  // Reactive leaderboard
+  const leaderboard = useQuery(api.sessions.getLeaderboard, {
+    sessionId: session._id,
+  });
+
+  const answeredCount = answerCount?.answered ?? 0;
+  const participantCount = participants.length;
+  const showLeaderboard = answerRevealed && (leaderboard?.length ?? 0) > 0;
+
+  // Track previous participant count for join toasts
+  const prevParticipantCount = useRef(participants.length);
+  useEffect(() => {
+    if (participants.length > prevParticipantCount.current) {
+      const newP = participants.slice(prevParticipantCount.current);
+      for (const p of newP) {
+        toast.info(`${p.name} joined!`);
+      }
+    }
+    prevParticipantCount.current = participants.length;
+  }, [participants]);
+
+  // Redirect on session end
+  useEffect(() => {
+    if (status === "finished") {
+      router.push(`/host/session/${session._id}/results`);
+    }
+  }, [status, session._id, router]);
 
   const currentStep = currentIndex >= 0 ? steps[currentIndex] : null;
 
   async function handleAdvance() {
     setAdvancing(true);
-    setAnsweredCount(0);
-    setAnswerRevealed(false);
-    setShowLeaderboard(false);
     try {
-      const res = await fetch(`/api/sessions/${session.id}/advance`, {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (data.stepIndex !== undefined) {
-        setCurrentIndex(data.stepIndex);
-        if (data.status === "finished") {
-          setStatus("finished");
-        } else {
-          setStatus("in_progress");
-        }
-      }
+      await advanceMut({ sessionId: session._id });
     } catch {
       toast.error("Failed to advance");
     } finally {
@@ -143,7 +126,7 @@ export function HostSessionView({
   async function handleReveal() {
     setRevealing(true);
     try {
-      await fetch(`/api/sessions/${session.id}/reveal`, { method: "POST" });
+      await revealMut({ sessionId: session._id });
     } catch {
       toast.error("Failed to reveal");
     } finally {
@@ -159,7 +142,7 @@ export function HostSessionView({
       <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur-md">
         <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-3">
-            <span className="font-bold font-display text-foreground">{game.title}</span>
+            <span className="font-bold font-display text-foreground">{game?.title}</span>
             <Badge
               className={cn(
                 "text-xs",
@@ -178,14 +161,14 @@ export function HostSessionView({
             {status === "waiting" && (
               <span className="text-muted-foreground text-sm font-mono">
                 {t("session.participantsJoined", {
-                  count: participants.length,
+                  count: participantCount,
                 })}
               </span>
             )}
             {status !== "finished" && (
               <InviteCodeDisplay
                 code={session.inviteCode}
-                sessionId={session.id}
+                sessionId={session._id}
               />
             )}
           </div>
@@ -218,17 +201,17 @@ export function HostSessionView({
                 </h2>
                 <p className="text-muted-foreground">
                   {t("session.participantsJoined", {
-                    count: participants.length,
+                    count: participantCount,
                   })}
                 </p>
                 <InviteCodeDisplay
                   code={session.inviteCode}
                   large
-                  sessionId={session.id}
+                  sessionId={session._id}
                 />
                 <Button
                   className="px-10 rounded-xl bg-primary font-bold font-display text-primary-foreground glow-primary hover:brightness-110 press-down"
-                  disabled={advancing || participants.length === 0}
+                  disabled={advancing || participantCount === 0}
                   onClick={handleAdvance}
                   size="lg"
                 >
@@ -267,7 +250,7 @@ export function HostSessionView({
                     {currentStep.codeBlock && (
                       <pre className="overflow-x-auto rounded-xl border border-border bg-surface-soft p-4 font-mono text-sm text-foreground">
                         <code>
-                          {(currentStep.codeBlock as { code: string }).code}
+                          {currentStep.codeBlock.code}
                         </code>
                       </pre>
                     )}
@@ -303,15 +286,15 @@ export function HostSessionView({
                         <span className="font-mono">
                           {t("session.answeredCount", {
                             answered: answeredCount,
-                            total: participants.length,
+                            total: participantCount,
                           })}
                         </span>
                         <Progress
                           aria-label="Answer progress"
                           className="h-2 flex-1"
                           value={
-                            participants.length
-                              ? (answeredCount / participants.length) * 100
+                            participantCount
+                              ? (answeredCount / participantCount) * 100
                               : 0
                           }
                         />
@@ -323,7 +306,7 @@ export function HostSessionView({
             </div>
           )}
 
-          {showLeaderboard && leaderboard.length > 0 && (
+          {showLeaderboard && leaderboard && leaderboard.length > 0 && (
             <div className="surface-raised p-5">
               <h3 className="font-display text-foreground mb-3">
                 {t("play.leaderboardTitle")}
@@ -358,7 +341,7 @@ export function HostSessionView({
               )}
               {status === "finished" && (
                 <Button asChild className="w-full rounded-xl bg-primary text-primary-foreground glow-sm hover:brightness-110">
-                  <Link href={`/host/session/${session.id}/results`}>
+                  <Link href={`/host/session/${session._id}/results`}>
                     {t("session.viewResults")}
                   </Link>
                 </Button>
@@ -370,22 +353,22 @@ export function HostSessionView({
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-display text-sm text-foreground">Participants</h3>
               <span className="inline-flex items-center rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-primary text-xs">
-                {participants.length}
+                {participantCount}
               </span>
             </div>
-            {participants.length === 0 ? (
+            {participantCount === 0 ? (
               <p className="text-muted-foreground text-xs">
                 Waiting for players to join...
               </p>
             ) : (
               <ul aria-label="Participants list" className="space-y-1.5">
-                {participants.map((p, i) => (
+                {participants.map((p) => (
                   <li
                     className="flex items-center justify-between text-sm text-foreground"
-                    key={p.id ?? i}
+                    key={p._id}
                   >
                     <span>{p.name}</span>
-                    {p.totalScore !== undefined && p.totalScore > 0 && (
+                    {p.totalScore > 0 && (
                       <span className="font-mono text-muted-foreground text-xs">
                         {p.totalScore}
                       </span>

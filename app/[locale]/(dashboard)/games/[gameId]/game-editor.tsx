@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,14 +10,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Link, useRouter } from "@/i18n/routing";
-import { updateGame } from "@/lib/actions/game";
-import type { GameStep } from "@/lib/db/schema";
+import { Link } from "@/i18n/routing";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+
+interface Step {
+  _id: Id<"gameSteps">;
+  gameId: Id<"games">;
+  order: number;
+  type: "theory" | "quiz";
+  markdownContent?: string;
+  codeBlock?: { code: string; language: string; annotations: Array<{ label: string; explanation: string; lines: number[] }> };
+  question?: string;
+  choices?: Array<{ text: string; isCorrect: boolean }>;
+  timeLimitSeconds?: number;
+}
 
 interface Game {
-  description: string | null;
-  id: string;
-  steps: GameStep[];
+  _id: Id<"games">;
+  description?: string;
+  steps: Step[];
   title: string;
 }
 
@@ -26,20 +39,20 @@ interface Props {
 
 export function GameEditor({ game }: Props) {
   const t = useTranslations();
-  const router = useRouter();
   const [title, setTitle] = useState(game.title);
   const [description, setDescription] = useState(game.description ?? "");
   const [saving, setSaving] = useState(false);
+  const updateGame = useMutation(api.games.update);
 
   async function handleSave() {
     setSaving(true);
     try {
-      await updateGame(game.id, {
+      await updateGame({
+        gameId: game._id,
         title,
         description: description || undefined,
       });
       toast.success("Saved!");
-      router.refresh();
     } catch {
       toast.error(t("common.error"));
     } finally {
@@ -104,13 +117,13 @@ export function GameEditor({ game }: Props) {
           </div>
           <div className="flex items-center gap-2">
             <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-foreground hover:bg-muted/50">
-              <Link href={`/games/${game.id}/sessions`}>Manage sessions</Link>
+              <Link href={`/games/${game._id}/sessions`}>Manage sessions</Link>
             </Button>
-            <AddStepMenu gameId={game.id} />
+            <AddStepMenu gameId={game._id} />
           </div>
         </div>
 
-        <StepList gameId={game.id} steps={game.steps} />
+        <StepList gameId={game._id} steps={game.steps} />
       </div>
     </div>
   );

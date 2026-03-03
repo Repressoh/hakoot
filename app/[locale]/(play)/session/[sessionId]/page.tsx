@@ -1,10 +1,9 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import { PlayerSessionView } from "./player-session-view";
 
-interface Props {
-  params: Promise<{ sessionId: string }>;
-}
-
-export default async function PlayerSessionPage({ params }: Props) {
-  const { sessionId } = await params;
+export default function PlayerSessionPage() {
+  const { sessionId } = useParams<{ sessionId: string }>();
   return <PlayerSessionView sessionId={sessionId} />;
 }

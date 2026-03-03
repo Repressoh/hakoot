@@ -1,8 +1,10 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "@/i18n/routing";
@@ -14,35 +16,21 @@ export function JoinCard() {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const joinByCode = useMutation(api.sessions.joinByCode);
 
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const upperCode = code.toUpperCase().trim();
-      const codeRes = await fetch(`/api/sessions/by-code?code=${upperCode}`);
-
-      if (!codeRes.ok) {
-        toast.error(tj("invalidCode"));
-        return;
-      }
-
-      const { id: sessionId } = await codeRes.json();
-
-      const joinRes = await fetch(`/api/sessions/${sessionId}/join`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
+      const result = await joinByCode({
+        inviteCode: code.trim(),
+        name: name.trim(),
       });
-
-      if (!joinRes.ok) {
-        const data = await joinRes.json();
-        toast.error(data.error ?? tj("invalidCode"));
-        return;
-      }
-
-      router.push(`/session/${sessionId}`);
+      localStorage.setItem(
+        `participantToken_${result.sessionId}`,
+        result.participantToken,
+      );
+      router.push(`/session/${result.sessionId}`);
     } catch {
       toast.error(tj("invalidCode"));
     } finally {

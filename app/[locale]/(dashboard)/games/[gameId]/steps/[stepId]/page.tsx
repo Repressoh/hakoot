@@ -1,25 +1,31 @@
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
+"use client";
+
+import { useQuery } from "convex/react";
+import { useParams } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
-import { getStep } from "@/lib/actions/step";
 import { QuizStepEditor } from "./quiz-step-editor";
 import { TheoryStepEditor } from "./theory-step-editor";
 
-interface Props {
-  params: Promise<{ gameId: string; stepId: string }>;
-}
+export default function StepEditorPage() {
+  const { gameId, stepId } = useParams<{ gameId: string; stepId: string }>();
+  const step = useQuery(api.steps.get, { stepId: stepId as Id<"gameSteps"> });
 
-async function StepEditorContent({
-  gameId,
-  stepId,
-}: {
-  gameId: string;
-  stepId: string;
-}) {
-  const step = await getStep(stepId).catch(() => null);
+  if (step === undefined) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Loading step...</p>
+      </div>
+    );
+  }
 
-  if (!step || step.gameId !== gameId) {
-    notFound();
+  if (step === null) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Step not found</p>
+      </div>
+    );
   }
 
   return (
@@ -39,21 +45,5 @@ async function StepEditorContent({
         <QuizStepEditor step={step} />
       )}
     </div>
-  );
-}
-
-export default async function StepEditorPage({ params }: Props) {
-  const { gameId, stepId } = await params;
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading step...</p>
-        </div>
-      }
-    >
-      <StepEditorContent gameId={gameId} stepId={stepId} />
-    </Suspense>
   );
 }

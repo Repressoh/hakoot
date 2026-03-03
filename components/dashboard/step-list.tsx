@@ -17,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -33,22 +34,33 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link, useRouter } from "@/i18n/routing";
-import { deleteStep, moveStep, reorderSteps } from "@/lib/actions/step";
-import type { GameStep } from "@/lib/db/schema";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
+interface Step {
+  _id: Id<"gameSteps">;
+  gameId: Id<"games">;
+  order: number;
+  type: "theory" | "quiz";
+  markdownContent?: string;
+  question?: string;
+  choices?: Array<{ text: string; isCorrect: boolean }>;
+  timeLimitSeconds?: number;
+}
+
 interface Props {
-  gameId: string;
-  steps: GameStep[];
+  gameId: Id<"games">;
+  steps: Step[];
 }
 
 interface SortableItemProps {
-  gameId: string;
+  gameId: Id<"games">;
   index: number;
-  onDelete: (id: string) => void;
-  onMove: (id: string, dir: "up" | "down") => void;
-  step: GameStep;
+  onDelete: (id: Id<"gameSteps">) => void;
+  onMove: (id: Id<"gameSteps">, dir: "up" | "down") => void;
+  step: Step;
   total: number;
 }
 
@@ -68,7 +80,7 @@ function SortableStepItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: step.id });
+  } = useSortable({ id: step._id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -144,7 +156,7 @@ function SortableStepItem({
           aria-label={t("moveUp")}
           className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
           disabled={index === 0}
-          onClick={() => onMove(step.id, "up")}
+          onClick={() => onMove(step._id, "up")}
           size="sm"
           variant="ghost"
         >
@@ -154,7 +166,7 @@ function SortableStepItem({
           aria-label={t("moveDown")}
           className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
           disabled={index === total - 1}
-          onClick={() => onMove(step.id, "down")}
+          onClick={() => onMove(step._id, "down")}
           size="sm"
           variant="ghost"
         >
@@ -162,7 +174,7 @@ function SortableStepItem({
         </Button>
 
         <Button asChild className="h-7 rounded-lg border-border text-foreground hover:bg-muted/50" size="sm" variant="outline">
-          <Link href={`/games/${gameId}/steps/${step.id}`}>
+          <Link href={`/games/${gameId}/steps/${step._id}`}>
             {t("editStep")}
           </Link>
         </Button>
@@ -189,7 +201,7 @@ function SortableStepItem({
               <AlertDialogCancel className="border-border text-foreground hover:bg-muted/50">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 className="bg-destructive text-white hover:bg-destructive/90"
-                onClick={() => onDelete(step.id)}
+                onClick={() => onDelete(step._id)}
               >
                 Delete
               </AlertDialogAction>
@@ -201,10 +213,19 @@ function SortableStepItem({
   );
 }
 
-export function StepList({ gameId, steps: initialSteps }: Props) {
+export function StepList({ gameId, steps }: Props) {
   const t = useTranslations("gameEditor");
-  const router = useRouter();
-  const [steps, setSteps] = useState(initialSteps);
+  const removeStep = useMutation(api.steps.remove);
+  const moveStepMut = useMutation(api.steps.move);
+  const reorderStepsMut = useMutation(api.steps.reorder);
+  const [localSteps, setLocalSteps] = useState(steps);
+
+  // Sync with Convex reactive updates
+  const stepsJson = JSON.stringify(steps);
+  const localJson = JSON.stringify(localSteps);
+  if (stepsJson !== localJson) {
+    setLocalSteps(steps);
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -219,42 +240,40 @@ export function StepList({ gameId, steps: initialSteps }: Props) {
       return;
     }
 
-    const oldIndex = steps.findIndex((s) => s.id === active.id);
-    const newIndex = steps.findIndex((s) => s.id === over.id);
-    const reordered = arrayMove(steps, oldIndex, newIndex);
-    setSteps(reordered);
+    const oldIndex = localSteps.findIndex((s) => s._id === active.id);
+    const newIndex = localSteps.findIndex((s) => s._id === over.id);
+    const reordered = arrayMove(localSteps, oldIndex, newIndex);
+    setLocalSteps(reordered);
 
     try {
-      await reorderSteps(
+      await reorderStepsMut({
         gameId,
-        reordered.map((s) => s.id)
-      );
+        orderedIds: reordered.map((s) => s._id),
+      });
     } catch {
-      setSteps(initialSteps);
+      setLocalSteps(steps);
       toast.error("Failed to reorder");
     }
   }
 
-  async function handleMove(stepId: string, direction: "up" | "down") {
+  async function handleMove(stepId: Id<"gameSteps">, direction: "up" | "down") {
     try {
-      await moveStep(stepId, direction);
-      router.refresh();
+      await moveStepMut({ stepId, direction });
     } catch {
       toast.error("Failed to move step");
     }
   }
 
-  async function handleDelete(stepId: string) {
+  async function handleDelete(stepId: Id<"gameSteps">) {
     try {
-      await deleteStep(stepId);
-      setSteps((prev) => prev.filter((s) => s.id !== stepId));
+      await removeStep({ stepId });
       toast.success("Step deleted");
     } catch {
       toast.error("Failed to delete step");
     }
   }
 
-  if (steps.length === 0) {
+  if (localSteps.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground text-sm">
         {t("noSteps")}
@@ -269,19 +288,19 @@ export function StepList({ gameId, steps: initialSteps }: Props) {
       sensors={sensors}
     >
       <SortableContext
-        items={steps.map((s) => s.id)}
+        items={localSteps.map((s) => s._id)}
         strategy={verticalListSortingStrategy}
       >
         <ul aria-label="Game steps" className="m-0 list-none space-y-2 p-0">
-          {steps.map((step, i) => (
+          {localSteps.map((step, i) => (
             <SortableStepItem
               gameId={gameId}
               index={i}
-              key={step.id}
+              key={step._id}
               onDelete={handleDelete}
               onMove={handleMove}
               step={step}
-              total={steps.length}
+              total={localSteps.length}
             />
           ))}
         </ul>
