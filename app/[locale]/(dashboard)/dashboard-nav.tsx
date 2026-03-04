@@ -36,27 +36,38 @@ export function DashboardNav({ user }: Props) {
     .slice(0, 2);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-card/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
+    <header className="sticky top-0 z-40 border-border/40 border-b bg-background/70 backdrop-blur-xl">
+      {/* Subtle glow line at bottom of nav */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+      />
+
+      <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
         <Link
-          className="font-black font-display text-lg text-primary tracking-tight text-glow"
+          className="group flex items-center gap-2.5 font-black font-display text-lg tracking-tight transition-all"
           href="/dashboard"
         >
-          Hakoot
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-black text-primary-foreground text-sm shadow-[0_0_12px_var(--glow-primary)] transition-shadow group-hover:shadow-[0_0_20px_var(--glow-primary)]">
+            H
+          </span>
+          <span className="text-foreground transition-colors group-hover:text-primary">
+            akoot
+          </span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <LocaleSwitcher />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 aria-label="User menu"
-                className="h-9 gap-2 text-foreground hover:bg-muted/50"
+                className="h-9 gap-2.5 rounded-xl text-foreground transition-colors hover:bg-muted/60"
                 size="sm"
                 variant="ghost"
               >
-                <Avatar className="h-7 w-7 ring-1 ring-border">
+                <Avatar className="h-7 w-7 ring-2 ring-primary/20 transition-all group-hover:ring-primary/40">
                   <AvatarImage alt={user.name} src={user.image ?? undefined} />
                   <AvatarFallback className="bg-primary/15 font-bold font-mono text-primary text-xs">
                     {initials}
@@ -67,20 +78,28 @@ export function DashboardNav({ user }: Props) {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 surface-elevated border-border">
-              <div className="px-2 py-1.5">
-                <p className="font-medium text-sm text-foreground">{user.name}</p>
-                <p className="truncate text-muted-foreground text-xs font-mono">
+            <DropdownMenuContent
+              align="end"
+              className="w-52 rounded-xl border-border/60 bg-card/95 shadow-black/20 shadow-xl backdrop-blur-xl"
+            >
+              <div className="px-3 py-2.5">
+                <p className="font-semibold text-foreground text-sm">
+                  {user.name}
+                </p>
+                <p className="mt-0.5 truncate font-mono text-muted-foreground text-xs">
                   {user.email}
                 </p>
               </div>
-              <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem asChild className="text-foreground focus:bg-muted/50">
+              <DropdownMenuSeparator className="bg-border/50" />
+              <DropdownMenuItem
+                asChild
+                className="mx-1 rounded-lg text-foreground focus:bg-muted/50"
+              >
                 <Link href="/dashboard">{t("nav.dashboard")}</Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuSeparator className="bg-border/50" />
               <DropdownMenuItem
-                className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                className="mx-1 rounded-lg text-destructive focus:bg-destructive/10 focus:text-destructive"
                 onClick={handleSignOut}
               >
                 {t("nav.signOut")}

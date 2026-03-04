@@ -4,10 +4,10 @@ import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/routing";
 
 interface Props {
@@ -36,27 +36,25 @@ export function JoinGameForm({
     if (prefilledSessionId && prefilledName) {
       handleJoinBySessionId(
         prefilledSessionId as Id<"gameSessions">,
-        prefilledName,
+        prefilledName
       );
     }
   }, []);
 
   async function handleJoinBySessionId(
     sessionId: Id<"gameSessions">,
-    joinName: string,
+    joinName: string
   ) {
     setLoading(true);
     try {
       const result = await joinSession({ sessionId, name: joinName });
       localStorage.setItem(
         `participantToken_${sessionId}`,
-        result.participantToken,
+        result.participantToken
       );
       router.push(`/session/${sessionId}`);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t("invalidCode"),
-      );
+      toast.error(err instanceof Error ? err.message : t("invalidCode"));
     } finally {
       setLoading(false);
     }
@@ -72,13 +70,11 @@ export function JoinGameForm({
       });
       localStorage.setItem(
         `participantToken_${result.sessionId}`,
-        result.participantToken,
+        result.participantToken
       );
       router.push(`/session/${result.sessionId}`);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t("invalidCode"),
-      );
+      toast.error(err instanceof Error ? err.message : t("invalidCode"));
     } finally {
       setLoading(false);
     }
@@ -113,7 +109,7 @@ export function JoinGameForm({
         value={name}
       />
       <Button
-        className="h-12 w-full rounded-2xl bg-primary font-bold font-display text-primary-foreground text-base glow-primary hover:brightness-110 press-down"
+        className="glow-primary press-down h-12 w-full rounded-2xl bg-primary font-bold font-display text-base text-primary-foreground hover:brightness-110"
         disabled={loading}
         type="submit"
       >

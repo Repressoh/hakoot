@@ -1,0 +1,51 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (rebuilt in container)
+node_modules
+
+# Build output (rebuilt in container)
+.next
+
+# Editor / IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Docs & config not needed at runtime
+README.md
+LICENSE
+CHANGELOG.md
+lefthook.yml
+biome.jsonc
+components.json
+
+# Agent / skill files
+.agents
+
+# Scripts not needed in container
+scripts
+
+# Dev lockfiles (bun.lock IS needed)
+package-lock.json
+
+# Env files (injected at runtime, never baked in)
+.env
+.env.*
+!.env.example

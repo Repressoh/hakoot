@@ -1,6 +1,3 @@
-/* ── Satoshi font from Fontshare ── */
-@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400;500;700;900&display=swap");
-
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -233,7 +230,9 @@
 
   /* ── Glow effects ── */
   .glow-primary {
-    box-shadow: 0 0 20px var(--glow-primary), 0 0 60px var(--glow-subtle);
+    box-shadow:
+      0 0 20px var(--glow-primary),
+      0 0 60px var(--glow-subtle);
   }
 
   .glow-accent {
@@ -250,12 +249,16 @@
 
   .glow-border {
     border-color: oklch(0.82 0.19 135 / 40%);
-    box-shadow: 0 0 12px var(--glow-subtle), inset 0 0 12px oklch(0.82 0.19 135 / 5%);
+    box-shadow:
+      0 0 12px var(--glow-subtle),
+      inset 0 0 12px oklch(0.82 0.19 135 / 5%);
   }
 
   /* ── Text glow ── */
   .text-glow {
-    text-shadow: 0 0 20px var(--glow-primary), 0 0 40px var(--glow-subtle);
+    text-shadow:
+      0 0 20px var(--glow-primary),
+      0 0 40px var(--glow-subtle);
   }
 
   .text-glow-accent {
@@ -264,7 +267,9 @@
 
   /* ── Press-down interaction ── */
   .press-down {
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transition:
+      transform 0.1s ease,
+      box-shadow 0.1s ease;
   }
   .press-down:active {
     transform: scale(0.96);
@@ -322,13 +327,25 @@
 
 /* ── Glow pulse animation ── */
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 15px var(--glow-subtle); }
-  50% { box-shadow: 0 0 25px var(--glow-primary), 0 0 50px var(--glow-subtle); }
+  0%,
+  100% {
+    box-shadow: 0 0 15px var(--glow-subtle);
+  }
+  50% {
+    box-shadow:
+      0 0 25px var(--glow-primary),
+      0 0 50px var(--glow-subtle);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 .animate-glow-pulse {

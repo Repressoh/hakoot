@@ -50,7 +50,9 @@ export function SignInForm() {
     <div className="space-y-4">
       <form className="space-y-4" noValidate onSubmit={handleSubmit}>
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-foreground/80 text-sm">{t("email")}</Label>
+          <Label className="text-foreground/80 text-sm" htmlFor="email">
+            {t("email")}
+          </Label>
           <Input
             autoComplete="email"
             className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
@@ -62,7 +64,9 @@ export function SignInForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="password" className="text-foreground/80 text-sm">{t("password")}</Label>
+          <Label className="text-foreground/80 text-sm" htmlFor="password">
+            {t("password")}
+          </Label>
           <Input
             autoComplete="current-password"
             className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
@@ -74,7 +78,7 @@ export function SignInForm() {
           />
         </div>
         <Button
-          className="w-full h-11 rounded-xl bg-primary font-bold font-display text-primary-foreground glow-primary hover:brightness-110 press-down"
+          className="glow-primary press-down h-11 w-full rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
           disabled={loading}
           type="submit"
         >
@@ -84,12 +88,14 @@ export function SignInForm() {
 
       <div className="flex items-center gap-3">
         <Separator className="flex-1 bg-border" />
-        <span className="text-muted-foreground text-xs font-mono">{tc("or")}</span>
+        <span className="font-mono text-muted-foreground text-xs">
+          {tc("or")}
+        </span>
         <Separator className="flex-1 bg-border" />
       </div>
 
       <Button
-        className="w-full h-11 rounded-xl gap-2 border-border bg-transparent text-foreground hover:bg-muted/50 press-down"
+        className="press-down h-11 w-full gap-2 rounded-xl border-border bg-transparent text-foreground hover:bg-muted/50"
         disabled={googleLoading}
         onClick={handleGoogle}
         type="button"

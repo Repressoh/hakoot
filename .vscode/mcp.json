@@ -1,11 +1,1 @@
-{
-  "servers": {
-    "shadcn": {
-      "command": "bunx",
-      "args": [
-        "shadcn@latest",
-        "mcp"
-      ]
-    }
-  }
-}
+{"servers":{"shadcn":{"command":"bunx","args":["shadcn@latest","mcp"]},"MCP_DOCKER":{"command":"docker","args":["mcp","gateway","run"],"type":"stdio"}}}

@@ -73,6 +73,7 @@ export default defineSchema({
     email: v.optional(v.string()),
     participantToken: v.string(),
     totalScore: v.number(),
+    lastSeen: v.optional(v.number()),
   })
     .index("by_session", ["sessionId"])
     .index("by_token", ["participantToken"]),

@@ -60,16 +60,44 @@ export function AddStepMenu({ gameId }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button disabled={loading} size="sm">
-          + {t("addStep")}
+        <Button
+          className="glow-sm press-down rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
+          disabled={loading}
+          size="sm"
+        >
+          <svg
+            aria-hidden="true"
+            className="mr-1.5"
+            fill="none"
+            height="14"
+            viewBox="0 0 14 14"
+            width="14"
+          >
+            <path
+              d="M7 2v10M2 7h10"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="2"
+            />
+          </svg>
+          {t("addStep")}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={addTheory}>
-          📖 {t("addTheoryStep")}
+      <DropdownMenuContent
+        align="end"
+        className="rounded-xl border-border/60 bg-card/95 shadow-black/20 shadow-xl backdrop-blur-xl"
+      >
+        <DropdownMenuItem className="mx-1 gap-2 rounded-lg" onClick={addTheory}>
+          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-choice-blue/15 text-xs">
+            📖
+          </span>
+          {t("addTheoryStep")}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={addQuiz}>
-          ❓ {t("addQuizStep")}
+        <DropdownMenuItem className="mx-1 gap-2 rounded-lg" onClick={addQuiz}>
+          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-choice-yellow/15 text-xs">
+            ❓
+          </span>
+          {t("addQuizStep")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

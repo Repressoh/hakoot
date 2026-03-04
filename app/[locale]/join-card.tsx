@@ -4,9 +4,9 @@ import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
-import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
 
 export function JoinCard() {
@@ -28,7 +28,7 @@ export function JoinCard() {
       });
       localStorage.setItem(
         `participantToken_${result.sessionId}`,
-        result.participantToken,
+        result.participantToken
       );
       router.push(`/session/${result.sessionId}`);
     } catch {
@@ -41,25 +41,31 @@ export function JoinCard() {
   return (
     <section
       aria-label="Join a game"
-      className="relative w-full max-w-md mx-auto surface-elevated transition-all duration-300 group"
-      style={{ 
+      className="surface-elevated group relative mx-auto w-full max-w-md transition-all duration-300"
+      style={{
         borderRadius: "32px",
         boxShadow: "0 20px 0 -10px var(--border)",
       }}
     >
-      <div className="absolute inset-x-8 -top-3 h-6 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-      
-      <div className="relative border-[4px] border-border bg-card p-10 rounded-[32px] overflow-hidden">
+      <div className="absolute inset-x-8 -top-3 h-6 bg-primary/20 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
+
+      <div className="relative overflow-hidden rounded-[32px] border-[4px] border-border bg-card p-10">
         {/* CRT Scanline effect inner overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.05)_50%)] bg-[length:100%_4px] opacity-10" />
-        
+        <div className="pointer-events-none absolute inset-0 bg-[length:100%_4px] bg-[linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.05)_50%)] opacity-10" />
+
         {/* Screen bezel reflection */}
         <div className="pointer-events-none absolute inset-0 rounded-[28px] border-2 border-white/5" />
-        
-        <form className="relative z-10 space-y-8" noValidate onSubmit={handleJoin}>
-          
+
+        <form
+          className="relative z-10 space-y-8"
+          noValidate
+          onSubmit={handleJoin}
+        >
           <div className="space-y-4">
-            <label htmlFor="join-code" className="block text-center font-mono text-sm tracking-widest text-primary/70 uppercase">
+            <label
+              className="block text-center font-mono text-primary/70 text-sm uppercase tracking-widest"
+              htmlFor="join-code"
+            >
               {t("insertCode")}
             </label>
             <div className="relative">
@@ -67,7 +73,7 @@ export function JoinCard() {
                 aria-label={t("joinCodeLabel")}
                 autoCapitalize="characters"
                 autoComplete="off"
-                className="h-24 w-full rounded-2xl border-4 border-border bg-background text-center font-mono text-5xl uppercase tracking-[0.4em] text-primary text-glow placeholder:text-muted/30 placeholder:tracking-[0.4em] focus-visible:ring-0 focus-visible:border-primary focus-visible:glow-border transition-all shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)]"
+                className="focus-visible:glow-border h-24 w-full rounded-2xl border-4 border-border bg-background text-center font-mono text-5xl text-glow text-primary uppercase tracking-[0.4em] shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] transition-all placeholder:text-muted/30 placeholder:tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
                 id="join-code"
                 maxLength={8}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
@@ -75,18 +81,27 @@ export function JoinCard() {
                 required
                 value={code}
               />
-              <div aria-hidden className="absolute -bottom-2 -right-2 w-4 h-4 border-b-4 border-r-4 border-primary/20" />
-              <div aria-hidden className="absolute -top-2 -left-2 w-4 h-4 border-t-4 border-l-4 border-primary/20" />
+              <div
+                aria-hidden
+                className="absolute -right-2 -bottom-2 h-4 w-4 border-primary/20 border-r-4 border-b-4"
+              />
+              <div
+                aria-hidden
+                className="absolute -top-2 -left-2 h-4 w-4 border-primary/20 border-t-4 border-l-4"
+              />
             </div>
           </div>
 
           <div className="space-y-4">
-            <label htmlFor="join-name" className="block text-center font-mono text-xs tracking-widest text-muted-foreground uppercase">
+            <label
+              className="block text-center font-mono text-muted-foreground text-xs uppercase tracking-widest"
+              htmlFor="join-name"
+            >
               {t("playerTag")}
             </label>
             <Input
               aria-label={t("joinNameLabel")}
-              className="h-16 w-full rounded-2xl border-2 border-border bg-background text-center text-foreground font-bold text-xl placeholder:text-muted-foreground/30 focus-visible:ring-0 focus-visible:border-primary/50 shadow-[inset_0_2px_5px_rgba(0,0,0,0.2)]"
+              className="h-16 w-full rounded-2xl border-2 border-border bg-background text-center font-bold text-foreground text-xl shadow-[inset_0_2px_5px_rgba(0,0,0,0.2)] placeholder:text-muted-foreground/30 focus-visible:border-primary/50 focus-visible:ring-0"
               id="join-name"
               maxLength={50}
               onChange={(e) => setName(e.target.value)}
@@ -97,21 +112,23 @@ export function JoinCard() {
           </div>
 
           <Button
-            className="group/btn relative h-20 w-full rounded-2xl bg-primary text-primary-foreground text-2xl font-black font-display uppercase tracking-widest overflow-hidden transition-all hover:bg-primary border-b-[6px] border-primary-foreground/30 active:border-b-0 active:translate-y-[6px]"
+            className="group/btn relative h-20 w-full overflow-hidden rounded-2xl border-primary-foreground/30 border-b-[6px] bg-primary font-black font-display text-2xl text-primary-foreground uppercase tracking-widest transition-all hover:bg-primary active:translate-y-[6px] active:border-b-0"
             disabled={loading || !code || !name}
-            type="submit"
-            style={{ 
-              boxShadow: "0 0 20px var(--glow-primary), inset 0 2px 0 rgba(255,255,255,0.2)"
+            style={{
+              boxShadow:
+                "0 0 20px var(--glow-primary), inset 0 2px 0 rgba(255,255,255,0.2)",
             }}
+            type="submit"
           >
             <span className="relative z-10 flex items-center justify-center gap-4">
               {loading ? t("connecting") : t("enterMatch")}
               {!loading && (
-                <span className="text-primary-foreground/50 text-3xl transition-transform group-hover/btn:translate-x-2">»</span>
+                <span className="text-3xl text-primary-foreground/50 transition-transform group-hover/btn:translate-x-2">
+                  »
+                </span>
               )}
             </span>
           </Button>
-
         </form>
       </div>
     </section>

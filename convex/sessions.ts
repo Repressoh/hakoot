@@ -53,10 +53,18 @@ export const getForHost = query({
       .collect();
     steps.sort((a, b) => a.order - b.order);
 
-    const participants = await ctx.db
+    const allParticipants = await ctx.db
       .query("gameParticipants")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
+
+    // In the waiting lobby, hide participants who stopped sending heartbeats
+    const participants =
+      session.status === "waiting"
+        ? allParticipants.filter(
+            (p) => p.lastSeen && Date.now() - p.lastSeen <= 15_000
+          )
+        : allParticipants;
 
     return { session, game, steps, participants };
   },
@@ -197,12 +205,17 @@ export const getAnswerCount = query({
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
 
-    const answers = await ctx.db
+    // Count answers only from participants in THIS session
+    const participantIds = new Set(participants.map((p) => p._id));
+    const allAnswers = await ctx.db
       .query("participantAnswers")
       .withIndex("by_step", (q) => q.eq("stepId", currentStep._id))
       .collect();
+    const answered = allAnswers.filter((a) =>
+      participantIds.has(a.participantId)
+    ).length;
 
-    return { answered: answers.length, total: participants.length };
+    return { answered, total: participants.length };
   },
 });
 
@@ -324,6 +337,7 @@ export const join = mutation({
         )
         .first();
       if (existing && existing.sessionId === args.sessionId) {
+        await ctx.db.patch(existing._id, { lastSeen: Date.now() });
         return {
           participantId: existing._id,
           participantToken: existing.participantToken,
@@ -339,6 +353,7 @@ export const join = mutation({
       email: args.email,
       participantToken: token,
       totalScore: 0,
+      lastSeen: Date.now(),
     });
 
     return { participantId, participantToken: token };
@@ -374,6 +389,7 @@ export const joinByCode = mutation({
         )
         .first();
       if (existing && existing.sessionId === session._id) {
+        await ctx.db.patch(existing._id, { lastSeen: Date.now() });
         return {
           sessionId: session._id,
           participantToken: existing.participantToken,
@@ -388,11 +404,30 @@ export const joinByCode = mutation({
       name: args.name.trim(),
       participantToken: token,
       totalScore: 0,
+      lastSeen: Date.now(),
     });
 
     return { sessionId: session._id, participantToken: token };
   },
 });
+
+/** Heartbeat: update lastSeen for a participant */
+export const heartbeat = mutation({
+  args: { participantToken: v.string() },
+  handler: async (ctx, args) => {
+    const participant = await ctx.db
+      .query("gameParticipants")
+      .withIndex("by_token", (q) =>
+        q.eq("participantToken", args.participantToken)
+      )
+      .first();
+    if (!participant) return;
+    await ctx.db.patch(participant._id, { lastSeen: Date.now() });
+  },
+});
+
+/** Stale threshold: participants unseen for this long are removed in lobby */
+const STALE_THRESHOLD_MS = 15_000; // 15 seconds
 
 export const advance = mutation({
   args: { sessionId: v.id("gameSessions") },
@@ -412,6 +447,20 @@ export const advance = mutation({
     steps.sort((a, b) => a.order - b.order);
 
     const nextIndex = session.currentStepIndex + 1;
+
+    // When starting from lobby, remove stale participants
+    if (session.status === "waiting") {
+      const participants = await ctx.db
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
+        .collect();
+      const now = Date.now();
+      for (const p of participants) {
+        if (!p.lastSeen || now - p.lastSeen > STALE_THRESHOLD_MS) {
+          await ctx.db.delete(p._id);
+        }
+      }
+    }
 
     if (nextIndex >= steps.length) {
       // Session is finished
@@ -554,18 +603,25 @@ export const submitAnswer = mutation({
       score,
     });
 
-    // Check if all participants have answered → auto-reveal
+    // Check if all participants in THIS session have answered → auto-reveal
     const participants = await ctx.db
       .query("gameParticipants")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
 
-    const answerCount = await ctx.db
+    const participantIds = new Set(participants.map((p) => p._id));
+    const allStepAnswers = await ctx.db
       .query("participantAnswers")
       .withIndex("by_step", (q) => q.eq("stepId", currentStep._id))
       .collect();
+    const sessionAnswerCount = allStepAnswers.filter((a) =>
+      participantIds.has(a.participantId)
+    ).length;
 
-    if (answerCount.length >= participants.length && !session.answerRevealed) {
+    if (
+      sessionAnswerCount >= participants.length &&
+      !session.answerRevealed
+    ) {
       // Auto-reveal: apply scores
       for (const p of participants) {
         const answer = await ctx.db

@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
   // cacheComponents requires next-intl to support next/root-params
   // See: https://github.com/amannn/next-intl/issues/2229
   // cacheComponents: true,
+  experimental: {
+    optimizePackageImports: [
+      "@hugeicons/core-free-icons",
+      "@hugeicons/react",
+      "motion",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "shiki",
+      "react-markdown",
+      "sonner",
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

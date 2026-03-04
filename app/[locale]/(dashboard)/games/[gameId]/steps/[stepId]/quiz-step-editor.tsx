@@ -14,16 +14,16 @@ import { cn } from "@/lib/utils";
 const TIMER_OPTIONS: (number | null)[] = [null, 10, 20, 30, 60, 90, 120];
 
 interface QuizChoice {
-  text: string;
   isCorrect: boolean;
+  text: string;
 }
 
 interface Step {
   _id: Id<"gameSteps">;
-  type: "theory" | "quiz";
-  question?: string;
   choices?: QuizChoice[];
+  question?: string;
   timeLimitSeconds?: number;
+  type: "theory" | "quiz";
 }
 
 interface Props {

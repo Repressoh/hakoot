@@ -32,14 +32,17 @@ export function LocaleSwitcher({ variant = "default" }: Props) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className="gap-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 font-mono uppercase text-xs"
+          className="gap-1 font-mono text-muted-foreground text-xs uppercase hover:bg-muted/50 hover:text-foreground"
           size="sm"
           variant="ghost"
         >
           {locale}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="surface-elevated border-border min-w-[120px]">
+      <DropdownMenuContent
+        align="end"
+        className="surface-elevated min-w-[120px] border-border"
+      >
         {Object.entries(localeNames).map(([code, name]) => (
           <DropdownMenuItem
             className={`text-foreground focus:bg-muted/50 ${locale === code ? "font-semibold text-primary" : ""}`}

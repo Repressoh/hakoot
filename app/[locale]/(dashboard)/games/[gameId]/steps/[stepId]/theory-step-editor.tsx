@@ -1,40 +1,73 @@
 "use client";
 
 import { useMutation } from "convex/react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MarkdownViewer } from "@/components/game/markdown-viewer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ClientCodeBlock } from "@/components/game/client-code-block";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLineNumbers, parseLineRange } from "@/lib/utils";
 
+const ClientCodeBlock = dynamic(
+  () =>
+    import("@/components/game/client-code-block").then(
+      (mod) => mod.ClientCodeBlock
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="animate-pulse rounded-lg border border-border bg-[#0d1117] p-4">
+        <Skeleton className="h-4 w-3/4 rounded bg-muted/20" />
+        <Skeleton className="mt-2 h-4 w-1/2 rounded bg-muted/20" />
+      </div>
+    ),
+  }
+);
+
+const MarkdownViewer = dynamic(
+  () =>
+    import("@/components/game/markdown-viewer").then(
+      (mod) => mod.MarkdownViewer
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="animate-pulse space-y-2">
+        <Skeleton className="h-4 w-full rounded" />
+        <Skeleton className="h-4 w-5/6 rounded" />
+        <Skeleton className="h-4 w-3/4 rounded" />
+      </div>
+    ),
+  }
+);
+
 interface CodeAnnotation {
-  lines: number[];
-  label: string;
   explanation: string;
+  label: string;
+  lines: number[];
 }
 
 interface CodeBlock {
+  annotations: CodeAnnotation[];
   code: string;
   language: string;
-  annotations: CodeAnnotation[];
 }
 
 interface Step {
   _id: Id<"gameSteps">;
-  type: "theory" | "quiz";
-  markdownContent?: string;
   codeBlock?: CodeBlock;
+  markdownContent?: string;
+  type: "theory" | "quiz";
 }
 
 interface Props {
@@ -109,7 +142,7 @@ export function TheoryStepEditor({ step }: Props) {
   async function handleSave() {
     setSaving(true);
     try {
-      let codeBlock: CodeBlock | undefined = undefined;
+      let codeBlock: CodeBlock | undefined;
       if (hasCodeBlock && code.trim()) {
         const parsedAnnotations: CodeAnnotation[] = annotations
           .filter((a) => a.linesInput && a.label && a.explanation)

@@ -1,29 +1,47 @@
 "use client";
 
 import { useMutation } from "convex/react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AddStepMenu } from "@/components/dashboard/add-step-menu";
-import { StepList } from "@/components/dashboard/step-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { Link } from "@/i18n/routing";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { Link } from "@/i18n/routing";
+
+const StepList = dynamic(
+  () => import("@/components/dashboard/step-list").then((mod) => mod.StepList),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="animate-pulse space-y-3">
+        <Skeleton className="h-16 w-full rounded-xl" />
+        <Skeleton className="h-16 w-full rounded-xl" />
+      </div>
+    ),
+  }
+);
 
 interface Step {
   _id: Id<"gameSteps">;
-  gameId: Id<"games">;
-  order: number;
-  type: "theory" | "quiz";
-  markdownContent?: string;
-  codeBlock?: { code: string; language: string; annotations: Array<{ label: string; explanation: string; lines: number[] }> };
-  question?: string;
   choices?: Array<{ text: string; isCorrect: boolean }>;
+  codeBlock?: {
+    code: string;
+    language: string;
+    annotations: Array<{ label: string; explanation: string; lines: number[] }>;
+  };
+  gameId: Id<"games">;
+  markdownContent?: string;
+  order: number;
+  question?: string;
   timeLimitSeconds?: number;
+  type: "theory" | "quiz";
 }
 
 interface Game {
@@ -62,62 +80,103 @@ export function GameEditor({ game }: Props) {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start gap-4">
-        <Button asChild size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-muted/50">
-          <Link href="/dashboard">← {t("common.back")}</Link>
-        </Button>
+      {/* Breadcrumb nav */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
+        <Link
+          className="text-muted-foreground transition-colors hover:text-foreground"
+          href="/dashboard"
+        >
+          {t("nav.dashboard")}
+        </Link>
+        <span aria-hidden="true" className="text-muted-foreground/40">
+          /
+        </span>
+        <span className="max-w-[200px] truncate font-medium text-foreground">
+          {game.title}
+        </span>
+      </nav>
+
+      {/* Game details card */}
+      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm">
+        {/* Accent bar */}
+        <div
+          aria-hidden="true"
+          className="h-1 bg-gradient-to-r from-primary/60 via-accent/40 to-primary/60"
+        />
+
+        <div className="p-6">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-lg text-primary">
+              🎮
+            </div>
+            <h1 className="font-bold font-display text-foreground text-xl">
+              {t("gameEditor.title")}
+            </h1>
+          </div>
+
+          <div className="max-w-xl space-y-4">
+            <div className="space-y-2">
+              <Label
+                className="font-medium text-foreground/80 text-sm"
+                htmlFor="game-title"
+              >
+                {t("gameEditor.gameTitleLabel")}
+              </Label>
+              <Input
+                className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
+                id="game-title"
+                maxLength={100}
+                onChange={(e) => setTitle(e.target.value)}
+                value={title}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                className="font-medium text-foreground/80 text-sm"
+                htmlFor="game-desc"
+              >
+                {t("gameEditor.gameDescLabel")}
+              </Label>
+              <Textarea
+                className="rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
+                id="game-desc"
+                maxLength={500}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={2}
+                value={description}
+              />
+            </div>
+            <Button
+              className="glow-sm press-down rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
+              disabled={saving}
+              onClick={handleSave}
+              size="sm"
+            >
+              {saving ? "Saving..." : t("gameEditor.saveGame")}
+            </Button>
+          </div>
+        </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <div className="mb-5 border-l-4 border-primary pl-4">
-          <h1 className="font-bold font-display text-xl text-foreground">
-            {t("gameEditor.title")}
-          </h1>
-        </div>
-        <div className="max-w-xl space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="game-title" className="text-foreground/80 text-sm">{t("gameEditor.gameTitleLabel")}</Label>
-            <Input
-              className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
-              id="game-title"
-              maxLength={100}
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="game-desc" className="text-foreground/80 text-sm">{t("gameEditor.gameDescLabel")}</Label>
-            <Textarea
-              className="rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
-              id="game-desc"
-              maxLength={500}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={2}
-              value={description}
-            />
-          </div>
-          <Button
-            className="rounded-xl bg-primary font-bold font-display text-primary-foreground glow-sm hover:brightness-110 press-down"
-            disabled={saving}
-            onClick={handleSave}
-            size="sm"
-          >
-            {saving ? "Saving..." : t("gameEditor.saveGame")}
-          </Button>
-        </div>
-      </div>
-
+      {/* Steps section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="font-display font-semibold text-lg text-foreground">Steps</h2>
-            <span className="inline-flex items-center rounded-lg bg-primary/10 px-2.5 py-0.5 font-mono text-primary text-xs">
+          <div className="flex items-center gap-3">
+            <h2 className="font-bold font-display text-foreground text-lg">
+              Steps
+            </h2>
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/15 px-2 font-bold font-mono text-primary text-xs shadow-[0_0_8px_var(--glow-subtle)]">
               {game.steps.length}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-foreground hover:bg-muted/50">
-              <Link href={`/games/${game._id}/sessions`}>Manage sessions</Link>
+          <div className="flex items-center gap-2.5">
+            <Button
+              asChild
+              className="rounded-xl border-border/60 text-foreground hover:bg-muted/50"
+              size="sm"
+              variant="outline"
+            >
+              <Link href={`/games/${game._id}/sessions`}>Sessions</Link>
             </Button>
             <AddStepMenu gameId={game._id} />
           </div>

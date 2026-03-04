@@ -41,13 +41,13 @@ import { cn } from "@/lib/utils";
 
 interface Step {
   _id: Id<"gameSteps">;
-  gameId: Id<"games">;
-  order: number;
-  type: "theory" | "quiz";
-  markdownContent?: string;
-  question?: string;
   choices?: Array<{ text: string; isCorrect: boolean }>;
+  gameId: Id<"games">;
+  markdownContent?: string;
+  order: number;
+  question?: string;
   timeLimitSeconds?: number;
+  type: "theory" | "quiz";
 }
 
 interface Props {
@@ -90,12 +90,13 @@ function SortableStepItem({
   return (
     <li
       className={cn(
-        "flex items-center gap-3 rounded-xl border border-border bg-card p-3",
+        "flex items-center gap-3 rounded-xl border border-border/60 bg-card/80 p-3.5 backdrop-blur-sm",
         step.type === "theory"
-          ? "border-l-4 border-l-choice-blue"
-          : "border-l-4 border-l-choice-yellow",
-        "transition-all hover:glow-border",
-        isDragging && "relative z-50 opacity-50 glow-primary"
+          ? "border-l-4 border-l-choice-blue/70"
+          : "border-l-4 border-l-choice-yellow/70",
+        "transition-all duration-200 hover:-translate-y-0.5 hover:shadow-black/10 hover:shadow-lg",
+        isDragging &&
+          "relative z-50 opacity-60 shadow-[0_0_20px_var(--glow-primary)]"
       )}
       ref={setNodeRef}
       style={style}
@@ -134,15 +135,15 @@ function SortableStepItem({
             className={cn(
               "text-xs",
               step.type === "theory"
-                ? "bg-choice-blue/15 text-choice-blue border-choice-blue/30"
-                : "bg-choice-yellow/15 text-choice-yellow border-choice-yellow/30"
+                ? "border-choice-blue/30 bg-choice-blue/15 text-choice-blue"
+                : "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow"
             )}
             variant="outline"
           >
             {step.type === "theory" ? "Theory" : "Quiz"}
           </Badge>
         </div>
-        <p className="mt-0.5 truncate font-medium text-sm text-foreground">
+        <p className="mt-0.5 truncate font-medium text-foreground text-sm">
           {step.type === "theory"
             ? step.markdownContent?.slice(0, 60) || "Empty theory step"
             : step.question || "Empty quiz step"}
@@ -154,7 +155,7 @@ function SortableStepItem({
         {/* Arrow buttons for accessibility */}
         <Button
           aria-label={t("moveUp")}
-          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          className="h-7 w-7 p-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           disabled={index === 0}
           onClick={() => onMove(step._id, "up")}
           size="sm"
@@ -164,7 +165,7 @@ function SortableStepItem({
         </Button>
         <Button
           aria-label={t("moveDown")}
-          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          className="h-7 w-7 p-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           disabled={index === total - 1}
           onClick={() => onMove(step._id, "down")}
           size="sm"
@@ -173,7 +174,12 @@ function SortableStepItem({
           ↓
         </Button>
 
-        <Button asChild className="h-7 rounded-lg border-border text-foreground hover:bg-muted/50" size="sm" variant="outline">
+        <Button
+          asChild
+          className="h-7 rounded-lg border-border text-foreground hover:bg-muted/50"
+          size="sm"
+          variant="outline"
+        >
           <Link href={`/games/${gameId}/steps/${step._id}`}>
             {t("editStep")}
           </Link>
@@ -183,7 +189,7 @@ function SortableStepItem({
           <AlertDialogTrigger asChild>
             <Button
               aria-label={t("deleteStep")}
-              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              className="h-7 w-7 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               size="sm"
               variant="ghost"
             >
@@ -192,13 +198,17 @@ function SortableStepItem({
           </AlertDialogTrigger>
           <AlertDialogContent className="surface-elevated border-border">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-foreground">Delete step?</AlertDialogTitle>
+              <AlertDialogTitle className="text-foreground">
+                Delete step?
+              </AlertDialogTitle>
               <AlertDialogDescription className="text-muted-foreground">
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="border-border text-foreground hover:bg-muted/50">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="border-border text-foreground hover:bg-muted/50">
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction
                 className="bg-destructive text-white hover:bg-destructive/90"
                 onClick={() => onDelete(step._id)}

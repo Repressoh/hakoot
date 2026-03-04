@@ -33,18 +33,18 @@ export default async function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background selection:bg-primary/30">
       {/* ── Arcade Float Header ── */}
-      <header className="fixed top-0 right-0 left-0 z-50 pointer-events-none">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 pointer-events-auto">
-          <Link href="/" className="group flex items-center gap-2 press-down">
-            <span className="font-black font-display text-2xl tracking-tight text-foreground transition-all group-hover:text-glow">
-              HAKOOT<span className="text-primary animate-glow-pulse">_</span>
+      <header className="pointer-events-none fixed top-0 right-0 left-0 z-50">
+        <div className="pointer-events-auto mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+          <Link className="group press-down flex items-center gap-2" href="/">
+            <span className="font-black font-display text-2xl text-foreground tracking-tight transition-all group-hover:text-glow">
+              HAKOOT<span className="animate-glow-pulse text-primary">_</span>
             </span>
           </Link>
           <div className="flex items-center gap-4">
             <LocaleSwitcher variant="light" />
             <Button
               asChild
-              className="rounded-full border-2 border-primary/40 bg-background/50 text-primary backdrop-blur-md hover:border-primary hover:bg-primary/10 hover:glow-border press-down text-sm font-bold tracking-widest uppercase"
+              className="hover:glow-border press-down rounded-full border-2 border-primary/40 bg-background/50 font-bold text-primary text-sm uppercase tracking-widest backdrop-blur-md hover:border-primary hover:bg-primary/10"
               size="sm"
               variant="outline"
             >
@@ -55,35 +55,47 @@ export default async function LandingPage() {
       </header>
 
       {/* ── CRT Hero Section ── */}
-      <section className="relative flex min-h-[90vh] flex-col items-center justify-center gap-12 px-6 pt-32 pb-24 bg-background overflow-hidden">
+      <section className="relative flex min-h-[90vh] flex-col items-center justify-center gap-12 overflow-hidden bg-background px-6 pt-32 pb-24">
         {/* Arcade Grid Overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" aria-hidden="true" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-grid opacity-30"
+        />
         {/* Subtle Scanlines effect overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] opacity-20" aria-hidden="true" />
-        
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[length:100%_4px] bg-[linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.1)_50%)] opacity-20"
+        />
+
         {/* Corner Neon Glows */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+        >
           <div className="absolute top-[-10%] left-[-10%] h-[50vw] w-[50vw] rounded-full bg-primary/10 blur-[120px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] h-[40vw] w-[40vw] rounded-full bg-accent/15 blur-[120px]" />
+          <div className="absolute right-[-10%] bottom-[-10%] h-[40vw] w-[40vw] rounded-full bg-accent/15 blur-[120px]" />
         </div>
 
-        <div className="relative z-10 max-w-4xl space-y-6 text-center mt-8">
-          <h1 className="font-black font-display text-6xl tracking-tighter text-foreground sm:text-7xl lg:text-8xl drop-shadow-xl uppercase">
+        <div className="relative z-10 mt-8 max-w-4xl space-y-6 text-center">
+          <h1 className="font-black font-display text-6xl text-foreground uppercase tracking-tighter drop-shadow-xl sm:text-7xl lg:text-8xl">
             {t("landing.heroTitle")}
           </h1>
-          <p className="mx-auto max-w-2xl text-xl text-muted-foreground font-medium leading-relaxed">
+          <p className="mx-auto max-w-2xl font-medium text-muted-foreground text-xl leading-relaxed">
             {t("landing.heroSubtitle")}
           </p>
         </div>
 
-        <div className="relative z-20 w-full animate-float" style={{ animationDelay: "0.2s" }}>
+        <div
+          className="relative z-20 w-full animate-float"
+          style={{ animationDelay: "0.2s" }}
+        >
           <JoinCard />
         </div>
 
-        <p className="relative z-10 text-center font-mono text-sm text-muted-foreground mt-8">
+        <p className="relative z-10 mt-8 text-center font-mono text-muted-foreground text-sm">
           {t("landing.makeGame")}{" "}
           <Link
-            className="font-bold text-accent hover:text-glow-accent transition-all uppercase tracking-widest"
+            className="font-bold text-accent uppercase tracking-widest transition-all hover:text-glow-accent"
             href="/sign-in"
           >
             {t("landing.authenticate")}
@@ -92,49 +104,56 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Horizontal Ticket Scroll Features ── */}
-      <section className="relative px-6 py-32 bg-background border-t-2 border-border overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-50" aria-hidden="true" />
-        
+      <section className="relative overflow-hidden border-border border-t-2 bg-background px-6 py-32">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-50"
+        />
+
         <div className="container mx-auto max-w-7xl">
-          <h2 className="font-black font-display text-4xl text-foreground mb-16 uppercase tracking-tight flex items-center gap-4">
-            <span className="text-sky-400 text-5xl">*</span> {t("landing.featuresTitle")}
+          <h2 className="mb-16 flex items-center gap-4 font-black font-display text-4xl text-foreground uppercase tracking-tight">
+            <span className="text-5xl text-sky-400">*</span>{" "}
+            {t("landing.featuresTitle")}
           </h2>
-          
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-8 pb-12 -mx-6 px-6 hide-scrollbar lg:grid lg:grid-cols-2 xl:grid-cols-4 lg:overflow-visible lg:px-0 lg:mx-0 lg:snap-none">
+
+          <div className="hide-scrollbar -mx-6 flex snap-x snap-mandatory gap-8 overflow-x-auto px-6 pb-12 lg:mx-0 lg:grid lg:snap-none lg:grid-cols-2 lg:overflow-visible lg:px-0 xl:grid-cols-4">
             {features.map((f, i) => {
               const iconData = FEATURE_ICONS[i];
               return (
                 <div
-                  className="snap-center shrink-0 w-[85vw] sm:w-[400px] lg:w-auto relative group"
+                  className="group relative w-[85vw] shrink-0 snap-center sm:w-[400px] lg:w-auto"
                   key={f.title}
                 >
                   {/* Arcade Ticket Shape wrapper */}
-                  <div className="relative surface-elevated h-full p-8 border-2 border-border/50 transition-all duration-300 group-hover:border-primary group-hover:glow-border group-hover:-translate-y-2 flex flex-col gap-6"
-                       style={{ borderRadius: "24px" }}>
-                    
+                  <div
+                    className="surface-elevated group-hover:glow-border relative flex h-full flex-col gap-6 border-2 border-border/50 p-8 transition-all duration-300 group-hover:-translate-y-2 group-hover:border-primary"
+                    style={{ borderRadius: "24px" }}
+                  >
                     {/* Ticket "hole punch" decors */}
-                    <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-6 h-6 rounded-full bg-background border-r-2 border-border/50 group-hover:border-primary transition-colors" />
-                    <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-6 h-6 rounded-full bg-background border-l-2 border-border/50 group-hover:border-primary transition-colors" />
+                    <div className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full border-border/50 border-r-2 bg-background transition-colors group-hover:border-primary" />
+                    <div className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full border-border/50 border-l-2 bg-background transition-colors group-hover:border-primary" />
 
-                    <div className="flex justify-between items-start">
-                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-muted border-2 border-border/50 group-hover:border-primary/50 ${iconData.color}`}>
+                    <div className="flex items-start justify-between">
+                      <div
+                        className={`flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-border/50 bg-muted group-hover:border-primary/50 ${iconData.color}`}
+                      >
                         <HugeiconsIcon
+                          color="currentColor"
                           icon={iconData.icon}
                           size={32}
                           strokeWidth={2.5}
-                          color="currentColor"
                         />
                       </div>
-                      <span className="font-mono text-4xl font-black text-muted-foreground/20 group-hover:text-primary/10 transition-colors">
+                      <span className="font-black font-mono text-4xl text-muted-foreground/20 transition-colors group-hover:text-primary/10">
                         0{i + 1}
                       </span>
                     </div>
-                    
+
                     <div>
-                      <h3 className="font-black font-display text-2xl text-foreground uppercase mb-3">
+                      <h3 className="mb-3 font-black font-display text-2xl text-foreground uppercase">
                         {f.title}
                       </h3>
-                      <p className="text-muted-foreground text-lg leading-relaxed font-medium">
+                      <p className="font-medium text-lg text-muted-foreground leading-relaxed">
                         {f.desc}
                       </p>
                     </div>
@@ -147,37 +166,48 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Neon Pipe How It Works ── */}
-      <section className="px-6 py-32 bg-muted/20 border-t-2 border-border relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-10" aria-hidden="true" />
-        <div className="container mx-auto max-w-5xl relative z-10">
-          <h2 className="font-black font-display text-4xl text-center text-foreground mb-24 uppercase tracking-tight">
-            {t("landing.howItWorksTitle")} <span className="text-primary animate-pulse">_</span>
+      <section className="relative overflow-hidden border-border border-t-2 bg-muted/20 px-6 py-32">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-grid opacity-10"
+        />
+        <div className="container relative z-10 mx-auto max-w-5xl">
+          <h2 className="mb-24 text-center font-black font-display text-4xl text-foreground uppercase tracking-tight">
+            {t("landing.howItWorksTitle")}{" "}
+            <span className="animate-pulse text-primary">_</span>
           </h2>
-          
-          <div className="relative flex flex-col sm:flex-row justify-between items-center gap-12 sm:gap-4">
+
+          <div className="relative flex flex-col items-center justify-between gap-12 sm:flex-row sm:gap-4">
             {/* The Neon Pipe (Desktop) */}
-            <div className="hidden sm:block absolute top-[48px] left-[10%] right-[10%] h-2 bg-muted border-y border-border rounded-full overflow-hidden" aria-hidden="true">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary to-transparent w-[200%] animate-[slide_3s_linear_infinite]" />
+            <div
+              aria-hidden="true"
+              className="absolute top-[48px] right-[10%] left-[10%] hidden h-2 overflow-hidden rounded-full border-border border-y bg-muted sm:block"
+            >
+              <div className="absolute inset-0 w-[200%] animate-[slide_3s_linear_infinite] bg-gradient-to-r from-transparent via-primary to-transparent" />
             </div>
 
             {/* The Neon Pipe (Mobile) */}
-            <div className="sm:hidden absolute left-[48px] top-[10%] bottom-[10%] w-2 bg-muted border-x border-border rounded-full overflow-hidden" aria-hidden="true">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary to-transparent h-[200%] animate-[slide-vertical_3s_linear_infinite]" />
+            <div
+              aria-hidden="true"
+              className="absolute top-[10%] bottom-[10%] left-[48px] w-2 overflow-hidden rounded-full border-border border-x bg-muted sm:hidden"
+            >
+              <div className="absolute inset-0 h-[200%] animate-[slide-vertical_3s_linear_infinite] bg-gradient-to-b from-transparent via-primary to-transparent" />
             </div>
 
             {steps.map((step, i) => (
-              <div className="relative flex sm:flex-col items-center gap-8 sm:gap-6 text-center sm:flex-1 w-full" key={step}>
-                <div className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] bg-background border-4 border-border shadow-[0_0_0_8px_var(--background)] z-10 transition-all hover:border-primary hover:glow-primary group">
-                  <span className="font-black font-mono text-4xl text-foreground transition-colors group-hover:text-primary group-hover:text-glow">
+              <div
+                className="relative flex w-full items-center gap-8 text-center sm:flex-1 sm:flex-col sm:gap-6"
+                key={step}
+              >
+                <div className="hover:glow-primary group relative z-10 flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] border-4 border-border bg-background shadow-[0_0_0_8px_var(--background)] transition-all hover:border-primary">
+                  <span className="font-black font-mono text-4xl text-foreground transition-colors group-hover:text-glow group-hover:text-primary">
                     {i + 1}
                   </span>
                 </div>
-                <div className="surface-elevated p-6 rounded-2xl border-2 border-border/50 text-left sm:text-center w-full relative">
+                <div className="surface-elevated relative w-full rounded-2xl border-2 border-border/50 p-6 text-left sm:text-center">
                   {/* Small triangular pointer from box to number */}
-                  <div className="absolute -left-3 sm:-top-3 sm:left-1/2 top-1/2 -translate-y-1/2 sm:-translate-x-1/2 sm:translate-y-0 w-4 h-4 bg-surface-elevated border-l-2 border-b-2 sm:border-b-0 sm:border-t-2 sm:border-r-2 border-border/50 rotate-45" />
-                  <p className="text-foreground text-lg font-bold">
-                    {step}
-                  </p>
+                  <div className="absolute top-1/2 -left-3 h-4 w-4 -translate-y-1/2 rotate-45 border-border/50 border-b-2 border-l-2 bg-surface-elevated sm:-top-3 sm:left-1/2 sm:-translate-x-1/2 sm:translate-y-0 sm:border-t-2 sm:border-r-2 sm:border-b-0" />
+                  <p className="font-bold text-foreground text-lg">{step}</p>
                 </div>
               </div>
             ))}
@@ -186,19 +216,25 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Massive Arcade CTA Banner ── */}
-      <section className="relative px-6 py-40 text-center overflow-hidden border-t-2 border-border bg-background">
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
-          <div className="h-[40rem] w-[40rem] rounded-full bg-accent/10 blur-[100px] animate-pulse glow-accent" />
+      <section className="relative overflow-hidden border-border border-t-2 bg-background px-6 py-40 text-center">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-grid opacity-20"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        >
+          <div className="glow-accent h-[40rem] w-[40rem] animate-pulse rounded-full bg-accent/10 blur-[100px]" />
         </div>
-        
-        <div className="relative z-10 container mx-auto max-w-3xl space-y-12 surface-raised p-16 rounded-[3rem] border-4 border-accent/20">
-          <h2 className="font-black font-display text-5xl sm:text-6xl text-foreground uppercase tracking-tighter drop-shadow-md">
+
+        <div className="surface-raised container relative z-10 mx-auto max-w-3xl space-y-12 rounded-[3rem] border-4 border-accent/20 p-16">
+          <h2 className="font-black font-display text-5xl text-foreground uppercase tracking-tighter drop-shadow-md sm:text-6xl">
             {t("landing.ctaTitle")}
           </h2>
           <Button
             asChild
-            className="rounded-[2rem] bg-accent hover:bg-accent border-4 border-accent-foreground/20 px-12 py-8 h-auto font-black font-display text-accent-foreground text-2xl shadow-[0_0_40px_var(--accent)] hover:shadow-[0_0_60px_var(--accent)] hover:-translate-y-1 press-down transition-all uppercase tracking-wider"
+            className="press-down h-auto rounded-[2rem] border-4 border-accent-foreground/20 bg-accent px-12 py-8 font-black font-display text-2xl text-accent-foreground uppercase tracking-wider shadow-[0_0_40px_var(--accent)] transition-all hover:-translate-y-1 hover:bg-accent hover:shadow-[0_0_60px_var(--accent)]"
           >
             <Link href="/sign-up">{t("landing.ctaButton")}</Link>
           </Button>
@@ -206,16 +242,20 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Monospace Footer ── */}
-      <footer className="px-6 py-8 border-t border-border bg-background flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs uppercase text-muted-foreground tracking-widest">
+      <footer className="flex flex-col items-center justify-between gap-4 border-border border-t bg-background px-6 py-8 font-mono text-muted-foreground text-xs uppercase tracking-widest sm:flex-row">
         <div>Hakoot © {new Date().getFullYear()}</div>
         <div className="flex gap-4">
           {/* ── package.json version ── */}
-          <span>{t("landing.version")} {process.env.npm_package_version}</span>
+          <span>
+            {t("landing.version")} {process.env.npm_package_version}
+          </span>
         </div>
       </footer>
 
       {/* Some custom inline animations for the pipes */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @keyframes slide {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(50%); }
@@ -231,7 +271,9 @@ export default async function LandingPage() {
           -ms-overflow-style: none;  
           scrollbar-width: none;  
         }
-      `}} />
+      `,
+        }}
+      />
     </div>
   );
 }

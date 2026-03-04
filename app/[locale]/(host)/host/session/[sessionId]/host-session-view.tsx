@@ -1,11 +1,20 @@
 "use client";
 
 import { useMutation, useQuery } from "convex/react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { MarkdownViewer } from "@/components/game/markdown-viewer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
+
+const MarkdownViewer = dynamic(
+  () =>
+    import("@/components/game/markdown-viewer").then(
+      (mod) => mod.MarkdownViewer
+    ),
+  { ssr: false }
+);
+
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,11 +26,11 @@ import { cn } from "@/lib/utils";
 
 interface SessionDoc {
   _id: Id<"gameSessions">;
+  answerRevealed: boolean;
+  currentStepIndex: number;
   gameId: Id<"games">;
   inviteCode: string;
   status: "waiting" | "in_progress" | "finished";
-  currentStepIndex: number;
-  answerRevealed: boolean;
 }
 
 interface GameDoc {
@@ -31,13 +40,17 @@ interface GameDoc {
 
 interface StepDoc {
   _id: Id<"gameSteps">;
-  type: "theory" | "quiz";
-  order: number;
-  markdownContent?: string;
-  codeBlock?: { code: string; language: string; annotations: Array<{ label: string; explanation: string; lines: number[] }> };
-  question?: string;
   choices?: Array<{ text: string; isCorrect: boolean }>;
+  codeBlock?: {
+    code: string;
+    language: string;
+    annotations: Array<{ label: string; explanation: string; lines: number[] }>;
+  };
+  markdownContent?: string;
+  order: number;
+  question?: string;
   timeLimitSeconds?: number;
+  type: "theory" | "quiz";
 }
 
 interface ParticipantDoc {
@@ -139,17 +152,19 @@ export function HostSessionView({ data }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-border border-b bg-card/80 backdrop-blur-md">
         <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-3">
-            <span className="font-bold font-display text-foreground">{game?.title}</span>
+            <span className="font-bold font-display text-foreground">
+              {game?.title}
+            </span>
             <Badge
               className={cn(
                 "text-xs",
                 status === "in_progress"
-                  ? "bg-choice-green/15 text-choice-green border-choice-green/30"
+                  ? "border-choice-green/30 bg-choice-green/15 text-choice-green"
                   : status === "waiting"
-                    ? "bg-choice-yellow/15 text-choice-yellow border-choice-yellow/30"
+                    ? "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow"
                     : "bg-muted text-muted-foreground"
               )}
               variant="outline"
@@ -159,7 +174,7 @@ export function HostSessionView({ data }: Props) {
           </div>
           <div className="flex items-center gap-2">
             {status === "waiting" && (
-              <span className="text-muted-foreground text-sm font-mono">
+              <span className="font-mono text-muted-foreground text-sm">
                 {t("session.participantsJoined", {
                   count: participantCount,
                 })}
@@ -179,7 +194,7 @@ export function HostSessionView({ data }: Props) {
         <div className="space-y-4 lg:col-span-2">
           {status !== "waiting" && steps.length > 0 && (
             <div className="flex items-center gap-3">
-              <span className="text-muted-foreground text-sm font-mono">
+              <span className="font-mono text-muted-foreground text-sm">
                 {t("session.currentStep", {
                   current: currentIndex + 1,
                   total: steps.length,
@@ -210,7 +225,7 @@ export function HostSessionView({ data }: Props) {
                   sessionId={session._id}
                 />
                 <Button
-                  className="px-10 rounded-xl bg-primary font-bold font-display text-primary-foreground glow-primary hover:brightness-110 press-down"
+                  className="glow-primary press-down rounded-xl bg-primary px-10 font-bold font-display text-primary-foreground hover:brightness-110"
                   disabled={advancing || participantCount === 0}
                   onClick={handleAdvance}
                   size="lg"
@@ -223,20 +238,23 @@ export function HostSessionView({ data }: Props) {
 
           {status === "in_progress" && currentStep && (
             <div className="surface-raised p-6">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="mb-4 flex items-center gap-2">
                 <Badge
                   className={cn(
                     "text-xs",
                     currentStep.type === "theory"
-                      ? "bg-choice-blue/15 text-choice-blue border-choice-blue/30"
-                      : "bg-choice-yellow/15 text-choice-yellow border-choice-yellow/30"
+                      ? "border-choice-blue/30 bg-choice-blue/15 text-choice-blue"
+                      : "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow"
                   )}
                   variant="outline"
                 >
                   {currentStep.type === "theory" ? "Theory" : "Quiz"}
                 </Badge>
                 {currentStep.timeLimitSeconds && (
-                  <Badge className="bg-muted text-muted-foreground border-border" variant="outline">
+                  <Badge
+                    className="border-border bg-muted text-muted-foreground"
+                    variant="outline"
+                  >
                     ⏱ {currentStep.timeLimitSeconds}s
                   </Badge>
                 )}
@@ -248,16 +266,14 @@ export function HostSessionView({ data }: Props) {
                       <MarkdownViewer content={currentStep.markdownContent} />
                     )}
                     {currentStep.codeBlock && (
-                      <pre className="overflow-x-auto rounded-xl border border-border bg-surface-soft p-4 font-mono text-sm text-foreground">
-                        <code>
-                          {currentStep.codeBlock.code}
-                        </code>
+                      <pre className="overflow-x-auto rounded-xl border border-border bg-surface-soft p-4 font-mono text-foreground text-sm">
+                        <code>{currentStep.codeBlock.code}</code>
                       </pre>
                     )}
                   </>
                 ) : (
                   <div className="space-y-4">
-                    <p className="font-bold font-display text-xl text-foreground">
+                    <p className="font-bold font-display text-foreground text-xl">
                       {currentStep.question}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
@@ -308,7 +324,7 @@ export function HostSessionView({ data }: Props) {
 
           {showLeaderboard && leaderboard && leaderboard.length > 0 && (
             <div className="surface-raised p-5">
-              <h3 className="font-display text-foreground mb-3">
+              <h3 className="mb-3 font-display text-foreground">
                 {t("play.leaderboardTitle")}
               </h3>
               <Leaderboard entries={leaderboard} />
@@ -318,7 +334,9 @@ export function HostSessionView({ data }: Props) {
 
         <div className="space-y-4">
           <div className="surface-raised p-5">
-            <h3 className="font-display text-sm text-foreground mb-3">Controls</h3>
+            <h3 className="mb-3 font-display text-foreground text-sm">
+              Controls
+            </h3>
             <div className="space-y-2">
               {status === "in_progress" && isQuiz && !answerRevealed && (
                 <Button
@@ -332,7 +350,7 @@ export function HostSessionView({ data }: Props) {
               )}
               {status === "in_progress" && (
                 <Button
-                  className="w-full rounded-xl bg-primary font-bold text-primary-foreground glow-sm hover:brightness-110 press-down"
+                  className="glow-sm press-down w-full rounded-xl bg-primary font-bold text-primary-foreground hover:brightness-110"
                   disabled={advancing || (isQuiz && !answerRevealed)}
                   onClick={handleAdvance}
                 >
@@ -340,7 +358,10 @@ export function HostSessionView({ data }: Props) {
                 </Button>
               )}
               {status === "finished" && (
-                <Button asChild className="w-full rounded-xl bg-primary text-primary-foreground glow-sm hover:brightness-110">
+                <Button
+                  asChild
+                  className="glow-sm w-full rounded-xl bg-primary text-primary-foreground hover:brightness-110"
+                >
                   <Link href={`/host/session/${session._id}/results`}>
                     {t("session.viewResults")}
                   </Link>
@@ -350,8 +371,10 @@ export function HostSessionView({ data }: Props) {
           </div>
 
           <div className="surface-raised p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display text-sm text-foreground">Participants</h3>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="font-display text-foreground text-sm">
+                Participants
+              </h3>
               <span className="inline-flex items-center rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-primary text-xs">
                 {participantCount}
               </span>
@@ -364,7 +387,7 @@ export function HostSessionView({ data }: Props) {
               <ul aria-label="Participants list" className="space-y-1.5">
                 {participants.map((p) => (
                   <li
-                    className="flex items-center justify-between text-sm text-foreground"
+                    className="flex items-center justify-between text-foreground text-sm"
                     key={p._id}
                   >
                     <span>{p.name}</span>

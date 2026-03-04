@@ -37,7 +37,9 @@ export function ClientCodeBlock({ code, language }: Props) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
     debounceRef.current = setTimeout(() => {
       const safeLang: SupportedLang = isSupportedLang(language)
@@ -52,7 +54,9 @@ export function ClientCodeBlock({ code, language }: Props) {
         langs: [safeLang],
       })
         .then((highlighter) => {
-          if (cancelled) return;
+          if (cancelled) {
+            return;
+          }
           const result = highlighter.codeToHtml(code, {
             lang: safeLang,
             theme: "github-dark",
@@ -61,7 +65,9 @@ export function ClientCodeBlock({ code, language }: Props) {
           setLoading(false);
         })
         .catch(() => {
-          if (!cancelled) setLoading(false);
+          if (!cancelled) {
+            setLoading(false);
+          }
         });
 
       return () => {
@@ -70,7 +76,9 @@ export function ClientCodeBlock({ code, language }: Props) {
     }, 300);
 
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
     };
   }, [code, language]);
 
@@ -96,8 +104,8 @@ export function ClientCodeBlock({ code, language }: Props) {
               (_, i) => (
                 <div
                   // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
+                  className="h-4 animate-pulse rounded bg-[oklch(0.22_0.015_260/0.6)]"
                   key={i}
-                  className="h-4 rounded bg-[oklch(0.22_0.015_260/0.6)] animate-pulse"
                   style={{ width: `${55 + ((i * 17 + 31) % 40)}%` }}
                 />
               )
@@ -105,9 +113,7 @@ export function ClientCodeBlock({ code, language }: Props) {
           </div>
         ) : (
           <div
-            className={`
-              shiki-container transition-opacity duration-200
-              ${loading ? "opacity-50" : "opacity-100"}
+            className={`shiki-container transition-opacity duration-200 ${loading ? "opacity-50" : "opacity-100"}
             `}
             // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki-sanitized HTML
             dangerouslySetInnerHTML={{ __html: html ?? "" }}
