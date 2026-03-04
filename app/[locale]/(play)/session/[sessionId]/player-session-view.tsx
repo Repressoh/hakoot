@@ -14,6 +14,14 @@ const MarkdownViewer = dynamic(
   { ssr: false }
 );
 
+const ClientCodeBlock = dynamic(
+  () =>
+    import("@/components/game/client-code-block").then(
+      (mod) => mod.ClientCodeBlock
+    ),
+  { ssr: false }
+);
+
 import { CHOICE_SHAPES } from "@/components/session/choice-shapes";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { Leaderboard } from "@/components/session/leaderboard";
@@ -273,6 +281,12 @@ export function PlayerSessionView({ sessionId }: Props) {
                 </p>
                 {currentStep.markdownContent && (
                   <MarkdownViewer content={currentStep.markdownContent} />
+                )}
+                {currentStep.codeBlock && (
+                  <ClientCodeBlock
+                    code={currentStep.codeBlock.code}
+                    language={currentStep.codeBlock.language}
+                  />
                 )}
               </div>
             )}

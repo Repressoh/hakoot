@@ -15,6 +15,14 @@ const MarkdownViewer = dynamic(
   { ssr: false }
 );
 
+const ClientCodeBlock = dynamic(
+  () =>
+    import("@/components/game/client-code-block").then(
+      (mod) => mod.ClientCodeBlock
+    ),
+  { ssr: false }
+);
+
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -266,9 +274,10 @@ export function HostSessionView({ data }: Props) {
                       <MarkdownViewer content={currentStep.markdownContent} />
                     )}
                     {currentStep.codeBlock && (
-                      <pre className="overflow-x-auto rounded-xl border border-border bg-surface-soft p-4 font-mono text-foreground text-sm">
-                        <code>{currentStep.codeBlock.code}</code>
-                      </pre>
+                      <ClientCodeBlock
+                        code={currentStep.codeBlock.code}
+                        language={currentStep.codeBlock.language}
+                      />
                     )}
                   </>
                 ) : (
