@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   // See: https://github.com/amannn/next-intl/issues/2229
   // cacheComponents: true,
   experimental: {
+    inlineCss: true,
+    optimizeCss: true,
+    cssChunking: "strict",
     optimizePackageImports: [
       "@hugeicons/core-free-icons",
       "@hugeicons/react",
