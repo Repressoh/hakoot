@@ -655,7 +655,9 @@ function computeScore(
   if (!timeLimitSeconds) return basePoints;
 
   const elapsed = (answeredAtMs - stepStartedAtMs) / 1000;
-  const timeRemaining = Math.max(0, timeLimitSeconds - elapsed);
+  if (elapsed >= timeLimitSeconds) return 0;
+
+  const timeRemaining = timeLimitSeconds - elapsed;
   const ratio = timeRemaining / timeLimitSeconds;
   return Math.round(basePoints * (0.5 + 0.5 * ratio));
 }

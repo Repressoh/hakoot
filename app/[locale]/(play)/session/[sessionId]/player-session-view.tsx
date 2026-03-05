@@ -95,8 +95,42 @@ export function PlayerSessionView({ sessionId }: Props) {
     return () => clearInterval(interval);
   }, [token, heartbeatMut]);
 
+  // Track whether the timer has expired on the client side
+  const [timerExpired, setTimerExpired] = useState(false);
+
+  useEffect(() => {
+    // Always reset when step changes so stale expiry doesn't persist
+    setTimerExpired(false);
+
+    if (!state) return;
+    const step = state.currentStep;
+    const sess = state.session;
+    if (
+      step?.type !== "quiz" ||
+      !step.timeLimitSeconds ||
+      !sess.stepStartedAt
+    ) {
+      return;
+    }
+
+    const checkExpiry = () => {
+      const elapsed = (Date.now() - sess.stepStartedAt!) / 1000;
+      if (elapsed >= step.timeLimitSeconds!) {
+        setTimerExpired(true);
+        return true;
+      }
+      return false;
+    };
+
+    if (checkExpiry()) return;
+    const interval = setInterval(() => {
+      if (checkExpiry()) clearInterval(interval);
+    }, 200);
+    return () => clearInterval(interval);
+  }, [state?.session.currentStepIndex, state?.session.stepStartedAt]);
+
   async function submitAnswer(choiceIndex: number) {
-    if (submitting || !token || state?.currentAnswer) {
+    if (submitting || !token || state?.currentAnswer || timerExpired) {
       return;
     }
     setSubmitting(true);
@@ -351,6 +385,7 @@ export function PlayerSessionView({ sessionId }: Props) {
                     {(currentStep.choices ?? []).map((choice, i) => {
                       const colorConfig = CHOICE_COLORS[i];
                       const ShapeIcon = CHOICE_SHAPES[i];
+                      const isDisabled = submitting || timerExpired;
                       return (
                         <button
                           aria-label={`Answer ${String.fromCharCode(65 + i)}: ${choice.text}`}
@@ -360,9 +395,9 @@ export function PlayerSessionView({ sessionId }: Props) {
                             colorConfig?.bg,
                             colorConfig?.hover,
                             colorConfig?.ring,
-                            submitting && "cursor-not-allowed opacity-50"
+                            isDisabled && "cursor-not-allowed opacity-50"
                           )}
-                          disabled={submitting}
+                          disabled={isDisabled}
                           key={String.fromCharCode(65 + i)}
                           onClick={() => submitAnswer(i)}
                           type="button"
