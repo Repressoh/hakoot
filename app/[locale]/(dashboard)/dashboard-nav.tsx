@@ -97,6 +97,12 @@ export function DashboardNav({ user }: Props) {
               >
                 <Link href="/dashboard">{t("nav.dashboard")}</Link>
               </DropdownMenuItem>
+              <DropdownMenuItem
+                asChild
+                className="mx-1 rounded-lg text-foreground focus:bg-muted/50"
+              >
+                <Link href="/email-lists">{t("nav.emailLists")}</Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border/50" />
               <DropdownMenuItem
                 className="mx-1 rounded-lg text-destructive focus:bg-destructive/10 focus:text-destructive"

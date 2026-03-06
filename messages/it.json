@@ -23,6 +23,7 @@
     "signIn": "Accedi",
     "signOut": "Esci",
     "dashboard": "Dashboard",
+    "emailLists": "Liste Email",
     "hostSignIn": "Sei un host? Accedi"
   },
   "landing": {
@@ -153,6 +154,16 @@
     "namePlaceholder": "Nome partecipante",
     "emailPlaceholder": "partecipante@esempio.com",
     "sendInvites": "Invia inviti",
+    "fromList": "Da lista email",
+    "selectList": "Seleziona una lista...",
+    "noList": "Nessuna lista (solo manuale)",
+    "manualEntries": "Aggiungi manualmente",
+    "selectAll": "Seleziona tutti",
+    "deselectAll": "Deseleziona tutti",
+    "noValidEntry": "Aggiungi almeno un destinatario valido",
+    "sendSuccess": "{sent} {sent, plural, =1 {invito inviato} other {inviti inviati}}",
+    "sendSuccessPartial": "{sent} {sent, plural, =1 {invito inviato} other {inviti inviati}}, {failed} {failed, plural, =1 {fallito} other {falliti}}",
+    "sendFailed": "Impossibile inviare gli inviti",
     "waitingRoom": "Sala d'attesa",
     "participantsJoined": "{count, plural, =0 {Nessun partecipante} =1 {1 partecipante} other {# partecipanti}} iscritti",
     "startSession": "Inizia gioco",
@@ -212,5 +223,23 @@
     "exportCSV": "Esporta CSV",
     "totalScore": "Punteggio totale",
     "position": "Posizione"
+  },
+  "emailLists": {
+    "title": "Liste Email",
+    "createList": "Nuova lista",
+    "listTitle": "Nome lista",
+    "listTitlePlaceholder": "es. La mia classe",
+    "emptyDesc": "Crea la tua prima lista email per invitare gruppi di persone velocemente.",
+    "createSuccess": "Lista creata!",
+    "deleteConfirm": "Eliminare questa lista?",
+    "deleteDesc": "Questo eliminerà definitivamente la lista e tutti i suoi contatti.",
+    "deleteSuccess": "Lista eliminata.",
+    "deleteFailed": "Impossibile eliminare la lista",
+    "entryName": "Nome",
+    "entryNamePlaceholder": "Nome del contatto",
+    "entryEmail": "Email",
+    "entryEmailPlaceholder": "contatto@esempio.com",
+    "addEntry": "Aggiungi",
+    "removeEntryFailed": "Impossibile rimuovere il contatto"
   }
 }

@@ -78,6 +78,19 @@ export default defineSchema({
     .index("by_session", ["sessionId"])
     .index("by_token", ["participantToken"]),
 
+  // ─── Email list ──────────────────────────────────────────────────────
+  emailLists: defineTable({
+    title: v.string(),
+    createdById: v.id("users"),
+  }).index("by_creator", ["createdById"]),
+
+  // ─── Email list entry ───────────────────────────────────────────────
+  emailListEntries: defineTable({
+    listId: v.id("emailLists"),
+    name: v.string(),
+    email: v.string(),
+  }).index("by_list", ["listId"]),
+
   // ─── Participant answer ──────────────────────────────────────────────
   participantAnswers: defineTable({
     participantId: v.id("gameParticipants"),

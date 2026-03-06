@@ -23,6 +23,7 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "dashboard": "Dashboard",
+    "emailLists": "Email Lists",
     "hostSignIn": "Host? Sign in"
   },
   "landing": {
@@ -153,6 +154,16 @@
     "namePlaceholder": "Participant name",
     "emailPlaceholder": "participant@example.com",
     "sendInvites": "Send invites",
+    "fromList": "From email list",
+    "selectList": "Select a list...",
+    "noList": "No list (manual only)",
+    "manualEntries": "Add manually",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "noValidEntry": "Add at least one valid entry",
+    "sendSuccess": "Sent {sent} {sent, plural, =1 {invite} other {invites}}",
+    "sendSuccessPartial": "Sent {sent} {sent, plural, =1 {invite} other {invites}}, {failed} failed",
+    "sendFailed": "Failed to send invites",
     "waitingRoom": "Waiting room",
     "participantsJoined": "{count, plural, =0 {No participants} =1 {1 participant} other {# participants}} joined",
     "startSession": "Start game",
@@ -212,5 +223,23 @@
     "exportCSV": "Export CSV",
     "totalScore": "Total score",
     "position": "Position"
+  },
+  "emailLists": {
+    "title": "Email Lists",
+    "createList": "New list",
+    "listTitle": "List name",
+    "listTitlePlaceholder": "e.g. My class",
+    "emptyDesc": "Create your first email list to quickly invite groups of people.",
+    "createSuccess": "List created!",
+    "deleteConfirm": "Delete this list?",
+    "deleteDesc": "This will permanently delete the list and all its contacts.",
+    "deleteSuccess": "List deleted.",
+    "deleteFailed": "Failed to delete list",
+    "entryName": "Name",
+    "entryNamePlaceholder": "Contact name",
+    "entryEmail": "Email",
+    "entryEmailPlaceholder": "contact@example.com",
+    "addEntry": "Add",
+    "removeEntryFailed": "Failed to remove contact"
   }
 }
