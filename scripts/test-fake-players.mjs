@@ -28,7 +28,7 @@ const convexUrl = process.argv[2];
 const inviteCode = process.argv[3];
 const count = Math.min(Number(process.argv[4]) || 5, NAMES.length);
 
-if (!convexUrl || !inviteCode) {
+if (!(convexUrl && inviteCode)) {
   console.error(
     "Usage: node scripts/test-fake-players.mjs <CONVEX_URL> <INVITE_CODE> [PLAYER_COUNT]"
   );
@@ -76,13 +76,9 @@ async function run() {
   console.log(`Unique tokens: ${uniqueTokens.size}`);
 
   if (uniqueTokens.size === results.length) {
-    console.log(
-      "\n✅ All tests passed! Each player has a unique token."
-    );
+    console.log("\n✅ All tests passed! Each player has a unique token.");
   } else {
-    console.error(
-      "\n❌ BUG: Duplicate tokens in join responses."
-    );
+    console.error("\n❌ BUG: Duplicate tokens in join responses.");
   }
 
   console.log("");

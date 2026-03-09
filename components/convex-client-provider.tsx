@@ -9,7 +9,7 @@ if (!convexUrl) {
   throw new Error(
     "NEXT_PUBLIC_CONVEX_URL is not set. " +
       "When building with Docker, pass it as a build arg: " +
-      "--build-arg NEXT_PUBLIC_CONVEX_URL=<your-convex-url>",
+      "--build-arg NEXT_PUBLIC_CONVEX_URL=<your-convex-url>"
   );
 }
 const convex = new ConvexReactClient(convexUrl);

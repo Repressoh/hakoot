@@ -1,6 +1,6 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 
 // ─── Queries ───────────────────────────────────────────────────────────
 
@@ -8,7 +8,9 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) {
+      return [];
+    }
 
     return await ctx.db
       .query("emailLists")
@@ -22,10 +24,14 @@ export const getWithEntries = query({
   args: { listId: v.id("emailLists") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const list = await ctx.db.get(args.listId);
-    if (!list || list.createdById !== userId) return null;
+    if (!list || list.createdById !== userId) {
+      return null;
+    }
 
     const entries = await ctx.db
       .query("emailListEntries")
@@ -40,7 +46,9 @@ export const listWithEntries = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) {
+      return [];
+    }
 
     const lists = await ctx.db
       .query("emailLists")
@@ -66,11 +74,17 @@ export const create = mutation({
   args: { title: v.string() },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const title = args.title.trim();
-    if (!title) throw new ConvexError("Title cannot be empty");
-    if (title.length > 200) throw new ConvexError("Title must be 200 characters or less");
+    if (!title) {
+      throw new ConvexError("Title cannot be empty");
+    }
+    if (title.length > 200) {
+      throw new ConvexError("Title must be 200 characters or less");
+    }
 
     return await ctx.db.insert("emailLists", {
       title,
@@ -83,7 +97,9 @@ export const rename = mutation({
   args: { listId: v.id("emailLists"), title: v.string() },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const list = await ctx.db.get(args.listId);
     if (!list || list.createdById !== userId) {
@@ -98,7 +114,9 @@ export const remove = mutation({
   args: { listId: v.id("emailLists") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const list = await ctx.db.get(args.listId);
     if (!list || list.createdById !== userId) {
@@ -126,7 +144,9 @@ export const addEntry = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const list = await ctx.db.get(args.listId);
     if (!list || list.createdById !== userId) {
@@ -149,10 +169,14 @@ export const updateEntry = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const entry = await ctx.db.get(args.entryId);
-    if (!entry) throw new ConvexError("Not found");
+    if (!entry) {
+      throw new ConvexError("Not found");
+    }
 
     const list = await ctx.db.get(entry.listId);
     if (!list || list.createdById !== userId) {
@@ -170,10 +194,14 @@ export const removeEntry = mutation({
   args: { entryId: v.id("emailListEntries") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const entry = await ctx.db.get(args.entryId);
-    if (!entry) throw new ConvexError("Not found");
+    if (!entry) {
+      throw new ConvexError("Not found");
+    }
 
     const list = await ctx.db.get(entry.listId);
     if (!list || list.createdById !== userId) {

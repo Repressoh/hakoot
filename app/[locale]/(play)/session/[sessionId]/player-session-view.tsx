@@ -86,12 +86,14 @@ export function PlayerSessionView({ sessionId }: Props) {
 
   // Send heartbeat every 5s so the host knows we're still connected
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
     // Send one immediately on mount
     heartbeatMut({ participantToken: token }).catch(() => {});
     const interval = setInterval(() => {
       heartbeatMut({ participantToken: token }).catch(() => {});
-    }, 5_000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [token, heartbeatMut]);
 
@@ -102,7 +104,9 @@ export function PlayerSessionView({ sessionId }: Props) {
     // Always reset when step changes so stale expiry doesn't persist
     setTimerExpired(false);
 
-    if (!state) return;
+    if (!state) {
+      return;
+    }
     const step = state.currentStep;
     const sess = state.session;
     if (
@@ -122,12 +126,16 @@ export function PlayerSessionView({ sessionId }: Props) {
       return false;
     };
 
-    if (checkExpiry()) return;
+    if (checkExpiry()) {
+      return;
+    }
     const interval = setInterval(() => {
-      if (checkExpiry()) clearInterval(interval);
+      if (checkExpiry()) {
+        clearInterval(interval);
+      }
     }, 200);
     return () => clearInterval(interval);
-  }, [state?.session.currentStepIndex, state?.session.stepStartedAt]);
+  }, [state?.session.currentStepIndex, state?.session.stepStartedAt, state]);
 
   async function submitAnswer(choiceIndex: number) {
     if (submitting || !token || state?.currentAnswer || timerExpired) {

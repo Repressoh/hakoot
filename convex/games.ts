@@ -1,12 +1,14 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) {
+      return [];
+    }
 
     const games = await ctx.db
       .query("games")
@@ -35,10 +37,14 @@ export const get = query({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const game = await ctx.db.get(args.gameId);
-    if (!game || game.createdById !== userId) return null;
+    if (!game || game.createdById !== userId) {
+      return null;
+    }
 
     return game;
   },
@@ -48,10 +54,14 @@ export const getWithSteps = query({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const game = await ctx.db.get(args.gameId);
-    if (!game || game.createdById !== userId) return null;
+    if (!game || game.createdById !== userId) {
+      return null;
+    }
 
     const steps = await ctx.db
       .query("gameSteps")
@@ -72,7 +82,9 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Unauthorized");
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
 
     return await ctx.db.insert("games", {
       title: args.title,
@@ -91,7 +103,9 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Unauthorized");
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
 
     const game = await ctx.db.get(args.gameId);
     if (!game || game.createdById !== userId) {
@@ -99,8 +113,12 @@ export const update = mutation({
     }
 
     const updates: Record<string, unknown> = { updatedAt: Date.now() };
-    if (args.title !== undefined) updates.title = args.title;
-    if (args.description !== undefined) updates.description = args.description;
+    if (args.title !== undefined) {
+      updates.title = args.title;
+    }
+    if (args.description !== undefined) {
+      updates.description = args.description;
+    }
 
     await ctx.db.patch(args.gameId, updates);
     return args.gameId;
@@ -111,7 +129,9 @@ export const remove = mutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Unauthorized");
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
 
     const game = await ctx.db.get(args.gameId);
     if (!game || game.createdById !== userId) {

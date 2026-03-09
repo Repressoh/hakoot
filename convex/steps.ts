@@ -1,6 +1,6 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 
 const codeBlockValidator = v.object({
   code: v.string(),
@@ -16,7 +16,9 @@ const codeBlockValidator = v.object({
 
 async function requireGameOwner(ctx: any, gameId: any) {
   const userId = await getAuthUserId(ctx);
-  if (!userId) throw new ConvexError("Unauthorized");
+  if (!userId) {
+    throw new ConvexError("Unauthorized");
+  }
   const game = await ctx.db.get(gameId);
   if (!game || game.createdById !== userId) {
     throw new ConvexError("Not found");
@@ -28,13 +30,19 @@ export const get = query({
   args: { stepId: v.id("gameSteps") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const step = await ctx.db.get(args.stepId);
-    if (!step) return null;
+    if (!step) {
+      return null;
+    }
 
     const game = await ctx.db.get(step.gameId);
-    if (!game || game.createdById !== userId) return null;
+    if (!game || game.createdById !== userId) {
+      return null;
+    }
 
     return step;
   },
@@ -115,14 +123,18 @@ export const updateTheory = mutation({
   },
   handler: async (ctx, args) => {
     const step = await ctx.db.get(args.stepId);
-    if (!step) throw new ConvexError("Not found");
+    if (!step) {
+      throw new ConvexError("Not found");
+    }
     await requireGameOwner(ctx, step.gameId);
 
     const updates: Record<string, unknown> = {};
-    if (args.markdownContent !== undefined)
+    if (args.markdownContent !== undefined) {
       updates.markdownContent = args.markdownContent;
-    if (args.codeBlock !== undefined)
+    }
+    if (args.codeBlock !== undefined) {
       updates.codeBlock = args.codeBlock ?? undefined;
+    }
 
     await ctx.db.patch(args.stepId, updates);
     await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
@@ -141,15 +153,22 @@ export const updateQuiz = mutation({
   },
   handler: async (ctx, args) => {
     const step = await ctx.db.get(args.stepId);
-    if (!step) throw new ConvexError("Not found");
+    if (!step) {
+      throw new ConvexError("Not found");
+    }
     await requireGameOwner(ctx, step.gameId);
 
     const updates: Record<string, unknown> = {};
-    if (args.question !== undefined) updates.question = args.question;
-    if (args.choices !== undefined) updates.choices = args.choices;
-    if (args.timeLimitSeconds !== undefined)
+    if (args.question !== undefined) {
+      updates.question = args.question;
+    }
+    if (args.choices !== undefined) {
+      updates.choices = args.choices;
+    }
+    if (args.timeLimitSeconds !== undefined) {
       updates.timeLimitSeconds =
         args.timeLimitSeconds === null ? undefined : args.timeLimitSeconds;
+    }
 
     await ctx.db.patch(args.stepId, updates);
     await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
@@ -161,7 +180,9 @@ export const remove = mutation({
   args: { stepId: v.id("gameSteps") },
   handler: async (ctx, args) => {
     const step = await ctx.db.get(args.stepId);
-    if (!step) throw new ConvexError("Not found");
+    if (!step) {
+      throw new ConvexError("Not found");
+    }
     await requireGameOwner(ctx, step.gameId);
 
     // Delete answers for this step
@@ -212,7 +233,9 @@ export const move = mutation({
   },
   handler: async (ctx, args) => {
     const step = await ctx.db.get(args.stepId);
-    if (!step) throw new ConvexError("Not found");
+    if (!step) {
+      throw new ConvexError("Not found");
+    }
     await requireGameOwner(ctx, step.gameId);
 
     const allSteps = await ctx.db
@@ -224,7 +247,9 @@ export const move = mutation({
     const idx = allSteps.findIndex((s) => s._id === args.stepId);
     const swapIdx = args.direction === "up" ? idx - 1 : idx + 1;
 
-    if (swapIdx < 0 || swapIdx >= allSteps.length) return null;
+    if (swapIdx < 0 || swapIdx >= allSteps.length) {
+      return null;
+    }
 
     const other = allSteps[swapIdx];
     await ctx.db.patch(args.stepId, { order: other.order });

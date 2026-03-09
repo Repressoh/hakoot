@@ -51,7 +51,10 @@ export default async function LocaleLayout({ children, params }: Props) {
   const messages = await getMessages();
 
   return (
-    <html className={`dark ${satoshi.variable} ${spaceMono.variable}`} lang={locale}>
+    <html
+      className={`dark ${satoshi.variable} ${spaceMono.variable}`}
+      lang={locale}
+    >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <ConvexClientProvider>
           <NextIntlClientProvider messages={messages}>

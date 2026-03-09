@@ -1,8 +1,8 @@
 "use node";
 
 import { v } from "convex/values";
-import { action } from "./_generated/server";
 import { api } from "./_generated/api";
+import { action } from "./_generated/server";
 
 export const sendInviteEmails = action({
   args: {
@@ -40,10 +40,7 @@ export const sendInviteEmails = action({
     for (const invite of args.invites) {
       try {
         // Sign invite token using HMAC
-        const inviteToken = await signInviteToken(
-          args.sessionId,
-          invite.name
-        );
+        const inviteToken = await signInviteToken(args.sessionId, invite.name);
         const joinUrl = `${appUrl}/${args.locale ?? "en"}/join?session=${args.sessionId}&name=${encodeURIComponent(invite.name)}&token=${inviteToken}`;
 
         await resend.emails.send({

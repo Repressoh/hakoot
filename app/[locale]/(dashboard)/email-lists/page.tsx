@@ -42,7 +42,9 @@ function CreateListDialog() {
     const title = (
       e.currentTarget.elements.namedItem("title") as HTMLInputElement
     ).value.trim();
-    if (!title) return;
+    if (!title) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -130,7 +132,9 @@ function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
 
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
+    if (!(name.trim() && email.trim())) {
+      return;
+    }
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
     setName("");
@@ -163,11 +167,7 @@ function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
           value={email}
         />
       </div>
-      <Button
-        className="h-9 rounded-lg"
-        size="sm"
-        type="submit"
-      >
+      <Button className="h-9 rounded-lg" size="sm" type="submit">
         {t("addEntry")}
       </Button>
     </form>
@@ -195,7 +195,7 @@ function EmailListCard({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="group rounded-2xl border border-border/50 bg-card/60 p-5 backdrop-blur-sm transition-all hover:border-border/80 hover:shadow-lg hover:shadow-black/5">
+    <div className="group rounded-2xl border border-border/50 bg-card/60 p-5 backdrop-blur-sm transition-all hover:border-border/80 hover:shadow-black/5 hover:shadow-lg">
       <div className="flex items-center justify-between gap-3">
         <button
           className="flex flex-1 items-center gap-3 text-left"
@@ -244,9 +244,7 @@ function EmailListCard({
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>{t("deleteConfirm")}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t("deleteDesc")}
-              </AlertDialogDescription>
+              <AlertDialogDescription>{t("deleteDesc")}</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -349,7 +347,7 @@ export default function EmailListsPage() {
       </div>
 
       {lists.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border/50 bg-card/30 py-16 text-center">
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-border/50 border-dashed bg-card/30 py-16 text-center">
           <p className="text-muted-foreground text-sm">{t("emptyDesc")}</p>
         </div>
       ) : (

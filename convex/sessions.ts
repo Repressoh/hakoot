@@ -1,6 +1,6 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 
 /** Generate a random alphanumeric invite code */
 function generateInviteCode(length = 6): string {
@@ -24,10 +24,14 @@ export const listForGame = query({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) {
+      return [];
+    }
 
     const game = await ctx.db.get(args.gameId);
-    if (!game || game.createdById !== userId) return [];
+    if (!game || game.createdById !== userId) {
+      return [];
+    }
 
     return await ctx.db
       .query("gameSessions")
@@ -41,10 +45,14 @@ export const getForHost = query({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const session = await ctx.db.get(args.sessionId);
-    if (!session || session.hostId !== userId) return null;
+    if (!session || session.hostId !== userId) {
+      return null;
+    }
 
     const game = await ctx.db.get(session.gameId);
     const steps = await ctx.db
@@ -80,7 +88,9 @@ export const getByInviteCode = query({
       )
       .first();
 
-    if (!session || session.status === "finished") return null;
+    if (!session || session.status === "finished") {
+      return null;
+    }
 
     const game = await ctx.db.get(session.gameId);
     return {
@@ -100,7 +110,9 @@ export const getPlayerState = query({
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId);
-    if (!session) return null;
+    if (!session) {
+      return null;
+    }
 
     const participant = await ctx.db
       .query("gameParticipants")
@@ -109,7 +121,9 @@ export const getPlayerState = query({
       )
       .first();
 
-    if (!participant || participant.sessionId !== args.sessionId) return null;
+    if (!participant || participant.sessionId !== args.sessionId) {
+      return null;
+    }
 
     const game = await ctx.db.get(session.gameId);
     const steps = await ctx.db
@@ -177,10 +191,14 @@ export const getAnswerCount = query({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const session = await ctx.db.get(args.sessionId);
-    if (!session || session.hostId !== userId) return null;
+    if (!session || session.hostId !== userId) {
+      return null;
+    }
 
     const steps = await ctx.db
       .query("gameSteps")
@@ -224,10 +242,14 @@ export const getResults = query({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     const session = await ctx.db.get(args.sessionId);
-    if (!session || session.hostId !== userId) return null;
+    if (!session || session.hostId !== userId) {
+      return null;
+    }
 
     const participants = await ctx.db
       .query("gameParticipants")
@@ -294,7 +316,9 @@ export const create = mutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Unauthorized");
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
 
     const game = await ctx.db.get(args.gameId);
     if (!game || game.createdById !== userId) {
@@ -323,7 +347,9 @@ export const join = mutation({
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId);
-    if (!session) throw new ConvexError("Session not found");
+    if (!session) {
+      throw new ConvexError("Session not found");
+    }
     if (session.status === "finished") {
       throw new ConvexError("Session has ended");
     }
@@ -375,7 +401,9 @@ export const joinByCode = mutation({
       )
       .first();
 
-    if (!session) throw new ConvexError("Invalid invite code");
+    if (!session) {
+      throw new ConvexError("Invalid invite code");
+    }
     if (session.status === "finished") {
       throw new ConvexError("Session has ended");
     }
@@ -421,7 +449,9 @@ export const heartbeat = mutation({
         q.eq("participantToken", args.participantToken)
       )
       .first();
-    if (!participant) return;
+    if (!participant) {
+      return;
+    }
     await ctx.db.patch(participant._id, { lastSeen: Date.now() });
   },
 });
@@ -433,7 +463,9 @@ export const advance = mutation({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Unauthorized");
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
 
     const session = await ctx.db.get(args.sessionId);
     if (!session || session.hostId !== userId) {
@@ -489,14 +521,18 @@ export const reveal = mutation({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Unauthorized");
+    if (!userId) {
+      throw new ConvexError("Unauthorized");
+    }
 
     const session = await ctx.db.get(args.sessionId);
     if (!session || session.hostId !== userId) {
       throw new ConvexError("Not found");
     }
 
-    if (session.answerRevealed) return null; // Idempotent
+    if (session.answerRevealed) {
+      return null; // Idempotent
+    }
 
     const steps = await ctx.db
       .query("gameSteps")
@@ -505,7 +541,9 @@ export const reveal = mutation({
     steps.sort((a, b) => a.order - b.order);
 
     const currentStep = steps[session.currentStepIndex];
-    if (!currentStep || currentStep.type !== "quiz") return null;
+    if (!currentStep || currentStep.type !== "quiz") {
+      return null;
+    }
 
     // Apply scores to totalScore
     const participants = await ctx.db
@@ -574,9 +612,7 @@ export const submitAnswer = mutation({
     const existing = await ctx.db
       .query("participantAnswers")
       .withIndex("by_participant_and_step", (q) =>
-        q
-          .eq("participantId", participant._id)
-          .eq("stepId", currentStep._id)
+        q.eq("participantId", participant._id).eq("stepId", currentStep._id)
       )
       .first();
 
@@ -618,10 +654,7 @@ export const submitAnswer = mutation({
       participantIds.has(a.participantId)
     ).length;
 
-    if (
-      sessionAnswerCount >= participants.length &&
-      !session.answerRevealed
-    ) {
+    if (sessionAnswerCount >= participants.length && !session.answerRevealed) {
       // Auto-reveal: apply scores
       for (const p of participants) {
         const answer = await ctx.db
@@ -651,11 +684,17 @@ function computeScore(
   stepStartedAtMs: number,
   basePoints = 1000
 ): number {
-  if (!isCorrect) return 0;
-  if (!timeLimitSeconds) return basePoints;
+  if (!isCorrect) {
+    return 0;
+  }
+  if (!timeLimitSeconds) {
+    return basePoints;
+  }
 
   const elapsed = (answeredAtMs - stepStartedAtMs) / 1000;
-  if (elapsed >= timeLimitSeconds) return 0;
+  if (elapsed >= timeLimitSeconds) {
+    return 0;
+  }
 
   const timeRemaining = timeLimitSeconds - elapsed;
   const ratio = timeRemaining / timeLimitSeconds;
