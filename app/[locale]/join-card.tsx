@@ -30,10 +30,10 @@ export function JoinCard() {
         `participantToken_${result.sessionId}`,
         result.participantToken
       );
+      setLoading(false);
       router.push(`/session/${result.sessionId}`);
     } catch {
       toast.error(tj("invalidCode"));
-    } finally {
       setLoading(false);
     }
   }

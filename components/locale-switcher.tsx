@@ -19,7 +19,7 @@ interface Props {
   variant?: "default" | "light";
 }
 
-export function LocaleSwitcher({ variant = "default" }: Props) {
+export function LocaleSwitcher({ variant: _variant = "default" }: Props) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();

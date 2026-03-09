@@ -101,14 +101,16 @@ export function ClientCodeBlock({ code, language }: Props) {
         {loading && !html ? (
           <div className="space-y-2 p-4">
             {Array.from({ length: Math.max(code.split("\n").length, 3) }).map(
-              (_, i) => (
-                <div
-                  // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
-                  className="h-4 animate-pulse rounded bg-[oklch(0.22_0.015_260/0.6)]"
-                  key={i}
-                  style={{ width: `${55 + ((i * 17 + 31) % 40)}%` }}
-                />
-              )
+              (_line, i) => {
+                const lineNum = i + 1;
+                return (
+                  <div
+                    className="h-4 animate-pulse rounded bg-[oklch(0.22_0.015_260/0.6)]"
+                    key={`skeleton-line-${code.length}-${lineNum}`}
+                    style={{ width: `${55 + ((i * 17 + 31) % 40)}%` }}
+                  />
+                );
+              }
             )}
           </div>
         ) : (

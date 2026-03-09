@@ -2,7 +2,7 @@
 
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,25 @@ export function JoinGameForm({
   const joinSession = useMutation(api.sessions.join);
   const joinByCode = useMutation(api.sessions.joinByCode);
 
+  const handleJoinBySessionId = useCallback(
+    async (sessionId: Id<"gameSessions">, joinName: string) => {
+      setLoading(true);
+      try {
+        const result = await joinSession({ sessionId, name: joinName });
+        localStorage.setItem(
+          `participantToken_${sessionId}`,
+          result.participantToken
+        );
+        setLoading(false);
+        router.push(`/session/${sessionId}`);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : t("invalidCode"));
+        setLoading(false);
+      }
+    },
+    [joinSession, router, t]
+  );
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs once on mount with prefilled props
   useEffect(() => {
     if (prefilledSessionId && prefilledName) {
@@ -40,25 +59,6 @@ export function JoinGameForm({
       );
     }
   }, []);
-
-  async function handleJoinBySessionId(
-    sessionId: Id<"gameSessions">,
-    joinName: string
-  ) {
-    setLoading(true);
-    try {
-      const result = await joinSession({ sessionId, name: joinName });
-      localStorage.setItem(
-        `participantToken_${sessionId}`,
-        result.participantToken
-      );
-      router.push(`/session/${sessionId}`);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("invalidCode"));
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -72,10 +72,10 @@ export function JoinGameForm({
         `participantToken_${result.sessionId}`,
         result.participantToken
       );
+      setLoading(false);
       router.push(`/session/${result.sessionId}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("invalidCode"));
-    } finally {
       setLoading(false);
     }
   }

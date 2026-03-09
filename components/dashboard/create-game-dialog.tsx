@@ -41,11 +41,11 @@ export function CreateGameDialog() {
         description: description || undefined,
       });
       toast.success(t("dashboard.createSuccess"));
+      setLoading(false);
       setOpen(false);
       router.push(`/games/${gameId}`);
     } catch {
       toast.error(t("common.error"));
-    } finally {
       setLoading(false);
     }
   }
@@ -87,7 +87,6 @@ export function CreateGameDialog() {
               {t("gameEditor.gameTitleLabel")}
             </Label>
             <Input
-              autoFocus
               className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground transition-colors placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
               id="title"
               maxLength={100}

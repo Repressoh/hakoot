@@ -71,9 +71,9 @@ export function GameEditor({ game }: Props) {
         description: description || undefined,
       });
       toast.success("Saved!");
+      setSaving(false);
     } catch {
       toast.error(t("common.error"));
-    } finally {
       setSaving(false);
     }
   }

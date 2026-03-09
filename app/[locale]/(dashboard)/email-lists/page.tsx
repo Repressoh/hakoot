@@ -50,10 +50,10 @@ function CreateListDialog() {
     try {
       await createList({ title });
       toast.success(t("createSuccess"));
+      setLoading(false);
       setOpen(false);
     } catch {
       toast.error("Something went wrong");
-    } finally {
       setLoading(false);
     }
   }
@@ -95,7 +95,6 @@ function CreateListDialog() {
               {t("listTitle")}
             </Label>
             <Input
-              autoFocus
               className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground transition-colors placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
               id="title"
               maxLength={100}

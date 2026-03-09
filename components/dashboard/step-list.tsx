@@ -19,7 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -228,14 +228,16 @@ export function StepList({ gameId, steps }: Props) {
   const removeStep = useMutation(api.steps.remove);
   const moveStepMut = useMutation(api.steps.move);
   const reorderStepsMut = useMutation(api.steps.reorder);
-  const [localSteps, setLocalSteps] = useState(steps);
+  const [localSteps, setLocalSteps] = useState<Step[]>(steps);
+  const [isDragging, setIsDragging] = useState(false);
 
-  // Sync with Convex reactive updates
-  const stepsJson = JSON.stringify(steps);
-  const localJson = JSON.stringify(localSteps);
-  if (stepsJson !== localJson) {
-    setLocalSteps(steps);
-  }
+  useEffect(() => {
+    if (!isDragging) {
+      setLocalSteps(steps);
+    }
+  }, [steps, isDragging]);
+
+  const displaySteps = isDragging ? localSteps : steps;
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -246,13 +248,14 @@ export function StepList({ gameId, steps }: Props) {
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
+    setIsDragging(false);
     if (!over || active.id === over.id) {
       return;
     }
 
-    const oldIndex = localSteps.findIndex((s) => s._id === active.id);
-    const newIndex = localSteps.findIndex((s) => s._id === over.id);
-    const reordered = arrayMove(localSteps, oldIndex, newIndex);
+    const oldIndex = displaySteps.findIndex((s) => s._id === active.id);
+    const newIndex = displaySteps.findIndex((s) => s._id === over.id);
+    const reordered = arrayMove(displaySteps, oldIndex, newIndex);
     setLocalSteps(reordered);
 
     try {
@@ -283,7 +286,7 @@ export function StepList({ gameId, steps }: Props) {
     }
   }
 
-  if (localSteps.length === 0) {
+  if (displaySteps.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground text-sm">
         {t("noSteps")}
@@ -295,14 +298,15 @@ export function StepList({ gameId, steps }: Props) {
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
+      onDragStart={() => setIsDragging(true)}
       sensors={sensors}
     >
       <SortableContext
-        items={localSteps.map((s) => s._id)}
+        items={displaySteps.map((s) => s._id)}
         strategy={verticalListSortingStrategy}
       >
         <ul aria-label="Game steps" className="m-0 list-none space-y-2 p-0">
-          {localSteps.map((step, i) => (
+          {displaySteps.map((step, i) => (
             <SortableStepItem
               gameId={gameId}
               index={i}
@@ -310,7 +314,7 @@ export function StepList({ gameId, steps }: Props) {
               onDelete={handleDelete}
               onMove={handleMove}
               step={step}
-              total={localSteps.length}
+              total={displaySteps.length}
             />
           ))}
         </ul>

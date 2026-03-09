@@ -80,9 +80,9 @@ export function QuizStepEditor({ step }: Props) {
         timeLimitSeconds: timeLimitSeconds ?? undefined,
       });
       toast.success("Saved!");
+      setSaving(false);
     } catch {
       toast.error("Failed to save");
-    } finally {
       setSaving(false);
     }
   }

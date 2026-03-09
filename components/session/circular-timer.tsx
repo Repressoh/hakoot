@@ -48,6 +48,7 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
       role="timer"
     >
       <svg
+        aria-hidden="true"
         className="drop-shadow-sm"
         height={CIRCLE_SIZE}
         viewBox={`0 0 ${CIRCLE_SIZE} ${CIRCLE_SIZE}`}

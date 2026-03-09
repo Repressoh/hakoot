@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { JoinGameForm } from "./join-game-form";
+
+export const metadata: Metadata = {
+  title: "Join Game - Hakoot",
+};
 
 interface Props {
   searchParams: Promise<{

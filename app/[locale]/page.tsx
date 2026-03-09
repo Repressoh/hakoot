@@ -5,11 +5,20 @@ import {
   SourceCodeIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { JoinCard } from "./join-card";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("landing");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 const FEATURE_ICONS = [
   { icon: BookOpen01Icon, color: "text-primary" },
@@ -53,7 +62,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </header>
-
       {/* ── CRT Hero Section ── */}
       <section className="relative flex min-h-[90vh] flex-col items-center justify-center gap-12 overflow-hidden bg-background px-6 pt-32 pb-24">
         {/* Arcade Grid Overlay */}
@@ -102,7 +110,6 @@ export default async function LandingPage() {
           </Link>
         </p>
       </section>
-
       {/* ── Horizontal Ticket Scroll Features ── */}
       <section className="relative overflow-hidden border-border border-t-2 bg-background px-6 py-32">
         <div
@@ -164,7 +171,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* ── Neon Pipe How It Works ── */}
       <section className="relative overflow-hidden border-border border-t-2 bg-muted/20 px-6 py-32">
         <div
@@ -214,7 +220,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* ── Massive Arcade CTA Banner ── */}
       <section className="relative overflow-hidden border-border border-t-2 bg-background px-6 py-40 text-center">
         <div
@@ -240,7 +245,6 @@ export default async function LandingPage() {
           </Button>
         </div>
       </section>
-
       {/* ── Monospace Footer ── */}
       <footer className="flex flex-col items-center justify-between gap-4 border-border border-t bg-background px-6 py-8 font-mono text-muted-foreground text-xs uppercase tracking-widest sm:flex-row">
         <div>Hakoot © {new Date().getFullYear()}</div>
@@ -251,29 +255,6 @@ export default async function LandingPage() {
           </span>
         </div>
       </footer>
-
-      {/* Some custom inline animations for the pipes */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        @keyframes slide {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(50%); }
-        }
-        @keyframes slide-vertical {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(50%); }
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;  
-          scrollbar-width: none;  
-        }
-      `,
-        }}
-      />
     </div>
   );
 }

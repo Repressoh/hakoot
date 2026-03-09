@@ -137,7 +137,11 @@ export const getPlayerState = query({
         ? steps[session.currentStepIndex]
         : null;
 
-    let currentAnswer = null;
+    let currentAnswer: {
+      choiceIndex: number;
+      isCorrect: boolean;
+      score: number;
+    } | null = null;
     if (currentStep) {
       const answer = await ctx.db
         .query("participantAnswers")
@@ -356,11 +360,10 @@ export const join = mutation({
 
     // Rejoin with existing token
     if (args.existingToken) {
+      const existingToken = args.existingToken;
       const existing = await ctx.db
         .query("gameParticipants")
-        .withIndex("by_token", (q) =>
-          q.eq("participantToken", args.existingToken!)
-        )
+        .withIndex("by_token", (q) => q.eq("participantToken", existingToken))
         .first();
       if (existing && existing.sessionId === args.sessionId) {
         await ctx.db.patch(existing._id, { lastSeen: Date.now() });
@@ -410,11 +413,10 @@ export const joinByCode = mutation({
 
     // Rejoin with existing token
     if (args.existingToken) {
+      const existingToken = args.existingToken;
       const existing = await ctx.db
         .query("gameParticipants")
-        .withIndex("by_token", (q) =>
-          q.eq("participantToken", args.existingToken!)
-        )
+        .withIndex("by_token", (q) => q.eq("participantToken", existingToken))
         .first();
       if (existing && existing.sessionId === session._id) {
         await ctx.db.patch(existing._id, { lastSeen: Date.now() });

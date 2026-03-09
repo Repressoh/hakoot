@@ -59,7 +59,9 @@
     "insertCode": "Insert Code :_",
     "playerTag": "Player Tag",
     "connecting": "CONNECTING...",
-    "enterMatch": "ENTER MATCH"
+    "enterMatch": "ENTER MATCH",
+    "metaTitle": "Hakoot - Interactive Quiz Platform",
+    "metaDescription": "Create and play interactive coding quizzes with your audience"
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -165,6 +167,8 @@
     "sendSuccessPartial": "Sent {sent} {sent, plural, =1 {invite} other {invites}}, {failed} failed",
     "sendFailed": "Failed to send invites",
     "waitingRoom": "Waiting room",
+    "participants": "Participants",
+    "waitingForPlayers": "Waiting for players to join...",
     "participantsJoined": "{count, plural, =0 {No participants} =1 {1 participant} other {# participants}} joined",
     "startSession": "Start game",
     "endSession": "End game",

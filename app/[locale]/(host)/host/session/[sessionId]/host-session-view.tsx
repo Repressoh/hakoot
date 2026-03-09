@@ -83,6 +83,150 @@ const CHOICE_BG = [
   "bg-choice-green text-white",
 ];
 
+function getStatusBadgeClass(
+  status: "waiting" | "in_progress" | "finished"
+): string {
+  if (status === "in_progress") {
+    return "border-choice-green/30 bg-choice-green/15 text-choice-green";
+  }
+  if (status === "waiting") {
+    return "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow";
+  }
+  return "bg-muted text-muted-foreground";
+}
+
+interface StepContentProps {
+  answeredCount: number;
+  answerRevealed: boolean;
+  participantCount: number;
+  step: StepDoc;
+}
+
+function StepContent({
+  step,
+  answerRevealed,
+  answeredCount,
+  participantCount,
+}: StepContentProps) {
+  if (step.type === "theory") {
+    return (
+      <>
+        {step.markdownContent && (
+          <MarkdownViewer content={step.markdownContent} />
+        )}
+        {step.codeBlock && (
+          <ClientCodeBlock
+            code={step.codeBlock.code}
+            language={step.codeBlock.language}
+          />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="font-bold font-display text-foreground text-xl">
+        {step.question}
+      </p>
+      <div className="grid grid-cols-2 gap-3">
+        {(step.choices ?? []).map((choice, i) => (
+          <div
+            className={cn(
+              "rounded-2xl p-3 font-medium text-sm",
+              answerRevealed && choice.isCorrect
+                ? "border-2 border-choice-green bg-choice-green/10 text-foreground"
+                : CHOICE_BG[i]
+            )}
+            key={String.fromCharCode(65 + i)}
+          >
+            <span className="mr-2 font-mono opacity-70">
+              {String.fromCharCode(65 + i)}.
+            </span>
+            {choice.text}
+            {answerRevealed && choice.isCorrect && (
+              <span className="ml-2 text-choice-green">✓</span>
+            )}
+          </div>
+        ))}
+      </div>
+      {!answerRevealed && (
+        <AnswerProgress
+          answeredCount={answeredCount}
+          participantCount={participantCount}
+        />
+      )}
+    </div>
+  );
+}
+
+interface AnswerProgressProps {
+  answeredCount: number;
+  participantCount: number;
+}
+
+function AnswerProgress({
+  answeredCount,
+  participantCount,
+}: AnswerProgressProps) {
+  const t = useTranslations();
+  return (
+    <div className="flex items-center gap-3 text-muted-foreground text-sm">
+      <span className="font-mono">
+        {t("session.answeredCount", {
+          answered: answeredCount,
+          total: participantCount,
+        })}
+      </span>
+      <Progress
+        aria-label="Answer progress"
+        className="h-2 flex-1"
+        value={participantCount ? (answeredCount / participantCount) * 100 : 0}
+      />
+    </div>
+  );
+}
+
+interface ParticipantsPanelProps {
+  participants: ParticipantDoc[];
+}
+
+function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
+  const t = useTranslations();
+  const count = participants.length;
+  return (
+    <div className="surface-raised p-5">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="font-display text-foreground text-sm">{t("session.participants")}</h3>
+        <span className="inline-flex items-center rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-primary text-xs">
+          {count}
+        </span>
+      </div>
+      {count === 0 ? (
+        <p className="text-muted-foreground text-xs">
+          {t("session.waitingForPlayers")}
+        </p>
+      ) : (
+        <ul aria-label="Participants list" className="space-y-1.5">
+          {participants.map((p) => (
+            <li
+              className="flex items-center justify-between text-foreground text-sm"
+              key={p._id}
+            >
+              <span>{p.name}</span>
+              {p.totalScore > 0 && (
+                <span className="font-mono text-muted-foreground text-xs">
+                  {p.totalScore}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function HostSessionView({ data }: Props) {
   const t = useTranslations();
   const router = useRouter();
@@ -137,9 +281,9 @@ export function HostSessionView({ data }: Props) {
     setAdvancing(true);
     try {
       await advanceMut({ sessionId: session._id });
+      setAdvancing(false);
     } catch {
       toast.error("Failed to advance");
-    } finally {
       setAdvancing(false);
     }
   }
@@ -148,9 +292,9 @@ export function HostSessionView({ data }: Props) {
     setRevealing(true);
     try {
       await revealMut({ sessionId: session._id });
+      setRevealing(false);
     } catch {
       toast.error("Failed to reveal");
-    } finally {
       setRevealing(false);
     }
   }
@@ -167,14 +311,7 @@ export function HostSessionView({ data }: Props) {
               {game?.title}
             </span>
             <Badge
-              className={cn(
-                "text-xs",
-                status === "in_progress"
-                  ? "border-choice-green/30 bg-choice-green/15 text-choice-green"
-                  : status === "waiting"
-                    ? "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow"
-                    : "bg-muted text-muted-foreground"
-              )}
+              className={cn("text-xs", getStatusBadgeClass(status))}
               variant="outline"
             >
               {t(`session.sessionStatus.${status}`)}
@@ -268,65 +405,12 @@ export function HostSessionView({ data }: Props) {
                 )}
               </div>
               <div className="space-y-4">
-                {currentStep.type === "theory" ? (
-                  <>
-                    {currentStep.markdownContent && (
-                      <MarkdownViewer content={currentStep.markdownContent} />
-                    )}
-                    {currentStep.codeBlock && (
-                      <ClientCodeBlock
-                        code={currentStep.codeBlock.code}
-                        language={currentStep.codeBlock.language}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <div className="space-y-4">
-                    <p className="font-bold font-display text-foreground text-xl">
-                      {currentStep.question}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {(currentStep.choices ?? []).map((choice, i) => (
-                        <div
-                          className={cn(
-                            "rounded-2xl p-3 font-medium text-sm",
-                            answerRevealed && choice.isCorrect
-                              ? "border-2 border-choice-green bg-choice-green/10 text-foreground"
-                              : CHOICE_BG[i]
-                          )}
-                          key={String.fromCharCode(65 + i)}
-                        >
-                          <span className="mr-2 font-mono opacity-70">
-                            {String.fromCharCode(65 + i)}.
-                          </span>
-                          {choice.text}
-                          {answerRevealed && choice.isCorrect && (
-                            <span className="ml-2 text-choice-green">✓</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    {!answerRevealed && (
-                      <div className="flex items-center gap-3 text-muted-foreground text-sm">
-                        <span className="font-mono">
-                          {t("session.answeredCount", {
-                            answered: answeredCount,
-                            total: participantCount,
-                          })}
-                        </span>
-                        <Progress
-                          aria-label="Answer progress"
-                          className="h-2 flex-1"
-                          value={
-                            participantCount
-                              ? (answeredCount / participantCount) * 100
-                              : 0
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                <StepContent
+                  answeredCount={answeredCount}
+                  answerRevealed={answerRevealed}
+                  participantCount={participantCount}
+                  step={currentStep}
+                />
               </div>
             </div>
           )}
@@ -379,37 +463,7 @@ export function HostSessionView({ data }: Props) {
             </div>
           </div>
 
-          <div className="surface-raised p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-display text-foreground text-sm">
-                Participants
-              </h3>
-              <span className="inline-flex items-center rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-primary text-xs">
-                {participantCount}
-              </span>
-            </div>
-            {participantCount === 0 ? (
-              <p className="text-muted-foreground text-xs">
-                Waiting for players to join...
-              </p>
-            ) : (
-              <ul aria-label="Participants list" className="space-y-1.5">
-                {participants.map((p) => (
-                  <li
-                    className="flex items-center justify-between text-foreground text-sm"
-                    key={p._id}
-                  >
-                    <span>{p.name}</span>
-                    {p.totalScore > 0 && (
-                      <span className="font-mono text-muted-foreground text-xs">
-                        {p.totalScore}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <ParticipantsPanel participants={participants} />
         </div>
       </div>
     </div>

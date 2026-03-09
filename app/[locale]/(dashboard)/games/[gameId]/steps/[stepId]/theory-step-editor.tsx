@@ -161,9 +161,9 @@ export function TheoryStepEditor({ step }: Props) {
         codeBlock,
       });
       toast.success("Saved!");
+      setSaving(false);
     } catch {
       toast.error("Failed to save");
-    } finally {
       setSaving(false);
     }
   }

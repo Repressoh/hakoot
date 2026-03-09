@@ -1,5 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
+import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
 
 const codeBlockValidator = v.object({
@@ -14,7 +16,10 @@ const codeBlockValidator = v.object({
   ),
 });
 
-async function requireGameOwner(ctx: any, gameId: any) {
+async function requireGameOwner(
+  ctx: QueryCtx | MutationCtx,
+  gameId: Id<"games">
+) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
     throw new ConvexError("Unauthorized");
