@@ -197,7 +197,9 @@ function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
   return (
     <div className="surface-raised p-5">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-display text-foreground text-sm">{t("session.participants")}</h3>
+        <h3 className="font-display text-foreground text-sm">
+          {t("session.participants")}
+        </h3>
         <span className="inline-flex items-center rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-primary text-xs">
           {count}
         </span>

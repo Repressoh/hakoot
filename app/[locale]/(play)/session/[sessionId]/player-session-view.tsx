@@ -639,7 +639,9 @@ export function PlayerSessionView({ sessionId }: Props) {
 
   // Derive correct choice index when answer is revealed
   const correctIndex = (() => {
-    if (!answerRevealed || !currentStep?.choices) return null;
+    if (!(answerRevealed && currentStep?.choices)) {
+      return null;
+    }
     const idx = currentStep.choices.findIndex((c) => c.isCorrect);
     return idx >= 0 ? idx : null;
   })();
