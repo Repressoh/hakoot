@@ -42,7 +42,8 @@ export function SignInForm() {
     setGoogleLoading(true);
     try {
       await signIn("google", { redirectTo: "/dashboard" });
-    } catch {
+    } catch (err) {
+      console.error("[Google sign-in] error:", err);
       toast.error("Google sign-in failed");
       setGoogleLoading(false);
     }
