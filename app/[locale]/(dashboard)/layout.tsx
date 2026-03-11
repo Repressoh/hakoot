@@ -1,13 +1,18 @@
 "use client";
 
-import { Authenticated, Unauthenticated, useQuery } from "convex/react";
-import { redirect } from "next/navigation";
+import { AuthLoading, Authenticated, Unauthenticated, useQuery } from "convex/react";
+import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
+import { useRouter } from "@/i18n/routing";
 import { DashboardNav } from "./dashboard-nav";
 
-function AuthRedirect(): never {
-  redirect("/sign-in");
+function AuthRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/sign-in");
+  }, [router]);
+  return <DashboardSkeleton />;
 }
 
 export default function DashboardLayout({
@@ -17,6 +22,9 @@ export default function DashboardLayout({
 }) {
   return (
     <>
+      <AuthLoading>
+        <DashboardSkeleton />
+      </AuthLoading>
       <Unauthenticated>
         <AuthRedirect />
       </Unauthenticated>

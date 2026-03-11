@@ -29,6 +29,8 @@ export function SignInForm() {
 
     try {
       await signIn("password", { email, password, flow: "signIn" });
+      // sleep for 2 seconds to show the loading state (without this, sometimes a race condition happens...)
+      await new Promise((resolve) => setTimeout(resolve, 500));
       router.push("/dashboard");
     } catch {
       toast.error(t("invalidCredentials"));
