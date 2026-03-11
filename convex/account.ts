@@ -5,8 +5,13 @@ import {
   retrieveAccount,
 } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
-import { action, internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
+import {
+  action,
+  internalMutation,
+  internalQuery,
+  query,
+} from "./_generated/server";
 
 // ─── Queries ────────────────────────────────────────────────────────────
 
@@ -15,7 +20,9 @@ export const getLinkedProviders = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) return [];
+    if (!userId) {
+      return [];
+    }
     const accounts = await ctx.db
       .query("authAccounts")
       .withIndex("userIdAndProvider", (q) => q.eq("userId", userId))
@@ -74,7 +81,9 @@ export const deleteAllData = internalMutation({
         .query("gameSteps")
         .withIndex("by_game", (q) => q.eq("gameId", game._id))
         .collect();
-      for (const step of steps) await ctx.db.delete(step._id);
+      for (const step of steps) {
+        await ctx.db.delete(step._id);
+      }
 
       const sessions = await ctx.db
         .query("gameSessions")
@@ -85,7 +94,9 @@ export const deleteAllData = internalMutation({
           .query("gameParticipants")
           .withIndex("by_session", (q) => q.eq("sessionId", session._id))
           .collect();
-        for (const p of participants) await ctx.db.delete(p._id);
+        for (const p of participants) {
+          await ctx.db.delete(p._id);
+        }
         await ctx.db.delete(session._id);
       }
 
@@ -97,7 +108,9 @@ export const deleteAllData = internalMutation({
       .query("authAccounts")
       .withIndex("userIdAndProvider", (q) => q.eq("userId", userId))
       .collect();
-    for (const account of authAccounts) await ctx.db.delete(account._id);
+    for (const account of authAccounts) {
+      await ctx.db.delete(account._id);
+    }
 
     // Delete the user
     await ctx.db.delete(userId);
@@ -114,13 +127,17 @@ export const changeEmail = action({
   },
   handler: async (ctx, { newEmail, currentPassword }) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const passwordAccount = await ctx.runQuery(
       internal.account.getPasswordAccount,
       { userId }
     );
-    if (!passwordAccount) throw new ConvexError("No password account linked");
+    if (!passwordAccount) {
+      throw new ConvexError("No password account linked");
+    }
 
     const currentEmail = passwordAccount.providerAccountId;
 
@@ -135,6 +152,7 @@ export const changeEmail = action({
     }
 
     // Validate new email format
+    // biome-ignore lint/performance/useTopLevelRegex: this regex is used in a convex action, it cannot be put in a higher level
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newEmail)) {
       throw new ConvexError("Invalid email address");
@@ -150,7 +168,9 @@ export const changeEmail = action({
     const existing = await ctx.runQuery(internal.account.getUserByEmail, {
       email: normalizedEmail,
     });
-    if (existing) throw new ConvexError("Email already in use");
+    if (existing) {
+      throw new ConvexError("Email already in use");
+    }
 
     await ctx.runMutation(internal.account.updateUserEmail, {
       userId,
@@ -168,13 +188,17 @@ export const changePassword = action({
   },
   handler: async (ctx, { currentPassword, newPassword }) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     const passwordAccount = await ctx.runQuery(
       internal.account.getPasswordAccount,
       { userId }
     );
-    if (!passwordAccount) throw new ConvexError("No password account linked");
+    if (!passwordAccount) {
+      throw new ConvexError("No password account linked");
+    }
 
     const email = passwordAccount.providerAccountId;
 
@@ -204,7 +228,9 @@ export const deleteUserData = action({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new ConvexError("Not authenticated");
+    if (!userId) {
+      throw new ConvexError("Not authenticated");
+    }
 
     // Invalidate all sessions so tokens stop working
     await invalidateSessions(ctx, { userId });

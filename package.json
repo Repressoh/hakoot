@@ -11,7 +11,8 @@
     "start": "next start",
     "check": "ultracite check",
     "fix": "ultracite fix",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "doctor": "bunx react-doctor@latest . --verbose"
   },
   "dependencies": {
     "@auth/core": "0.41.1",

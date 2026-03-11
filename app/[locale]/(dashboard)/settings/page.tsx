@@ -1,16 +1,11 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useAction, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { api } from "@/convex/_generated/api";
-import { useRouter } from "@/i18n/routing";
-import { useAuthActions } from "@convex-dev/auth/react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +17,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "@/i18n/routing";
 
 export default function AccountSettingsPage() {
   const t = useTranslations("settings");
@@ -132,36 +133,38 @@ export default function AccountSettingsPage() {
       </div>
 
       {/* Connected accounts */}
-      <section className="rounded-2xl border border-border/50 bg-card/40 p-6 space-y-5">
+      <section className="space-y-5 rounded-2xl border border-border/50 bg-card/40 p-6">
         <div className="space-y-0.5">
-          <h2 className="font-semibold text-foreground">{t("connectedTitle")}</h2>
+          <h2 className="font-semibold text-foreground">
+            {t("connectedTitle")}
+          </h2>
           <p className="text-muted-foreground text-sm">{t("connectedDesc")}</p>
         </div>
         <Separator className="bg-border/40" />
         <div className="space-y-3">
           <ConnectedProvider
             icon="G"
-            name="Google"
             linked={isLoading ? false : hasGoogle}
             loading={isLoading}
+            name="Google"
           />
           <ConnectedProvider
             icon="@"
-            name={t("emailPassword")}
             linked={isLoading ? false : hasPassword}
             loading={isLoading}
+            name={t("emailPassword")}
           />
         </div>
       </section>
 
       {/* Change email — only shown for password accounts */}
       {(hasPassword || isLoading) && (
-        <section className="rounded-2xl border border-border/50 bg-card/40 p-6 space-y-5">
+        <section className="space-y-5 rounded-2xl border border-border/50 bg-card/40 p-6">
           <div className="space-y-0.5">
             <h2 className="font-semibold text-foreground">{t("emailTitle")}</h2>
             <p className="text-muted-foreground text-sm">
               {viewer?.email && (
-                <span className="font-mono text-xs text-muted-foreground/70 bg-muted/60 px-1.5 py-0.5 rounded-md">
+                <span className="rounded-md bg-muted/60 px-1.5 py-0.5 font-mono text-muted-foreground/70 text-xs">
                   {viewer.email}
                 </span>
               )}
@@ -170,49 +173,49 @@ export default function AccountSettingsPage() {
           <Separator className="bg-border/40" />
           <form className="space-y-4" onSubmit={handleChangeEmail}>
             <div className="space-y-1.5">
-              <Label htmlFor="new-email" className="text-foreground/80 text-sm">
+              <Label className="text-foreground/80 text-sm" htmlFor="new-email">
                 {t("newEmail")}
               </Label>
               <Input
-                id="new-email"
-                type="email"
                 autoComplete="email"
-                required
-                value={emailForm.newEmail}
+                className="h-11 rounded-xl border-border bg-muted/50"
+                id="new-email"
                 onChange={(e) =>
                   setEmailForm((f) => ({ ...f, newEmail: e.target.value }))
                 }
-                className="h-11 rounded-xl border-border bg-muted/50"
                 placeholder={t("newEmailPlaceholder")}
+                required
+                type="email"
+                value={emailForm.newEmail}
               />
             </div>
             <div className="space-y-1.5">
               <Label
-                htmlFor="email-password"
                 className="text-foreground/80 text-sm"
+                htmlFor="email-password"
               >
                 {t("confirmWithPassword")}
               </Label>
               <Input
-                id="email-password"
-                type="password"
                 autoComplete="current-password"
-                required
-                value={emailForm.currentPassword}
+                className="h-11 rounded-xl border-border bg-muted/50"
+                id="email-password"
                 onChange={(e) =>
                   setEmailForm((f) => ({
                     ...f,
                     currentPassword: e.target.value,
                   }))
                 }
-                className="h-11 rounded-xl border-border bg-muted/50"
                 placeholder="••••••••"
+                required
+                type="password"
+                value={emailForm.currentPassword}
               />
             </div>
             <Button
-              type="submit"
-              disabled={emailLoading}
               className="rounded-xl"
+              disabled={emailLoading}
+              type="submit"
             >
               {emailLoading ? tc("loading") : t("saveEmail")}
             </Button>
@@ -222,86 +225,84 @@ export default function AccountSettingsPage() {
 
       {/* Change password — only shown for password accounts */}
       {(hasPassword || isLoading) && (
-        <section className="rounded-2xl border border-border/50 bg-card/40 p-6 space-y-5">
+        <section className="space-y-5 rounded-2xl border border-border/50 bg-card/40 p-6">
           <div className="space-y-0.5">
-            <h2 className="font-semibold text-foreground">{t("passwordTitle")}</h2>
+            <h2 className="font-semibold text-foreground">
+              {t("passwordTitle")}
+            </h2>
             <p className="text-muted-foreground text-sm">{t("passwordDesc")}</p>
           </div>
           <Separator className="bg-border/40" />
           <form className="space-y-4" onSubmit={handleChangePassword}>
             <div className="space-y-1.5">
               <Label
-                htmlFor="current-password"
                 className="text-foreground/80 text-sm"
+                htmlFor="current-password"
               >
                 {t("currentPassword")}
               </Label>
               <Input
-                id="current-password"
-                type="password"
                 autoComplete="current-password"
-                required
-                value={pwForm.currentPassword}
+                className="h-11 rounded-xl border-border bg-muted/50"
+                id="current-password"
                 onChange={(e) =>
                   setPwForm((f) => ({
                     ...f,
                     currentPassword: e.target.value,
                   }))
                 }
-                className="h-11 rounded-xl border-border bg-muted/50"
                 placeholder="••••••••"
+                required
+                type="password"
+                value={pwForm.currentPassword}
               />
             </div>
             <div className="space-y-1.5">
               <Label
-                htmlFor="new-password"
                 className="text-foreground/80 text-sm"
+                htmlFor="new-password"
               >
                 {t("newPassword")}
               </Label>
               <Input
-                id="new-password"
-                type="password"
                 autoComplete="new-password"
-                required
+                className="h-11 rounded-xl border-border bg-muted/50"
+                id="new-password"
                 minLength={8}
-                value={pwForm.newPassword}
                 onChange={(e) =>
                   setPwForm((f) => ({ ...f, newPassword: e.target.value }))
                 }
-                className="h-11 rounded-xl border-border bg-muted/50"
                 placeholder="••••••••"
+                required
+                type="password"
+                value={pwForm.newPassword}
               />
             </div>
             <div className="space-y-1.5">
               <Label
-                htmlFor="confirm-password"
                 className="text-foreground/80 text-sm"
+                htmlFor="confirm-password"
               >
                 {t("confirmPassword")}
               </Label>
               <Input
-                id="confirm-password"
-                type="password"
                 autoComplete="new-password"
-                required
+                className="h-11 rounded-xl border-border bg-muted/50"
+                id="confirm-password"
                 minLength={8}
-                value={pwForm.confirmPassword}
                 onChange={(e) =>
                   setPwForm((f) => ({
                     ...f,
                     confirmPassword: e.target.value,
                   }))
                 }
-                className="h-11 rounded-xl border-border bg-muted/50"
                 placeholder="••••••••"
+                required
+                type="password"
+                value={pwForm.confirmPassword}
               />
             </div>
-            <Button
-              type="submit"
-              disabled={pwLoading}
-              className="rounded-xl"
-            >
+            <Button className="rounded-xl" disabled={pwLoading} type="submit">
               {pwLoading ? tc("loading") : t("savePassword")}
             </Button>
           </form>
@@ -309,7 +310,7 @@ export default function AccountSettingsPage() {
       )}
 
       {/* Danger zone */}
-      <section className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 space-y-5">
+      <section className="space-y-5 rounded-2xl border border-destructive/30 bg-destructive/5 p-6">
         <div className="space-y-0.5">
           <h2 className="font-semibold text-destructive">{t("dangerTitle")}</h2>
           <p className="text-muted-foreground text-sm">{t("dangerDesc")}</p>
@@ -318,9 +319,9 @@ export default function AccountSettingsPage() {
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
-              variant="destructive"
               className="rounded-xl"
               disabled={deleteLoading}
+              variant="destructive"
             >
               {t("deleteAccount")}
             </Button>
@@ -338,8 +339,8 @@ export default function AccountSettingsPage() {
               </AlertDialogCancel>
               <AlertDialogAction
                 className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                onClick={handleDeleteAccount}
                 disabled={deleteLoading}
+                onClick={handleDeleteAccount}
               >
                 {deleteLoading ? tc("loading") : t("deleteConfirmButton")}
               </AlertDialogAction>
@@ -363,6 +364,22 @@ function ConnectedProvider({
   loading: boolean;
 }) {
   const t = useTranslations("settings");
+  let badge: ReactNode;
+  if (loading) {
+    badge = <span className="h-5 w-16 animate-pulse rounded-md bg-muted" />;
+  } else if (linked) {
+    badge = (
+      <span className="rounded-full bg-primary/15 px-2.5 py-0.5 font-medium text-primary text-xs ring-1 ring-primary/20">
+        {t("connected")}
+      </span>
+    );
+  } else {
+    badge = (
+      <span className="rounded-full bg-muted px-2.5 py-0.5 font-medium text-muted-foreground text-xs ring-1 ring-border/30">
+        {t("notConnected")}
+      </span>
+    );
+  }
   return (
     <div className="flex items-center justify-between rounded-xl border border-border/40 bg-muted/30 px-4 py-3">
       <div className="flex items-center gap-3">
@@ -371,17 +388,7 @@ function ConnectedProvider({
         </span>
         <span className="font-medium text-foreground text-sm">{name}</span>
       </div>
-      {loading ? (
-        <span className="h-5 w-16 animate-pulse rounded-md bg-muted" />
-      ) : linked ? (
-        <span className="rounded-full bg-primary/15 px-2.5 py-0.5 font-medium text-primary text-xs ring-1 ring-primary/20">
-          {t("connected")}
-        </span>
-      ) : (
-        <span className="rounded-full bg-muted px-2.5 py-0.5 font-medium text-muted-foreground text-xs ring-1 ring-border/30">
-          {t("notConnected")}
-        </span>
-      )}
+      {badge}
     </div>
   );
 }

@@ -12,11 +12,21 @@ export const { auth, signIn, signOut, store } = convexAuth({
      * either email+password OR Google afterwards.
      */
     async createOrUpdateUser(ctx, args) {
-      console.log("[createOrUpdateUser] type:", args.type, "existingUserId:", args.existingUserId, "email:", args.profile?.email);
+      console.log(
+        "[createOrUpdateUser] type:",
+        args.type,
+        "existingUserId:",
+        args.existingUserId,
+        "email:",
+        args.profile?.email
+      );
       try {
         if (args.existingUserId) {
           // Existing account for this provider — just return as-is
-          console.log("[createOrUpdateUser] existing user ID found for provider:", args.existingUserId);
+          console.log(
+            "[createOrUpdateUser] existing user ID found for provider:",
+            args.existingUserId
+          );
           return args.existingUserId;
         }
 
@@ -34,7 +44,10 @@ export const { auth, signIn, signOut, store } = convexAuth({
           if (existing) {
             // Merge: return the existing user ID so the new OAuth account
             // gets linked to the same user record.
-            console.log("[createOrUpdateUser] merging with existing user:", existing._id);
+            console.log(
+              "[createOrUpdateUser] merging with existing user:",
+              existing._id
+            );
             return existing._id;
           }
         }
