@@ -64,11 +64,12 @@ export function GameEditor({ game }: Props) {
 
   async function handleSave() {
     setSaving(true);
+    const descriptionValue = description || undefined;
     try {
       await updateGame({
         gameId: game._id,
         title,
-        description: description || undefined,
+        description: descriptionValue,
       });
       toast.success("Saved!");
       setSaving(false);

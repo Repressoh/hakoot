@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -29,7 +30,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { Link, useRouter } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
 interface SessionDoc {
@@ -231,7 +231,6 @@ function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
 
 export function HostSessionView({ data }: Props) {
   const t = useTranslations();
-  const router = useRouter();
 
   const { session, game, steps, participants } = data;
   const status = session.status;
@@ -271,11 +270,9 @@ export function HostSessionView({ data }: Props) {
   }, [participants]);
 
   // Redirect on session end
-  useEffect(() => {
-    if (status === "finished") {
-      router.push(`/host/session/${session._id}/results`);
-    }
-  }, [status, session._id, router]);
+  if (status === "finished") {
+    redirect(`/host/session/${session._id}/results`);
+  }
 
   const currentStep = currentIndex >= 0 ? steps[currentIndex] : null;
 
@@ -327,12 +324,10 @@ export function HostSessionView({ data }: Props) {
                 })}
               </span>
             )}
-            {status !== "finished" && (
-              <InviteCodeDisplay
-                code={session.inviteCode}
-                sessionId={session._id}
-              />
-            )}
+            <InviteCodeDisplay
+              code={session.inviteCode}
+              sessionId={session._id}
+            />
           </div>
         </div>
       </header>
@@ -452,16 +447,6 @@ export function HostSessionView({ data }: Props) {
                   {isLastStep ? t("session.endSession") : t("session.nextStep")}
                 </Button>
               )}
-              {status === "finished" && (
-                <Button
-                  asChild
-                  className="glow-sm w-full rounded-xl bg-primary text-primary-foreground hover:brightness-110"
-                >
-                  <Link href={`/host/session/${session._id}/results`}>
-                    {t("session.viewResults")}
-                  </Link>
-                </Button>
-              )}
             </div>
           </div>
 
@@ -470,4 +455,28 @@ export function HostSessionView({ data }: Props) {
       </div>
     </div>
   );
+}
+
+export function HostSessionPage({ sessionId }: { sessionId: string }) {
+  const data = useQuery(api.sessions.getForHost, {
+    sessionId: sessionId as Id<"gameSessions">,
+  });
+
+  if (data === undefined) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-muted-foreground">Loading session...</p>
+      </div>
+    );
+  }
+
+  if (data === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-muted-foreground">Session not found</p>
+      </div>
+    );
+  }
+
+  return <HostSessionView data={data} />;
 }

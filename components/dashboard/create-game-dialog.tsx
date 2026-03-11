@@ -34,11 +34,12 @@ export function CreateGameDialog() {
     const description = (
       form.elements.namedItem("description") as HTMLTextAreaElement
     ).value;
+    const descriptionValue = description || undefined;
 
     try {
       const gameId = await createGame({
         title,
-        description: description || undefined,
+        description: descriptionValue,
       });
       toast.success(t("dashboard.createSuccess"));
       setLoading(false);

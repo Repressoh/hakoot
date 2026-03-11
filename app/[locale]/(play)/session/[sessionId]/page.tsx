@@ -1,9 +1,16 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import type { Metadata } from "next";
 import { PlayerSessionView } from "./player-session-view";
 
-export default function PlayerSessionPage() {
-  const { sessionId } = useParams<{ sessionId: string }>();
+export const metadata: Metadata = {
+  title: "Game Session",
+  description: "Join and play a live game session",
+};
+
+export default async function PlayerSessionPage({
+  params,
+}: {
+  params: Promise<{ sessionId: string }>;
+}) {
+  const { sessionId } = await params;
   return <PlayerSessionView sessionId={sessionId} />;
 }

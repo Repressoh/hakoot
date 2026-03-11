@@ -19,7 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -228,14 +228,8 @@ export function StepList({ gameId, steps }: Props) {
   const removeStep = useMutation(api.steps.remove);
   const moveStepMut = useMutation(api.steps.move);
   const reorderStepsMut = useMutation(api.steps.reorder);
-  const [localSteps, setLocalSteps] = useState<Step[]>(steps);
+  const [localSteps, setLocalSteps] = useState<Step[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    if (!isDragging) {
-      setLocalSteps(steps);
-    }
-  }, [steps, isDragging]);
 
   const displaySteps = isDragging ? localSteps : steps;
 
@@ -298,7 +292,10 @@ export function StepList({ gameId, steps }: Props) {
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
-      onDragStart={() => setIsDragging(true)}
+      onDragStart={() => {
+        setLocalSteps(steps);
+        setIsDragging(true);
+      }}
       sensors={sensors}
     >
       <SortableContext

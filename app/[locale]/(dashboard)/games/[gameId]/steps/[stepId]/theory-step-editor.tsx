@@ -3,7 +3,7 @@
 import { useMutation } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -98,35 +98,98 @@ const LANGUAGES = [
   "plaintext",
 ];
 
+interface TheoryFormState {
+  annotations: AnnotationForm[];
+  code: string;
+  hasCodeBlock: boolean;
+  language: string;
+  markdown: string;
+}
+
+type TheoryFormAction =
+  | { type: "SET_MARKDOWN"; value: string }
+  | { type: "SET_HAS_CODE_BLOCK"; value: boolean }
+  | { type: "SET_CODE"; value: string }
+  | { type: "SET_LANGUAGE"; value: string }
+  | { type: "ADD_ANNOTATION" }
+  | { type: "REMOVE_ANNOTATION"; index: number }
+  | {
+      type: "UPDATE_ANNOTATION";
+      index: number;
+      field: keyof AnnotationForm;
+      value: string;
+    };
+
+function theoryFormReducer(
+  state: TheoryFormState,
+  action: TheoryFormAction
+): TheoryFormState {
+  switch (action.type) {
+    case "SET_MARKDOWN":
+      return { ...state, markdown: action.value };
+    case "SET_HAS_CODE_BLOCK":
+      return { ...state, hasCodeBlock: action.value };
+    case "SET_CODE":
+      return { ...state, code: action.value };
+    case "SET_LANGUAGE":
+      return { ...state, language: action.value };
+    case "ADD_ANNOTATION":
+      return {
+        ...state,
+        annotations: [
+          ...state.annotations,
+          {
+            id: crypto.randomUUID(),
+            linesInput: "",
+            label: "",
+            explanation: "",
+          },
+        ],
+      };
+    case "REMOVE_ANNOTATION":
+      return {
+        ...state,
+        annotations: state.annotations.filter((_, idx) => idx !== action.index),
+      };
+    case "UPDATE_ANNOTATION":
+      return {
+        ...state,
+        annotations: state.annotations.map((a, idx) =>
+          idx === action.index ? { ...a, [action.field]: action.value } : a
+        ),
+      };
+    default:
+      return state;
+  }
+}
+
 export function TheoryStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateTheory = useMutation(api.steps.updateTheory);
   const [saving, setSaving] = useState(false);
 
-  const [markdown, setMarkdown] = useState(step.markdownContent ?? "");
-  const [hasCodeBlock, setHasCodeBlock] = useState(!!step.codeBlock);
-  const [code, setCode] = useState(step.codeBlock?.code ?? "");
-  const [language, setLanguage] = useState(
-    step.codeBlock?.language ?? "typescript"
-  );
-  const [annotations, setAnnotations] = useState<AnnotationForm[]>(
-    step.codeBlock?.annotations.map((a) => ({
-      id: crypto.randomUUID(),
-      linesInput: formatLineNumbers(a.lines),
-      label: a.label,
-      explanation: a.explanation,
-    })) ?? []
-  );
+  const [form, dispatch] = useReducer(theoryFormReducer, {
+    markdown: step.markdownContent ?? "",
+    hasCodeBlock: !!step.codeBlock,
+    code: step.codeBlock?.code ?? "",
+    language: step.codeBlock?.language ?? "typescript",
+    annotations:
+      step.codeBlock?.annotations.map((a) => ({
+        id: crypto.randomUUID(),
+        linesInput: formatLineNumbers(a.lines),
+        label: a.label,
+        explanation: a.explanation,
+      })) ?? [],
+  });
+
+  const { markdown, hasCodeBlock, code, language, annotations } = form;
 
   function addAnnotation() {
-    setAnnotations((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), linesInput: "", label: "", explanation: "" },
-    ]);
+    dispatch({ type: "ADD_ANNOTATION" });
   }
 
   function removeAnnotation(i: number) {
-    setAnnotations((prev) => prev.filter((_, idx) => idx !== i));
+    dispatch({ type: "REMOVE_ANNOTATION", index: i });
   }
 
   function updateAnnotation(
@@ -134,27 +197,24 @@ export function TheoryStepEditor({ step }: Props) {
     field: keyof AnnotationForm,
     value: string
   ) {
-    setAnnotations((prev) =>
-      prev.map((a, idx) => (idx === i ? { ...a, [field]: value } : a))
-    );
+    dispatch({ type: "UPDATE_ANNOTATION", index: i, field, value });
   }
 
   async function handleSave() {
     setSaving(true);
+    let codeBlock: CodeBlock | undefined;
+    if (hasCodeBlock && code.trim()) {
+      const parsedAnnotations: CodeAnnotation[] = annotations
+        .filter((a) => a.linesInput && a.label && a.explanation)
+        .map((a) => ({
+          lines: parseLineRange(a.linesInput),
+          label: a.label,
+          explanation: a.explanation,
+        }));
+
+      codeBlock = { code, language, annotations: parsedAnnotations };
+    }
     try {
-      let codeBlock: CodeBlock | undefined;
-      if (hasCodeBlock && code.trim()) {
-        const parsedAnnotations: CodeAnnotation[] = annotations
-          .filter((a) => a.linesInput && a.label && a.explanation)
-          .map((a) => ({
-            lines: parseLineRange(a.linesInput),
-            label: a.label,
-            explanation: a.explanation,
-          }));
-
-        codeBlock = { code, language, annotations: parsedAnnotations };
-      }
-
       await updateTheory({
         stepId: step._id,
         markdownContent: markdown,
@@ -188,7 +248,9 @@ export function TheoryStepEditor({ step }: Props) {
           <TabsContent value="edit">
             <Textarea
               className="min-h-[200px] font-mono text-sm"
-              onChange={(e) => setMarkdown(e.target.value)}
+              onChange={(e) =>
+                dispatch({ type: "SET_MARKDOWN", value: e.target.value })
+              }
               placeholder={t("markdownPlaceholder")}
               value={markdown}
             />
@@ -213,7 +275,9 @@ export function TheoryStepEditor({ step }: Props) {
           aria-label={t("codeBlockToggle")}
           checked={hasCodeBlock}
           id="has-code"
-          onCheckedChange={setHasCodeBlock}
+          onCheckedChange={(v) =>
+            dispatch({ type: "SET_HAS_CODE_BLOCK", value: v })
+          }
         />
         <Label htmlFor="has-code">{t("codeBlockToggle")}</Label>
       </div>
@@ -226,7 +290,9 @@ export function TheoryStepEditor({ step }: Props) {
             <select
               className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
               id="language"
-              onChange={(e) => setLanguage(e.target.value)}
+              onChange={(e) =>
+                dispatch({ type: "SET_LANGUAGE", value: e.target.value })
+              }
               value={language}
             >
               {LANGUAGES.map((l) => (
@@ -243,7 +309,9 @@ export function TheoryStepEditor({ step }: Props) {
             <Textarea
               className="min-h-[200px] font-mono text-sm"
               id="code"
-              onChange={(e) => setCode(e.target.value)}
+              onChange={(e) =>
+                dispatch({ type: "SET_CODE", value: e.target.value })
+              }
               placeholder={t("codePlaceholder")}
               spellCheck={false}
               value={code}

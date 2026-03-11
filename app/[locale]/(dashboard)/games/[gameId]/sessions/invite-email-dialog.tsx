@@ -74,14 +74,16 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
         invites: valid,
         locale,
       });
-      toast.success(
-        result.failed > 0
-          ? t("sendSuccessPartial", {
-              sent: result.sent,
-              failed: result.failed,
-            })
-          : t("sendSuccess", { sent: result.sent })
-      );
+      let successMsg: string;
+      if (result.failed > 0) {
+        successMsg = t("sendSuccessPartial", {
+          sent: result.sent,
+          failed: result.failed,
+        });
+      } else {
+        successMsg = t("sendSuccess", { sent: result.sent });
+      }
+      toast.success(successMsg);
       setSending(false);
       setOpen(false);
     } catch {

@@ -72,12 +72,13 @@ export function QuizStepEditor({ step }: Props) {
     }
 
     setSaving(true);
+    const timeLimitValue = timeLimitSeconds ?? undefined;
     try {
       await updateQuiz({
         stepId: step._id,
         question,
         choices,
-        timeLimitSeconds: timeLimitSeconds ?? undefined,
+        timeLimitSeconds: timeLimitValue,
       });
       toast.success("Saved!");
       setSaving(false);

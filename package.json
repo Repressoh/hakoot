@@ -7,6 +7,7 @@
     "dev:convex": "npx convex dev --once",
     "deploy:convex": "npx convex deploy",
     "build": "bun run deploy:convex && next build",
+    "dev:build": "next build",
     "start": "next start",
     "check": "ultracite check",
     "fix": "ultracite fix",

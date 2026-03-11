@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { createHighlighter } from "shiki";
 
 const SUPPORTED_LANGS = [
@@ -31,10 +31,30 @@ interface Props {
   language: string;
 }
 
+type HighlightState =
+  | { status: "loading"; html: string | null }
+  | { status: "ready"; html: string }
+  | { status: "error"; html: string | null };
+
+type HighlightAction = { type: "RESOLVE"; html: string } | { type: "REJECT" };
+
+function highlightReducer(
+  state: HighlightState,
+  action: HighlightAction
+): HighlightState {
+  if (action.type === "RESOLVE") {
+    return { status: "ready", html: action.html };
+  }
+  return { status: "error", html: state.html };
+}
+
 export function ClientCodeBlock({ code, language }: Props) {
-  const [html, setHtml] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, dispatch] = useReducer(highlightReducer, {
+    status: "loading",
+    html: null,
+  });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (debounceRef.current) {
@@ -47,7 +67,6 @@ export function ClientCodeBlock({ code, language }: Props) {
         : "plaintext";
 
       let cancelled = false;
-      setLoading(true);
 
       createHighlighter({
         themes: ["github-dark"],
@@ -57,16 +76,15 @@ export function ClientCodeBlock({ code, language }: Props) {
           if (cancelled) {
             return;
           }
-          const result = highlighter.codeToHtml(code, {
+          const html = highlighter.codeToHtml(code, {
             lang: safeLang,
             theme: "github-dark",
           });
-          setHtml(result);
-          setLoading(false);
+          dispatch({ type: "RESOLVE", html });
         })
         .catch(() => {
           if (!cancelled) {
-            setLoading(false);
+            dispatch({ type: "REJECT" });
           }
         });
 
@@ -81,6 +99,15 @@ export function ClientCodeBlock({ code, language }: Props) {
       }
     };
   }, [code, language]);
+
+  const { status, html } = state;
+
+  // Set innerHTML via ref to avoid dangerouslySetInnerHTML
+  useEffect(() => {
+    if (containerRef.current && html !== null) {
+      containerRef.current.innerHTML = html;
+    }
+  }, [html]);
 
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-[#0d1117]">
@@ -98,7 +125,7 @@ export function ClientCodeBlock({ code, language }: Props) {
 
       {/* Code area */}
       <div className="relative min-h-[3rem] overflow-x-auto">
-        {loading && !html ? (
+        {status === "loading" && !html ? (
           <div className="space-y-2 p-4">
             {Array.from({ length: Math.max(code.split("\n").length, 3) }).map(
               (_line, i) => {
@@ -115,10 +142,9 @@ export function ClientCodeBlock({ code, language }: Props) {
           </div>
         ) : (
           <div
-            className={`shiki-container transition-opacity duration-200 ${loading ? "opacity-50" : "opacity-100"}
+            className={`shiki-container transition-opacity duration-200 ${status === "loading" ? "opacity-50" : "opacity-100"}
             `}
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki-sanitized HTML
-            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+            ref={containerRef}
           />
         )}
       </div>

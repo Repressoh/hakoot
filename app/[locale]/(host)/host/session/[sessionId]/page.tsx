@@ -1,32 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import { HostSessionPage } from "./host-session-view";
 
-import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
-import { HostSessionView } from "./host-session-view";
+export const metadata: Metadata = {
+  title: "Host Session",
+  description: "Host and manage a live game session",
+};
 
-export default function HostSessionPage() {
-  const { sessionId } = useParams<{ sessionId: string }>();
-  const data = useQuery(api.sessions.getForHost, {
-    sessionId: sessionId as Id<"gameSessions">,
-  });
-
-  if (data === undefined) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading session...</p>
-      </div>
-    );
-  }
-
-  if (data === null) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Session not found</p>
-      </div>
-    );
-  }
-
-  return <HostSessionView data={data} />;
+export default async function HostSessionPageRoute({
+  params,
+}: {
+  params: Promise<{ sessionId: string }>;
+}) {
+  const { sessionId } = await params;
+  return <HostSessionPage sessionId={sessionId} />;
 }

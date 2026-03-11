@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 const MarkdownViewer = dynamic(
@@ -379,13 +379,23 @@ type PlayerState = NonNullable<
 >;
 
 function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
-  const [timerExpired, setTimerExpired] = useState(false);
+  const step = state?.currentStep;
+  const stepStartedAt = state?.session.stepStartedAt;
+  const stepKey =
+    step?.type === "quiz" && step.timeLimitSeconds && stepStartedAt
+      ? `${step.timeLimitSeconds}-${stepStartedAt}`
+      : null;
+
+  // Track (stepKey, expired) so we can reset expired when step changes
+  const [expiryState, setExpiryState] = useState<{
+    key: string | null;
+    expired: boolean;
+  }>({ key: stepKey, expired: false });
+
+  const timerExpired =
+    expiryState.key === stepKey ? expiryState.expired : false;
 
   useEffect(() => {
-    setTimerExpired(false);
-
-    const step = state?.currentStep;
-    const stepStartedAt = state?.session.stepStartedAt;
     if (step?.type !== "quiz" || !step.timeLimitSeconds || !stepStartedAt) {
       return;
     }
@@ -395,7 +405,7 @@ function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
     const checkExpiry = () => {
       const elapsed = (Date.now() - stepStartedAt) / 1000;
       if (elapsed >= timeLimitSeconds) {
-        setTimerExpired(true);
+        setExpiryState({ key: stepKey, expired: true });
         return true;
       }
       return false;
@@ -410,7 +420,7 @@ function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
       }
     }, 200);
     return () => clearInterval(interval);
-  }, [state]);
+  }, [stepKey, step, stepStartedAt]);
 
   return timerExpired;
 }
@@ -580,12 +590,18 @@ function SessionContent({
 export function PlayerSessionView({ sessionId }: Props) {
   const t = useTranslations();
 
-  // Get participant token from localStorage
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => {
-    const stored = localStorage.getItem(`participantToken_${sessionId}`);
-    setToken(stored);
-  }, [sessionId]);
+  // Get participant token from localStorage — useSyncExternalStore avoids an
+  // effect-based setState and handles SSR (returns null on the server).
+  const token = useSyncExternalStore(
+    (onStoreChange: () => void) => {
+      // Storage events fire when another tab changes localStorage; re-subscribe
+      // when sessionId changes by returning a no-op unsubscribe.
+      window.addEventListener("storage", onStoreChange);
+      return () => window.removeEventListener("storage", onStoreChange);
+    },
+    () => localStorage.getItem(`participantToken_${sessionId}`),
+    () => null
+  );
 
   // Reactive player state from Convex
   const state = useQuery(
