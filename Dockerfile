@@ -24,6 +24,9 @@ WORKDIR /app
 ARG NEXT_PUBLIC_CONVEX_URL
 ARG NEXT_PUBLIC_APP_URL
 
+# Convex deploy key for CI/CD authentication (generate in Convex dashboard → Settings → Deploy Keys)
+ARG CONVEX_DEPLOY_KEY
+
 # Copy deps from previous stage
 COPY --from=deps /app/node_modules ./node_modules
 
