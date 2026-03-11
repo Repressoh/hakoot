@@ -58,8 +58,6 @@ COPY --from=builder /app/.next/standalone ./
 # Copy static assets (not included in standalone)
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copy public assets
-COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
