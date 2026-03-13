@@ -170,7 +170,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
               onClick={handleExportCsv}
               variant="outline"
             >
-              Export CSV
+              {t("exportCSV")}
             </Button>
             <Button
               asChild
