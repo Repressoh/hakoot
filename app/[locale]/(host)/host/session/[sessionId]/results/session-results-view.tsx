@@ -54,29 +54,30 @@ function buildCsv(
     ...quizSteps.map((_s, i) => `Q${i + 1} Score`),
   ];
 
+  const answerLookup = new Map<string, CsvAnswer>();
+  for (const answer of answers) {
+    answerLookup.set(`${answer.participantId}:${answer.stepId}`, answer);
+  }
+  const getAnswer = (participantId: string, stepId: string): CsvAnswer | undefined =>
+    answerLookup.get(`${participantId}:${stepId}`);
+
   const rows = participants.map((p) => {
     const answerCols = quizSteps.map((step) => {
-      const ans = answers.find(
-        (a) => a.participantId === p._id && a.stepId === step._id
-      );
+      const ans = getAnswer(p._id, step._id);
       if (!ans) {
         return "";
       }
       return step.choices?.[ans.choiceIndex]?.text ?? String(ans.choiceIndex);
     });
     const correctCols = quizSteps.map((step) => {
-      const ans = answers.find(
-        (a) => a.participantId === p._id && a.stepId === step._id
-      );
+      const ans = getAnswer(p._id, step._id);
       if (!ans) {
         return "";
       }
       return ans.isCorrect ? "yes" : "no";
     });
     const scoreCols = quizSteps.map((step) => {
-      const ans = answers.find(
-        (a) => a.participantId === p._id && a.stepId === step._id
-      );
+      const ans = getAnswer(p._id, step._id);
       return ans ? String(ans.score) : "";
     });
 
