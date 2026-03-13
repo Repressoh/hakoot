@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
+  const t = useTranslations("timer");
   const startMs = new Date(stepStartedAt).getTime();
 
   const getRemaining = useCallback(() => {
@@ -40,10 +42,13 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
   const isUrgent = remaining <= timeLimitSeconds * 0.25;
   const displaySeconds = Math.ceil(remaining);
   const isExpired = displaySeconds <= 0;
+  const ariaLabel = isExpired
+    ? t("timeUp")
+    : t("secondsRemaining", { seconds: displaySeconds });
 
   return (
     <div
-      aria-label={isExpired ? "Time up" : `${displaySeconds} seconds remaining`}
+      aria-label={ariaLabel}
       className="flex flex-col items-center gap-1"
       role="timer"
     >

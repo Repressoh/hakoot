@@ -7,9 +7,15 @@ import { action } from "./_generated/server";
 /** Send in batches to respect Resend rate limits (10 req/s on free tier) */
 const BATCH_SIZE = 8;
 const BATCH_DELAY_MS = 1200; // ~1.2s between batches
+const SUPPORTED_LOCALES = new Set(["en", "it"]);
+const TRAILING_SLASHES_REGEX = /\/+$/;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function normalizeLocale(locale?: string): string {
+  return locale && SUPPORTED_LOCALES.has(locale) ? locale : "en";
 }
 
 export const sendInviteEmails = action({
@@ -25,6 +31,8 @@ export const sendInviteEmails = action({
     locale: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const locale = normalizeLocale(args.locale);
+
     // Verify session exists via query
     const sessionData = await ctx.runQuery(api.sessions.getForHost, {
       sessionId: args.sessionId,
@@ -37,9 +45,12 @@ export const sendInviteEmails = action({
     const { Resend } = await import("resend");
     const resend = new Resend(process.env.RESEND_API_KEY);
     const fromEmail = process.env.RESEND_FROM_EMAIL ?? "noreply@hakoot.app";
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(
+      TRAILING_SLASHES_REGEX,
+      ""
+    );
     const gameName = sessionData.game?.title ?? "Hakoot Game";
-    const isItalian = args.locale === "it";
+    const isItalian = locale === "it";
     const hostName = isItalian ? "Il tuo host" : "Your host";
 
     let sent = 0;
@@ -65,7 +76,7 @@ export const sendInviteEmails = action({
               args.sessionId,
               invite.name
             );
-            const joinUrl = `${appUrl}/${args.locale ?? "en"}/join?session=${args.sessionId}&name=${encodeURIComponent(invite.name)}&token=${inviteToken}`;
+            const joinUrl = `${appUrl}/${locale}/join?session=${encodeURIComponent(args.sessionId)}&name=${encodeURIComponent(invite.name)}&token=${encodeURIComponent(inviteToken)}`;
 
             await resend.emails.send({
               from: fromEmail,
@@ -79,7 +90,7 @@ export const sendInviteEmails = action({
                 gameName,
                 joinUrl,
                 inviteCode: sessionData.session.inviteCode,
-                locale: args.locale ?? "en",
+                locale,
               }),
             });
             sent++;
@@ -145,6 +156,7 @@ function buildInviteEmailHtml({
   const safeHost = escapeHtml(hostName);
   const safeGame = escapeHtml(gameName);
   const safeCode = escapeHtml(inviteCode);
+  const safeJoinUrl = escapeHtml(joinUrl);
   const subtitle = isIt ? "Invito di apprendimento" : "Learning invitation";
   const greeting = isIt ? `Ciao ${safeName}!` : `Hi ${safeName}!`;
   const body = isIt
@@ -176,7 +188,7 @@ function buildInviteEmailHtml({
                 <p style="margin:0 0 4px;font-size:12px;color:#6b7280;">${codeLabel}</p>
                 <p style="margin:0;font-size:32px;font-weight:800;color:#111827;letter-spacing:.15em;">${safeCode}</p>
               </div>
-              <a href="${joinUrl}" style="display:block;text-align:center;background:#111827;color:#ffffff;padding:14px 24px;border-radius:8px;font-size:16px;font-weight:600;text-decoration:none;">${btnLabel}</a>
+              <a href="${safeJoinUrl}" style="display:block;text-align:center;background:#111827;color:#ffffff;padding:14px 24px;border-radius:8px;font-size:16px;font-weight:600;text-decoration:none;">${btnLabel}</a>
             </td>
           </tr>
         </table>

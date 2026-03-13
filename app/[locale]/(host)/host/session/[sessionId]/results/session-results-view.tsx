@@ -110,13 +110,17 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
       results.steps,
       results.answers as CsvAnswer[]
     );
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `results-${sessionId}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const csvBlob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const downloadUrl = URL.createObjectURL(csvBlob);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = downloadUrl;
+    downloadLink.download = `results-${sessionId}.csv`;
+    document.body.append(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+    setTimeout(() => {
+      URL.revokeObjectURL(downloadUrl);
+    }, 100);
   }, [results, sessionId]);
 
   if (results === undefined) {

@@ -247,6 +247,10 @@
     "finalScore": "Punteggio finale: {score}",
     "finalRank": "Sei arrivato #{rank} su {total}"
   },
+  "timer": {
+    "timeUp": "Tempo scaduto!",
+    "secondsRemaining": "{seconds, plural, one {# secondo rimanente} other {# secondi rimanenti}}"
+  },
   "results": {
     "title": "Risultati della sessione",
     "leaderboard": "Classifica finale",

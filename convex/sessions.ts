@@ -1,5 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
+import type { MutationCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
 
 /** Generate a random alphanumeric invite code */
@@ -509,11 +511,12 @@ export const advance = mutation({
     const hasTimer = nextStep.type === "quiz" && nextStep.timeLimitSeconds;
     // Add 10-second reading phase before the answer timer starts
     const READING_PHASE_MS = 10_000;
+    const timerStartsAt = hasTimer ? Date.now() + READING_PHASE_MS : undefined;
 
     await ctx.db.patch(args.sessionId, {
       status: "in_progress",
       currentStepIndex: nextIndex,
-      stepStartedAt: hasTimer ? Date.now() + READING_PHASE_MS : undefined,
+      stepStartedAt: timerStartsAt,
       answerRevealed: false,
     });
 
@@ -597,20 +600,8 @@ export const submitAnswer = mutation({
       throw new ConvexError("Invalid participant");
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
-
-    const currentStep = steps[session.currentStepIndex];
-    if (!currentStep || currentStep.type !== "quiz") {
-      throw new ConvexError("Not a quiz step");
-    }
-
-    if (session.answerRevealed) {
-      throw new ConvexError("Answer already revealed");
-    }
+    const currentStep = await getActiveQuizStep(ctx, session.gameId, session);
+    assertAnsweringOpen(session);
 
     // Check for duplicate answer
     const existing = await ctx.db
@@ -659,26 +650,74 @@ export const submitAnswer = mutation({
     ).length;
 
     if (sessionAnswerCount >= participants.length && !session.answerRevealed) {
-      // Auto-reveal: apply scores
-      for (const p of participants) {
-        const answer = await ctx.db
-          .query("participantAnswers")
-          .withIndex("by_participant_and_step", (q) =>
-            q.eq("participantId", p._id).eq("stepId", currentStep._id)
-          )
-          .first();
-        if (answer) {
-          await ctx.db.patch(p._id, {
-            totalScore: Math.max(0, p.totalScore + answer.score),
-          });
-        }
-      }
-      await ctx.db.patch(args.sessionId, { answerRevealed: true });
+      await applyStepScoresAndReveal(
+        ctx,
+        args.sessionId,
+        participants,
+        currentStep._id
+      );
     }
 
     return { isCorrect, score };
   },
 });
+
+async function getActiveQuizStep(
+  ctx: MutationCtx,
+  gameId: Id<"games">,
+  session: {
+    currentStepIndex: number;
+  }
+) {
+  const steps = await ctx.db
+    .query("gameSteps")
+    .withIndex("by_game", (q) => q.eq("gameId", gameId))
+    .collect();
+  steps.sort((a, b) => a.order - b.order);
+
+  const currentStep = steps[session.currentStepIndex];
+  if (!currentStep || currentStep.type !== "quiz") {
+    throw new ConvexError("Not a quiz step");
+  }
+
+  return currentStep;
+}
+
+function assertAnsweringOpen(session: {
+  answerRevealed: boolean;
+  stepStartedAt?: number;
+}) {
+  if (session.answerRevealed) {
+    throw new ConvexError("Answer already revealed");
+  }
+
+  if (session.stepStartedAt && Date.now() < session.stepStartedAt) {
+    throw new ConvexError("Reading phase still active");
+  }
+}
+
+async function applyStepScoresAndReveal(
+  ctx: MutationCtx,
+  sessionId: Id<"gameSessions">,
+  participants: Array<{ _id: Id<"gameParticipants">; totalScore: number }>,
+  stepId: Id<"gameSteps">
+) {
+  for (const participant of participants) {
+    const answer = await ctx.db
+      .query("participantAnswers")
+      .withIndex("by_participant_and_step", (q) =>
+        q.eq("participantId", participant._id).eq("stepId", stepId)
+      )
+      .first();
+    if (answer) {
+      await ctx.db.patch(participant._id, {
+        totalScore: Math.max(0, participant.totalScore + answer.score),
+      });
+    }
+  }
+
+  await ctx.db.patch(sessionId, { answerRevealed: true });
+}
 
 /** Compute Kahoot-style score (positive for correct, negative for wrong) */
 function computeScore(
@@ -696,7 +735,7 @@ function computeScore(
     return basePoints;
   }
 
-  const elapsed = (answeredAtMs - stepStartedAtMs) / 1000;
+  const elapsed = Math.max(0, answeredAtMs - stepStartedAtMs) / 1000;
   if (elapsed >= timeLimitSeconds) {
     return 0;
   }
