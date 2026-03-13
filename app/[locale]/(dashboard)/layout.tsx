@@ -6,7 +6,6 @@ import {
   Unauthenticated,
   useQuery,
 } from "convex/react";
-import { useLocale } from "next-intl";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
@@ -15,11 +14,10 @@ import { DashboardNav } from "./dashboard-nav";
 
 function AuthRedirect() {
   const router = useRouter();
-  const locale = useLocale();
 
   useEffect(() => {
-    router.push(`/${locale}/sign-in`);
-  }, [locale, router]);
+    router.replace("/sign-in");
+  }, [router]);
 
   return null;
 }
