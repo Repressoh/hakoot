@@ -14,10 +14,12 @@ import { DashboardNav } from "./dashboard-nav";
 
 function AuthRedirect() {
   const router = useRouter();
+
   useEffect(() => {
     router.replace("/sign-in");
   }, [router]);
-  return <DashboardSkeleton />;
+
+  return null;
 }
 
 export default function DashboardLayout({

@@ -15,7 +15,7 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
-  const t = useTranslations("play");
+  const t = useTranslations("timer");
   const startMs = new Date(stepStartedAt).getTime();
 
   const getRemaining = useCallback(() => {
@@ -37,13 +37,18 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
   }, [getRemaining]);
 
   const fraction = remaining / timeLimitSeconds;
+  // When expired, offset equals full circumference → circle appears "cut" (empty)
   const offset = CIRCUMFERENCE * (1 - fraction);
   const isUrgent = remaining <= timeLimitSeconds * 0.25;
   const displaySeconds = Math.ceil(remaining);
+  const isExpired = displaySeconds <= 0;
+  const ariaLabel = isExpired
+    ? t("timeUp")
+    : t("secondsRemaining", { seconds: displaySeconds });
 
   return (
     <div
-      aria-label={`${displaySeconds} seconds remaining`}
+      aria-label={ariaLabel}
       className="flex flex-col items-center gap-1"
       role="timer"
     >
@@ -66,7 +71,9 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
         <circle
           className={cn(
             "transition-colors duration-300",
-            isUrgent ? "text-destructive" : "text-primary"
+            isExpired && "text-muted/30",
+            !isExpired && isUrgent && "text-destructive",
+            !(isExpired || isUrgent) && "text-primary"
           )}
           cx={CIRCLE_SIZE / 2}
           cy={CIRCLE_SIZE / 2}
@@ -86,7 +93,9 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
         <text
           className={cn(
             "font-bold font-display",
-            isUrgent ? "fill-destructive" : "fill-foreground"
+            isExpired && "fill-muted-foreground",
+            !isExpired && isUrgent && "fill-destructive",
+            !(isExpired || isUrgent) && "fill-foreground"
           )}
           dominantBaseline="central"
           fontSize="22"
@@ -94,7 +103,7 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
           x={CIRCLE_SIZE / 2}
           y={CIRCLE_SIZE / 2}
         >
-          {displaySeconds <= 0 ? t("timeUp") : displaySeconds}
+          {isExpired ? "0" : displaySeconds}
         </text>
       </svg>
     </div>

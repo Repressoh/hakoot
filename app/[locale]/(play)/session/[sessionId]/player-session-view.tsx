@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 const MarkdownViewer = dynamic(
@@ -53,33 +53,78 @@ const CHOICE_COLORS = [
   },
 ];
 
+/**
+ * Seeded LCG (Linear Congruential Generator) PRNG.
+ * Uses only arithmetic operators (+, *, %) — no bitwise ops.
+ * Parameters from Numerical Recipes: m=2^31, a=1664525, c=1013904223.
+ */
+function lcgRng(seed: number): () => number {
+  let s = Math.abs(seed) % 2_147_483_647;
+  return () => {
+    s = (1_664_525 * s + 1_013_904_223) % 2_147_483_648;
+    return s / 2_147_483_648;
+  };
+}
+
+/** Hash a string to a non-negative integer using only + and * operators */
+function hashString(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 31 + str.charCodeAt(i)) % 2_147_483_647;
+  }
+  return h;
+}
+
+/**
+ * Returns a shuffled array of {choice, originalIndex} pairs
+ * deterministically based on token + stepId seed.
+ */
+function shuffleChoices(
+  choices: Choice[],
+  token: string,
+  stepId: string
+): Array<{ choice: Choice; originalIndex: number }> {
+  const seed = hashString(`${token}:${stepId}`);
+  const rng = lcgRng(seed);
+  const arr = choices.map((choice, originalIndex) => ({
+    choice,
+    originalIndex,
+  }));
+  // Fisher-Yates shuffle
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j] as (typeof arr)[0], arr[i] as (typeof arr)[0]];
+  }
+  return arr;
+}
+
 interface Choice {
   isCorrect: boolean;
   text: string;
 }
 
 interface ChoiceGridProps {
-  choices: Choice[];
-  onSubmit: (index: number) => void;
+  onSubmit: (originalIndex: number) => void;
+  shuffledChoices: Array<{ choice: Choice; originalIndex: number }>;
   submitting: boolean;
   timerExpired: boolean;
 }
 
 function ChoiceGrid({
-  choices,
+  shuffledChoices,
   submitting,
   timerExpired,
   onSubmit,
 }: ChoiceGridProps) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      {choices.map((choice, i) => {
-        const colorConfig = CHOICE_COLORS[i];
-        const ShapeIcon = CHOICE_SHAPES[i];
+      {shuffledChoices.map(({ choice, originalIndex }, displayIndex) => {
+        const colorConfig = CHOICE_COLORS[displayIndex];
+        const ShapeIcon = CHOICE_SHAPES[displayIndex];
         const isDisabled = submitting || timerExpired;
         return (
           <button
-            aria-label={`Answer ${String.fromCharCode(65 + i)}: ${choice.text}`}
+            aria-label={`Answer ${String.fromCharCode(65 + displayIndex)}: ${choice.text}`}
             className={cn(
               "relative flex min-h-[5rem] flex-col items-start justify-between rounded-2xl p-4 text-left font-semibold text-white transition-all",
               "press-down focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -89,8 +134,8 @@ function ChoiceGrid({
               isDisabled && "cursor-not-allowed opacity-50"
             )}
             disabled={isDisabled}
-            key={String.fromCharCode(65 + i)}
-            onClick={() => onSubmit(i)}
+            key={String.fromCharCode(65 + displayIndex)}
+            onClick={() => onSubmit(originalIndex)}
             type="button"
           >
             {ShapeIcon && <ShapeIcon className="opacity-60" size={18} />}
@@ -103,13 +148,13 @@ function ChoiceGrid({
 }
 
 interface RevealedChoicesProps {
-  choices: Choice[];
   correctIndex: number | null | undefined;
   selectedChoiceIndex?: number;
+  shuffledChoices: Array<{ choice: Choice; originalIndex: number }>;
 }
 
 function RevealedChoices({
-  choices,
+  shuffledChoices,
   correctIndex,
   selectedChoiceIndex,
 }: RevealedChoicesProps) {
@@ -118,25 +163,29 @@ function RevealedChoices({
   }
   return (
     <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0">
-      {choices.map((choice, i) => (
+      {shuffledChoices.map(({ choice, originalIndex }, displayIndex) => (
         <li
           aria-label={
-            i === correctIndex ? `Correct: ${choice.text}` : choice.text
+            originalIndex === correctIndex
+              ? `Correct: ${choice.text}`
+              : choice.text
           }
           className={cn(
             "rounded-xl border-2 p-3 text-foreground text-sm",
-            i === correctIndex
+            originalIndex === correctIndex
               ? "border-choice-green bg-choice-green/10 font-medium"
               : "border-border opacity-50",
-            selectedChoiceIndex === i &&
-              i !== correctIndex &&
+            selectedChoiceIndex === originalIndex &&
+              originalIndex !== correctIndex &&
               "border-choice-red bg-choice-red/10"
           )}
-          key={String.fromCharCode(65 + i)}
+          key={String.fromCharCode(65 + displayIndex)}
         >
-          <span className="mr-1 font-mono">{String.fromCharCode(65 + i)}.</span>
+          <span className="mr-1 font-mono">
+            {String.fromCharCode(65 + displayIndex)}.
+          </span>
           {choice.text}
-          {i === correctIndex && " ✓"}
+          {originalIndex === correctIndex && " ✓"}
         </li>
       ))}
     </ul>
@@ -274,6 +323,11 @@ function LeaderboardPanel({
               {t("play.pointsEarned", { points: currentAnswer.score })}
             </p>
           )}
+          {!currentAnswer.isCorrect && currentAnswer.score < 0 && (
+            <p className="font-bold font-mono text-destructive text-sm">
+              {currentAnswer.score} pts
+            </p>
+          )}
         </output>
       )}
       <div>
@@ -291,12 +345,16 @@ interface QuizStepProps {
   choices: Choice[];
   correctIndex: number | null | undefined;
   currentAnswer?: CurrentAnswer | null;
+  isReading: boolean;
   onSubmit: (index: number) => void;
   question: string;
+  readingSecondsLeft: number;
+  stepId: string;
   stepStartedAt?: number;
   submitting: boolean;
   timeLimitSeconds?: number;
   timerExpired: boolean;
+  token: string;
 }
 
 function QuizStep({
@@ -305,21 +363,47 @@ function QuizStep({
   answerRevealed,
   correctIndex,
   currentAnswer,
+  isReading,
+  readingSecondsLeft,
   submitting,
   timerExpired,
   timeLimitSeconds,
   stepStartedAt,
+  stepId,
+  token,
   onSubmit,
 }: QuizStepProps) {
   const t = useTranslations();
+
+  // Stable shuffle per (token, stepId) — recalculates only when the step changes.
+  // choices is stable for a given stepId so including it doesn't cause extra recalculations.
+  const shuffledChoices = useMemo(
+    () => shuffleChoices(choices, token, stepId),
+    [choices, token, stepId]
+  );
+
   return (
     <div className="flex-1 space-y-5">
-      {timeLimitSeconds && stepStartedAt && !currentAnswer && (
+      {timeLimitSeconds && stepStartedAt && !currentAnswer && !isReading && (
         <div className="flex justify-center">
           <CircularTimer
             stepStartedAt={new Date(stepStartedAt).toISOString()}
             timeLimitSeconds={timeLimitSeconds}
           />
+        </div>
+      )}
+      {isReading && (
+        <div className="flex justify-center">
+          <div
+            aria-label={`${readingSecondsLeft} seconds to read`}
+            className="flex h-20 w-20 flex-col items-center justify-center rounded-full border-4 border-primary/30 bg-primary/10"
+            role="timer"
+          >
+            <span className="font-bold font-display text-2xl text-primary">
+              {readingSecondsLeft}
+            </span>
+            <span className="text-muted-foreground text-xs">read</span>
+          </div>
         </div>
       )}
       <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
@@ -353,21 +437,26 @@ function QuizStep({
               {t("play.pointsEarned", { points: currentAnswer.score })}
             </p>
           )}
+          {!currentAnswer.isCorrect && currentAnswer.score < 0 && (
+            <p className="font-bold font-mono text-destructive">
+              {currentAnswer.score} pts
+            </p>
+          )}
         </output>
       )}
-      {!currentAnswer && (
+      {!(currentAnswer || isReading) && (
         <ChoiceGrid
-          choices={choices}
           onSubmit={onSubmit}
+          shuffledChoices={shuffledChoices}
           submitting={submitting}
           timerExpired={timerExpired}
         />
       )}
       {answerRevealed && correctIndex !== null && (
         <RevealedChoices
-          choices={choices}
           correctIndex={correctIndex}
           selectedChoiceIndex={currentAnswer?.choiceIndex}
+          shuffledChoices={shuffledChoices}
         />
       )}
     </div>
@@ -377,6 +466,43 @@ function QuizStep({
 type PlayerState = NonNullable<
   ReturnType<typeof useQuery<typeof api.sessions.getPlayerState>>
 >;
+
+/** Returns true while we're in the reading phase (stepStartedAt is in the future) */
+function useReadingPhase(state: PlayerState | null | undefined): {
+  isReading: boolean;
+  readingSecondsLeft: number;
+} {
+  const stepStartedAt = state?.session.stepStartedAt;
+  const step = state?.currentStep;
+  const isQuizWithTimer =
+    step?.type === "quiz" && Boolean(step.timeLimitSeconds) && stepStartedAt;
+
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!isQuizWithTimer) {
+      return;
+    }
+    const interval = setInterval(() => {
+      const current = Date.now();
+      setNow(current);
+      if (current >= (stepStartedAt ?? 0)) {
+        clearInterval(interval);
+      }
+    }, 200);
+    return () => clearInterval(interval);
+  }, [isQuizWithTimer, stepStartedAt]);
+
+  if (!(isQuizWithTimer && stepStartedAt)) {
+    return { isReading: false, readingSecondsLeft: 0 };
+  }
+
+  const remaining = stepStartedAt - now;
+  if (remaining <= 0) {
+    return { isReading: false, readingSecondsLeft: 0 };
+  }
+  return { isReading: true, readingSecondsLeft: Math.ceil(remaining / 1000) };
+}
 
 function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
   const step = state?.currentStep;
@@ -481,6 +607,7 @@ interface SessionContentProps {
   correctIndex: number | null;
   currentAnswer: CurrentAnswer | null | undefined;
   currentStep: {
+    id: string;
     type: string;
     choices?: Choice[] | null;
     question?: string | null;
@@ -492,8 +619,10 @@ interface SessionContentProps {
     } | null;
     timeLimitSeconds?: number | null;
   } | null;
+  isReading: boolean;
   leaderboard: LeaderboardEntry[] | undefined;
   participant: { name: string; totalScore: number };
+  readingSecondsLeft: number;
   session: {
     stepStartedAt?: number | null;
     currentStepIndex: number;
@@ -503,6 +632,7 @@ interface SessionContentProps {
   submitAnswer: (i: number) => Promise<void>;
   submitting: boolean;
   timerExpired: boolean;
+  token: string;
 }
 
 function SessionContent({
@@ -510,13 +640,16 @@ function SessionContent({
   correctIndex,
   currentAnswer,
   currentStep,
+  isReading,
   leaderboard,
   participant,
+  readingSecondsLeft,
   session,
   showLeaderboard,
   submitAnswer,
   submitting,
   timerExpired,
+  token,
 }: SessionContentProps) {
   const t = useTranslations();
   return (
@@ -572,12 +705,16 @@ function SessionContent({
                 choices={currentStep.choices ?? []}
                 correctIndex={correctIndex}
                 currentAnswer={currentAnswer}
+                isReading={isReading}
                 onSubmit={submitAnswer}
                 question={currentStep.question ?? ""}
+                readingSecondsLeft={readingSecondsLeft}
+                stepId={currentStep.id}
                 stepStartedAt={session.stepStartedAt ?? undefined}
                 submitting={submitting}
                 timeLimitSeconds={currentStep.timeLimitSeconds ?? undefined}
                 timerExpired={timerExpired}
+                token={token}
               />
             )}
           </>
@@ -621,6 +758,9 @@ export function PlayerSessionView({ sessionId }: Props) {
 
   // Track whether the timer has expired on the client side
   const timerExpired = useStepTimerExpiry(state);
+
+  // Track reading phase (10s before choices appear)
+  const { isReading, readingSecondsLeft } = useReadingPhase(state);
 
   const hasCurrentAnswer = Boolean(state?.currentAnswer);
   const [submitting, submitAnswer] = useSubmitAnswer(
@@ -685,13 +825,16 @@ export function PlayerSessionView({ sessionId }: Props) {
       correctIndex={correctIndex}
       currentAnswer={currentAnswer}
       currentStep={currentStep}
+      isReading={isReading}
       leaderboard={leaderboard}
       participant={participant}
+      readingSecondsLeft={readingSecondsLeft}
       session={session}
       showLeaderboard={showLeaderboard}
       submitAnswer={submitAnswer}
       submitting={submitting}
       timerExpired={timerExpired}
+      token={token}
     />
   );
 }
