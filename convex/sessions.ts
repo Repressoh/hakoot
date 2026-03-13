@@ -507,11 +507,13 @@ export const advance = mutation({
 
     const nextStep = steps[nextIndex];
     const hasTimer = nextStep.type === "quiz" && nextStep.timeLimitSeconds;
+    // Add 10-second reading phase before the answer timer starts
+    const READING_PHASE_MS = 10_000;
 
     await ctx.db.patch(args.sessionId, {
       status: "in_progress",
       currentStepIndex: nextIndex,
-      stepStartedAt: hasTimer ? Date.now() : undefined,
+      stepStartedAt: hasTimer ? Date.now() + READING_PHASE_MS : undefined,
       answerRevealed: false,
     });
 
@@ -562,7 +564,7 @@ export const reveal = mutation({
         .first();
       if (answer) {
         await ctx.db.patch(p._id, {
-          totalScore: p.totalScore + answer.score,
+          totalScore: Math.max(0, p.totalScore + answer.score),
         });
       }
     }
@@ -667,7 +669,7 @@ export const submitAnswer = mutation({
           .first();
         if (answer) {
           await ctx.db.patch(p._id, {
-            totalScore: p.totalScore + answer.score,
+            totalScore: Math.max(0, p.totalScore + answer.score),
           });
         }
       }
@@ -678,7 +680,7 @@ export const submitAnswer = mutation({
   },
 });
 
-/** Compute Kahoot-style score */
+/** Compute Kahoot-style score (positive for correct, negative for wrong) */
 function computeScore(
   isCorrect: boolean,
   timeLimitSeconds: number | null,
@@ -687,7 +689,8 @@ function computeScore(
   basePoints = 1000
 ): number {
   if (!isCorrect) {
-    return 0;
+    // Wrong answer: lose a fraction of base points
+    return Math.round(-basePoints * 0.25);
   }
   if (!timeLimitSeconds) {
     return basePoints;

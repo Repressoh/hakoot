@@ -24,6 +24,7 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
+import { CircularTimer } from "@/components/session/circular-timer";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ interface SessionDoc {
   gameId: Id<"games">;
   inviteCode: string;
   status: "waiting" | "in_progress" | "finished";
+  stepStartedAt?: number;
 }
 
 interface GameDoc {
@@ -392,7 +394,17 @@ export function HostSessionView({ data }: Props) {
                 >
                   {currentStep.type === "theory" ? "Theory" : "Quiz"}
                 </Badge>
-                {currentStep.timeLimitSeconds && (
+                {currentStep.timeLimitSeconds &&
+                  session.stepStartedAt &&
+                  !answerRevealed && (
+                    <CircularTimer
+                      stepStartedAt={new Date(
+                        session.stepStartedAt
+                      ).toISOString()}
+                      timeLimitSeconds={currentStep.timeLimitSeconds}
+                    />
+                  )}
+                {currentStep.timeLimitSeconds && answerRevealed && (
                   <Badge
                     className="border-border bg-muted text-muted-foreground"
                     variant="outline"

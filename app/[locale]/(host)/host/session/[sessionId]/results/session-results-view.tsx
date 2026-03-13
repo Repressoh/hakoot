@@ -2,6 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { useCallback } from "react";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
@@ -15,11 +16,108 @@ const CHOICE_BAR_COLORS = [
   "bg-choice-green",
 ];
 
+interface CsvParticipant {
+  _id: string;
+  email?: string;
+  name: string;
+  totalScore: number;
+}
+
+interface CsvStep {
+  _id: string;
+  choices?: Array<{ text: string; isCorrect: boolean }>;
+  question?: string;
+  type: string;
+}
+
+interface CsvAnswer {
+  choiceIndex: number;
+  isCorrect: boolean;
+  participantId: string;
+  score: number;
+  stepId: string;
+}
+
+function buildCsv(
+  participants: CsvParticipant[],
+  steps: CsvStep[],
+  answers: CsvAnswer[]
+): string {
+  const quizSteps = steps.filter((s) => s.type === "quiz");
+
+  const headers = [
+    "Name",
+    "Email",
+    "Total Score",
+    ...quizSteps.map((_s, i) => `Q${i + 1} Answer`),
+    ...quizSteps.map((_s, i) => `Q${i + 1} Correct`),
+    ...quizSteps.map((_s, i) => `Q${i + 1} Score`),
+  ];
+
+  const rows = participants.map((p) => {
+    const answerCols = quizSteps.map((step) => {
+      const ans = answers.find(
+        (a) => a.participantId === p._id && a.stepId === step._id
+      );
+      if (!ans) {
+        return "";
+      }
+      return step.choices?.[ans.choiceIndex]?.text ?? String(ans.choiceIndex);
+    });
+    const correctCols = quizSteps.map((step) => {
+      const ans = answers.find(
+        (a) => a.participantId === p._id && a.stepId === step._id
+      );
+      if (!ans) {
+        return "";
+      }
+      return ans.isCorrect ? "yes" : "no";
+    });
+    const scoreCols = quizSteps.map((step) => {
+      const ans = answers.find(
+        (a) => a.participantId === p._id && a.stepId === step._id
+      );
+      return ans ? String(ans.score) : "";
+    });
+
+    return [
+      p.name,
+      p.email ?? "",
+      String(p.totalScore),
+      ...answerCols,
+      ...correctCols,
+      ...scoreCols,
+    ];
+  });
+
+  const csvEscape = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const lines = [headers, ...rows].map((row) => row.map(csvEscape).join(","));
+  return lines.join("\n");
+}
+
 export function SessionResultsView({ sessionId }: { sessionId: string }) {
   const t = useTranslations("results");
   const results = useQuery(api.sessions.getResults, {
     sessionId: sessionId as Id<"gameSessions">,
   });
+
+  const handleExportCsv = useCallback(() => {
+    if (!results) {
+      return;
+    }
+    const csv = buildCsv(
+      results.participants as CsvParticipant[],
+      results.steps,
+      results.answers as CsvAnswer[]
+    );
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `results-${sessionId}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [results, sessionId]);
 
   if (results === undefined) {
     return (
@@ -61,13 +159,23 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
               {participants.length} participants · {steps.length} steps
             </p>
           </div>
-          <Button
-            asChild
-            className="rounded-xl border-border text-foreground hover:bg-muted/50"
-            variant="outline"
-          >
-            <Link href={`/games/${session.gameId}/sessions`}>← Sessions</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              className="rounded-xl border-border text-foreground hover:bg-muted/50"
+              disabled={!results}
+              onClick={handleExportCsv}
+              variant="outline"
+            >
+              Export CSV
+            </Button>
+            <Button
+              asChild
+              className="rounded-xl border-border text-foreground hover:bg-muted/50"
+              variant="outline"
+            >
+              <Link href={`/games/${session.gameId}/sessions`}>← Sessions</Link>
+            </Button>
+          </div>
         </div>
 
         {/* Stat cards */}

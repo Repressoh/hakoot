@@ -4,6 +4,14 @@ import { v } from "convex/values";
 import { api } from "./_generated/api";
 import { action } from "./_generated/server";
 
+/** Send in batches to respect Resend rate limits (10 req/s on free tier) */
+const BATCH_SIZE = 8;
+const BATCH_DELAY_MS = 1200; // ~1.2s between batches
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const sendInviteEmails = action({
   args: {
     gameId: v.id("games"),
@@ -37,31 +45,49 @@ export const sendInviteEmails = action({
     let sent = 0;
     let failed = 0;
 
-    for (const invite of args.invites) {
-      try {
-        // Sign invite token using HMAC
-        const inviteToken = await signInviteToken(args.sessionId, invite.name);
-        const joinUrl = `${appUrl}/${args.locale ?? "en"}/join?session=${args.sessionId}&name=${encodeURIComponent(invite.name)}&token=${inviteToken}`;
+    // Split into batches to avoid Resend rate limits
+    for (
+      let batchStart = 0;
+      batchStart < args.invites.length;
+      batchStart += BATCH_SIZE
+    ) {
+      const batch = args.invites.slice(batchStart, batchStart + BATCH_SIZE);
 
-        await resend.emails.send({
-          from: fromEmail,
-          to: invite.email,
-          subject: isItalian
-            ? `${hostName} ti ha invitato a unirti a "${gameName}" su Hakoot`
-            : `${hostName} invited you to join "${gameName}" on Hakoot`,
-          html: buildInviteEmailHtml({
-            recipientName: invite.name,
-            hostName,
-            gameName,
-            joinUrl,
-            inviteCode: sessionData.session.inviteCode,
-            locale: args.locale ?? "en",
-          }),
-        });
-        sent++;
-      } catch {
-        failed++;
+      // Wait between batches (not before the first one)
+      if (batchStart > 0) {
+        await sleep(BATCH_DELAY_MS);
       }
+
+      await Promise.allSettled(
+        batch.map(async (invite) => {
+          try {
+            const inviteToken = await signInviteToken(
+              args.sessionId,
+              invite.name
+            );
+            const joinUrl = `${appUrl}/${args.locale ?? "en"}/join?session=${args.sessionId}&name=${encodeURIComponent(invite.name)}&token=${inviteToken}`;
+
+            await resend.emails.send({
+              from: fromEmail,
+              to: invite.email,
+              subject: isItalian
+                ? `${hostName} ti ha invitato a unirti a "${gameName}" su Hakoot`
+                : `${hostName} invited you to join "${gameName}" on Hakoot`,
+              html: buildInviteEmailHtml({
+                recipientName: invite.name,
+                hostName,
+                gameName,
+                joinUrl,
+                inviteCode: sessionData.session.inviteCode,
+                locale: args.locale ?? "en",
+              }),
+            });
+            sent++;
+          } catch {
+            failed++;
+          }
+        })
+      );
     }
 
     return { sent, failed };
