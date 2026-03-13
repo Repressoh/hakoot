@@ -396,6 +396,7 @@ export function HostSessionView({ data }: Props) {
                 </Badge>
                 {currentStep.timeLimitSeconds &&
                   session.stepStartedAt &&
+                  session.stepStartedAt <= Date.now() &&
                   !answerRevealed && (
                     <CircularTimer
                       stepStartedAt={new Date(
