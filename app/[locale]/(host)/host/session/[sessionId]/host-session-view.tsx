@@ -7,6 +7,14 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
+import { CircularTimer } from "@/components/session/circular-timer";
+import { Leaderboard } from "@/components/session/leaderboard";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
 
 const MarkdownViewer = dynamic(
   () =>
@@ -23,15 +31,6 @@ const ClientCodeBlock = dynamic(
     ),
   { ssr: false }
 );
-
-import { CircularTimer } from "@/components/session/circular-timer";
-import { Leaderboard } from "@/components/session/leaderboard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
 
 interface SessionDoc {
   _id: Id<"gameSessions">;
