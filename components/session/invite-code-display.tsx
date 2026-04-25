@@ -14,7 +14,7 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
   const t = useTranslations("session");
   const [copied, setCopied] = useState(false);
 
-  const _joinUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/en/join?session=${sessionId}`;
+  const _joinUrl = `${typeof window === "undefined" ? "" : window.location.origin}/en/join?session=${sessionId}`;
 
   async function copy() {
     await navigator.clipboard.writeText(code);

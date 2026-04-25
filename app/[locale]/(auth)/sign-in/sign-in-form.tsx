@@ -4,6 +4,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,9 +18,16 @@ export function SignInForm() {
   const { signIn } = useAuthActions();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      toast.error("Please complete the security check");
+      return;
+    }
+
     setLoading(true);
 
     const form = e.currentTarget;
@@ -28,8 +36,25 @@ export function SignInForm() {
       .value;
 
     try {
+      const verifyResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_CONVEX_URL}/verify-turnstile`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        }
+      );
+
+      const verifyResult = await verifyResponse.json();
+
+      if (!verifyResult.success) {
+        toast.error("Security check failed. Please try again.");
+        setTurnstileToken(null);
+        setLoading(false);
+        return;
+      }
+
       await signIn("password", { email, password, flow: "signIn" });
-      // sleep for 2 seconds to show the loading state (without this, sometimes a race condition happens...)
       await new Promise((resolve) => setTimeout(resolve, 500));
       router.push("/dashboard");
     } catch {
@@ -80,9 +105,21 @@ export function SignInForm() {
             type="password"
           />
         </div>
+        <div className="flex justify-center">
+          <TurnstileWidget
+            onError={() => {
+              setTurnstileToken(null);
+              toast.error("Security check failed");
+            }}
+            onExpire={() => {
+              setTurnstileToken(null);
+            }}
+            onSuccess={(token) => setTurnstileToken(token)}
+          />
+        </div>
         <Button
           className="glow-primary press-down h-11 w-full rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
-          disabled={loading}
+          disabled={loading || !turnstileToken}
           type="submit"
         >
           {loading ? "..." : t("signInButton")}

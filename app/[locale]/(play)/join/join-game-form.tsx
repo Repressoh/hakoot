@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
@@ -24,14 +25,13 @@ export function JoinGameForm({
   prefilledCode,
 }: Props) {
   const t = useTranslations("join");
-  const [code, setCode] = useState(prefilledCode ?? "");
-  const [name, setName] = useState(prefilledName ?? "");
-  const [loading, setLoading] = useState(
-    // Start in loading state if we have prefilled props so the auto-join
-    // doesn't cause a synchronous setState inside the effect.
-    !!(prefilledSessionId && prefilledName)
-  );
-  const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
+  const [state, setState] = useState({
+    code: prefilledCode ?? "",
+    name: prefilledName ?? "",
+    loading: !!(prefilledSessionId && prefilledName),
+    redirectUrl: null as string | null,
+    turnstileToken: null as string | null,
+  });
   const joinSession = useMutation(api.sessions.join);
   const joinByCode = useMutation(api.sessions.joinByCode);
 
@@ -50,35 +50,61 @@ export function JoinGameForm({
           `participantToken_${sessionId}`,
           result.participantToken
         );
-        setRedirectUrl(`/session/${sessionId}`);
+        setState((prev) => ({ ...prev, redirectUrl: `/session/${sessionId}` }));
       })
       .catch((err: unknown) => {
         toast.error(err instanceof Error ? err.message : t("invalidCode"));
-        setLoading(false);
+        setState((prev) => ({ ...prev, loading: false }));
       });
   }, []);
 
-  if (redirectUrl) {
-    redirect(redirectUrl);
+  if (state.redirectUrl) {
+    redirect(state.redirectUrl);
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
+
+    if (!state.turnstileToken) {
+      toast.error("Please complete the security check");
+      return;
+    }
+
+    setState((prev) => ({ ...prev, loading: true }));
     try {
+      const verifyResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_CONVEX_URL}/verify-turnstile`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: state.turnstileToken }),
+        }
+      );
+
+      const verifyResult = await verifyResponse.json();
+
+      if (!verifyResult.success) {
+        toast.error("Security check failed. Please try again.");
+        setState((prev) => ({ ...prev, turnstileToken: null, loading: false }));
+        return;
+      }
+
       const result = await joinByCode({
-        inviteCode: code.trim(),
-        name: name.trim(),
+        inviteCode: state.code.trim(),
+        name: state.name.trim(),
       });
       localStorage.setItem(
         `participantToken_${result.sessionId}`,
         result.participantToken
       );
-      setLoading(false);
-      setRedirectUrl(`/session/${result.sessionId}`);
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        redirectUrl: `/session/${result.sessionId}`,
+      }));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("invalidCode"));
-      setLoading(false);
+      setState((prev) => ({ ...prev, loading: false }));
     }
   }
 
@@ -92,11 +118,13 @@ export function JoinGameForm({
         disabled={!!prefilledSessionId && !prefilledCode}
         id="code"
         maxLength={8}
-        onChange={(e) => setCode(e.target.value.toUpperCase())}
+        onChange={(e) =>
+          setState((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))
+        }
         placeholder={t("codePlaceholder")}
         readOnly={!!prefilledSessionId && !prefilledCode}
         required
-        value={code}
+        value={state.code}
       />
       <Input
         aria-label={t("nameLabel")}
@@ -104,18 +132,34 @@ export function JoinGameForm({
         disabled={!!prefilledName && !!prefilledToken}
         id="name"
         maxLength={50}
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) =>
+          setState((prev) => ({ ...prev, name: e.target.value }))
+        }
         placeholder={t("namePlaceholder")}
         readOnly={!!prefilledName}
         required
-        value={name}
+        value={state.name}
       />
+      <div className="flex justify-center">
+        <TurnstileWidget
+          onError={() => {
+            setState((prev) => ({ ...prev, turnstileToken: null }));
+            toast.error("Security check failed");
+          }}
+          onExpire={() => {
+            setState((prev) => ({ ...prev, turnstileToken: null }));
+          }}
+          onSuccess={(token) =>
+            setState((prev) => ({ ...prev, turnstileToken: token }))
+          }
+        />
+      </div>
       <Button
         className="glow-primary press-down h-12 w-full rounded-2xl bg-primary font-bold font-display text-base text-primary-foreground hover:brightness-110"
-        disabled={loading}
+        disabled={state.loading || !state.turnstileToken}
         type="submit"
       >
-        {loading ? t("joining") : t("joinButton")}
+        {state.loading ? t("joining") : t("joinButton")}
       </Button>
     </form>
   );

@@ -30,10 +30,63 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Hakoot",
+    default: "Hakoot - Interactive Learning Platform for Real Education",
     template: "%s | Hakoot",
   },
-  description: "Like Kahoot, but to actually learn something.",
+  description:
+    "Hakoot is an interactive learning platform that makes education engaging and effective. Create custom quizzes, host live sessions, and track student progress in real-time.",
+  keywords: [
+    "interactive learning",
+    "online quiz",
+    "education platform",
+    "kahoot alternative",
+    "live quiz",
+    "student engagement",
+    "classroom games",
+    "learning tools",
+  ],
+  authors: [{ name: "Hakoot" }],
+  creator: "Hakoot",
+  publisher: "Hakoot",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://dev.hakoot.albertocaserta.it",
+    siteName: "Hakoot",
+    title: "Hakoot - Interactive Learning Platform for Real Education",
+    description:
+      "Create engaging quizzes and host interactive learning sessions. Make education fun and effective with Hakoot.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Hakoot - Interactive Learning Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hakoot - Interactive Learning Platform",
+    description:
+      "Create engaging quizzes and host interactive learning sessions.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: "https://dev.hakoot.albertocaserta.it",
+  },
+  metadataBase: new URL("https://dev.hakoot.albertocaserta.it"),
 };
 
 interface Props {
@@ -55,6 +108,12 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={`dark ${satoshi.variable} ${spaceMono.variable}`}
       lang={locale}
     >
+      <head>
+        <link href="/favicon.ico" rel="icon" sizes="any" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+        <link href="/manifest.json" rel="manifest" />
+        <meta content="#000000" name="theme-color" />
+      </head>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <ConvexClientProvider>
           <NextIntlClientProvider messages={messages}>

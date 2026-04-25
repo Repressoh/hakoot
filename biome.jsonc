@@ -16,7 +16,8 @@
       "proxy.ts",
       "drizzle.config.ts",
       "next.config.ts",
-      "!types"
+      "!types",
+      "!.agents"
     ]
   }
 }

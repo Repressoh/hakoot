@@ -41,5 +41,4 @@ yarn-error.log*
 next-env.d.ts
 .agents/docs/better-auth-better-auth
 
-# agents docs
-.agents/docs/*
+secrets.txt

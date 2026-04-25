@@ -137,8 +137,8 @@ export default async function LandingPage() {
                     style={{ borderRadius: "24px" }}
                   >
                     {/* Ticket "hole punch" decors */}
-                    <div className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full border-border/50 border-r-2 bg-background transition-colors group-hover:border-primary" />
-                    <div className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full border-border/50 border-l-2 bg-background transition-colors group-hover:border-primary" />
+                    <div className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full border-2 border-border/50 bg-background transition-colors group-hover:border-primary" />
+                    <div className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full border-2 border-border/50 bg-background transition-colors group-hover:border-primary" />
 
                     <div className="flex items-start justify-between">
                       <div

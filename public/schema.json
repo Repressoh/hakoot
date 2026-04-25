@@ -1,0 +1,26 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Hakoot",
+  "description": "Interactive learning platform that makes education engaging and effective. Create custom quizzes, host live sessions, and track student progress in real-time.",
+  "url": "https://dev.hakoot.albertocaserta.it",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Create custom quizzes",
+    "Host live interactive sessions",
+    "Real-time leaderboards",
+    "Student progress tracking",
+    "Multiple question types",
+    "Instant feedback"
+  ],
+  "audience": {
+    "@type": "EducationalAudience",
+    "educationalRole": ["teacher", "student", "instructor"]
+  }
+}

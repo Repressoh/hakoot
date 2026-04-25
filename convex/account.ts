@@ -35,24 +35,22 @@ export const getLinkedProviders = query({
 
 export const getPasswordAccount = internalQuery({
   args: { userId: v.id("users") },
-  handler: async (ctx, { userId }) => {
-    return await ctx.db
+  handler: async (ctx, { userId }) =>
+    await ctx.db
       .query("authAccounts")
       .withIndex("userIdAndProvider", (q) =>
         q.eq("userId", userId).eq("provider", "password")
       )
-      .first();
-  },
+      .first(),
 });
 
 export const getUserByEmail = internalQuery({
   args: { email: v.string() },
-  handler: async (ctx, { email }) => {
-    return await ctx.db
+  handler: async (ctx, { email }) =>
+    await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("email"), email))
-      .first();
-  },
+      .first(),
 });
 
 export const updateUserEmail = internalMutation({

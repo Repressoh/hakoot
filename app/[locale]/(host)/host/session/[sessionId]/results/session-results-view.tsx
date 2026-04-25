@@ -58,8 +58,10 @@ function buildCsv(
   for (const answer of answers) {
     answerLookup.set(`${answer.participantId}:${answer.stepId}`, answer);
   }
-  const getAnswer = (participantId: string, stepId: string): CsvAnswer | undefined =>
-    answerLookup.get(`${participantId}:${stepId}`);
+  const getAnswer = (
+    participantId: string,
+    stepId: string
+  ): CsvAnswer | undefined => answerLookup.get(`${participantId}:${stepId}`);
 
   const rows = participants.map((p) => {
     const answerCols = quizSteps.map((step) => {

@@ -9,15 +9,12 @@ import {
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "@/i18n/routing";
 import { DashboardNav } from "./dashboard-nav";
 
 function AuthRedirect() {
-  const router = useRouter();
-
   useEffect(() => {
-    router.replace("/sign-in");
-  }, [router]);
+    window.location.href = "/sign-in";
+  }, []);
 
   return null;
 }

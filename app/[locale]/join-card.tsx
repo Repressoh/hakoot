@@ -4,6 +4,7 @@ import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
@@ -16,12 +17,37 @@ export function JoinCard() {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const joinByCode = useMutation(api.sessions.joinByCode);
 
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      toast.error("Please complete the security check");
+      return;
+    }
+
     setLoading(true);
     try {
+      const verifyResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_CONVEX_URL}/verify-turnstile`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        }
+      );
+
+      const verifyResult = await verifyResponse.json();
+
+      if (!verifyResult.success) {
+        toast.error("Security check failed. Please try again.");
+        setTurnstileToken(null);
+        setLoading(false);
+        return;
+      }
+
       const result = await joinByCode({
         inviteCode: code.trim(),
         name: name.trim(),
@@ -83,11 +109,11 @@ export function JoinCard() {
               />
               <div
                 aria-hidden
-                className="absolute -right-2 -bottom-2 h-4 w-4 border-primary/20 border-r-4 border-b-4"
+                className="absolute -right-2 -bottom-2 h-4 w-4 border-primary/20 border-r-2 border-b-2"
               />
               <div
                 aria-hidden
-                className="absolute -top-2 -left-2 h-4 w-4 border-primary/20 border-t-4 border-l-4"
+                className="absolute -top-2 -left-2 h-4 w-4 border-primary/20 border-t-2 border-l-2"
               />
             </div>
           </div>
@@ -111,9 +137,24 @@ export function JoinCard() {
             />
           </div>
 
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <TurnstileWidget
+                onError={() => {
+                  setTurnstileToken(null);
+                  toast.error("Security check failed");
+                }}
+                onExpire={() => {
+                  setTurnstileToken(null);
+                }}
+                onSuccess={(token) => setTurnstileToken(token)}
+              />
+            </div>
+          </div>
+
           <Button
             className="group/btn relative h-20 w-full overflow-hidden rounded-2xl border-primary-foreground/30 border-b-[6px] bg-primary font-black font-display text-2xl text-primary-foreground uppercase tracking-widest transition-all hover:bg-primary active:translate-y-[6px] active:border-b-0"
-            disabled={loading || !code || !name}
+            disabled={loading || !code || !name || !turnstileToken}
             style={{
               boxShadow:
                 "0 0 20px var(--glow-primary), inset 0 2px 0 rgba(255,255,255,0.2)",
