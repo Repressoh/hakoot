@@ -2,6 +2,11 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+/** Sanitize user input */
+function sanitizeInput(input: string, maxLength = 500): string {
+  return input.trim().replace(/[<>]/g, "").trim().slice(0, maxLength);
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -86,9 +91,16 @@ export const create = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+    const sanitizedTitle = sanitizeInput(args.title, 200);
+    if (!sanitizedTitle) {
+      throw new ConvexError("Invalid title");
+    }
+
     return await ctx.db.insert("games", {
-      title: args.title,
-      description: args.description,
+      title: sanitizedTitle,
+      description: args.description
+        ? sanitizeInput(args.description, 1000)
+        : undefined,
       createdById: userId,
       updatedAt: Date.now(),
     });
@@ -114,10 +126,14 @@ export const update = mutation({
 
     const updates: Record<string, unknown> = { updatedAt: Date.now() };
     if (args.title !== undefined) {
-      updates.title = args.title;
+      const sanitizedTitle = sanitizeInput(args.title, 200);
+      if (!sanitizedTitle) {
+        throw new ConvexError("Invalid title");
+      }
+      updates.title = sanitizedTitle;
     }
     if (args.description !== undefined) {
-      updates.description = args.description;
+      updates.description = sanitizeInput(args.description, 1000);
     }
 
     await ctx.db.patch(args.gameId, updates);

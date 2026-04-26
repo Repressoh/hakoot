@@ -209,4 +209,4 @@ Private project.
 
 ## Disclaimer
 
-This project has **not been security audited**. All code was written by AI with totally-human project structuring. Use at your own risk — do not deploy to production with sensitive data without a proper security review.
+This project has **not been security audited**. All code was written by AI with human project structuring. Use at your own risk — do not deploy to production with sensitive data without a proper security review.

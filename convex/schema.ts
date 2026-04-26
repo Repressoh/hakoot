@@ -74,9 +74,11 @@ export default defineSchema({
     participantToken: v.string(),
     totalScore: v.number(),
     lastSeen: v.optional(v.number()),
+    expiresAt: v.optional(v.number()),
   })
     .index("by_session", ["sessionId"])
-    .index("by_token", ["participantToken"]),
+    .index("by_token", ["participantToken"])
+    .index("by_expiration", ["expiresAt"]),
 
   // ─── Email list ──────────────────────────────────────────────────────
   emailLists: defineTable({
@@ -102,4 +104,12 @@ export default defineSchema({
     .index("by_participant", ["participantId"])
     .index("by_step", ["stepId"])
     .index("by_participant_and_step", ["participantId", "stepId"]),
+
+  // ─── Rate limiting ───────────────────────────────────────────────────
+  rateLimits: defineTable({
+    identifier: v.string(),
+    endpoint: v.string(),
+    attempts: v.number(),
+    windowStart: v.number(),
+  }).index("by_identifier_and_endpoint", ["identifier", "endpoint"]),
 });

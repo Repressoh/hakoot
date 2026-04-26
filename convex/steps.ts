@@ -4,6 +4,11 @@ import type { Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
 
+/** Sanitize user input */
+function sanitizeInput(input: string, maxLength = 5000): string {
+  return input.trim().slice(0, maxLength);
+}
+
 const codeBlockValidator = v.object({
   code: v.string(),
   language: v.string(),
@@ -73,7 +78,9 @@ export const createTheory = mutation({
       gameId: args.gameId,
       order,
       type: "theory",
-      markdownContent: args.markdownContent ?? "",
+      markdownContent: args.markdownContent
+        ? sanitizeInput(args.markdownContent, 10_000)
+        : "",
       codeBlock: args.codeBlock,
     });
 
@@ -101,12 +108,17 @@ export const createQuiz = mutation({
 
     const order = existingSteps.length;
 
+    const sanitizedChoices = args.choices?.map((choice) => ({
+      text: sanitizeInput(choice.text, 500),
+      isCorrect: choice.isCorrect,
+    }));
+
     const stepId = await ctx.db.insert("gameSteps", {
       gameId: args.gameId,
       order,
       type: "quiz",
-      question: args.question ?? "",
-      choices: args.choices ?? [
+      question: args.question ? sanitizeInput(args.question, 1000) : "",
+      choices: sanitizedChoices ?? [
         { text: "", isCorrect: false },
         { text: "", isCorrect: false },
         { text: "", isCorrect: false },
@@ -135,7 +147,7 @@ export const updateTheory = mutation({
 
     const updates: Record<string, unknown> = {};
     if (args.markdownContent !== undefined) {
-      updates.markdownContent = args.markdownContent;
+      updates.markdownContent = sanitizeInput(args.markdownContent, 10_000);
     }
     if (args.codeBlock !== undefined) {
       updates.codeBlock = args.codeBlock ?? undefined;
@@ -165,10 +177,13 @@ export const updateQuiz = mutation({
 
     const updates: Record<string, unknown> = {};
     if (args.question !== undefined) {
-      updates.question = args.question;
+      updates.question = sanitizeInput(args.question, 1000);
     }
     if (args.choices !== undefined) {
-      updates.choices = args.choices;
+      updates.choices = args.choices.map((choice) => ({
+        text: sanitizeInput(choice.text, 500),
+        isCorrect: choice.isCorrect,
+      }));
     }
     if (args.timeLimitSeconds !== undefined) {
       updates.timeLimitSeconds =

@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 /** Generate a random alphanumeric invite code */
 function generateInviteCode(length = 6): string {
@@ -19,6 +19,61 @@ function generateToken(): string {
   crypto.getRandomValues(array);
   return Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
 }
+
+/** Rate limiting configuration */
+const RATE_LIMIT_CONFIG = {
+  join: { maxAttempts: 10, windowMs: 60_000 },
+  joinByCode: { maxAttempts: 10, windowMs: 60_000 },
+} as const;
+
+/** Check and enforce rate limiting */
+async function checkRateLimit(
+  ctx: MutationCtx,
+  identifier: string,
+  endpoint: keyof typeof RATE_LIMIT_CONFIG
+): Promise<void> {
+  const config = RATE_LIMIT_CONFIG[endpoint];
+  const now = Date.now();
+  const windowStart = now - config.windowMs;
+
+  const existing = await ctx.db
+    .query("rateLimits")
+    .withIndex("by_identifier_and_endpoint", (q) =>
+      q.eq("identifier", identifier).eq("endpoint", endpoint)
+    )
+    .first();
+
+  if (existing) {
+    if (existing.windowStart > windowStart) {
+      if (existing.attempts >= config.maxAttempts) {
+        throw new ConvexError("Rate limit exceeded. Please try again later.");
+      }
+      await ctx.db.patch(existing._id, {
+        attempts: existing.attempts + 1,
+      });
+    } else {
+      await ctx.db.patch(existing._id, {
+        attempts: 1,
+        windowStart: now,
+      });
+    }
+  } else {
+    await ctx.db.insert("rateLimits", {
+      identifier,
+      endpoint,
+      attempts: 1,
+      windowStart: now,
+    });
+  }
+}
+
+/** Sanitize user input */
+function sanitizeInput(input: string, maxLength = 100): string {
+  return input.trim().slice(0, maxLength).replace(/[<>]/g, "");
+}
+
+/** Token expiration time: 24 hours */
+const TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
 // ─── Queries ────────────────────────────────────────────────────────────
 
@@ -124,6 +179,11 @@ export const getPlayerState = query({
       .first();
 
     if (!participant || participant.sessionId !== args.sessionId) {
+      return null;
+    }
+
+    // Check if token is expired
+    if (participant.expiresAt && Date.now() > participant.expiresAt) {
       return null;
     }
 
@@ -352,6 +412,10 @@ export const join = mutation({
     existingToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    // Use session ID only to prevent bypass via name variation
+    const identifier = `session:${args.sessionId}`;
+    await checkRateLimit(ctx, identifier, "join");
+
     const session = await ctx.db.get(args.sessionId);
     if (!session) {
       throw new ConvexError("Session not found");
@@ -368,6 +432,10 @@ export const join = mutation({
         .withIndex("by_token", (q) => q.eq("participantToken", existingToken))
         .first();
       if (existing && existing.sessionId === args.sessionId) {
+        // Check if token is expired
+        if (existing.expiresAt && Date.now() > existing.expiresAt) {
+          throw new ConvexError("Token expired. Please rejoin.");
+        }
         await ctx.db.patch(existing._id, { lastSeen: Date.now() });
         return {
           participantId: existing._id,
@@ -376,15 +444,22 @@ export const join = mutation({
       }
     }
 
+    const sanitizedName = sanitizeInput(args.name, 50);
+    if (!sanitizedName) {
+      throw new ConvexError("Invalid name");
+    }
+
     const token = generateToken();
+    const expiresAt = Date.now() + TOKEN_EXPIRATION_MS;
 
     const participantId = await ctx.db.insert("gameParticipants", {
       sessionId: args.sessionId,
-      name: args.name.trim(),
+      name: sanitizedName,
       email: args.email,
       participantToken: token,
       totalScore: 0,
       lastSeen: Date.now(),
+      expiresAt,
     });
 
     return { participantId, participantToken: token };
@@ -399,11 +474,13 @@ export const joinByCode = mutation({
     existingToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const sanitizedCode = args.inviteCode.toUpperCase().trim();
+    const identifier = `code:${sanitizedCode}`;
+    await checkRateLimit(ctx, identifier, "joinByCode");
+
     const session = await ctx.db
       .query("gameSessions")
-      .withIndex("by_invite_code", (q) =>
-        q.eq("inviteCode", args.inviteCode.toUpperCase().trim())
-      )
+      .withIndex("by_invite_code", (q) => q.eq("inviteCode", sanitizedCode))
       .first();
 
     if (!session) {
@@ -421,6 +498,10 @@ export const joinByCode = mutation({
         .withIndex("by_token", (q) => q.eq("participantToken", existingToken))
         .first();
       if (existing && existing.sessionId === session._id) {
+        // Check if token is expired
+        if (existing.expiresAt && Date.now() > existing.expiresAt) {
+          throw new ConvexError("Token expired. Please rejoin.");
+        }
         await ctx.db.patch(existing._id, { lastSeen: Date.now() });
         return {
           sessionId: session._id,
@@ -429,14 +510,21 @@ export const joinByCode = mutation({
       }
     }
 
+    const sanitizedName = sanitizeInput(args.name, 50);
+    if (!sanitizedName) {
+      throw new ConvexError("Invalid name");
+    }
+
     const token = generateToken();
+    const expiresAt = Date.now() + TOKEN_EXPIRATION_MS;
 
     await ctx.db.insert("gameParticipants", {
       sessionId: session._id,
-      name: args.name.trim(),
+      name: sanitizedName,
       participantToken: token,
       totalScore: 0,
       lastSeen: Date.now(),
+      expiresAt,
     });
 
     return { sessionId: session._id, participantToken: token };
@@ -744,3 +832,42 @@ function computeScore(
   const ratio = timeRemaining / timeLimitSeconds;
   return Math.round(basePoints * (0.5 + 0.5 * ratio));
 }
+
+// ─── Internal Mutations (Cron Jobs) ─────────────────────────────────
+
+/** Cleanup expired participant tokens (runs hourly) */
+export const cleanupExpiredTokens = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const now = Date.now();
+    const expiredParticipants = await ctx.db
+      .query("gameParticipants")
+      .withIndex("by_expiration")
+      .filter((q) => q.lt(q.field("expiresAt"), now))
+      .take(100);
+
+    for (const participant of expiredParticipants) {
+      await ctx.db.delete(participant._id);
+    }
+
+    return { deleted: expiredParticipants.length };
+  },
+});
+
+/** Cleanup old rate limit records (runs every 6 hours) */
+export const cleanupOldRateLimits = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
+    const oldRecords = await ctx.db
+      .query("rateLimits")
+      .filter((q) => q.lt(q.field("windowStart"), cutoff))
+      .take(100);
+
+    for (const record of oldRecords) {
+      await ctx.db.delete(record._id);
+    }
+
+    return { deleted: oldRecords.length };
+  },
+});

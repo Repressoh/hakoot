@@ -28,7 +28,7 @@ export function TurnstileWidget({
       onExpire={onExpire}
       onSuccess={onSuccess}
       options={{
-        theme: resolvedTheme === "dark" ? "dark" : "light",
+        theme: "auto",
         size: "normal",
       }}
       siteKey={siteKey}

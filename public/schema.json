@@ -3,7 +3,7 @@
   "@type": "WebApplication",
   "name": "Hakoot",
   "description": "Interactive learning platform that makes education engaging and effective. Create custom quizzes, host live sessions, and track student progress in real-time.",
-  "url": "https://dev.hakoot.albertocaserta.it",
+  "url": "https://hakoot.albertocaserta.it",
   "applicationCategory": "EducationalApplication",
   "operatingSystem": "Web",
   "offers": {

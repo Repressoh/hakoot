@@ -258,6 +258,17 @@ export function HostSessionView({ data }: Props) {
   const participantCount = participants.length;
   const showLeaderboard = answerRevealed && (leaderboard?.length ?? 0) > 0;
 
+  // Use useState to track current time for timer calculations
+  const [now, setNow] = useState(() => Date.now());
+
+  // Update time every second for timer display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Track previous participant count for join toasts
   const prevParticipantCount = useRef(participants.length);
   useEffect(() => {
@@ -395,7 +406,7 @@ export function HostSessionView({ data }: Props) {
                 </Badge>
                 {currentStep.timeLimitSeconds &&
                   session.stepStartedAt &&
-                  session.stepStartedAt <= Date.now() &&
+                  session.stepStartedAt <= now &&
                   !answerRevealed && (
                     <CircularTimer
                       stepStartedAt={new Date(
