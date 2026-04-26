@@ -1,7 +1,6 @@
 "use client";
 
 import { Turnstile } from "@marsidev/react-turnstile";
-import { useTheme } from "next-themes";
 
 interface TurnstileWidgetProps {
   onError?: () => void;
@@ -14,7 +13,6 @@ export function TurnstileWidget({
   onError,
   onExpire,
 }: TurnstileWidgetProps) {
-  const { resolvedTheme } = useTheme();
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   if (!siteKey) {

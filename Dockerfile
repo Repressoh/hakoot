@@ -23,6 +23,7 @@ WORKDIR /app
 # Build-time args for NEXT_PUBLIC_* vars (inlined into JS bundle by Next.js)
 ARG NEXT_PUBLIC_CONVEX_URL
 ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 # Convex deploy key for CI/CD authentication (generate in Convex dashboard → Settings → Deploy Keys)
 ARG CONVEX_DEPLOY_KEY
