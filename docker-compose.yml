@@ -8,6 +8,7 @@ services:
         # Set these in a .env file next to this compose file, or export in your shell.
         - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL}
         - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-}
+        - NEXT_PUBLIC_CONVEX_SITE_URL=${NEXT_PUBLIC_CONVEX_SITE_URL:-}
     ports:
       - "3000:3000"
     environment:
