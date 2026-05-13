@@ -39,7 +39,7 @@ export function ResetPasswordForm({
 
     try {
       const verifyResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_CONVEX_URL}/verify-turnstile`,
+        `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/verify-turnstile`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
