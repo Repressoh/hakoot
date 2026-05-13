@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type Language, type TargetLanguageCode, Translator } from "deepl-node";
 
@@ -48,7 +48,10 @@ function collectAvailableLocales(messagesDir: string): string[] {
   );
 
   if (uniqueSorted.includes(SOURCE_LANG)) {
-    return [SOURCE_LANG, ...uniqueSorted.filter((code) => code !== SOURCE_LANG)];
+    return [
+      SOURCE_LANG,
+      ...uniqueSorted.filter((code) => code !== SOURCE_LANG),
+    ];
   }
 
   return uniqueSorted;
@@ -68,11 +71,11 @@ function syncLocalesModule(messagesDir: string): string[] {
     ? readFileSync(LOCALES_MODULE_PATH, "utf-8")
     : null;
 
-  if (currentContent !== nextContent) {
+  if (currentContent === nextContent) {
+    console.log("🗺️  Locales module already up to date");
+  } else {
     writeFileSync(LOCALES_MODULE_PATH, nextContent);
     console.log(`🗺️  Updated locales module: ${LOCALES_MODULE_PATH}`);
-  } else {
-    console.log("🗺️  Locales module already up to date");
   }
 
   return locales;
@@ -380,8 +383,9 @@ async function main() {
     }\n`
   );
 
-  const sourceContent = JSON.parse(readFileSync(sourceFile, "utf-8")) as
-    TranslationValue;
+  const sourceContent = JSON.parse(
+    readFileSync(sourceFile, "utf-8")
+  ) as TranslationValue;
 
   const results = await mapLimit(
     runTargetLangs,
