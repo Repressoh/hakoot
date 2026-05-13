@@ -80,12 +80,12 @@ export default async function LandingPage() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 overflow-hidden"
         >
-          <div className="absolute top-[-10%] left-[-10%] h-[50vw] w-[50vw] rounded-full bg-primary/10 blur-[120px]" />
-          <div className="absolute right-[-10%] bottom-[-10%] h-[40vw] w-[40vw] rounded-full bg-accent/15 blur-[120px]" />
+          <div className="absolute top-[-10%] left-[-10%] size-[50vw] rounded-full bg-primary/10 blur-[120px]" />
+          <div className="absolute right-[-10%] bottom-[-10%] size-[40vw] rounded-full bg-accent/15 blur-[120px]" />
         </div>
 
         <div className="relative z-10 mt-8 max-w-4xl space-y-6 text-center">
-          <h1 className="font-black font-display text-6xl text-foreground uppercase tracking-tighter drop-shadow-xl sm:text-7xl lg:text-8xl">
+          <h1 className="font-semibold font-display text-6xl text-foreground uppercase tracking-tighter drop-shadow-xl sm:text-7xl lg:text-8xl">
             {t("landing.heroTitle")}
           </h1>
           <p className="mx-auto max-w-2xl font-medium text-muted-foreground text-xl leading-relaxed">
@@ -118,7 +118,7 @@ export default async function LandingPage() {
         />
 
         <div className="container mx-auto max-w-7xl">
-          <h2 className="mb-16 flex items-center gap-4 font-black font-display text-4xl text-foreground uppercase tracking-tight">
+          <h2 className="mb-16 flex items-center gap-4 font-semibold font-display text-4xl text-foreground uppercase tracking-tight">
             <span className="text-5xl text-sky-400">*</span>{" "}
             {t("landing.featuresTitle")}
           </h2>
@@ -137,12 +137,12 @@ export default async function LandingPage() {
                     style={{ borderRadius: "24px" }}
                   >
                     {/* Ticket "hole punch" decors */}
-                    <div className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full border-2 border-border/50 bg-background transition-colors group-hover:border-primary" />
-                    <div className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full border-2 border-border/50 bg-background transition-colors group-hover:border-primary" />
+                    <div className="absolute top-1/2 -left-3 size-6 -translate-y-1/2 rounded-full border-2 border-border/50 bg-background transition-colors group-hover:border-primary" />
+                    <div className="absolute top-1/2 -right-3 size-6 -translate-y-1/2 rounded-full border-2 border-border/50 bg-background transition-colors group-hover:border-primary" />
 
                     <div className="flex items-start justify-between">
                       <div
-                        className={`flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-border/50 bg-muted group-hover:border-primary/50 ${iconData.color}`}
+                        className={`flex size-16 items-center justify-center rounded-2xl border-2 border-border/50 bg-muted group-hover:border-primary/50 ${iconData.color}`}
                       >
                         <HugeiconsIcon
                           color="currentColor"
@@ -157,7 +157,7 @@ export default async function LandingPage() {
                     </div>
 
                     <div>
-                      <h3 className="mb-3 font-black font-display text-2xl text-foreground uppercase">
+                      <h3 className="mb-3 font-semibold font-display text-2xl text-foreground uppercase">
                         {f.title}
                       </h3>
                       <p className="font-medium text-lg text-muted-foreground leading-relaxed">
@@ -178,7 +178,7 @@ export default async function LandingPage() {
           className="pointer-events-none absolute inset-0 bg-grid opacity-10"
         />
         <div className="container relative z-10 mx-auto max-w-5xl">
-          <h2 className="mb-24 text-center font-black font-display text-4xl text-foreground uppercase tracking-tight">
+          <h2 className="mb-24 text-center font-semibold font-display text-4xl text-foreground uppercase tracking-tight">
             {t("landing.howItWorksTitle")}{" "}
             <span className="animate-pulse text-primary">_</span>
           </h2>
@@ -205,14 +205,14 @@ export default async function LandingPage() {
                 className="relative flex w-full items-center gap-8 text-center sm:flex-1 sm:flex-col sm:gap-6"
                 key={step}
               >
-                <div className="hover:glow-primary group relative z-10 flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] border-4 border-border bg-background shadow-[0_0_0_8px_var(--background)] transition-all hover:border-primary">
+                <div className="hover:glow-primary group relative z-10 flex size-24 shrink-0 items-center justify-center rounded-[2rem] border-4 border-border bg-background shadow-[0_0_0_8px_var(--background)] transition-all hover:border-primary">
                   <span className="font-black font-mono text-4xl text-foreground transition-colors group-hover:text-glow group-hover:text-primary">
                     {i + 1}
                   </span>
                 </div>
                 <div className="surface-elevated relative w-full rounded-2xl border-2 border-border/50 p-6 text-left sm:text-center">
                   {/* Small triangular pointer from box to number */}
-                  <div className="absolute top-1/2 -left-3 h-4 w-4 -translate-y-1/2 rotate-45 border-border/50 border-b-2 border-l-2 bg-surface-elevated sm:-top-3 sm:left-1/2 sm:-translate-x-1/2 sm:translate-y-0 sm:border-t-2 sm:border-r-2 sm:border-b-0" />
+                  <div className="absolute top-1/2 -left-3 size-4 -translate-y-1/2 rotate-45 border-border/50 border-b-2 border-l-2 bg-surface-elevated sm:-top-3 sm:left-1/2 sm:-translate-x-1/2 sm:translate-y-0 sm:border-t-2 sm:border-r-2 sm:border-b-0" />
                   <p className="font-bold text-foreground text-lg">{step}</p>
                 </div>
               </div>
@@ -230,11 +230,11 @@ export default async function LandingPage() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
-          <div className="glow-accent h-[40rem] w-[40rem] animate-pulse rounded-full bg-accent/10 blur-[100px]" />
+          <div className="glow-accent size-[40rem] animate-pulse rounded-full bg-accent/10 blur-[100px]" />
         </div>
 
         <div className="surface-raised container relative z-10 mx-auto max-w-3xl space-y-12 rounded-[3rem] border-4 border-accent/20 p-16">
-          <h2 className="font-black font-display text-5xl text-foreground uppercase tracking-tighter drop-shadow-md sm:text-6xl">
+          <h2 className="font-semibold font-display text-5xl text-foreground uppercase tracking-tighter drop-shadow-md sm:text-6xl">
             {t("landing.ctaTitle")}
           </h2>
           <Button

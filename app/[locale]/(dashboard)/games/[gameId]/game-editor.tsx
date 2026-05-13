@@ -57,8 +57,8 @@ interface Props {
 
 export function GameEditor({ game }: Props) {
   const t = useTranslations();
-  const [title, setTitle] = useState(game.title);
-  const [description, setDescription] = useState(game.description ?? "");
+  const title = game.title;
+  const description = game.description ?? "";
   const [saving, setSaving] = useState(false);
   const updateGame = useMutation(api.games.update);
 
@@ -107,10 +107,10 @@ export function GameEditor({ game }: Props) {
 
         <div className="p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-lg text-primary">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-lg text-primary">
               🎮
             </div>
-            <h1 className="font-bold font-display text-foreground text-xl">
+            <h1 className="font-semibold font-display text-foreground text-xl">
               {t("gameEditor.title")}
             </h1>
           </div>
@@ -127,7 +127,6 @@ export function GameEditor({ game }: Props) {
                 className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
                 id="game-title"
                 maxLength={100}
-                onChange={(e) => setTitle(e.target.value)}
                 value={title}
               />
             </div>
@@ -142,7 +141,6 @@ export function GameEditor({ game }: Props) {
                 className="rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
                 id="game-desc"
                 maxLength={500}
-                onChange={(e) => setDescription(e.target.value)}
                 rows={2}
                 value={description}
               />
@@ -163,7 +161,7 @@ export function GameEditor({ game }: Props) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h2 className="font-bold font-display text-foreground text-lg">
+            <h2 className="font-semibold font-display text-foreground text-lg">
               Steps
             </h2>
             <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/15 px-2 font-bold font-mono text-primary text-xs shadow-[0_0_8px_var(--glow-subtle)]">

@@ -15,7 +15,7 @@ export default function DashboardLoading() {
             key={id}
           >
             <div className="flex items-start gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-muted" />
+              <div className="size-10 shrink-0 rounded-xl bg-muted" />
               <div className="flex-1 space-y-2">
                 <div className="h-5 w-3/4 rounded-md bg-muted" />
                 <div className="h-3 w-full rounded-sm bg-muted/60" />
@@ -24,7 +24,7 @@ export default function DashboardLoading() {
             <div className="h-6 w-20 rounded-lg bg-muted/60" />
             <div className="flex gap-2 pt-2">
               <div className="h-9 flex-1 rounded-xl bg-muted" />
-              <div className="h-9 w-9 rounded-xl bg-muted" />
+              <div className="size-9 rounded-xl bg-muted" />
             </div>
           </div>
         ))}

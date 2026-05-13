@@ -12,9 +12,9 @@ function SessionsSkeleton() {
     <div className="space-y-8">
       <div className="flex items-center gap-2">
         <Skeleton className="h-4 w-20 rounded-md" />
-        <Skeleton className="h-4 w-4 rounded-sm" />
+        <Skeleton className="size-4 rounded-sm" />
         <Skeleton className="h-4 w-28 rounded-md" />
-        <Skeleton className="h-4 w-4 rounded-sm" />
+        <Skeleton className="size-4 rounded-sm" />
         <Skeleton className="h-4 w-16 rounded-md" />
       </div>
       <div className="flex items-center justify-between">
@@ -44,7 +44,7 @@ export default function SessionsPage() {
   if (game === null) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-2xl">
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-destructive/10 text-2xl">
           ⚠️
         </div>
         <p className="font-bold font-display text-foreground">Game not found</p>

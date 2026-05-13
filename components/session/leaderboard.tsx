@@ -41,7 +41,7 @@ export function Leaderboard({ entries, highlightName }: Props) {
           <span
             aria-hidden="true"
             className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-center text-sm",
+              "flex size-8 shrink-0 items-center justify-center rounded-full text-center text-sm",
               entry.rank <= 3
                 ? "bg-muted font-bold font-mono"
                 : "bg-muted font-mono text-muted-foreground"

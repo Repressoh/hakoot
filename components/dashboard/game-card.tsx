@@ -115,12 +115,12 @@ export function GameCard({ game, index = 0 }: Props) {
         {/* Icon + Title */}
         <div className="flex items-start gap-3.5">
           <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent.icon} text-lg transition-transform duration-300 group-hover:scale-110`}
+            className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${accent.icon} text-lg transition-transform duration-300 group-hover:scale-110`}
           >
             {emoji}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-2 font-bold font-display text-base text-foreground leading-snug">
+            <h3 className="line-clamp-2 font-semibold font-display text-base text-foreground leading-snug">
               {game.title}
             </h3>
             {game.description && (
@@ -184,7 +184,7 @@ export function GameCard({ game, index = 0 }: Props) {
             <AlertDialogTrigger asChild>
               <Button
                 aria-label={`${tc("delete")} ${game.title}`}
-                className="h-9 w-9 rounded-xl text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                className="size-9 rounded-xl text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
                 size="sm"
                 variant="ghost"
               >

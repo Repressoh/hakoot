@@ -21,11 +21,11 @@ interface Props {
 
 export function LocaleSwitcher({ variant: _variant = "default" }: Props) {
   const locale = useLocale();
-  const router = useRouter();
+  const { push } = useRouter();
   const pathname = usePathname();
 
   const switchLocale = (newLocale: string) => {
-    router.push(pathname, { locale: newLocale });
+    push(pathname, { locale: newLocale });
   };
 
   return (

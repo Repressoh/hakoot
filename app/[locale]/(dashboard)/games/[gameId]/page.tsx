@@ -12,14 +12,14 @@ function EditorSkeleton() {
     <div className="space-y-8">
       <div className="flex items-center gap-2">
         <Skeleton className="h-4 w-20 rounded-md" />
-        <Skeleton className="h-4 w-4 rounded-sm" />
+        <Skeleton className="size-4 rounded-sm" />
         <Skeleton className="h-4 w-32 rounded-md" />
       </div>
       <div className="overflow-hidden rounded-2xl border border-border/50 bg-card/50">
         <Skeleton className="h-1 w-full" />
         <div className="space-y-5 p-6">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-9 w-9 rounded-xl" />
+            <Skeleton className="size-9 rounded-xl" />
             <Skeleton className="h-6 w-32 rounded-md" />
           </div>
           <div className="max-w-xl space-y-4">
@@ -55,7 +55,7 @@ export default function GameEditorPage() {
   if (game === null) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-2xl">
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-destructive/10 text-2xl">
           ⚠️
         </div>
         <p className="font-bold font-display text-foreground">Game not found</p>

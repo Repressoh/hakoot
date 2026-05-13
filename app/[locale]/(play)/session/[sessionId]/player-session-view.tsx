@@ -214,11 +214,11 @@ function WaitingScreen({ gameTitle, participantName }: WaitingScreenProps) {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 overflow-hidden"
       >
-        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/8 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 h-48 w-48 rounded-full bg-accent/6 blur-3xl" />
+        <div className="absolute top-1/4 left-1/3 size-72 rounded-full bg-primary/8 blur-3xl" />
+        <div className="absolute right-1/4 bottom-1/4 size-48 rounded-full bg-accent/6 blur-3xl" />
       </div>
       <div className="relative space-y-2 text-center">
-        <h1 className="font-black font-display text-3xl text-foreground text-glow">
+        <h1 className="font-semibold font-display text-3xl text-foreground text-glow">
           {gameTitle}
         </h1>
         <p className="text-muted-foreground">{t("play.waitingTitle")}</p>
@@ -226,7 +226,7 @@ function WaitingScreen({ gameTitle, participantName }: WaitingScreenProps) {
       <div className="relative flex flex-col items-center gap-3">
         <div
           aria-label="Loading"
-          className="h-10 w-10 animate-spin rounded-full border-4 border-border border-t-primary"
+          className="size-10 animate-spin rounded-full border-4 border-border border-t-primary"
           role="img"
         />
         <p className="font-bold font-display text-lg text-primary">
@@ -257,11 +257,11 @@ function FinishedScreen({ participant, leaderboard }: FinishedScreenProps) {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 overflow-hidden"
       >
-        <div className="absolute top-1/3 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute top-1/3 left-1/2 size-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       </div>
       <div className="relative space-y-3">
         <p className="text-6xl">🎉</p>
-        <h1 className="font-black font-display text-3xl text-foreground">
+        <h1 className="font-semibold font-display text-3xl text-foreground">
           {t("play.finalTitle")}
         </h1>
         <p className="font-bold font-mono text-2xl text-glow text-primary">
@@ -377,6 +377,12 @@ function QuizStep({
 
   // Stable shuffle per (token, stepId) — recalculates only when the step changes.
   // choices is stable for a given stepId so including it doesn't cause extra recalculations.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+
   const shuffledChoices = useMemo(
     () => shuffleChoices(choices, token, stepId),
     [choices, token, stepId]
@@ -384,7 +390,7 @@ function QuizStep({
 
   return (
     <div className="flex-1 space-y-5">
-      {timeLimitSeconds && stepStartedAt && !currentAnswer && !isReading && (
+      {mounted && timeLimitSeconds && stepStartedAt && !currentAnswer && !isReading && (
         <div className="flex justify-center">
           <CircularTimer
             stepStartedAt={new Date(stepStartedAt).toISOString()}
@@ -396,7 +402,7 @@ function QuizStep({
         <div className="flex justify-center">
           <div
             aria-label={`${readingSecondsLeft} seconds to read`}
-            className="flex h-20 w-20 flex-col items-center justify-center rounded-full border-4 border-primary/30 bg-primary/10"
+            className="flex size-20 flex-col items-center justify-center rounded-full border-4 border-primary/30 bg-primary/10"
             role="timer"
           >
             <span className="font-bold font-display text-2xl text-primary">
@@ -409,7 +415,7 @@ function QuizStep({
       <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
         {t("play.quizLabel")}
       </p>
-      <h2 className="font-bold font-display text-foreground text-xl leading-snug">
+      <h2 className="font-semibold font-display text-foreground text-xl leading-snug">
         {question}
       </h2>
       {currentAnswer && !answerRevealed && (

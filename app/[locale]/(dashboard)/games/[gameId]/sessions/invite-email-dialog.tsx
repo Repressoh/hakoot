@@ -169,14 +169,26 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
   }
 
   async function handleSend() {
-    const manualValid = entries
-      .filter((e) => e.name.trim() && e.email.trim())
-      .map(({ name, email }) => ({ name, email }));
+    const manualValid = entries.reduce<{ name: string; email: string }[]>(
+      (acc, e) => {
+        if (e.name.trim() && e.email.trim()) {
+          acc.push({ name: e.name, email: e.email });
+        }
+        return acc;
+      },
+      [],
+    );
 
     const listValid = selectedList
-      ? selectedList.entries
-          .filter((e) => checkedEntryIds.has(e._id))
-          .map(({ name, email }) => ({ name, email }))
+      ? selectedList.entries.reduce<{ name: string; email: string }[]>(
+          (acc, e) => {
+            if (checkedEntryIds.has(e._id)) {
+              acc.push({ name: e.name, email: e.email });
+            }
+            return acc;
+          },
+          [],
+        )
       : [];
 
     const seen = new Set<string>();
@@ -269,7 +281,7 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
                   {entries.length > 1 && (
                     <Button
                       aria-label="Remove"
-                      className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-destructive"
+                      className="size-9 shrink-0 p-0 text-muted-foreground hover:text-destructive"
                       onClick={() => removeEntry(i)}
                       size="sm"
                       variant="ghost"

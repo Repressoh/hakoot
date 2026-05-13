@@ -29,7 +29,7 @@ export function GameList({ games }: Props) {
         initial={{ opacity: 0, y: 12 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div className="flex h-16 w-16 animate-float items-center justify-center rounded-2xl bg-primary/10 text-3xl shadow-[0_0_20px_var(--glow-subtle)]">
+        <div className="flex size-16 animate-float items-center justify-center rounded-2xl bg-primary/10 text-3xl shadow-[0_0_20px_var(--glow-subtle)]">
           🎮
         </div>
         <p className="mt-5 font-bold font-display text-foreground text-lg">

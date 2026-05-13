@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
@@ -259,6 +259,11 @@ export function HostSessionView({ data }: Props) {
   const showLeaderboard = answerRevealed && (leaderboard?.length ?? 0) > 0;
 
   // Use useState to track current time for timer calculations
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const [now, setNow] = useState(() => Date.now());
 
   // Update time every second for timer display
@@ -365,7 +370,7 @@ export function HostSessionView({ data }: Props) {
           {status === "waiting" && (
             <div className="surface-raised p-6">
               <div className="space-y-6 py-10 text-center">
-                <h2 className="font-bold font-display text-2xl text-foreground">
+                <h2 className="font-semibold font-display text-2xl text-foreground">
                   {t("session.waitingRoom")}
                 </h2>
                 <p className="text-muted-foreground">
@@ -404,7 +409,7 @@ export function HostSessionView({ data }: Props) {
                 >
                   {currentStep.type === "theory" ? "Theory" : "Quiz"}
                 </Badge>
-                {currentStep.timeLimitSeconds &&
+                {mounted && currentStep.timeLimitSeconds &&
                   session.stepStartedAt &&
                   session.stepStartedAt <= now &&
                   !answerRevealed && (
@@ -488,7 +493,7 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
   if (data === undefined) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading session...</p>
+        <p className="text-muted-foreground">Loading session…</p>
       </div>
     );
   }

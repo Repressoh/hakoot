@@ -21,7 +21,7 @@ interface Props {
 
 export function AddStepMenu({ gameId }: Props) {
   const t = useTranslations("gameEditor");
-  const router = useRouter();
+  const { push } = useRouter();
   const [loading, setLoading] = useState(false);
   const createTheory = useMutation(api.steps.createTheory);
   const createQuiz = useMutation(api.steps.createQuiz);
@@ -30,7 +30,7 @@ export function AddStepMenu({ gameId }: Props) {
     setLoading(true);
     try {
       const stepId = await createTheory({ gameId, markdownContent: "" });
-      router.push(`/games/${gameId}/steps/${stepId}`);
+      push(`/games/${gameId}/steps/${stepId}`);
     } catch {
       toast.error("Failed to create step");
       setLoading(false);
@@ -50,7 +50,7 @@ export function AddStepMenu({ gameId }: Props) {
           { text: "", isCorrect: false },
         ],
       });
-      router.push(`/games/${gameId}/steps/${stepId}`);
+      push(`/games/${gameId}/steps/${stepId}`);
     } catch {
       toast.error("Failed to create step");
       setLoading(false);
@@ -88,13 +88,13 @@ export function AddStepMenu({ gameId }: Props) {
         className="rounded-xl border-border/60 bg-card/95 shadow-black/20 shadow-xl backdrop-blur-xl"
       >
         <DropdownMenuItem className="mx-1 gap-2 rounded-lg" onClick={addTheory}>
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-choice-blue/15 text-xs">
+          <span className="flex size-6 items-center justify-center rounded-md bg-choice-blue/15 text-xs">
             📖
           </span>
           {t("addTheoryStep")}
         </DropdownMenuItem>
         <DropdownMenuItem className="mx-1 gap-2 rounded-lg" onClick={addQuiz}>
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-choice-yellow/15 text-xs">
+          <span className="flex size-6 items-center justify-center rounded-md bg-choice-yellow/15 text-xs">
             ❓
           </span>
           {t("addQuizStep")}

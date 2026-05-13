@@ -204,13 +204,18 @@ export function TheoryStepEditor({ step }: Props) {
     setSaving(true);
     let codeBlock: CodeBlock | undefined;
     if (hasCodeBlock && code.trim()) {
-      const parsedAnnotations: CodeAnnotation[] = annotations
-        .filter((a) => a.linesInput && a.label && a.explanation)
-        .map((a) => ({
-          lines: parseLineRange(a.linesInput),
-          label: a.label,
-          explanation: a.explanation,
-        }));
+      const parsedAnnotations: CodeAnnotation[] = annotations.reduce<
+        CodeAnnotation[]
+      >((acc, a) => {
+        if (a.linesInput && a.label && a.explanation) {
+          acc.push({
+            lines: parseLineRange(a.linesInput),
+            label: a.label,
+            explanation: a.explanation,
+          });
+        }
+        return acc;
+      }, []);
 
       codeBlock = { code, language, annotations: parsedAnnotations };
     }
@@ -231,7 +236,7 @@ export function TheoryStepEditor({ step }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-bold text-xl">{t("theoryTitle")}</h1>
+        <h1 className="font-semibold text-xl">{t("theoryTitle")}</h1>
         <Button disabled={saving} onClick={handleSave}>
           {saving ? "Saving..." : t("saveStep")}
         </Button>

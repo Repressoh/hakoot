@@ -129,7 +129,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
   if (results === undefined) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading results...</p>
+        <p className="text-muted-foreground">Loading results…</p>
       </div>
     );
   }
@@ -159,7 +159,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
       <div className="container mx-auto max-w-5xl space-y-8 px-4 py-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-bold font-display text-2xl text-foreground">
+            <h1 className="font-semibold font-display text-2xl text-foreground">
               {t("title")}
             </h1>
             <p className="font-mono text-muted-foreground text-sm">
