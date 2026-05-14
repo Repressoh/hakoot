@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
   if (!secretKey) {
     return NextResponse.json(
-      { success: false, error: "Server configuration error" },
+      { success: false, error: "Missing TURNSTILE_SECRET_KEY environment variable" },
       { status: 500 }
     );
   }
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
         method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params,
       }
     );
@@ -38,9 +39,11 @@ export async function POST(request: Request) {
     const outcome = await result.json();
 
     return NextResponse.json(outcome);
-  } catch {
+  } catch (err) {
+    console.error("[verify-turnstile] Cloudflare siteverify error:", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { success: false, error: "Verification failed" },
+      { success: false, error: `Verification failed: ${message}` },
       { status: 500 }
     );
   }
