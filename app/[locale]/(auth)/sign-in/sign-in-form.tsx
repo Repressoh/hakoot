@@ -36,14 +36,11 @@ export function SignInForm() {
       .value;
 
     try {
-      const verifyResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/verify-turnstile`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: turnstileToken }),
-        }
-      );
+      const verifyResponse = await fetch("/api/verify-turnstile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
 
       const verifyResult = await verifyResponse.json();
 
