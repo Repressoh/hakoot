@@ -73,6 +73,7 @@ export function ResetPasswordForm({
       } else {
         toast.error(t("resetPasswordFailed"));
       }
+      setTurnstileToken(null);
       setLoading(false);
     }
   }
