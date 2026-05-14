@@ -6,17 +6,45 @@ const http = httpRouter();
 
 auth.addHttpRoutes(http);
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://dev.hakoot.albertocaserta.it",
+  "https://hakoot.albertocaserta.it",
+];
+
+const getCorsHeaders = (origin: string | null): Record<string, string> => {
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    Vary: "Origin",
+  };
+
+  if (origin && allowedOrigins.includes(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+
+  return headers;
+};
+
+http.route({
+  path: "/verify-turnstile",
+  method: "OPTIONS",
+  handler: httpAction(async (_ctx, req) => {
+    const origin = req.headers.get("origin");
+    return new Response(null, {
+      status: 204,
+      headers: getCorsHeaders(origin),
+    });
+  }),
+});
+
 http.route({
   path: "/verify-turnstile",
   method: "POST",
   handler: httpAction(async (_ctx, req) => {
     const origin = req.headers.get("origin");
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "https://dev.hakoot.albertocaserta.it",
-      "https://hakoot.albertocaserta.it",
-    ];
+    const corsHeaders = getCorsHeaders(origin);
 
     const body = await req.json();
     const { token, remoteip } = body;
@@ -28,10 +56,7 @@ http.route({
           status: 400,
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin":
-              origin && allowedOrigins.includes(origin) ? origin : "",
-            "Access-Control-Allow-Methods": "POST",
-            "Access-Control-Allow-Headers": "Content-Type",
+            ...corsHeaders,
           },
         }
       );
@@ -47,10 +72,7 @@ http.route({
           status: 500,
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin":
-              origin && allowedOrigins.includes(origin) ? origin : "",
-            "Access-Control-Allow-Methods": "POST",
-            "Access-Control-Allow-Headers": "Content-Type",
+            ...corsHeaders,
           },
         }
       );
@@ -77,10 +99,7 @@ http.route({
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin":
-            origin && allowedOrigins.includes(origin) ? origin : "",
-          "Access-Control-Allow-Methods": "POST",
-          "Access-Control-Allow-Headers": "Content-Type",
+          ...corsHeaders,
         },
       });
     } catch {
@@ -93,10 +112,7 @@ http.route({
           status: 500,
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin":
-              origin && allowedOrigins.includes(origin) ? origin : "",
-            "Access-Control-Allow-Methods": "POST",
-            "Access-Control-Allow-Headers": "Content-Type",
+            ...corsHeaders,
           },
         }
       );
