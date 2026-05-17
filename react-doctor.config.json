@@ -1,5 +1,5 @@
 {
   "ignore": {
-    "files": [".agents/**", "messages/**"]
+    "files": [".agents/**", "messages/**", "convex/auth.ts"]
   }
 }

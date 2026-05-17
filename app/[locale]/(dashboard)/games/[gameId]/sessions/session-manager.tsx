@@ -53,7 +53,7 @@ const statusConfig: Record<
 export function SessionManager({ game, sessions }: Props) {
   const t = useTranslations("session");
   const tNav = useTranslations("nav");
-  const router = useRouter();
+  const { push } = useRouter();
   const [creating, setCreating] = useState(false);
   const createSession = useMutation(api.sessions.create);
 
@@ -61,7 +61,7 @@ export function SessionManager({ game, sessions }: Props) {
     setCreating(true);
     try {
       const sessionId = await createSession({ gameId: game._id });
-      router.push(`/host/session/${sessionId}`);
+      push(`/host/session/${sessionId}`);
     } catch {
       toast.error("Failed to create session");
       setCreating(false);
@@ -96,7 +96,7 @@ export function SessionManager({ game, sessions }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="font-bold font-display text-2xl text-foreground">
+          <h1 className="font-display font-semibold text-2xl text-foreground">
             Sessions
           </h1>
           <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/15 px-2 font-bold font-mono text-primary text-xs">
@@ -119,7 +119,7 @@ export function SessionManager({ game, sessions }: Props) {
           initial={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="flex h-14 w-14 animate-float items-center justify-center rounded-2xl bg-primary/10 text-2xl shadow-[0_0_15px_var(--glow-subtle)]">
+          <div className="flex size-14 animate-float items-center justify-center rounded-2xl bg-primary/10 text-2xl shadow-[0_0_15px_var(--glow-subtle)]">
             📡
           </div>
           <p className="mt-4 font-bold font-display text-foreground">
@@ -155,15 +155,18 @@ export function SessionManager({ game, sessions }: Props) {
                     >
                       <span
                         aria-hidden="true"
-                        className={`h-1.5 w-1.5 rounded-full ${config.dot}`}
+                        className={`size-1.5 rounded-full ${config.dot}`}
                       />
                       {t(`sessionStatus.${s.status}`)}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <p className="flex-1 font-mono text-muted-foreground text-xs">
-                    Created {new Date(s._creationTime).toLocaleDateString()}
+                  <p
+                    className="flex-1 font-mono text-muted-foreground text-xs"
+                    suppressHydrationWarning
+                  >
+                    Created {Intl.DateTimeFormat().format(s._creationTime)}
                   </p>
                   {s.status !== "finished" && (
                     <>

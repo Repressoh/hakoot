@@ -3,7 +3,7 @@ interface ShapeProps {
   size?: number;
 }
 
-export function TriangleShape({ size = 20, className }: ShapeProps) {
+function TriangleShape({ size = 20, className }: ShapeProps) {
   return (
     <svg
       aria-hidden="true"
@@ -18,7 +18,7 @@ export function TriangleShape({ size = 20, className }: ShapeProps) {
   );
 }
 
-export function DiamondShape({ size = 20, className }: ShapeProps) {
+function DiamondShape({ size = 20, className }: ShapeProps) {
   return (
     <svg
       aria-hidden="true"
@@ -33,7 +33,7 @@ export function DiamondShape({ size = 20, className }: ShapeProps) {
   );
 }
 
-export function CircleShape({ size = 20, className }: ShapeProps) {
+function CircleShape({ size = 20, className }: ShapeProps) {
   return (
     <svg
       aria-hidden="true"
@@ -48,7 +48,7 @@ export function CircleShape({ size = 20, className }: ShapeProps) {
   );
 }
 
-export function SquareShape({ size = 20, className }: ShapeProps) {
+function SquareShape({ size = 20, className }: ShapeProps) {
   return (
     <svg
       aria-hidden="true"

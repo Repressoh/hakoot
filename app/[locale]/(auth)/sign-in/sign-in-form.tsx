@@ -9,14 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useRouter } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 
 export function SignInForm() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
-  const router = useRouter();
+  const { push } = useRouter();
   const { signIn } = useAuthActions();
   const [loading, setLoading] = useState(false);
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
@@ -56,7 +57,7 @@ export function SignInForm() {
 
       await signIn("password", { email, password, flow: "signIn" });
       await new Promise((resolve) => setTimeout(resolve, 500));
-      router.push("/dashboard");
+      push("/dashboard");
     } catch {
       toast.error(t("invalidCredentials"));
       setLoading(false);
@@ -71,6 +72,27 @@ export function SignInForm() {
       console.error("[Google sign-in] error:", err);
       toast.error("Google sign-in failed");
       setGoogleLoading(false);
+    }
+  }
+
+  async function handleMagicLink() {
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const email = emailInput?.value.trim();
+
+    if (!email) {
+      toast.error("Enter your email address first.");
+      emailInput?.focus();
+      return;
+    }
+
+    setMagicLinkLoading(true);
+    try {
+      await signIn("email", { email, redirectTo: "/dashboard" });
+      toast.success("Check your email for a sign-in link.");
+    } catch {
+      toast.error("Could not send a magic link. Please try again.");
+    } finally {
+      setMagicLinkLoading(false);
     }
   }
 
@@ -92,9 +114,17 @@ export function SignInForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-foreground/80 text-sm" htmlFor="password">
-            {t("password")}
-          </Label>
+          <div className="flex items-center justify-between gap-3">
+            <Label className="text-foreground/80 text-sm" htmlFor="password">
+              {t("password")}
+            </Label>
+            <Link
+              className="font-medium text-primary text-xs underline underline-offset-4 hover:text-primary/80"
+              href="/reset-password"
+            >
+              {t("forgotPassword")}
+            </Link>
+          </div>
           <Input
             autoComplete="current-password"
             className="h-11 rounded-xl border-border bg-muted/50 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
@@ -124,6 +154,15 @@ export function SignInForm() {
         >
           {loading ? "..." : t("signInButton")}
         </Button>
+        <Button
+          className="press-down h-11 w-full rounded-xl border-border bg-transparent text-foreground hover:bg-muted/50"
+          disabled={magicLinkLoading}
+          onClick={handleMagicLink}
+          type="button"
+          variant="outline"
+        >
+          {magicLinkLoading ? "..." : "Email me a magic link"}
+        </Button>
       </form>
 
       <div className="flex items-center gap-3">
@@ -141,7 +180,7 @@ export function SignInForm() {
         type="button"
         variant="outline"
       >
-        <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">
+        <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24">
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
             fill="#4285F4"

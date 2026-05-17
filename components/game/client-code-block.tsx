@@ -114,9 +114,9 @@ export function ClientCodeBlock({ code, language }: Props) {
       {/* Header bar */}
       <div className="flex items-center gap-2 border-border border-b bg-[#161b22] px-4 py-2">
         <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[oklch(0.62_0.24_18/0.6)]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[oklch(0.78_0.17_70/0.6)]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[oklch(0.68_0.2_150/0.6)]" />
+          <span className="size-2.5 rounded-full bg-[oklch(0.62_0.24_18/0.6)]" />
+          <span className="size-2.5 rounded-full bg-[oklch(0.78_0.17_70/0.6)]" />
+          <span className="size-2.5 rounded-full bg-[oklch(0.68_0.2_150/0.6)]" />
         </div>
         <span className="ml-auto font-mono text-[oklch(0.58_0.02_260)] text-xs tracking-wider">
           {language}

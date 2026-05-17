@@ -111,5 +111,3 @@ export const locales = [
   "zh-HANT",
   "zu",
 ] as const;
-
-export type AppLocale = (typeof locales)[number];

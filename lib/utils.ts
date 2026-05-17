@@ -5,44 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Generate a random alphanumeric invite code of given length */
-export function generateInviteCode(length = 6): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  return Array.from(
-    { length },
-    () => chars[Math.floor(Math.random() * chars.length)]
-  ).join("");
-}
-
-/** Generate a cryptographically random token */
-export function generateToken(): string {
-  const array = new Uint8Array(32);
-  crypto.getRandomValues(array);
-  return Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-/** Compute Kahoot-style score: basePoints * (timeRemaining / timeLimit), min 0 */
-export function computeScore(
-  isCorrect: boolean,
-  timeLimitSeconds: number | null,
-  answeredAtMs: number,
-  stepStartedAtMs: number,
-  basePoints = 1000
-): number {
-  if (!isCorrect) {
-    return 0;
-  }
-  if (!timeLimitSeconds) {
-    return basePoints;
-  }
-
-  const elapsed = (answeredAtMs - stepStartedAtMs) / 1000;
-  const timeRemaining = Math.max(0, timeLimitSeconds - elapsed);
-  const ratio = timeRemaining / timeLimitSeconds;
-  // Minimum 50% of base points for a correct answer
-  return Math.round(basePoints * (0.5 + 0.5 * ratio));
-}
-
 /** Parse a line range string like "5, 10-12" into an array of line numbers */
 export function parseLineRange(input: string): number[] {
   const lines: number[] = [];

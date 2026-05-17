@@ -20,7 +20,7 @@ import { useRouter } from "@/i18n/routing";
 
 export function CreateGameDialog() {
   const t = useTranslations();
-  const router = useRouter();
+  const { push } = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const createGame = useMutation(api.games.create);
@@ -44,7 +44,7 @@ export function CreateGameDialog() {
       toast.success(t("dashboard.createSuccess"));
       setLoading(false);
       setOpen(false);
-      router.push(`/games/${gameId}`);
+      push(`/games/${gameId}`);
     } catch {
       toast.error(t("common.error"));
       setLoading(false);

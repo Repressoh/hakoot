@@ -230,7 +230,7 @@ function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
   );
 }
 
-export function HostSessionView({ data }: Props) {
+function HostSessionView({ data }: Props) {
   const t = useTranslations();
 
   const { session, game, steps, participants } = data;
@@ -365,7 +365,7 @@ export function HostSessionView({ data }: Props) {
           {status === "waiting" && (
             <div className="surface-raised p-6">
               <div className="space-y-6 py-10 text-center">
-                <h2 className="font-bold font-display text-2xl text-foreground">
+                <h2 className="font-display font-semibold text-2xl text-foreground">
                   {t("session.waitingRoom")}
                 </h2>
                 <p className="text-muted-foreground">
@@ -409,9 +409,7 @@ export function HostSessionView({ data }: Props) {
                   session.stepStartedAt <= now &&
                   !answerRevealed && (
                     <CircularTimer
-                      stepStartedAt={new Date(
-                        session.stepStartedAt
-                      ).toISOString()}
+                      stepStartedAt={session.stepStartedAt}
                       timeLimitSeconds={currentStep.timeLimitSeconds}
                     />
                   )}
@@ -488,7 +486,7 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
   if (data === undefined) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading session...</p>
+        <p className="text-muted-foreground">Loading session&hellip;</p>
       </div>
     );
   }

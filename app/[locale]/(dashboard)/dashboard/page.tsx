@@ -24,7 +24,7 @@ function DashboardSkeleton() {
             key={id}
           >
             <div className="flex items-start gap-3">
-              <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+              <Skeleton className="size-10 shrink-0 rounded-xl" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-5 w-3/4 rounded-md" />
                 <Skeleton className="h-3 w-full rounded-sm" />
@@ -33,7 +33,7 @@ function DashboardSkeleton() {
             <Skeleton className="h-6 w-20 rounded-lg" />
             <div className="flex gap-2 pt-2">
               <Skeleton className="h-9 flex-1 rounded-xl" />
-              <Skeleton className="h-9 w-9 rounded-xl" />
+              <Skeleton className="size-9 rounded-xl" />
             </div>
           </div>
         ))}
@@ -55,7 +55,7 @@ export default function DashboardPage() {
       {/* Header section */}
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1.5">
-          <h1 className="font-black font-display text-3xl text-foreground tracking-tight">
+          <h1 className="font-display font-semibold text-3xl text-foreground tracking-tight">
             {t("title")}
           </h1>
           <p className="text-muted-foreground text-sm">

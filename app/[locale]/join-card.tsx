@@ -13,7 +13,7 @@ import { useRouter } from "@/i18n/routing";
 export function JoinCard() {
   const t = useTranslations("landing");
   const tj = useTranslations("join");
-  const router = useRouter();
+  const { push } = useRouter();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ export function JoinCard() {
         result.participantToken
       );
       setLoading(false);
-      router.push(`/session/${result.sessionId}`);
+      push(`/session/${result.sessionId}`);
     } catch {
       toast.error(tj("invalidCode"));
       setLoading(false);
@@ -109,11 +109,11 @@ export function JoinCard() {
               />
               <div
                 aria-hidden
-                className="absolute -right-2 -bottom-2 h-4 w-4 border-primary/20 border-r-2 border-b-2"
+                className="absolute -right-2 -bottom-2 size-4 border-primary/20 border-r-2 border-b-2"
               />
               <div
                 aria-hidden
-                className="absolute -top-2 -left-2 h-4 w-4 border-primary/20 border-t-2 border-l-2"
+                className="absolute -top-2 -left-2 size-4 border-primary/20 border-t-2 border-l-2"
               />
             </div>
           </div>

@@ -16,8 +16,7 @@ interface Props {
 }
 
 export default async function JoinPage({ searchParams }: Props) {
-  const sp = await searchParams;
-  const t = await getTranslations("join");
+  const [sp, t] = await Promise.all([searchParams, getTranslations("join")]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background bg-grid p-4">
@@ -26,8 +25,8 @@ export default async function JoinPage({ searchParams }: Props) {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 overflow-hidden"
       >
-        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/8 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 h-48 w-48 rounded-full bg-accent/6 blur-3xl" />
+        <div className="absolute top-1/4 left-1/3 size-72 rounded-full bg-primary/8 blur-3xl" />
+        <div className="absolute right-1/4 bottom-1/4 size-48 rounded-full bg-accent/6 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-sm space-y-8">
@@ -39,7 +38,7 @@ export default async function JoinPage({ searchParams }: Props) {
 
         <div className="surface-raised p-8">
           <div className="mb-6 text-center">
-            <h1 className="font-bold font-display text-foreground text-lg">
+            <h1 className="font-display font-semibold text-foreground text-lg">
               {t("title")}
             </h1>
           </div>

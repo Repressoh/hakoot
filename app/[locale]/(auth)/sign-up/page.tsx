@@ -18,8 +18,8 @@ export default async function SignUpPage() {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 overflow-hidden"
       >
-        <div className="absolute top-1/3 right-1/3 h-72 w-72 rounded-full bg-accent/8 blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/4 h-48 w-48 rounded-full bg-primary/6 blur-3xl" />
+        <div className="absolute top-1/3 right-1/3 size-72 rounded-full bg-accent/8 blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/4 size-48 rounded-full bg-primary/6 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-sm space-y-6">
@@ -31,7 +31,7 @@ export default async function SignUpPage() {
 
         <div className="surface-raised p-8">
           <div className="mb-6 space-y-1 text-center">
-            <h1 className="font-bold font-display text-foreground text-xl">
+            <h1 className="font-display font-semibold text-foreground text-xl">
               {t("signUpTitle")}
             </h1>
             <p className="text-muted-foreground text-sm">

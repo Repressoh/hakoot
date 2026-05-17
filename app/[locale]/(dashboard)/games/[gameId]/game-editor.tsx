@@ -3,7 +3,7 @@
 import { useMutation } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AddStepMenu } from "@/components/dashboard/add-step-menu";
 import { Button } from "@/components/ui/button";
@@ -57,10 +57,15 @@ interface Props {
 
 export function GameEditor({ game }: Props) {
   const t = useTranslations();
-  const [title, setTitle] = useState(game.title);
-  const [description, setDescription] = useState(game.description ?? "");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const updateGame = useMutation(api.games.update);
+
+  useEffect(() => {
+    setTitle(game.title);
+    setDescription(game.description ?? "");
+  }, [game.description, game.title]);
 
   async function handleSave() {
     setSaving(true);
@@ -107,10 +112,10 @@ export function GameEditor({ game }: Props) {
 
         <div className="p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-lg text-primary">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-lg text-primary">
               🎮
             </div>
-            <h1 className="font-bold font-display text-foreground text-xl">
+            <h1 className="font-display font-semibold text-foreground text-xl">
               {t("gameEditor.title")}
             </h1>
           </div>
@@ -163,7 +168,7 @@ export function GameEditor({ game }: Props) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h2 className="font-bold font-display text-foreground text-lg">
+            <h2 className="font-display font-semibold text-foreground text-lg">
               Steps
             </h2>
             <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/15 px-2 font-bold font-mono text-primary text-xs shadow-[0_0_8px_var(--glow-subtle)]">

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  stepStartedAt: string;
+  stepStartedAt: number;
   timeLimitSeconds: number;
 }
 
@@ -16,7 +16,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
   const t = useTranslations("timer");
-  const startMs = new Date(stepStartedAt).getTime();
+  const startMs = stepStartedAt;
 
   const getRemaining = useCallback(() => {
     const elapsed = (Date.now() - startMs) / 1000;

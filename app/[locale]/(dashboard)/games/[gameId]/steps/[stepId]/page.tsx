@@ -15,7 +15,7 @@ export default function StepEditorPage() {
   if (step === undefined) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading step...</p>
+        <p className="text-muted-foreground">Loading step&hellip;</p>
       </div>
     );
   }

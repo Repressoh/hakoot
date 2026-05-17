@@ -98,7 +98,7 @@ function AlertDialogFooter({
   );
 }
 
-function AlertDialogMedia({
+function _AlertDialogMedia({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -190,9 +190,6 @@ export {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogOverlay,
-  AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
 };

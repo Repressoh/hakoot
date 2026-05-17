@@ -155,7 +155,7 @@ function SortableStepItem({
         {/* Arrow buttons for accessibility */}
         <Button
           aria-label={t("moveUp")}
-          className="h-7 w-7 p-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          className="size-7 p-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           disabled={index === 0}
           onClick={() => onMove(step._id, "up")}
           size="sm"
@@ -165,7 +165,7 @@ function SortableStepItem({
         </Button>
         <Button
           aria-label={t("moveDown")}
-          className="h-7 w-7 p-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          className="size-7 p-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           disabled={index === total - 1}
           onClick={() => onMove(step._id, "down")}
           size="sm"
@@ -189,7 +189,7 @@ function SortableStepItem({
           <AlertDialogTrigger asChild>
             <Button
               aria-label={t("deleteStep")}
-              className="h-7 w-7 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              className="size-7 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               size="sm"
               variant="ghost"
             >

@@ -47,7 +47,7 @@ function DashboardSkeleton() {
         <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
           <Skeleton className="h-6 w-20 rounded-lg" />
           <div className="flex items-center gap-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="size-8 rounded-full" />
           </div>
         </div>
       </header>

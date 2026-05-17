@@ -2,7 +2,7 @@
 
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,7 +98,7 @@ export function QuizStepEditor({ step }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-bold text-xl">{t("quizTitle")}</h1>
+        <h1 className="font-semibold text-xl">{t("quizTitle")}</h1>
         <Button disabled={saving} onClick={handleSave}>
           {saving ? "Saving..." : t("saveStep")}
         </Button>
@@ -175,11 +175,16 @@ export function QuizStepEditor({ step }: Props) {
           value={timeLimitSeconds ?? ""}
         >
           <option value="">{t("timerOff")}</option>
-          {TIMER_OPTIONS.filter((s): s is number => s !== null).map((s) => (
-            <option key={s} value={s}>
-              {t("timerSeconds", { seconds: s })}
-            </option>
-          ))}
+          {TIMER_OPTIONS.reduce<ReactNode[]>((options, seconds) => {
+            if (seconds !== null) {
+              options.push(
+                <option key={seconds} value={seconds}>
+                  {t("timerSeconds", { seconds })}
+                </option>
+              );
+            }
+            return options;
+          }, [])}
         </select>
         {timeLimitSeconds && (
           <p className="text-muted-foreground text-xs">

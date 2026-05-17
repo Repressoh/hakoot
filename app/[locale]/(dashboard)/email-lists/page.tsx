@@ -201,11 +201,11 @@ function EmailListCard({
           onClick={() => setExpanded(!expanded)}
           type="button"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 font-bold font-mono text-primary text-sm">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 font-bold font-mono text-primary text-sm">
             {list.entries.length}
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate font-bold font-display text-foreground">
+            <h3 className="truncate font-display font-semibold text-foreground">
               {list.title}
             </h3>
             <p className="text-muted-foreground text-xs">
@@ -215,7 +215,7 @@ function EmailListCard({
           </div>
           <svg
             aria-hidden="true"
-            className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
+            className={`size-4 shrink-0 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -233,7 +233,7 @@ function EmailListCard({
           <AlertDialogTrigger asChild>
             <Button
               aria-label="Delete list"
-              className="h-8 w-8 shrink-0 p-0 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+              className="size-8 shrink-0 p-0 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
               size="sm"
               variant="ghost"
             >
@@ -282,7 +282,7 @@ function EmailListCard({
                   </span>
                   <Button
                     aria-label="Remove entry"
-                    className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-destructive"
+                    className="size-6 shrink-0 p-0 text-muted-foreground hover:text-destructive"
                     onClick={() =>
                       removeEntry({ entryId: entry._id }).catch(() =>
                         toast.error(t("removeEntryFailed"))
@@ -333,7 +333,7 @@ export default function EmailListsPage() {
     <div className="space-y-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1.5">
-          <h1 className="font-black font-display text-3xl text-foreground tracking-tight">
+          <h1 className="font-display font-semibold text-3xl text-foreground tracking-tight">
             {t("title")}
           </h1>
           <p className="text-muted-foreground text-sm">

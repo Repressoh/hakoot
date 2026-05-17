@@ -27,7 +27,7 @@ import { useRouter } from "@/i18n/routing";
 export default function AccountSettingsPage() {
   const t = useTranslations("settings");
   const tc = useTranslations("common");
-  const router = useRouter();
+  const { replace } = useRouter();
   const { signOut } = useAuthActions();
 
   const viewer = useQuery(api.users.viewer);
@@ -113,7 +113,7 @@ export default function AccountSettingsPage() {
     try {
       await deleteUserDataAction({});
       await signOut();
-      router.replace("/");
+      replace("/");
     } catch {
       toast.error(tc("error"));
       setDeleteLoading(false);
@@ -126,7 +126,7 @@ export default function AccountSettingsPage() {
     <div className="mx-auto max-w-2xl space-y-10">
       {/* Header */}
       <div className="space-y-1.5">
-        <h1 className="font-black font-display text-3xl text-foreground tracking-tight">
+        <h1 className="font-display font-semibold text-3xl text-foreground tracking-tight">
           {t("title")}
         </h1>
         <p className="text-muted-foreground text-sm">{t("subtitle")}</p>
@@ -383,7 +383,7 @@ function ConnectedProvider({
   return (
     <div className="flex items-center justify-between rounded-xl border border-border/40 bg-muted/30 px-4 py-3">
       <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted font-bold text-foreground text-sm ring-1 ring-border/40">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-muted font-bold text-foreground text-sm ring-1 ring-border/40">
           {icon}
         </span>
         <span className="font-medium text-foreground text-sm">{name}</span>
