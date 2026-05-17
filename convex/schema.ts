@@ -96,11 +96,13 @@ export default defineSchema({
   // ─── Participant answer ──────────────────────────────────────────────
   participantAnswers: defineTable({
     participantId: v.id("gameParticipants"),
+    sessionId: v.optional(v.id("gameSessions")),
     stepId: v.id("gameSteps"),
     choiceIndex: v.number(),
     isCorrect: v.boolean(),
     score: v.number(),
   })
+    .index("by_session", ["sessionId"])
     .index("by_participant", ["participantId"])
     .index("by_step", ["stepId"])
     .index("by_participant_and_step", ["participantId", "stepId"]),

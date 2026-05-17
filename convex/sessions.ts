@@ -1,7 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
-import type { MutationCtx } from "./_generated/server";
+import type { Doc, Id } from "./_generated/dataModel";
+import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
 
 /** Generate a random alphanumeric invite code */
@@ -317,11 +317,10 @@ export const getResults = query({
       return null;
     }
 
-    const participants = await ctx.db
+    const storedParticipants = await ctx.db
       .query("gameParticipants")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
-    participants.sort((a, b) => b.totalScore - a.totalScore);
 
     const steps = await ctx.db
       .query("gameSteps")
@@ -329,33 +328,118 @@ export const getResults = query({
       .collect();
     steps.sort((a, b) => a.order - b.order);
 
-    const allAnswers: Array<{
-      participantId: string;
-      stepId: string;
-      choiceIndex: number;
-      isCorrect: boolean;
-      score: number;
-    }> = [];
+    const { answers: allAnswers, restoredParticipants } =
+      await collectResultAnswers(
+        ctx,
+        args.sessionId,
+        steps,
+        storedParticipants
+      );
 
-    for (const p of participants) {
-      const answers = await ctx.db
-        .query("participantAnswers")
-        .withIndex("by_participant", (q) => q.eq("participantId", p._id))
-        .collect();
-      for (const a of answers) {
-        allAnswers.push({
-          participantId: a.participantId,
-          stepId: a.stepId,
-          choiceIndex: a.choiceIndex,
-          isCorrect: a.isCorrect,
-          score: a.score,
-        });
-      }
-    }
+    const participants = [...storedParticipants, ...restoredParticipants];
+    participants.sort((a, b) => b.totalScore - a.totalScore);
 
     return { session, participants, steps, answers: allAnswers };
   },
 });
+
+async function collectResultAnswers(
+  ctx: QueryCtx,
+  sessionId: Id<"gameSessions">,
+  steps: Doc<"gameSteps">[],
+  storedParticipants: Doc<"gameParticipants">[]
+) {
+  const sessionAnswers = await ctx.db
+    .query("participantAnswers")
+    .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
+    .collect();
+
+  if (sessionAnswers.length > 0) {
+    return {
+      answers: sessionAnswers,
+      restoredParticipants: [] as RestoredParticipant[],
+    };
+  }
+
+  return await collectLegacyResultAnswers(
+    ctx,
+    sessionId,
+    steps,
+    storedParticipants
+  );
+}
+
+async function collectLegacyResultAnswers(
+  ctx: QueryCtx,
+  sessionId: Id<"gameSessions">,
+  steps: Doc<"gameSteps">[],
+  storedParticipants: Doc<"gameParticipants">[]
+) {
+  const participantById = new Map(
+    storedParticipants.map((participant) => [participant._id, participant])
+  );
+  const scoreByMissingParticipant = new Map<Id<"gameParticipants">, number>();
+  const answers: Doc<"participantAnswers">[] = [];
+
+  for (const step of steps) {
+    if (step.type !== "quiz") {
+      continue;
+    }
+
+    const stepAnswers = await ctx.db
+      .query("participantAnswers")
+      .withIndex("by_step", (q) => q.eq("stepId", step._id))
+      .collect();
+
+    for (const answer of stepAnswers) {
+      if (
+        storedParticipants.length > 0 &&
+        !participantById.has(answer.participantId)
+      ) {
+        continue;
+      }
+
+      answers.push(answer);
+      if (!participantById.has(answer.participantId)) {
+        scoreByMissingParticipant.set(
+          answer.participantId,
+          (scoreByMissingParticipant.get(answer.participantId) ?? 0) +
+            answer.score
+        );
+      }
+    }
+  }
+
+  return {
+    answers,
+    restoredParticipants: buildRestoredParticipants(
+      sessionId,
+      scoreByMissingParticipant
+    ),
+  };
+}
+
+type RestoredParticipant = Omit<
+  Doc<"gameParticipants">,
+  "email" | "expiresAt" | "lastSeen"
+>;
+
+function buildRestoredParticipants(
+  sessionId: Id<"gameSessions">,
+  scoreByMissingParticipant: Map<Id<"gameParticipants">, number>
+): RestoredParticipant[] {
+  return Array.from(
+    scoreByMissingParticipant.entries(),
+    ([participantId, totalScore], index) => ({
+      _id: participantId,
+      _creationTime: 0,
+      sessionId,
+      name: `Archived participant ${index + 1}`,
+      participantToken: "",
+      totalScore,
+    })
+  );
+}
 
 /** Get leaderboard for a session */
 export const getLeaderboard = query({
@@ -716,6 +800,7 @@ export const submitAnswer = mutation({
 
     await ctx.db.insert("participantAnswers", {
       participantId: participant._id,
+      sessionId: args.sessionId,
       stepId: currentStep._id,
       choiceIndex: args.choiceIndex,
       isCorrect,
@@ -847,6 +932,11 @@ export const cleanupExpiredTokens = internalMutation({
       .take(100);
 
     for (const participant of expiredParticipants) {
+      const session = await ctx.db.get(participant.sessionId);
+      if (session?.status === "finished") {
+        await ctx.db.patch(participant._id, { expiresAt: undefined });
+        continue;
+      }
       await ctx.db.delete(participant._id);
     }
 
