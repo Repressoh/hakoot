@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "@/i18n/routing";
 
 interface Props {
-  resetCode: string | null;
+  resetCode?: string;
 }
 
 export function ResetPasswordForm({ resetCode }: Props) {
@@ -53,6 +53,12 @@ export function ResetPasswordForm({ resetCode }: Props) {
 
     if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
+    if (!resetCode) {
+      toast.error("This reset link is missing its verification code.");
       setLoading(false);
       return;
     }

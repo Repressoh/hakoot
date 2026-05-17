@@ -46,7 +46,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
               Enter your email and choose a new password from the secure link.
             </p>
           </div>
-          <ResetPasswordForm resetCode={params.resetCode ?? null} />
+          <ResetPasswordForm resetCode={params.resetCode} />
         </div>
 
         <p className="text-center text-muted-foreground text-sm">
