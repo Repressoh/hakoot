@@ -24,6 +24,7 @@ WORKDIR /app
 ARG NEXT_PUBLIC_CONVEX_URL
 ARG NEXT_PUBLIC_APP_URL
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ARG NEXT_PUBLIC_CONVEX_SITE_URL
 
 # Convex deploy key for CI/CD authentication (generate in Convex dashboard → Settings → Deploy Keys)
 ARG CONVEX_DEPLOY_KEY
