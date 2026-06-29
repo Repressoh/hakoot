@@ -7,8 +7,8 @@
   "scripts": {
     "scan": "deepsec scan",
     "status": "deepsec status",
-    "process": "deepsec process --agent codex --model gpt-5.5",
-    "revalidate": "deepsec revalidate --agent codex --model gpt-5.5",
+    "process": "deepsec process --agent codex --model evomap-gpt-5.5",
+    "revalidate": "deepsec revalidate --agent codex --model evomap-gpt-5.5",
     "triage": "deepsec triage",
     "export": "deepsec export",
     "metrics": "deepsec metrics",

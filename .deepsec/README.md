@@ -16,13 +16,14 @@ cp .env.example .env.local   # optional — see below
 
 **AI credentials** (only needed for `process`, `revalidate`, `triage`):
 
-This workspace is configured for the **Codex agent** with **`gpt-5.5`**
-(`defaultAgent: "codex"` in `deepsec.config.ts`; scripts pass
-`--agent codex --model gpt-5.5`).
+This workspace is configured for the **Codex agent** with **`evomap-gpt-5.5`**
+via [Evomap](https://api.evomap.ai) (`OPENAI_BASE_URL` + `OPENAI_API_KEY` in
+`.env.local`). Scripts pass `--agent codex --model evomap-gpt-5.5`.
 
 Pick one auth path in `.env.local`:
 
-- **`OPENAI_API_KEY`** — direct OpenAI API (recommended for gpt-5.5 via API)
+- **`OPENAI_API_KEY` + `OPENAI_BASE_URL`** — OpenAI-compatible API (default:
+  `https://api.openai.com/v1`; custom providers like Evomap work too)
 - **`AI_GATEWAY_API_KEY`** — [Vercel AI Gateway](https://vercel.com/ai-gateway)
   (covers Codex, Claude, and Pi)
 - **`ANTHROPIC_AUTH_TOKEN`** — use with `--agent claude` instead

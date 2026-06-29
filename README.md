@@ -201,7 +201,7 @@ at `.deepsec/` for agent-assisted vulnerability scanning.
 cd .deepsec && bun install          # once
 bun run deepsec:scan                # free regex scan
 bun run deepsec:status              # scan progress
-bun run deepsec:process             # Codex + gpt-5.5 (needs OPENAI_API_KEY or gateway)
+bun run deepsec:process             # Codex + evomap-gpt-5.5 (needs .deepsec/.env.local)
 bun run deepsec:revalidate          # optional false-positive reduction
 bun run deepsec:export              # export findings
 ```
