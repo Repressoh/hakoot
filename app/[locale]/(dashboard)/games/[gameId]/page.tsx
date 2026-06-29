@@ -66,5 +66,5 @@ export default function GameEditorPage() {
     );
   }
 
-  return <GameEditor game={game} />;
+  return <GameEditor game={game} key={game._id} />;
 }

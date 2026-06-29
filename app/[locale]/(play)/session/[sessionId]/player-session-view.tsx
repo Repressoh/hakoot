@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 const MarkdownViewer = dynamic(
@@ -22,7 +22,7 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
-import { CHOICE_SHAPES } from "@/components/session/choice-shapes";
+import { ChoiceShapeIcon } from "@/components/session/choice-shape-icon";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Badge } from "@/components/ui/badge";
@@ -120,7 +120,6 @@ function ChoiceGrid({
     <div className="grid grid-cols-2 gap-3">
       {shuffledChoices.map(({ choice, originalIndex }, displayIndex) => {
         const colorConfig = CHOICE_COLORS[displayIndex];
-        const ShapeIcon = CHOICE_SHAPES[displayIndex];
         const isDisabled = submitting || timerExpired;
         return (
           <button
@@ -138,7 +137,11 @@ function ChoiceGrid({
             onClick={() => onSubmit(originalIndex)}
             type="button"
           >
-            {ShapeIcon && <ShapeIcon className="opacity-60" size={18} />}
+            <ChoiceShapeIcon
+              className="opacity-60"
+              index={displayIndex}
+              size={18}
+            />
             <span className="text-sm leading-tight">{choice.text}</span>
           </button>
         );
@@ -223,16 +226,15 @@ function WaitingScreen({ gameTitle, participantName }: WaitingScreenProps) {
         </h1>
         <p className="text-muted-foreground">{t("play.waitingTitle")}</p>
       </div>
-      <div className="relative flex flex-col items-center gap-3">
+      <output className="relative flex flex-col items-center gap-3">
         <div
-          aria-label="Loading"
+          aria-hidden="true"
           className="size-10 animate-spin rounded-full border-4 border-border border-t-primary"
-          role="img"
         />
         <p className="font-bold font-display text-lg text-primary">
           {participantName}
         </p>
-      </div>
+      </output>
     </div>
   );
 }
@@ -377,10 +379,7 @@ function QuizStep({
 
   // Stable shuffle per (token, stepId) — recalculates only when the step changes.
   // choices is stable for a given stepId so including it doesn't cause extra recalculations.
-  const shuffledChoices = useMemo(
-    () => shuffleChoices(choices, token, stepId),
-    [choices, token, stepId]
-  );
+  const shuffledChoices = shuffleChoices(choices, token, stepId);
 
   return (
     <div className="flex-1 space-y-5">

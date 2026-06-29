@@ -33,9 +33,8 @@ export function ResetPasswordForm({ resetCode }: Props) {
       toast.success("Check your email for a password reset link.");
     } catch {
       toast.error("Could not send a reset link. Please try again.");
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }
 
   async function handleReset(e: React.FormEvent<HTMLFormElement>) {

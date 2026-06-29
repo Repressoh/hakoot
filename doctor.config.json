@@ -1,0 +1,5 @@
+{
+  "ignore": {
+    "files": [".agents/**", "messages/**", "convex/**", "components/ui/**"]
+  }
+}

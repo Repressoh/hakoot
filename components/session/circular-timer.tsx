@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -17,24 +17,22 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
   const t = useTranslations("timer");
   const startMs = stepStartedAt;
-
-  const getRemaining = useCallback(() => {
+  const [remaining, setRemaining] = useState(() => {
     const elapsed = (Date.now() - startMs) / 1000;
     return Math.max(0, timeLimitSeconds - elapsed);
-  }, [startMs, timeLimitSeconds]);
-
-  const [remaining, setRemaining] = useState(getRemaining);
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const r = getRemaining();
-      setRemaining(r);
-      if (r <= 0) {
+      const elapsed = (Date.now() - startMs) / 1000;
+      const remainingSeconds = Math.max(0, timeLimitSeconds - elapsed);
+      setRemaining(remainingSeconds);
+      if (remainingSeconds <= 0) {
         clearInterval(interval);
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [getRemaining]);
+  }, [startMs, timeLimitSeconds]);
 
   const fraction = remaining / timeLimitSeconds;
   // When expired, offset equals full circumference → circle appears "cut" (empty)

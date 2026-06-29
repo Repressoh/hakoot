@@ -4,11 +4,12 @@ import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
 import { Leaderboard } from "@/components/session/leaderboard";
+import { ParticipantJoinNotifier } from "@/components/session/participant-join-notifier";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -269,18 +270,6 @@ function HostSessionView({ data }: Props) {
     return () => clearInterval(interval);
   }, []);
 
-  // Track previous participant count for join toasts
-  const prevParticipantCount = useRef(participants.length);
-  useEffect(() => {
-    if (participants.length > prevParticipantCount.current) {
-      const newP = participants.slice(prevParticipantCount.current);
-      for (const p of newP) {
-        toast.info(`${p.name} joined!`);
-      }
-    }
-    prevParticipantCount.current = participants.length;
-  }, [participants]);
-
   // Redirect on session end
   if (status === "finished") {
     redirect(`/host/session/${session._id}/results`);
@@ -315,6 +304,7 @@ function HostSessionView({ data }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <ParticipantJoinNotifier participants={participants} />
       <header className="sticky top-0 z-40 border-border border-b bg-card/80 backdrop-blur-md">
         <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-3">
