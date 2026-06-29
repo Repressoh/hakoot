@@ -36,8 +36,6 @@ export function JoinGameForm({
   const joinByCode = useMutation(api.sessions.joinByCode);
 
   // Auto-join on mount when prefilled props are provided.
-  // loading is pre-initialized to true in this case so no setState fires synchronously.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs once on mount with prefilled props
   useEffect(() => {
     if (!(prefilledSessionId && prefilledName)) {
       return;
@@ -56,7 +54,7 @@ export function JoinGameForm({
         toast.error(err instanceof Error ? err.message : t("invalidCode"));
         setState((prev) => ({ ...prev, loading: false }));
       });
-  }, []);
+  }, [joinSession, prefilledName, prefilledSessionId, t]);
 
   if (state.redirectUrl) {
     redirect(state.redirectUrl);

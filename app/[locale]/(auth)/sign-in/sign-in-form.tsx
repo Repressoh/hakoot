@@ -91,9 +91,8 @@ export function SignInForm() {
       toast.success("Check your email for a sign-in link.");
     } catch {
       toast.error("Could not send a magic link. Please try again.");
-    } finally {
-      setMagicLinkLoading(false);
     }
+    setMagicLinkLoading(false);
   }
 
   return (

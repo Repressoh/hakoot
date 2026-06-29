@@ -28,7 +28,7 @@ export default function RootLayout({
         strategy="afterInteractive"
         type="application/ld+json"
       >
-        {JSON.stringify(schema)}
+        {JSON.stringify(schema).replace(/</g, "\\u003c")}
       </Script>
     </>
   );

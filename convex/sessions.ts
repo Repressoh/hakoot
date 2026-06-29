@@ -720,7 +720,7 @@ export const reveal = mutation({
     steps.sort((a, b) => a.order - b.order);
 
     const currentStep = steps[session.currentStepIndex];
-    if (!currentStep || currentStep.type !== "quiz") {
+    if (currentStep?.type !== "quiz") {
       return null;
     }
 
@@ -757,7 +757,7 @@ export const submitAnswer = mutation({
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId);
-    if (!session || session.status !== "in_progress") {
+    if (session?.status !== "in_progress") {
       throw new ConvexError("Session not active");
     }
 
@@ -849,7 +849,7 @@ async function getActiveQuizStep(
   steps.sort((a, b) => a.order - b.order);
 
   const currentStep = steps[session.currentStepIndex];
-  if (!currentStep || currentStep.type !== "quiz") {
+  if (currentStep?.type !== "quiz") {
     throw new ConvexError("Not a quiz step");
   }
 

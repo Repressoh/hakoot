@@ -2,7 +2,6 @@
 
 import { useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useCallback } from "react";
 import { Leaderboard } from "@/components/session/leaderboard";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
@@ -104,7 +103,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
     sessionId: sessionId as Id<"gameSessions">,
   });
 
-  const handleExportCsv = useCallback(() => {
+  const handleExportCsv = () => {
     if (!results) {
       return;
     }
@@ -124,7 +123,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
     setTimeout(() => {
       URL.revokeObjectURL(downloadUrl);
     }, 100);
-  }, [results, sessionId]);
+  };
 
   if (results === undefined) {
     return (
@@ -306,19 +305,16 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
                               </span>
                             </div>
                             <div className="h-2.5 overflow-hidden rounded-full bg-muted">
-                              <div
+                              <progress
                                 aria-label={`${Math.round(pct)}% chose ${c.text}`}
-                                aria-valuemax={100}
-                                aria-valuemin={0}
-                                aria-valuenow={pct}
-                                className={`h-full rounded-full transition-all ${
+                                className={`h-full w-full appearance-none rounded-full transition-all [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:rounded-full ${
                                   c.isCorrect
-                                    ? "bg-choice-green"
+                                    ? "bg-choice-green [&::-webkit-progress-value]:bg-choice-green"
                                     : (CHOICE_BAR_COLORS[ci] ??
-                                      "bg-muted-foreground/30")
+                                      "bg-muted-foreground/30 [&::-webkit-progress-value]:bg-muted-foreground/30")
                                 }`}
-                                role="progressbar"
-                                style={{ width: `${pct}%` }}
+                                max={100}
+                                value={pct}
                               />
                             </div>
                           </div>

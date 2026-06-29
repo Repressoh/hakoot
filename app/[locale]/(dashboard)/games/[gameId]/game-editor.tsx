@@ -3,7 +3,7 @@
 import { useMutation } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { AddStepMenu } from "@/components/dashboard/add-step-menu";
 import { Button } from "@/components/ui/button";
@@ -57,15 +57,12 @@ interface Props {
 
 export function GameEditor({ game }: Props) {
   const t = useTranslations();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [titleOverride, setTitleOverride] = useState<string>();
+  const [descriptionOverride, setDescriptionOverride] = useState<string>();
+  const title = titleOverride ?? game.title;
+  const description = descriptionOverride ?? game.description ?? "";
   const [saving, setSaving] = useState(false);
   const updateGame = useMutation(api.games.update);
-
-  useEffect(() => {
-    setTitle(game.title);
-    setDescription(game.description ?? "");
-  }, [game.description, game.title]);
 
   async function handleSave() {
     setSaving(true);
@@ -132,7 +129,7 @@ export function GameEditor({ game }: Props) {
                 className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
                 id="game-title"
                 maxLength={100}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => setTitleOverride(e.target.value)}
                 value={title}
               />
             </div>
@@ -147,7 +144,7 @@ export function GameEditor({ game }: Props) {
                 className="rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
                 id="game-desc"
                 maxLength={500}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => setDescriptionOverride(e.target.value)}
                 rows={2}
                 value={description}
               />
