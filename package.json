@@ -13,7 +13,12 @@
     "fix": "ultracite fix",
     "prepare": "lefthook install",
     "doctor": "bunx react-doctor@latest . --verbose",
-    "translate": "bun run scripts/translate.ts"
+    "translate": "bun run scripts/translate.ts",
+    "deepsec:scan": "cd .deepsec && bun run scan",
+    "deepsec:status": "cd .deepsec && bun run status",
+    "deepsec:process": "cd .deepsec && bun run process",
+    "deepsec:revalidate": "cd .deepsec && bun run revalidate",
+    "deepsec:export": "cd .deepsec && bun run export"
   },
   "dependencies": {
     "@auth/core": "0.41.1",

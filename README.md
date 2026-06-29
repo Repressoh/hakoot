@@ -192,6 +192,24 @@ messages/               # Translation files (en.json, it.json)
 lib/                    # Shared utilities
 ```
 
+## Security scanning (deepsec)
+
+This repo includes a [deepsec](https://github.com/vercel-labs/deepsec) workspace
+at `.deepsec/` for agent-assisted vulnerability scanning.
+
+```bash
+cd .deepsec && bun install          # once
+bun run deepsec:scan                # free regex scan
+bun run deepsec:status              # scan progress
+bun run deepsec:process             # AI investigation (needs API key or Claude/Codex CLI)
+bun run deepsec:revalidate          # optional false-positive reduction
+bun run deepsec:export              # export findings
+```
+
+Copy `.deepsec/.env.example` to `.deepsec/.env.local` and set
+`AI_GATEWAY_API_KEY` (or use a logged-in Claude/Codex CLI). See
+`.deepsec/README.md` for details.
+
 ## Scripts
 
 | Command            | Description                                |
@@ -202,6 +220,8 @@ lib/                    # Shared utilities
 | `bun run start`    | Start production server                    |
 | `bun run check`    | Lint and format check (Ultracite)          |
 | `bun run fix`      | Auto-fix lint and format issues            |
+| `bun run deepsec:scan` | Regex security scan (no AI cost)       |
+| `bun run deepsec:process` | AI security investigation stage       |
 
 ## License
 
@@ -209,4 +229,6 @@ Private project.
 
 ## Disclaimer
 
-This project has **not been security audited**. All code was written by AI with human project structuring. Use at your own risk — do not deploy to production with sensitive data without a proper security review.
+This project has **not been professionally security audited**. Use deepsec
+(`.deepsec/`) for ongoing scanning, but do not deploy to production with
+sensitive data without a proper security review.
