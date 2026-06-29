@@ -1,4 +1,3 @@
-// biome-ignore lint/style/useFilenamingConvention: convex's fault
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";

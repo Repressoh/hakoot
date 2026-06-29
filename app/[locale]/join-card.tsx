@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
+import { verifyTurnstileAndGetPass } from "@/lib/verify-turnstile";
 
 export function JoinCard() {
   const t = useTranslations("landing");
@@ -30,27 +31,15 @@ export function JoinCard() {
 
     setLoading(true);
     try {
-      const verifyResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/verify-turnstile`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: turnstileToken }),
-        }
+      const turnstilePassId = await verifyTurnstileAndGetPass(
+        turnstileToken,
+        "joinByCode"
       );
-
-      const verifyResult = await verifyResponse.json();
-
-      if (!verifyResult.success) {
-        toast.error("Security check failed. Please try again.");
-        setTurnstileToken(null);
-        setLoading(false);
-        return;
-      }
 
       const result = await joinByCode({
         inviteCode: code.trim(),
         name: name.trim(),
+        turnstilePassId,
       });
       localStorage.setItem(
         `participantToken_${result.sessionId}`,

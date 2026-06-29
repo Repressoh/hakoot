@@ -55,7 +55,13 @@ export function SignUpForm() {
         return;
       }
 
-      await signIn("password", { name, email, password, flow: "signUp" });
+      await signIn("password", {
+        name,
+        email,
+        password,
+        flow: "signUp",
+        turnstileToken,
+      });
       push("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "";

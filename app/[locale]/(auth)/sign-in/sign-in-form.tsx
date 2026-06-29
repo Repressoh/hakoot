@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useAction } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { api } from "@/convex/_generated/api";
 import { Link, useRouter } from "@/i18n/routing";
 
 export function SignInForm() {
@@ -16,6 +18,7 @@ export function SignInForm() {
   const tc = useTranslations("common");
   const { push } = useRouter();
   const { signIn } = useAuthActions();
+  const requestMagicLink = useAction(api.authFlows.requestMagicLink);
   const [loading, setLoading] = useState(false);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -55,7 +58,12 @@ export function SignInForm() {
         return;
       }
 
-      await signIn("password", { email, password, flow: "signIn" });
+      await signIn("password", {
+        email,
+        password,
+        flow: "signIn",
+        turnstileToken,
+      });
       await new Promise((resolve) => setTimeout(resolve, 500));
       push("/dashboard");
     } catch {
@@ -85,10 +93,20 @@ export function SignInForm() {
       return;
     }
 
+    if (!turnstileToken) {
+      toast.error("Please complete the security check");
+      return;
+    }
+
     setMagicLinkLoading(true);
     try {
-      await signIn("email", { email, redirectTo: "/dashboard" });
+      await requestMagicLink({
+        email,
+        turnstileToken,
+        redirectTo: "/dashboard",
+      });
       toast.success("Check your email for a sign-in link.");
+      setTurnstileToken(null);
     } catch {
       toast.error("Could not send a magic link. Please try again.");
     }
@@ -155,7 +173,7 @@ export function SignInForm() {
         </Button>
         <Button
           className="press-down h-11 w-full rounded-xl border-border bg-transparent text-foreground hover:bg-muted/50"
-          disabled={magicLinkLoading}
+          disabled={magicLinkLoading || !turnstileToken}
           onClick={handleMagicLink}
           type="button"
           variant="outline"

@@ -61,12 +61,12 @@ export function ClientCodeBlock({ code, language }: Props) {
       clearTimeout(debounceRef.current);
     }
 
+    let cancelled = false;
+
     debounceRef.current = setTimeout(() => {
       const safeLang: SupportedLang = isSupportedLang(language)
         ? language
         : "plaintext";
-
-      let cancelled = false;
 
       createHighlighter({
         themes: ["github-dark"],
@@ -87,13 +87,10 @@ export function ClientCodeBlock({ code, language }: Props) {
             dispatch({ type: "REJECT" });
           }
         });
-
-      return () => {
-        cancelled = true;
-      };
     }, 300);
 
     return () => {
+      cancelled = true;
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);
       }

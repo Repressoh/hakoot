@@ -1,6 +1,8 @@
 import { httpRouter } from "convex/server";
+import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 import { auth } from "./auth";
+import { verifyTurnstileToken } from "./lib/turnstile";
 
 const http = httpRouter();
 
@@ -9,7 +11,7 @@ auth.addHttpRoutes(http);
 http.route({
   path: "/verify-turnstile",
   method: "POST",
-  handler: httpAction(async (_ctx, req) => {
+  handler: httpAction(async (ctx, req) => {
     const origin = req.headers.get("origin");
     const allowedOrigins = [
       "http://localhost:3000",
@@ -19,7 +21,7 @@ http.route({
     ];
 
     const body = await req.json();
-    const { token, remoteip } = body;
+    const { token, scope } = body;
 
     if (!token) {
       return new Response(
@@ -37,14 +39,22 @@ http.route({
       );
     }
 
-    const formData = new FormData();
-    const secretKey = process.env.TURNSTILE_SECRET_KEY;
+    try {
+      await verifyTurnstileToken(token);
 
-    if (!secretKey) {
+      let passId: string | undefined;
+      if (typeof scope === "string" && scope.length > 0) {
+        passId = crypto.randomUUID();
+        await ctx.runMutation(internal.turnstilePasses.createPass, {
+          passId,
+          scope,
+        });
+      }
+
       return new Response(
-        JSON.stringify({ success: false, error: "Server configuration error" }),
+        JSON.stringify({ success: true, ...(passId ? { passId } : {}) }),
         {
-          status: 500,
+          status: 200,
           headers: {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin":
@@ -54,35 +64,6 @@ http.route({
           },
         }
       );
-    }
-
-    formData.append("secret", secretKey);
-    formData.append("response", token);
-    if (remoteip) {
-      formData.append("remoteip", remoteip);
-    }
-
-    try {
-      const result = await fetch(
-        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const outcome = await result.json();
-
-      return new Response(JSON.stringify(outcome), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin":
-            origin && allowedOrigins.includes(origin) ? origin : "",
-          "Access-Control-Allow-Methods": "POST",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-      });
     } catch {
       return new Response(
         JSON.stringify({

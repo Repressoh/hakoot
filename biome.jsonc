@@ -13,11 +13,25 @@
       "hooks/**",
       "i18n/**",
       "messages/**",
+      "convex/**",
+      "!convex/_generated",
       "proxy.ts",
       "drizzle.config.ts",
       "next.config.ts",
       "!types",
       "!.agents"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["convex/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ]
 }

@@ -114,4 +114,11 @@ export default defineSchema({
     attempts: v.number(),
     windowStart: v.number(),
   }).index("by_identifier_and_endpoint", ["identifier", "endpoint"]),
+
+  turnstilePasses: defineTable({
+    passId: v.string(),
+    scope: v.string(),
+    expiresAt: v.number(),
+    consumed: v.boolean(),
+  }).index("by_pass_id", ["passId"]),
 });

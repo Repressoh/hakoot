@@ -3,10 +3,12 @@
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 import { action } from "./_generated/server";
+import { signInviteToken } from "./lib/inviteTokens";
 
 /** Send in batches to respect Resend rate limits (10 req/s on free tier) */
 const BATCH_SIZE = 8;
 const BATCH_DELAY_MS = 1200; // ~1.2s between batches
+const MAX_INVITES_PER_CALL = 50;
 const SUPPORTED_LOCALES = new Set(["en", "it"]);
 const TRAILING_SLASHES_REGEX = /\/+$/;
 
@@ -32,6 +34,15 @@ export const sendInviteEmails = action({
   },
   handler: async (ctx, args) => {
     const locale = normalizeLocale(args.locale);
+
+    if (args.invites.length === 0) {
+      return { sent: 0, failed: 0 };
+    }
+    if (args.invites.length > MAX_INVITES_PER_CALL) {
+      throw new Error(
+        `Cannot send more than ${MAX_INVITES_PER_CALL} invites at once`
+      );
+    }
 
     // Verify session exists via query
     const sessionData = await ctx.runQuery(api.sessions.getForHost, {
@@ -104,28 +115,6 @@ export const sendInviteEmails = action({
     return { sent, failed };
   },
 });
-
-async function getKey(): Promise<CryptoKey> {
-  const secret = process.env.INVITE_HMAC_SECRET ?? "";
-  const keyMaterial = new TextEncoder().encode(secret);
-  return await crypto.subtle.importKey(
-    "raw",
-    keyMaterial,
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-}
-
-async function signInviteToken(
-  sessionId: string,
-  name: string
-): Promise<string> {
-  const key = await getKey();
-  const data = new TextEncoder().encode(`${sessionId}:${name}`);
-  const sig = await crypto.subtle.sign("HMAC", key, data);
-  return Buffer.from(sig).toString("base64url");
-}
 
 function escapeHtml(str: string): string {
   return str

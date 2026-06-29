@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { verifyTurnstileAndGetPass } from "@/lib/verify-turnstile";
 
 interface Props {
   prefilledCode?: string;
@@ -28,21 +29,21 @@ export function JoinGameForm({
   const [state, setState] = useState({
     code: prefilledCode ?? "",
     name: prefilledName ?? "",
-    loading: !!(prefilledSessionId && prefilledName),
+    loading: !!(prefilledSessionId && prefilledName && prefilledToken),
     redirectUrl: null as string | null,
     turnstileToken: null as string | null,
   });
   const joinSession = useMutation(api.sessions.join);
   const joinByCode = useMutation(api.sessions.joinByCode);
 
-  // Auto-join on mount when prefilled props are provided.
   useEffect(() => {
-    if (!(prefilledSessionId && prefilledName)) {
+    if (!(prefilledSessionId && prefilledName && prefilledToken)) {
       return;
     }
     const sessionId = prefilledSessionId as Id<"gameSessions">;
     const joinName = prefilledName;
-    joinSession({ sessionId, name: joinName })
+    const inviteToken = prefilledToken;
+    joinSession({ sessionId, name: joinName, inviteToken })
       .then((result) => {
         localStorage.setItem(
           `participantToken_${sessionId}`,
@@ -54,7 +55,7 @@ export function JoinGameForm({
         toast.error(err instanceof Error ? err.message : t("invalidCode"));
         setState((prev) => ({ ...prev, loading: false }));
       });
-  }, [joinSession, prefilledName, prefilledSessionId, t]);
+  }, [joinSession, prefilledName, prefilledSessionId, prefilledToken, t]);
 
   if (state.redirectUrl) {
     redirect(state.redirectUrl);
@@ -70,26 +71,15 @@ export function JoinGameForm({
 
     setState((prev) => ({ ...prev, loading: true }));
     try {
-      const verifyResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/verify-turnstile`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: state.turnstileToken }),
-        }
+      const turnstilePassId = await verifyTurnstileAndGetPass(
+        state.turnstileToken,
+        "joinByCode"
       );
-
-      const verifyResult = await verifyResponse.json();
-
-      if (!verifyResult.success) {
-        toast.error("Security check failed. Please try again.");
-        setState((prev) => ({ ...prev, turnstileToken: null, loading: false }));
-        return;
-      }
 
       const result = await joinByCode({
         inviteCode: state.code.trim(),
         name: state.name.trim(),
+        turnstilePassId,
       });
       localStorage.setItem(
         `participantToken_${result.sessionId}`,
@@ -102,7 +92,7 @@ export function JoinGameForm({
       }));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("invalidCode"));
-      setState((prev) => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false, turnstileToken: null }));
     }
   }
 
@@ -134,7 +124,7 @@ export function JoinGameForm({
           setState((prev) => ({ ...prev, name: e.target.value }))
         }
         placeholder={t("namePlaceholder")}
-        readOnly={!!prefilledName}
+        readOnly={!!prefilledName && !!prefilledToken}
         required
         value={state.name}
       />

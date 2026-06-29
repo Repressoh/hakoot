@@ -1,7 +1,7 @@
 import Google from "@auth/core/providers/google";
 import { Email } from "@convex-dev/auth/providers/Email";
-import { Password } from "@convex-dev/auth/providers/Password";
 import { convexAuth } from "@convex-dev/auth/server";
+import { PasswordWithTurnstile, passwordCrypto } from "./lib/passwordAuthorize";
 
 const AUTH_EMAIL_FROM =
   process.env.RESEND_FROM_EMAIL ?? "Hakoot <onboarding@resend.dev>";
@@ -47,8 +47,13 @@ const passwordResetEmail = Email({
 
 export const { auth, signIn, signOut, store } = convexAuth({
   providers: [
-    Password({
+    PasswordWithTurnstile({
       reset: passwordResetEmail,
+      profile: (profileParams) => ({
+        email: profileParams.email as string,
+        ...(profileParams.name ? { name: profileParams.name as string } : {}),
+      }),
+      crypto: passwordCrypto,
     }),
     magicLinkEmail,
     Google,

@@ -3,14 +3,15 @@ import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { verifyInviteToken } from "./lib/inviteTokens";
+import { assertTurnstilePass } from "./turnstilePasses";
 
-/** Generate a random alphanumeric invite code */
+/** Generate a cryptographically random invite code */
 function generateInviteCode(length = 6): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  return Array.from(
-    { length },
-    () => chars[Math.floor(Math.random() * chars.length)]
-  ).join("");
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => chars[byte % chars.length]).join("");
 }
 
 /** Generate a cryptographically random token */
@@ -494,6 +495,8 @@ export const join = mutation({
     name: v.string(),
     email: v.optional(v.string()),
     existingToken: v.optional(v.string()),
+    inviteToken: v.optional(v.string()),
+    turnstilePassId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     // Use session ID only to prevent bypass via name variation
@@ -533,6 +536,21 @@ export const join = mutation({
       throw new ConvexError("Invalid name");
     }
 
+    if (args.inviteToken) {
+      const validInvite = await verifyInviteToken(
+        args.sessionId,
+        sanitizedName,
+        args.inviteToken
+      );
+      if (!validInvite) {
+        throw new ConvexError("Invalid or expired invite link");
+      }
+    } else if (args.turnstilePassId) {
+      await assertTurnstilePass(ctx, args.turnstilePassId, "joinSession");
+    } else {
+      throw new ConvexError("Invite verification required");
+    }
+
     const token = generateToken();
     const expiresAt = Date.now() + TOKEN_EXPIRATION_MS;
 
@@ -556,8 +574,11 @@ export const joinByCode = mutation({
     inviteCode: v.string(),
     name: v.string(),
     existingToken: v.optional(v.string()),
+    turnstilePassId: v.string(),
   },
   handler: async (ctx, args) => {
+    await assertTurnstilePass(ctx, args.turnstilePassId, "joinByCode");
+
     const sanitizedCode = args.inviteCode.toUpperCase().trim();
     const identifier = `code:${sanitizedCode}`;
     await checkRateLimit(ctx, identifier, "joinByCode");

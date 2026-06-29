@@ -207,8 +207,7 @@ bun run deepsec:export              # export findings
 ```
 
 Copy `.deepsec/.env.example` to `.deepsec/.env.local` and set
-`OPENAI_API_KEY` for gpt-5.5 via the OpenAI API, or `AI_GATEWAY_API_KEY`
-for Vercel AI Gateway. deepsec does not integrate with Cursor's agent API.
+`OPENAI_API_KEY` + `OPENAI_BASE_URL` for your OpenAI-compatible provider.
 See `.deepsec/README.md` for details.
 
 ## Scripts
