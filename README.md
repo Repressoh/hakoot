@@ -201,14 +201,15 @@ at `.deepsec/` for agent-assisted vulnerability scanning.
 cd .deepsec && bun install          # once
 bun run deepsec:scan                # free regex scan
 bun run deepsec:status              # scan progress
-bun run deepsec:process             # AI investigation (needs API key or Claude/Codex CLI)
+bun run deepsec:process             # Codex + gpt-5.5 (needs OPENAI_API_KEY or gateway)
 bun run deepsec:revalidate          # optional false-positive reduction
 bun run deepsec:export              # export findings
 ```
 
 Copy `.deepsec/.env.example` to `.deepsec/.env.local` and set
-`AI_GATEWAY_API_KEY` (or use a logged-in Claude/Codex CLI). See
-`.deepsec/README.md` for details.
+`OPENAI_API_KEY` for gpt-5.5 via the OpenAI API, or `AI_GATEWAY_API_KEY`
+for Vercel AI Gateway. deepsec does not integrate with Cursor's agent API.
+See `.deepsec/README.md` for details.
 
 ## Scripts
 

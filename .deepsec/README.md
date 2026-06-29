@@ -16,9 +16,21 @@ cp .env.example .env.local   # optional — see below
 
 **AI credentials** (only needed for `process`, `revalidate`, `triage`):
 
-- Set `AI_GATEWAY_API_KEY` in `.env.local` ([Vercel AI Gateway](https://vercel.com/ai-gateway)), or
-- Set `ANTHROPIC_AUTH_TOKEN` + `ANTHROPIC_BASE_URL`, or
-- Use a logged-in `claude` / `codex` CLI on this machine (auto-detected).
+This workspace is configured for the **Codex agent** with **`gpt-5.5`**
+(`defaultAgent: "codex"` in `deepsec.config.ts`; scripts pass
+`--agent codex --model gpt-5.5`).
+
+Pick one auth path in `.env.local`:
+
+- **`OPENAI_API_KEY`** — direct OpenAI API (recommended for gpt-5.5 via API)
+- **`AI_GATEWAY_API_KEY`** — [Vercel AI Gateway](https://vercel.com/ai-gateway)
+  (covers Codex, Claude, and Pi)
+- **`ANTHROPIC_AUTH_TOKEN`** — use with `--agent claude` instead
+- Logged-in **`codex`** / **`claude`** CLI on this machine (auto-detected)
+
+**Cursor agent:** deepsec has no Cursor Cloud Agent backend. Cursor's API
+is separate from deepsec; use Codex + `gpt-5.5` above for the same model
+through OpenAI (or a gateway).
 
 `scan` is free (regex only) and needs no API key.
 
