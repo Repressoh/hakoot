@@ -26,7 +26,9 @@ Pick one auth path in `.env.local`:
 - **`AI_GATEWAY_API_KEY`** — [Vercel AI Gateway](https://vercel.com/ai-gateway)
   (covers Codex, Claude, and Pi)
 - **`ANTHROPIC_AUTH_TOKEN`** — use with `--agent claude` instead
-- Logged-in **`codex`** / **`claude`** CLI on this machine (auto-detected)
+- Logged-in **`codex`** / **`claude`** CLI on this machine (auto-detected).
+  Run `bun run codex-login` and complete the device flow at
+  https://auth.openai.com/codex/device
 
 **Cursor agent:** deepsec has no Cursor Cloud Agent backend. Cursor's API
 is separate from deepsec; use Codex + `gpt-5.5` above for the same model
