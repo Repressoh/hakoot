@@ -98,6 +98,10 @@ export const listForGame = query({
   },
 });
 
+/**
+ * Session, game, steps and participants for the session's host. In the lobby, only players seen in
+ * the last 15 seconds are listed.
+ */
 export const getForHost = query({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -137,6 +141,7 @@ export const getForHost = query({
   },
 });
 
+/** Look up a session that can still be joined (not finished) by its invite code. */
 export const getByInviteCode = query({
   args: { code: v.string() },
   handler: async (ctx, args) => {
@@ -374,6 +379,10 @@ async function collectResultAnswers(
   );
 }
 
+/**
+ * Results fallback for older sessions whose answers have no session id: gather the quiz answers by
+ * step and total the scores of participants that no longer exist.
+ */
 async function collectLegacyResultAnswers(
   ctx: QueryCtx,
   sessionId: Id<"gameSessions">,
@@ -431,6 +440,9 @@ type RestoredParticipant = Omit<
   "email" | "expiresAt" | "lastSeen"
 >;
 
+/**
+ * Placeholder "Archived participant N" rows so deleted participants still appear in the results.
+ */
 function buildRestoredParticipants(
   sessionId: Id<"gameSessions">,
   scoreByMissingParticipant: Map<Id<"gameParticipants">, number>
@@ -469,6 +481,9 @@ export const getLeaderboard = query({
 
 // ─── Mutations ──────────────────────────────────────────────────────────
 
+/**
+ * Open a new session (in the lobby, with a fresh invite code) for one of the current user's games.
+ */
 export const create = mutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
@@ -495,6 +510,7 @@ export const create = mutation({
   },
 });
 
+/** Join a session by id, or rejoin with an existing participant token. Rate-limited per session. */
 export const join = mutation({
   args: {
     email: v.optional(v.string()),
@@ -642,6 +658,10 @@ export const heartbeat = mutation({
 /** Stale threshold: participants unseen for this long are removed in lobby */
 const STALE_THRESHOLD_MS = 15_000; // 15 seconds
 
+/**
+ * Host moves to the next step, or finishes after the last one. Starting from the lobby removes
+ * stale players; timed quizzes get a 10-second reading phase.
+ */
 export const advance = mutation({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -702,6 +722,10 @@ export const advance = mutation({
   },
 });
 
+/**
+ * Host reveals the current quiz answer and adds this step's scores to the totals. Safe to call
+ * twice.
+ */
 export const reveal = mutation({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -746,6 +770,10 @@ export const reveal = mutation({
   },
 });
 
+/**
+ * Record and score a participant's answer to the current quiz step; reveals automatically once
+ * everyone has answered.
+ */
 export const submitAnswer = mutation({
   args: {
     choiceIndex: v.number(),
@@ -832,6 +860,7 @@ export const submitAnswer = mutation({
   },
 });
 
+/** The session's current step; throws if it is not a quiz. */
 async function getActiveQuizStep(
   ctx: MutationCtx,
   gameId: Id<"games">,
@@ -853,6 +882,7 @@ async function getActiveQuizStep(
   return currentStep;
 }
 
+/** Throws if the answer was already revealed or the reading phase has not ended yet. */
 function assertAnsweringOpen(session: {
   answerRevealed: boolean;
   stepStartedAt?: number;
@@ -866,6 +896,10 @@ function assertAnsweringOpen(session: {
   }
 }
 
+/**
+ * Add each participant's score for `stepId` to their total (never below 0) and mark the answer
+ * revealed.
+ */
 async function applyStepScoresAndReveal(
   ctx: MutationCtx,
   sessionId: Id<"gameSessions">,

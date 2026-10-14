@@ -12,6 +12,10 @@ interface Props {
   resetCode?: string;
 }
 
+/**
+ * Password reset form: requests a reset email, or sets a new password when opened from that email's
+ * link (`resetCode`).
+ */
 export function ResetPasswordForm({ resetCode }: Props) {
   const { push } = useRouter();
   const { signIn } = useAuthActions();

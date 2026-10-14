@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+/** Sitemap of the public, localized pages. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://dev.hakoot.albertocaserta.it";
 

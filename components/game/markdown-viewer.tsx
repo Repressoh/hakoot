@@ -9,6 +9,10 @@ interface Props {
   content: string;
 }
 
+/**
+ * Renders user-authored markdown. Raw HTML is allowed but sanitized (GitHub schema) to block
+ * scripts and other injected markup.
+ */
 export function MarkdownViewer({ content, className }: Props) {
   return (
     <div

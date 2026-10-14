@@ -21,6 +21,7 @@ const codeBlockValidator = v.object({
   language: v.string(),
 });
 
+/** Throws unless the current user owns `gameId`; returns the game and the user id. */
 async function requireGameOwner(
   ctx: QueryCtx | MutationCtx,
   gameId: Id<"games">
@@ -58,6 +59,7 @@ export const get = query({
   },
 });
 
+/** Append a theory step to one of the current user's games. */
 export const createTheory = mutation({
   args: {
     codeBlock: v.optional(codeBlockValidator),
@@ -89,6 +91,7 @@ export const createTheory = mutation({
   },
 });
 
+/** Append a quiz step to one of the current user's games. */
 export const createQuiz = mutation({
   args: {
     choices: v.optional(
@@ -132,6 +135,7 @@ export const createQuiz = mutation({
   },
 });
 
+/** Update a theory step's markdown and code block (`codeBlock: null` removes it). */
 export const updateTheory = mutation({
   args: {
     codeBlock: v.optional(v.union(codeBlockValidator, v.null())),
@@ -159,6 +163,10 @@ export const updateTheory = mutation({
   },
 });
 
+/**
+ * Update a quiz step's question, choices and time limit (`timeLimitSeconds: null` removes the
+ * limit).
+ */
 export const updateQuiz = mutation({
   args: {
     choices: v.optional(
@@ -229,6 +237,7 @@ export const remove = mutation({
   },
 });
 
+/** Set the order of a game's steps to match `orderedIds`. */
 export const reorder = mutation({
   args: {
     gameId: v.id("games"),
@@ -246,6 +255,7 @@ export const reorder = mutation({
   },
 });
 
+/** Swap a step with its neighbor above or below. */
 export const move = mutation({
   args: {
     direction: v.union(v.literal("up"), v.literal("down")),

@@ -8,6 +8,7 @@ interface TurnstileWidgetProps {
   onSuccess: (token: string) => void;
 }
 
+/** Cloudflare Turnstile challenge; renders nothing if the site key is not configured. */
 export function TurnstileWidget({
   onSuccess,
   onError,

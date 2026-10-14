@@ -72,6 +72,7 @@ function DashboardSkeleton() {
   );
 }
 
+/** Dashboard shell for the signed-in user; shows a skeleton until the viewer has loaded. */
 function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const viewer = useQuery(api.users.viewer);
 

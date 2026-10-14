@@ -120,6 +120,10 @@ type TheoryFormAction =
       value: string;
     };
 
+/**
+ * State transitions for the theory step form: markdown, the optional code block and its
+ * annotations.
+ */
 function theoryFormReducer(
   state: TheoryFormState,
   action: TheoryFormAction
@@ -163,6 +167,7 @@ function theoryFormReducer(
   }
 }
 
+/** Editor for a theory step's markdown content and optional annotated code block. */
 export function TheoryStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateTheory = useMutation(api.steps.updateTheory);

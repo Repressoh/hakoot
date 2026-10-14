@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
       "sonner",
     ],
   },
+  /** Security headers (HSTS, CSP, framing, referrer and permissions policies) for every route. */
   async headers() {
     return [
       {

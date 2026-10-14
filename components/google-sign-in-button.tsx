@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
+/** "Continue with Google" button that starts the Google OAuth sign-in. */
 export function GoogleSignInButton() {
   const t = useTranslations("auth");
   const { signIn } = useAuthActions();

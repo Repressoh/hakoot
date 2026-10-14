@@ -14,6 +14,7 @@ const STROKE_WIDTH = 6;
 const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
+/** Circular countdown that empties as the step's time limit runs out. */
 export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
   const t = useTranslations("timer");
   const startMs = stepStartedAt;

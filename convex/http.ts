@@ -28,6 +28,7 @@ function corsHeaders(origin: string | null): Record<string, string> {
   return headers;
 }
 
+/** JSON response with the CORS headers for `origin`. */
 function jsonResponse(
   origin: string | null,
   body: unknown,

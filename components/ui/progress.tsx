@@ -5,6 +5,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/** Horizontal progress bar; `value` is a percentage (0-100). */
 function Progress({
   className,
   value,

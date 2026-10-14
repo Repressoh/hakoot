@@ -240,6 +240,7 @@ async function translateString(
   }
 }
 
+/** Translate every string in `obj`, keeping existing translations from `existing` where present. */
 async function translateObject(
   obj: TranslationValue,
   targetLang: Language,
@@ -281,6 +282,7 @@ async function translateObject(
   return obj;
 }
 
+/** Map over `items` with at most `concurrency` calls in flight, keeping results in input order. */
 async function mapLimit<T, R>(
   items: T[],
   concurrency: number,
@@ -358,6 +360,7 @@ async function translateLanguage(
   return { code: targetLang.code, status: "updated" };
 }
 
+/** Translate the source messages file into every target language and print a summary. */
 async function main() {
   const messagesDir = join(process.cwd(), "messages");
   const sourceFile = join(messagesDir, `${SOURCE_LANG}.json`);

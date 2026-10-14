@@ -10,6 +10,9 @@ interface Props {
   sessionId: string;
 }
 
+/**
+ * Session invite code with a copy button; `large` is the prominent version for the host's lobby.
+ */
 export function InviteCodeDisplay({ code, sessionId, large }: Props) {
   const t = useTranslations("session");
   const [copied, setCopied] = useState(false);

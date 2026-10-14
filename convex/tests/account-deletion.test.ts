@@ -7,6 +7,7 @@ import schema from "../schema";
 
 const modules = import.meta.glob("../**/*.ts");
 
+/** A fresh in-memory Convex backend for one test. */
 function newTest() {
   return convexTest(schema, modules);
 }
@@ -118,6 +119,7 @@ async function seedUser(t: TestConvex, label: string) {
   });
 }
 
+/** Row count of every table that can hold user data. */
 async function countRows(t: TestConvex) {
   return await t.run(async (ctx) => {
     const counts = await Promise.all(

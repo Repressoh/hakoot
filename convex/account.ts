@@ -55,6 +55,7 @@ export const getUserByEmail = internalQuery({
       .first(),
 });
 
+/** Set the new email on the user and on their password account. */
 export const updateUserEmail = internalMutation({
   args: {
     accountId: v.id("authAccounts"),
@@ -67,6 +68,10 @@ export const updateUserEmail = internalMutation({
   },
 });
 
+/**
+ * Delete everything the user owns: games (one scheduled mutation each), email lists, sign-in codes,
+ * auth accounts and the user.
+ */
 export const deleteAllData = internalMutation({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {

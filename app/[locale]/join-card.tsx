@@ -11,6 +11,7 @@ import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 
+/** Landing-page card for joining a game with an invite code and a name, guarded by Turnstile. */
 export function JoinCard() {
   const t = useTranslations("landing");
   const tj = useTranslations("join");

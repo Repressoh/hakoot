@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { JoinCard } from "./join-card";
 
+/** Localized title and description for the landing page. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("landing");
   return {
@@ -27,6 +28,7 @@ const FEATURE_ICONS = [
   { color: "text-primary", icon: FlashIcon },
 ] as const;
 
+/** Public landing page: hero with the join card, features, how it works and a call to action. */
 export default async function LandingPage() {
   const t = await getTranslations();
 

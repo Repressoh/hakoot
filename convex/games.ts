@@ -128,6 +128,7 @@ export const getWithSteps = query({
   },
 });
 
+/** Create a game owned by the current user. */
 export const create = mutation({
   args: {
     description: v.optional(v.string()),
@@ -155,6 +156,7 @@ export const create = mutation({
   },
 });
 
+/** Update the title and/or description of one of the current user's games. */
 export const update = mutation({
   args: {
     description: v.optional(v.string()),
@@ -189,6 +191,7 @@ export const update = mutation({
   },
 });
 
+/** Delete one of the current user's games with its steps, sessions, participants and answers. */
 export const remove = mutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {

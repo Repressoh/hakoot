@@ -76,6 +76,7 @@ interface Props {
   index?: number;
 }
 
+/** Dashboard card for one game, with links to its editor and sessions and a confirmed delete. */
 export function GameCard({ game, index = 0 }: Props) {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");

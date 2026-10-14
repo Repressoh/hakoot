@@ -19,6 +19,7 @@ interface Props {
   gameId: Id<"games">;
 }
 
+/** Menu that adds a theory or quiz step to the game and opens its editor. */
 export function AddStepMenu({ gameId }: Props) {
   const t = useTranslations("gameEditor");
   const { push } = useRouter();

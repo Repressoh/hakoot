@@ -32,6 +32,10 @@ function normalizeLocale(locale?: string): string {
   return locale && SUPPORTED_LOCALES.has(locale) ? locale : "en";
 }
 
+/**
+ * Email signed join links for a session the caller hosts, in batches. Returns how many were sent
+ * and how many failed.
+ */
 export const sendInviteEmails = action({
   args: {
     gameId: v.id("games"),
@@ -101,6 +105,7 @@ export const sendInviteEmails = action({
   },
 });
 
+/** HMAC-SHA256 key for signing invite links, from `INVITE_HMAC_SECRET`. */
 async function getKey(): Promise<CryptoKey> {
   const secret = process.env.INVITE_HMAC_SECRET ?? "";
   const keyMaterial = new TextEncoder().encode(secret);

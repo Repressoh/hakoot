@@ -35,6 +35,7 @@ export const list = query({
   },
 });
 
+/** One of the current user's email lists with its entries, or null if it is not theirs. */
 export const getWithEntries = query({
   args: { listId: v.id("emailLists") },
   handler: async (ctx, args) => {
@@ -57,6 +58,7 @@ export const getWithEntries = query({
   },
 });
 
+/** All of the current user's email lists, each with its entries. */
 export const listWithEntries = query({
   args: {},
   handler: async (ctx) => {
@@ -85,6 +87,7 @@ export const listWithEntries = query({
 
 // ─── Mutations ─────────────────────────────────────────────────────────
 
+/** Create an empty email list for the current user. */
 export const create = mutation({
   args: { title: v.string() },
   handler: async (ctx, args) => {
@@ -108,6 +111,7 @@ export const create = mutation({
   },
 });
 
+/** Rename one of the current user's email lists. */
 export const rename = mutation({
   args: { listId: v.id("emailLists"), title: v.string() },
   handler: async (ctx, args) => {
@@ -125,6 +129,7 @@ export const rename = mutation({
   },
 });
 
+/** Delete one of the current user's email lists and its entries. */
 export const remove = mutation({
   args: { listId: v.id("emailLists") },
   handler: async (ctx, args) => {
@@ -142,6 +147,7 @@ export const remove = mutation({
   },
 });
 
+/** Add a name and email address to one of the current user's lists. */
 export const addEntry = mutation({
   args: {
     email: v.string(),
@@ -167,6 +173,7 @@ export const addEntry = mutation({
   },
 });
 
+/** Edit the name and email address of an entry in one of the current user's lists. */
 export const updateEntry = mutation({
   args: {
     email: v.string(),
@@ -196,6 +203,7 @@ export const updateEntry = mutation({
   },
 });
 
+/** Remove an entry from one of the current user's lists. */
 export const removeEntry = mutation({
   args: { entryId: v.id("emailListEntries") },
   handler: async (ctx, args) => {

@@ -41,6 +41,9 @@ const buttonVariants = cva(
   }
 );
 
+/**
+ * Button with the design-system variants and sizes; `asChild` renders the child element instead.
+ */
 function Button({
   className,
   variant = "default",

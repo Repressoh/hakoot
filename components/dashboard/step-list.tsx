@@ -223,6 +223,7 @@ function SortableStepItem({
   );
 }
 
+/** A game's steps in order, with drag-and-drop reordering, move up/down and delete. */
 export function StepList({ gameId, steps }: Props) {
   const t = useTranslations("gameEditor");
   const removeStep = useMutation(api.steps.remove);

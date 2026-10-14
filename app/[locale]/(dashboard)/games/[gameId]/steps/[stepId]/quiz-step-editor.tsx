@@ -30,6 +30,7 @@ interface Props {
   step: Step;
 }
 
+/** Editor for a quiz step's question, answer choices and time limit. */
 export function QuizStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateQuiz = useMutation(api.steps.updateQuiz);

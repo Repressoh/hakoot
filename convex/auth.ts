@@ -12,6 +12,7 @@ const magicLinkEmail = Email({
   id: "email",
   maxAge: 60 * 30,
   name: "Email",
+  /** Email a magic sign-in link. */
   async sendVerificationRequest({ identifier, url }) {
     await sendAuthEmail({
       body: "Use this secure link to sign in to your Hakoot host account.",
@@ -29,6 +30,7 @@ const passwordResetEmail = Email({
   id: "password-reset",
   maxAge: 60 * 30,
   name: "Password reset",
+  /** Email a password reset link that carries the code as `resetCode`. */
   async sendVerificationRequest({ identifier, token, url }) {
     const resetUrl = new URL(url);
     resetUrl.searchParams.delete("code");
@@ -134,6 +136,7 @@ function isVerifiedEmailFlow(args: {
   return Boolean(args.profile.email) && shouldLinkExistingEmail(args);
 }
 
+/** Send a sign-in or password-reset email with one call-to-action button, via the Resend API. */
 async function sendAuthEmail({
   to,
   subject,

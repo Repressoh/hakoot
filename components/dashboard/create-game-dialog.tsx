@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
 
+/** Dialog for creating a game; opens its editor on success. */
 export function CreateGameDialog() {
   const t = useTranslations();
   const { push } = useRouter();

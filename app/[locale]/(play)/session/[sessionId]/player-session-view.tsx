@@ -110,6 +110,7 @@ interface ChoiceGridProps {
   timerExpired: boolean;
 }
 
+/** Grid of answer buttons for a quiz step; disabled while submitting or once time is up. */
 function ChoiceGrid({
   shuffledChoices,
   submitting,
@@ -297,6 +298,7 @@ interface LeaderboardPanelProps {
   participantName: string;
 }
 
+/** Leaderboard shown between steps, with the player's result for the last question. */
 function LeaderboardPanel({
   entries,
   currentAnswer,
@@ -357,6 +359,7 @@ interface QuizStepProps {
   token: string;
 }
 
+/** Countdown for the answer window; hidden during the reading phase. */
 function QuizTimer({
   hidden,
   stepStartedAt,
@@ -379,6 +382,7 @@ function QuizTimer({
   );
 }
 
+/** Seconds left in the reading phase before answers open. */
 function ReadingCountdown({ secondsLeft }: { secondsLeft: number }) {
   return (
     <div className="flex justify-center">
@@ -396,6 +400,7 @@ function ReadingCountdown({ secondsLeft }: { secondsLeft: number }) {
   );
 }
 
+/** Announces whether the player's answer was correct and the points earned. */
 function AnswerResult({ currentAnswer }: { currentAnswer: CurrentAnswer }) {
   const t = useTranslations();
 
@@ -426,6 +431,10 @@ function AnswerResult({ currentAnswer }: { currentAnswer: CurrentAnswer }) {
   );
 }
 
+/**
+ * A quiz step for the player: question, reading countdown or timer, answer choices and the result
+ * once revealed.
+ */
 function QuizStep({
   question,
   choices,
@@ -535,6 +544,10 @@ function useReadingPhase(state: PlayerState | null | undefined): {
   return { isReading: true, readingSecondsLeft: Math.ceil(remaining / 1000) };
 }
 
+/**
+ * Whether the current quiz step's time limit has passed. Schedules a single timeout at the deadline
+ * instead of polling.
+ */
 function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
   const step = state?.currentStep;
   const stepStartedAt = state?.session.stepStartedAt;
@@ -579,6 +592,10 @@ function useHeartbeat(token: string | null): void {
   }, [token, heartbeatMut]);
 }
 
+/**
+ * Returns `[submitting, submitAnswer]`; `submitAnswer` does nothing once the player has answered or
+ * time is up.
+ */
 function useSubmitAnswer(
   sessionId: string,
   token: string | null,
@@ -645,6 +662,10 @@ interface SessionContentProps {
   token: string;
 }
 
+/**
+ * Player screen during a session: header with name and score, then the current step or the
+ * leaderboard.
+ */
 function SessionContent({
   answerRevealed,
   correctIndex,
@@ -734,6 +755,7 @@ function SessionContent({
   );
 }
 
+/** Player view of a live session, identified by the participant token saved in localStorage. */
 export function PlayerSessionView({ sessionId }: Props) {
   const t = useTranslations();
 

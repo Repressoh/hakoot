@@ -136,6 +136,7 @@ function GameDetailsForm({
   );
 }
 
+/** Game editor page: breadcrumb, editable title and description, and the list of steps. */
 export function GameEditor({ game }: Props) {
   const t = useTranslations();
 

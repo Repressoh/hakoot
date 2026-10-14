@@ -50,6 +50,7 @@ const statusConfig: Record<
   },
 };
 
+/** Lists a game's sessions (with invite codes and email invites) and starts new ones. */
 export function SessionManager({ game, sessions }: Props) {
   const t = useTranslations("session");
   const tNav = useTranslations("nav");

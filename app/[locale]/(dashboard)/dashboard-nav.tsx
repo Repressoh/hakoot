@@ -18,6 +18,7 @@ interface Props {
   user: { name: string; email: string; image: string | null };
 }
 
+/** Dashboard header with navigation links and the signed-in user's menu (including sign-out). */
 export function DashboardNav({ user }: Props) {
   const t = useTranslations();
   const { push } = useRouter();

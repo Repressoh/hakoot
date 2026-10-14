@@ -18,6 +18,7 @@ interface Props {
   games: Game[];
 }
 
+/** Grid of the user's games, or an empty state when there are none. */
 export function GameList({ games }: Props) {
   const t = useTranslations("dashboard");
 

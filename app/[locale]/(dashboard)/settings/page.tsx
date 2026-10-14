@@ -24,6 +24,10 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
 
+/**
+ * Account settings: linked sign-in methods, email and password changes (password accounts only) and
+ * account deletion.
+ */
 export default function AccountSettingsPage() {
   const t = useTranslations("settings");
 
@@ -84,6 +88,7 @@ export default function AccountSettingsPage() {
   );
 }
 
+/** Form to change the account email, confirmed with the current password. */
 function ChangeEmailSection({ email }: { email?: string }) {
   const t = useTranslations("settings");
   const tc = useTranslations("common");
@@ -179,6 +184,7 @@ function ChangeEmailSection({ email }: { email?: string }) {
   );
 }
 
+/** Form to change the password; requires the current password and a matching confirmation. */
 function ChangePasswordSection() {
   const t = useTranslations("settings");
   const tc = useTranslations("common");
@@ -303,6 +309,7 @@ function ChangePasswordSection() {
   );
 }
 
+/** Permanently deletes the account and all its data after confirmation, then signs out. */
 function DeleteAccountSection() {
   const t = useTranslations("settings");
   const tc = useTranslations("common");

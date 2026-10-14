@@ -29,6 +29,7 @@ function mockSiteverify(respond: () => Response): FormData[] {
   return received;
 }
 
+/** POST `body` to /verify-turnstile as if sent from `origin`. */
 function postToken(body: string, origin: string) {
   const t = convexTest(schema, modules);
   return t.fetch("/verify-turnstile", {

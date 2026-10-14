@@ -31,6 +31,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 
 // ─── Create list dialog ────────────────────────────────────────────────
 
+/** Dialog for creating a new, empty email list. */
 function CreateListDialog() {
   const t = useTranslations("emailLists");
   const [open, setOpen] = useState(false);
@@ -123,6 +124,7 @@ function CreateListDialog() {
 
 // ─── Add entry form ─────────────────────────────────────────────────────
 
+/** Inline form that adds a name and email address to the list `listId`. */
 function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
   const t = useTranslations("emailLists");
   const addEntry = useMutation(api.emailLists.addEntry);
@@ -175,6 +177,10 @@ function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
 
 // ─── Single list card ──────────────────────────────────────────────────
 
+/**
+ * Expandable card for one email list: its entries, plus controls to add or remove entries and
+ * delete the list.
+ */
 function EmailListCard({
   list,
 }: {

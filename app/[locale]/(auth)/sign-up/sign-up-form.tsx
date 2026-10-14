@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from "@/i18n/routing";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 
+/** Host sign-up with name, email and password, guarded by Turnstile. */
 export function SignUpForm() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");

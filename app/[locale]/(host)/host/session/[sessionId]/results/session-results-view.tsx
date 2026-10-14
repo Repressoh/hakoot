@@ -98,6 +98,7 @@ function buildCsv(
   return lines.join("\n");
 }
 
+/** Results of a finished session: final leaderboard, per-question breakdown and CSV export. */
 export function SessionResultsView({ sessionId }: { sessionId: string }) {
   const t = useTranslations("results");
   const results = useQuery(api.sessions.getResults, {

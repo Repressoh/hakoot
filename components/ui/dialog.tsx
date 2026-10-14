@@ -47,6 +47,7 @@ function DialogOverlay({
   );
 }
 
+/** Dialog panel with its overlay; shows a close button unless `showCloseButton` is false. */
 function DialogContent({
   className,
   children,
@@ -94,6 +95,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Dialog footer for action buttons, with an optional close button. */
 function _DialogFooter({
   className,
   showCloseButton = false,

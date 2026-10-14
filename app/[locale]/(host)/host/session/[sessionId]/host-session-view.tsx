@@ -103,6 +103,9 @@ interface StepContentProps {
   step: StepDoc;
 }
 
+/**
+ * The current step as the host sees it: theory content, or the quiz question with answer progress.
+ */
 function StepContent({
   step,
   answerRevealed,
@@ -192,6 +195,7 @@ interface ParticipantsPanelProps {
   participants: ParticipantDoc[];
 }
 
+/** Panel listing the session's participants, with a count. */
 function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
   const t = useTranslations();
   const count = participants.length;
@@ -237,6 +241,7 @@ interface WaitingRoomProps {
   session: SessionDoc;
 }
 
+/** Lobby shown before the session starts: invite code, player count and the start button. */
 function WaitingRoom({
   advancing,
   onStart,
@@ -282,6 +287,10 @@ interface CurrentStepCardProps {
   stepStartedAt?: number;
 }
 
+/**
+ * Card for the step being played. Owns the 1-second clock, so only this card re-renders while the
+ * timer runs.
+ */
 function CurrentStepCard({
   answeredCount,
   answerRevealed,
@@ -358,6 +367,7 @@ interface HostControlsProps {
   status: SessionDoc["status"];
 }
 
+/** Host buttons to reveal the quiz answer and move to the next step (or finish on the last one). */
 function HostControls({
   advancing,
   answerRevealed,
@@ -398,6 +408,10 @@ function HostControls({
   );
 }
 
+/**
+ * Host screen for a live session: lobby, then the current step, leaderboard and controls; redirects
+ * to the results when finished.
+ */
 function HostSessionView({ data }: Props) {
   const t = useTranslations();
 

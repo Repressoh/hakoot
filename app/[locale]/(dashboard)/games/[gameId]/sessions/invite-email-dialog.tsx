@@ -69,6 +69,10 @@ const initialState: State = {
   sending: false,
 };
 
+/**
+ * State transitions for the invite dialog: recipient rows, the chosen email list and sending
+ * status.
+ */
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_OPEN":
@@ -119,6 +123,10 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+/**
+ * Dialog for emailing session invites to recipients typed in by hand or picked from a saved email
+ * list.
+ */
 export function InviteEmailDialog({ gameId, session, gameName }: Props) {
   const t = useTranslations("session");
   const locale = useLocale();

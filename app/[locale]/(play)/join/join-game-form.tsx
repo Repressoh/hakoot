@@ -19,6 +19,10 @@ interface Props {
   prefilledToken?: string;
 }
 
+/**
+ * Player join form; joins automatically (once) when opened from an invite link with prefilled
+ * details.
+ */
 export function JoinGameForm({
   prefilledSessionId,
   prefilledName,
