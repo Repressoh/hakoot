@@ -164,6 +164,62 @@ describe("account.deleteAllData", () => {
       users: ["bob@x.test"],
     });
   });
+
+  test("also removes answers whose player was already cleaned up", async () => {
+    vi.useFakeTimers();
+    const t = newTest();
+    const alice = await seedUser(t, "alice");
+    // A game the host left running: the player's token has expired
+    await t.run(async (ctx) => {
+      const step = await ctx.db
+        .query("gameSteps")
+        .withIndex("by_game", (q) => q.eq("gameId", alice.gameId))
+        .first();
+      if (!step) {
+        throw new Error("seedUser should create a step");
+      }
+      const sessionId = await ctx.db.insert("gameSessions", {
+        answerRevealed: false,
+        currentStepIndex: 0,
+        gameId: alice.gameId,
+        hostId: alice.userId,
+        inviteCode: "INVLEFT",
+        status: "in_progress",
+      });
+      const participantId = await ctx.db.insert("gameParticipants", {
+        expiresAt: Date.now() - 1000,
+        name: "gone",
+        participantToken: "expired-token",
+        sessionId,
+        totalScore: 0,
+      });
+      await ctx.db.insert("participantAnswers", {
+        choiceIndex: 0,
+        isCorrect: true,
+        participantId,
+        score: 100,
+        sessionId,
+        stepId: step._id,
+      });
+    });
+
+    // The cleanup cron deletes the expired player but keeps their answer
+    await t.mutation(internal.sessions.cleanupExpiredTokens, {});
+    expect(await countRows(t)).toMatchObject({
+      gameParticipants: ONE_USER.gameParticipants,
+      participantAnswers: ONE_USER.participantAnswers + 1,
+    });
+
+    await t.mutation(internal.account.deleteAllData, { userId: alice.userId });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+
+    expect(await countRows(t)).toMatchObject({
+      gameParticipants: 0,
+      gameSessions: 0,
+      games: 0,
+      participantAnswers: 0,
+    });
+  });
 });
 
 describe("games.deleteGameData", () => {

@@ -29,28 +29,42 @@ export async function deleteGameCascade(
       .collect(),
   ]);
 
-  await Promise.all(steps.map((s) => ctx.db.delete(s._id)));
+  const participants = (
+    await Promise.all(
+      sessions.map((session) =>
+        ctx.db
+          .query("gameParticipants")
+          .withIndex("by_session", (q) => q.eq("sessionId", session._id))
+          .collect()
+      )
+    )
+  ).flat();
 
-  await Promise.all(
-    sessions.map(async (session) => {
-      const participants = await ctx.db
-        .query("gameParticipants")
-        .withIndex("by_session", (q) => q.eq("sessionId", session._id))
-        .collect();
-      await Promise.all(
-        participants.map(async (p) => {
-          // by_participant also catches legacy answers saved without a sessionId
-          const answers = await ctx.db
-            .query("participantAnswers")
-            .withIndex("by_participant", (q) => q.eq("participantId", p._id))
-            .collect();
-          await Promise.all(answers.map((a) => ctx.db.delete(a._id)));
-          await ctx.db.delete(p._id);
-        })
-      );
-      await ctx.db.delete(session._id);
-    })
-  );
+  // Find answers by step as well as by participant: cleanupExpiredTokens
+  // deletes expired players but keeps their answers, so some answers have no
+  // participant left. The Set avoids deleting an answer twice.
+  const answerLists = await Promise.all([
+    ...steps.map((step) =>
+      ctx.db
+        .query("participantAnswers")
+        .withIndex("by_step", (q) => q.eq("stepId", step._id))
+        .collect()
+    ),
+    ...participants.map((p) =>
+      ctx.db
+        .query("participantAnswers")
+        .withIndex("by_participant", (q) => q.eq("participantId", p._id))
+        .collect()
+    ),
+  ]);
+  const answerIds = new Set(answerLists.flat().map((answer) => answer._id));
+
+  await Promise.all([
+    ...Array.from(answerIds, (id) => ctx.db.delete(id)),
+    ...participants.map((p) => ctx.db.delete(p._id)),
+    ...sessions.map((session) => ctx.db.delete(session._id)),
+    ...steps.map((step) => ctx.db.delete(step._id)),
+  ]);
 
   await ctx.db.delete(gameId);
 }
