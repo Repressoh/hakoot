@@ -22,7 +22,10 @@ jobs:
   convex-tests:
     runs-on: ubuntu-latest
     steps:
+      # The tests run repository code, so don't leave the token in .git/config
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       # Same Bun version as the Dockerfile, so the lockfile is read the same way
       - uses: oven-sh/setup-bun@v2
