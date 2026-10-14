@@ -7,11 +7,13 @@ import {
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import {
+  type ActionCtx,
   action,
   internalMutation,
   internalQuery,
   query,
 } from "./_generated/server";
+import { deleteEmailListCascade } from "./emailLists";
 
 // ─── Queries ────────────────────────────────────────────────────────────
 
@@ -55,9 +57,9 @@ export const getUserByEmail = internalQuery({
 
 export const updateUserEmail = internalMutation({
   args: {
-    userId: v.id("users"),
     accountId: v.id("authAccounts"),
     newEmail: v.string(),
+    userId: v.id("users"),
   },
   handler: async (ctx, { userId, accountId, newEmail }) => {
     await ctx.db.patch(userId, { email: newEmail });
@@ -68,60 +70,77 @@ export const updateUserEmail = internalMutation({
 export const deleteAllData = internalMutation({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {
-    // Delete games cascade (steps, sessions, participants)
-    const games = await ctx.db
-      .query("games")
-      .withIndex("by_creator", (q) => q.eq("createdById", userId))
-      .collect();
+    const [games, emailLists, authAccounts] = await Promise.all([
+      ctx.db
+        .query("games")
+        .withIndex("by_creator", (q) => q.eq("createdById", userId))
+        .collect(),
+      ctx.db
+        .query("emailLists")
+        .withIndex("by_creator", (q) => q.eq("createdById", userId))
+        .collect(),
+      ctx.db
+        .query("authAccounts")
+        .withIndex("userIdAndProvider", (q) => q.eq("userId", userId))
+        .collect(),
+    ]);
 
-    for (const game of games) {
-      const steps = await ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", game._id))
-        .collect();
-      for (const step of steps) {
-        await ctx.db.delete(step._id);
-      }
+    // Games cascade (steps, sessions, participants, answers). Each runs in its
+    // own transaction so a busy account doesn't exceed per-mutation limits.
+    await Promise.all(
+      games.map((game) =>
+        ctx.scheduler.runAfter(0, internal.games.deleteGameData, {
+          gameId: game._id,
+        })
+      )
+    );
 
-      const sessions = await ctx.db
-        .query("gameSessions")
-        .withIndex("by_game", (q) => q.eq("gameId", game._id))
-        .collect();
-      for (const session of sessions) {
-        const participants = await ctx.db
-          .query("gameParticipants")
-          .withIndex("by_session", (q) => q.eq("sessionId", session._id))
+    // Email lists hold other people's names and addresses
+    await Promise.all(
+      emailLists.map((emailList) => deleteEmailListCascade(ctx, emailList._id))
+    );
+
+    // Auth accounts and any unused sign-in codes for them
+    await Promise.all(
+      authAccounts.map(async (account) => {
+        const codes = await ctx.db
+          .query("authVerificationCodes")
+          .withIndex("accountId", (q) => q.eq("accountId", account._id))
           .collect();
-        for (const p of participants) {
-          await ctx.db.delete(p._id);
-        }
-        await ctx.db.delete(session._id);
-      }
-
-      await ctx.db.delete(game._id);
-    }
-
-    // Delete auth accounts
-    const authAccounts = await ctx.db
-      .query("authAccounts")
-      .withIndex("userIdAndProvider", (q) => q.eq("userId", userId))
-      .collect();
-    for (const account of authAccounts) {
-      await ctx.db.delete(account._id);
-    }
+        await Promise.all(codes.map((code) => ctx.db.delete(code._id)));
+        await ctx.db.delete(account._id);
+      })
+    );
 
     // Delete the user
     await ctx.db.delete(userId);
   },
 });
 
+/** Whether `password` is the current password for the password account `email`. */
+async function isPasswordValid(
+  ctx: ActionCtx,
+  email: string,
+  password: string
+): Promise<boolean> {
+  try {
+    await retrieveAccount(ctx, {
+      account: { id: email, secret: password },
+      provider: "password",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ─── Actions ────────────────────────────────────────────────────────────
 
 /** Change the email address for a password-based account. */
 export const changeEmail = action({
   args: {
-    newEmail: v.string(),
     currentPassword: v.string(),
+    newEmail: v.string(),
   },
   handler: async (ctx, { newEmail, currentPassword }) => {
     const userId = await getAuthUserId(ctx);
@@ -140,12 +159,12 @@ export const changeEmail = action({
     const currentEmail = passwordAccount.providerAccountId;
 
     // Verify current password before allowing email change
-    try {
-      await retrieveAccount(ctx, {
-        provider: "password",
-        account: { id: currentEmail, secret: currentPassword },
-      });
-    } catch {
+    const passwordValid = await isPasswordValid(
+      ctx,
+      currentEmail,
+      currentPassword
+    );
+    if (!passwordValid) {
       throw new ConvexError("Invalid password");
     }
 
@@ -171,9 +190,9 @@ export const changeEmail = action({
     }
 
     await ctx.runMutation(internal.account.updateUserEmail, {
-      userId,
       accountId: passwordAccount._id,
       newEmail: normalizedEmail,
+      userId,
     });
   },
 });
@@ -201,12 +220,8 @@ export const changePassword = action({
     const email = passwordAccount.providerAccountId;
 
     // Verify current password
-    try {
-      await retrieveAccount(ctx, {
-        provider: "password",
-        account: { id: email, secret: currentPassword },
-      });
-    } catch {
+    const passwordValid = await isPasswordValid(ctx, email, currentPassword);
+    if (!passwordValid) {
       throw new ConvexError("Invalid current password");
     }
 
@@ -215,8 +230,8 @@ export const changePassword = action({
     }
 
     await modifyAccountCredentials(ctx, {
-      provider: "password",
       account: { id: email, secret: newPassword },
+      provider: "password",
     });
   },
 });

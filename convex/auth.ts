@@ -7,52 +7,45 @@ const AUTH_EMAIL_FROM =
   process.env.RESEND_FROM_EMAIL ?? "Hakoot <onboarding@resend.dev>";
 
 const magicLinkEmail = Email({
-  id: "email",
-  name: "Email",
-  from: AUTH_EMAIL_FROM,
-  maxAge: 60 * 30,
   authorize: undefined,
+  from: AUTH_EMAIL_FROM,
+  id: "email",
+  maxAge: 60 * 30,
+  name: "Email",
   async sendVerificationRequest({ identifier, url }) {
     await sendAuthEmail({
-      to: identifier,
-      subject: "Sign in to Hakoot",
-      title: "Sign in to Hakoot",
       body: "Use this secure link to sign in to your Hakoot host account.",
       buttonLabel: "Sign in",
+      subject: "Sign in to Hakoot",
+      title: "Sign in to Hakoot",
+      to: identifier,
       url,
     });
   },
 });
 
 const passwordResetEmail = Email({
-  id: "password-reset",
-  name: "Password reset",
   from: AUTH_EMAIL_FROM,
+  id: "password-reset",
   maxAge: 60 * 30,
+  name: "Password reset",
   async sendVerificationRequest({ identifier, token, url }) {
     const resetUrl = new URL(url);
     resetUrl.searchParams.delete("code");
     resetUrl.searchParams.set("resetCode", token);
 
     await sendAuthEmail({
-      to: identifier,
-      subject: "Reset your Hakoot password",
-      title: "Reset your password",
       body: "Use this secure link to choose a new password for your Hakoot account.",
       buttonLabel: "Reset password",
+      subject: "Reset your Hakoot password",
+      title: "Reset your password",
+      to: identifier,
       url: resetUrl.toString(),
     });
   },
 });
 
 export const { auth, signIn, signOut, store } = convexAuth({
-  providers: [
-    Password({
-      reset: passwordResetEmail,
-    }),
-    magicLinkEmail,
-    Google,
-  ],
   callbacks: {
     /**
      * When a user signs in with Google and the same email already exists
@@ -100,11 +93,11 @@ export const { auth, signIn, signOut, store } = convexAuth({
         // Default: create a new user
         const newId = await ctx.db.insert("users", {
           email: args.profile.email as string | undefined,
-          name: args.profile.name as string | undefined,
-          image: args.profile.image as string | undefined,
           emailVerificationTime: isVerifiedEmailFlow(args)
             ? Date.now()
             : undefined,
+          image: args.profile.image as string | undefined,
+          name: args.profile.name as string | undefined,
         });
         console.log("[createOrUpdateUser] created new user:", newId);
         return newId;
@@ -114,6 +107,13 @@ export const { auth, signIn, signOut, store } = convexAuth({
       }
     },
   },
+  providers: [
+    Password({
+      reset: passwordResetEmail,
+    }),
+    magicLinkEmail,
+    Google,
+  ],
 });
 
 function shouldLinkExistingEmail(args: {
@@ -155,17 +155,17 @@ async function sendAuthEmail({
   }
 
   const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
+    body: JSON.stringify({
+      from: AUTH_EMAIL_FROM,
+      html: buildAuthEmailHtml({ body, buttonLabel, title, url }),
+      subject,
+      to,
+    }),
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from: AUTH_EMAIL_FROM,
-      to,
-      subject,
-      html: buildAuthEmailHtml({ title, body, buttonLabel, url }),
-    }),
+    method: "POST",
   });
 
   if (!response.ok) {

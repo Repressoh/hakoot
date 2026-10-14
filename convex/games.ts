@@ -1,10 +1,58 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import {
+  internalMutation,
+  type MutationCtx,
+  mutation,
+  query,
+} from "./_generated/server";
 
 /** Sanitize user input */
 function sanitizeInput(input: string, maxLength = 500): string {
   return input.trim().replace(/[<>]/g, "").trim().slice(0, maxLength);
+}
+
+/** Delete a game and everything under it: steps, sessions, participants and their answers. */
+export async function deleteGameCascade(
+  ctx: MutationCtx,
+  gameId: Id<"games">
+): Promise<void> {
+  const [steps, sessions] = await Promise.all([
+    ctx.db
+      .query("gameSteps")
+      .withIndex("by_game", (q) => q.eq("gameId", gameId))
+      .collect(),
+    ctx.db
+      .query("gameSessions")
+      .withIndex("by_game", (q) => q.eq("gameId", gameId))
+      .collect(),
+  ]);
+
+  await Promise.all(steps.map((s) => ctx.db.delete(s._id)));
+
+  await Promise.all(
+    sessions.map(async (session) => {
+      const participants = await ctx.db
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", session._id))
+        .collect();
+      await Promise.all(
+        participants.map(async (p) => {
+          // by_participant also catches legacy answers saved without a sessionId
+          const answers = await ctx.db
+            .query("participantAnswers")
+            .withIndex("by_participant", (q) => q.eq("participantId", p._id))
+            .collect();
+          await Promise.all(answers.map((a) => ctx.db.delete(a._id)));
+          await ctx.db.delete(p._id);
+        })
+      );
+      await ctx.db.delete(session._id);
+    })
+  );
+
+  await ctx.db.delete(gameId);
 }
 
 export const list = query({
@@ -82,8 +130,8 @@ export const getWithSteps = query({
 
 export const create = mutation({
   args: {
-    title: v.string(),
     description: v.optional(v.string()),
+    title: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -97,11 +145,11 @@ export const create = mutation({
     }
 
     return await ctx.db.insert("games", {
-      title: sanitizedTitle,
+      createdById: userId,
       description: args.description
         ? sanitizeInput(args.description, 1000)
         : undefined,
-      createdById: userId,
+      title: sanitizedTitle,
       updatedAt: Date.now(),
     });
   },
@@ -109,9 +157,9 @@ export const create = mutation({
 
 export const update = mutation({
   args: {
+    description: v.optional(v.string()),
     gameId: v.id("games"),
     title: v.optional(v.string()),
-    description: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -154,35 +202,20 @@ export const remove = mutation({
       throw new ConvexError("Not found");
     }
 
-    // Delete all steps
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", args.gameId))
-      .collect();
-    await Promise.all(steps.map((s) => ctx.db.delete(s._id)));
+    await deleteGameCascade(ctx, args.gameId);
+    return null;
+  },
+});
 
-    // Delete all sessions and their participants/answers
-    const sessions = await ctx.db
-      .query("gameSessions")
-      .withIndex("by_game", (q) => q.eq("gameId", args.gameId))
-      .collect();
-    for (const session of sessions) {
-      const participants = await ctx.db
-        .query("gameParticipants")
-        .withIndex("by_session", (q) => q.eq("sessionId", session._id))
-        .collect();
-      for (const p of participants) {
-        const answers = await ctx.db
-          .query("participantAnswers")
-          .withIndex("by_participant", (q) => q.eq("participantId", p._id))
-          .collect();
-        await Promise.all(answers.map((a) => ctx.db.delete(a._id)));
-        await ctx.db.delete(p._id);
-      }
-      await ctx.db.delete(session._id);
+/** Deletes one game's data. Scheduled per game by account deletion so each
+ * game gets its own transaction (and its own write limits). */
+export const deleteGameData = internalMutation({
+  args: { gameId: v.id("games") },
+  handler: async (ctx, { gameId }) => {
+    // The owner may have deleted it in the meantime.
+    if (await ctx.db.get(gameId)) {
+      await deleteGameCascade(ctx, gameId);
     }
-
-    await ctx.db.delete(args.gameId);
     return null;
   },
 });

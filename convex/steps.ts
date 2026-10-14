@@ -10,15 +10,15 @@ function sanitizeInput(input: string, maxLength = 5000): string {
 }
 
 const codeBlockValidator = v.object({
-  code: v.string(),
-  language: v.string(),
   annotations: v.array(
     v.object({
-      label: v.string(),
       explanation: v.string(),
+      label: v.string(),
       lines: v.array(v.number()),
     })
   ),
+  code: v.string(),
+  language: v.string(),
 });
 
 async function requireGameOwner(
@@ -33,7 +33,7 @@ async function requireGameOwner(
   if (!game || game.createdById !== userId) {
     throw new ConvexError("Not found");
   }
-  return { userId, game };
+  return { game, userId };
 }
 
 export const get = query({
@@ -60,9 +60,9 @@ export const get = query({
 
 export const createTheory = mutation({
   args: {
+    codeBlock: v.optional(codeBlockValidator),
     gameId: v.id("games"),
     markdownContent: v.optional(v.string()),
-    codeBlock: v.optional(codeBlockValidator),
   },
   handler: async (ctx, args) => {
     await requireGameOwner(ctx, args.gameId);
@@ -75,13 +75,13 @@ export const createTheory = mutation({
     const order = existingSteps.length;
 
     const stepId = await ctx.db.insert("gameSteps", {
+      codeBlock: args.codeBlock,
       gameId: args.gameId,
-      order,
-      type: "theory",
       markdownContent: args.markdownContent
         ? sanitizeInput(args.markdownContent, 10_000)
         : "",
-      codeBlock: args.codeBlock,
+      order,
+      type: "theory",
     });
 
     await ctx.db.patch(args.gameId, { updatedAt: Date.now() });
@@ -91,11 +91,11 @@ export const createTheory = mutation({
 
 export const createQuiz = mutation({
   args: {
+    choices: v.optional(
+      v.array(v.object({ isCorrect: v.boolean(), text: v.string() }))
+    ),
     gameId: v.id("games"),
     question: v.optional(v.string()),
-    choices: v.optional(
-      v.array(v.object({ text: v.string(), isCorrect: v.boolean() }))
-    ),
     timeLimitSeconds: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -109,22 +109,22 @@ export const createQuiz = mutation({
     const order = existingSteps.length;
 
     const sanitizedChoices = args.choices?.map((choice) => ({
-      text: sanitizeInput(choice.text, 500),
       isCorrect: choice.isCorrect,
+      text: sanitizeInput(choice.text, 500),
     }));
 
     const stepId = await ctx.db.insert("gameSteps", {
+      choices: sanitizedChoices ?? [
+        { isCorrect: false, text: "" },
+        { isCorrect: false, text: "" },
+        { isCorrect: false, text: "" },
+        { isCorrect: false, text: "" },
+      ],
       gameId: args.gameId,
       order,
-      type: "quiz",
       question: args.question ? sanitizeInput(args.question, 1000) : "",
-      choices: sanitizedChoices ?? [
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-      ],
       timeLimitSeconds: args.timeLimitSeconds,
+      type: "quiz",
     });
 
     await ctx.db.patch(args.gameId, { updatedAt: Date.now() });
@@ -134,9 +134,9 @@ export const createQuiz = mutation({
 
 export const updateTheory = mutation({
   args: {
-    stepId: v.id("gameSteps"),
-    markdownContent: v.optional(v.string()),
     codeBlock: v.optional(v.union(codeBlockValidator, v.null())),
+    markdownContent: v.optional(v.string()),
+    stepId: v.id("gameSteps"),
   },
   handler: async (ctx, args) => {
     const step = await ctx.db.get(args.stepId);
@@ -161,11 +161,11 @@ export const updateTheory = mutation({
 
 export const updateQuiz = mutation({
   args: {
-    stepId: v.id("gameSteps"),
-    question: v.optional(v.string()),
     choices: v.optional(
-      v.array(v.object({ text: v.string(), isCorrect: v.boolean() }))
+      v.array(v.object({ isCorrect: v.boolean(), text: v.string() }))
     ),
+    question: v.optional(v.string()),
+    stepId: v.id("gameSteps"),
     timeLimitSeconds: v.optional(v.union(v.number(), v.null())),
   },
   handler: async (ctx, args) => {
@@ -181,8 +181,8 @@ export const updateQuiz = mutation({
     }
     if (args.choices !== undefined) {
       updates.choices = args.choices.map((choice) => ({
-        text: sanitizeInput(choice.text, 500),
         isCorrect: choice.isCorrect,
+        text: sanitizeInput(choice.text, 500),
       }));
     }
     if (args.timeLimitSeconds !== undefined) {
@@ -248,8 +248,8 @@ export const reorder = mutation({
 
 export const move = mutation({
   args: {
-    stepId: v.id("gameSteps"),
     direction: v.union(v.literal("up"), v.literal("down")),
+    stepId: v.id("gameSteps"),
   },
   handler: async (ctx, args) => {
     const step = await ctx.db.get(args.stepId);

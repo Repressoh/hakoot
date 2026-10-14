@@ -14,6 +14,20 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** Run `send` over `items` in batches, pausing between batches (not before the first). */
+async function sendInBatches<T>(
+  items: T[],
+  send: (item: T) => Promise<void>
+): Promise<void> {
+  await Promise.allSettled(items.slice(0, BATCH_SIZE).map(send));
+  const rest = items.slice(BATCH_SIZE);
+  if (rest.length === 0) {
+    return;
+  }
+  await sleep(BATCH_DELAY_MS);
+  await sendInBatches(rest, send);
+}
+
 function normalizeLocale(locale?: string): string {
   return locale && SUPPORTED_LOCALES.has(locale) ? locale : "en";
 }
@@ -21,14 +35,14 @@ function normalizeLocale(locale?: string): string {
 export const sendInviteEmails = action({
   args: {
     gameId: v.id("games"),
-    sessionId: v.id("gameSessions"),
     invites: v.array(
       v.object({
-        name: v.string(),
         email: v.string(),
+        name: v.string(),
       })
     ),
     locale: v.optional(v.string()),
+    sessionId: v.id("gameSessions"),
   },
   handler: async (ctx, args) => {
     const locale = normalizeLocale(args.locale);
@@ -39,7 +53,7 @@ export const sendInviteEmails = action({
     });
 
     if (!sessionData) {
-      return { sent: 0, failed: args.invites.length };
+      return { failed: args.invites.length, sent: 0 };
     }
 
     const { Resend } = await import("resend");
@@ -57,51 +71,33 @@ export const sendInviteEmails = action({
     let failed = 0;
 
     // Split into batches to avoid Resend rate limits
-    for (
-      let batchStart = 0;
-      batchStart < args.invites.length;
-      batchStart += BATCH_SIZE
-    ) {
-      const batch = args.invites.slice(batchStart, batchStart + BATCH_SIZE);
+    await sendInBatches(args.invites, async (invite) => {
+      try {
+        const inviteToken = await signInviteToken(args.sessionId, invite.name);
+        const joinUrl = `${appUrl}/${locale}/join?session=${encodeURIComponent(args.sessionId)}&name=${encodeURIComponent(invite.name)}&token=${encodeURIComponent(inviteToken)}`;
 
-      // Wait between batches (not before the first one)
-      if (batchStart > 0) {
-        await sleep(BATCH_DELAY_MS);
+        await resend.emails.send({
+          from: fromEmail,
+          html: buildInviteEmailHtml({
+            gameName,
+            hostName,
+            inviteCode: sessionData.session.inviteCode,
+            joinUrl,
+            locale,
+            recipientName: invite.name,
+          }),
+          subject: isItalian
+            ? `${hostName} ti ha invitato a unirti a "${gameName}" su Hakoot`
+            : `${hostName} invited you to join "${gameName}" on Hakoot`,
+          to: invite.email,
+        });
+        sent += 1;
+      } catch {
+        failed += 1;
       }
+    });
 
-      await Promise.allSettled(
-        batch.map(async (invite) => {
-          try {
-            const inviteToken = await signInviteToken(
-              args.sessionId,
-              invite.name
-            );
-            const joinUrl = `${appUrl}/${locale}/join?session=${encodeURIComponent(args.sessionId)}&name=${encodeURIComponent(invite.name)}&token=${encodeURIComponent(inviteToken)}`;
-
-            await resend.emails.send({
-              from: fromEmail,
-              to: invite.email,
-              subject: isItalian
-                ? `${hostName} ti ha invitato a unirti a "${gameName}" su Hakoot`
-                : `${hostName} invited you to join "${gameName}" on Hakoot`,
-              html: buildInviteEmailHtml({
-                recipientName: invite.name,
-                hostName,
-                gameName,
-                joinUrl,
-                inviteCode: sessionData.session.inviteCode,
-                locale,
-              }),
-            });
-            sent++;
-          } catch {
-            failed++;
-          }
-        })
-      );
-    }
-
-    return { sent, failed };
+    return { failed, sent };
   },
 });
 
@@ -111,7 +107,7 @@ async function getKey(): Promise<CryptoKey> {
   return await crypto.subtle.importKey(
     "raw",
     keyMaterial,
-    { name: "HMAC", hash: "SHA-256" },
+    { hash: "SHA-256", name: "HMAC" },
     false,
     ["sign"]
   );
