@@ -62,13 +62,17 @@ type Action =
   | { type: "SET_SENDING"; sending: boolean };
 
 const initialState: State = {
-  open: false,
-  entries: [{ id: crypto.randomUUID(), name: "", email: "" }],
-  sending: false,
-  selectedListId: "",
   checkedEntryIds: new Set(),
+  entries: [{ email: "", id: crypto.randomUUID(), name: "" }],
+  open: false,
+  selectedListId: "",
+  sending: false,
 };
 
+/**
+ * State transitions for the invite dialog: recipient rows, the chosen email list and sending
+ * status.
+ */
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_OPEN":
@@ -78,7 +82,7 @@ function reducer(state: State, action: Action): State {
         ...state,
         entries: [
           ...state.entries,
-          { id: crypto.randomUUID(), name: "", email: "" },
+          { email: "", id: crypto.randomUUID(), name: "" },
         ],
       };
     case "UPDATE_ENTRY":
@@ -96,8 +100,8 @@ function reducer(state: State, action: Action): State {
     case "SET_LIST":
       return {
         ...state,
-        selectedListId: action.listId,
         checkedEntryIds: new Set(action.entryIds),
+        selectedListId: action.listId,
       };
     case "TOGGLE_ENTRY": {
       const next = new Set(state.checkedEntryIds);
@@ -119,6 +123,10 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+/**
+ * Dialog for emailing session invites to recipients typed in by hand or picked from a saved email
+ * list.
+ */
 export function InviteEmailDialog({ gameId, session, gameName }: Props) {
   const t = useTranslations("session");
   const locale = useLocale();
@@ -135,31 +143,31 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
   }
 
   function updateEntry(i: number, field: keyof InviteEntry, value: string) {
-    dispatch({ type: "UPDATE_ENTRY", index: i, field, value });
+    dispatch({ field, index: i, type: "UPDATE_ENTRY", value });
   }
 
   function removeEntry(i: number) {
-    dispatch({ type: "REMOVE_ENTRY", index: i });
+    dispatch({ index: i, type: "REMOVE_ENTRY" });
   }
 
   function handleListChange(listId: string) {
     const list = emailLists?.find((l) => l._id === listId);
     dispatch({
-      type: "SET_LIST",
-      listId,
       entryIds: list ? list.entries.map((e) => e._id) : [],
+      listId,
+      type: "SET_LIST",
     });
   }
 
   function toggleEntry(entryId: string) {
-    dispatch({ type: "TOGGLE_ENTRY", entryId });
+    dispatch({ entryId, type: "TOGGLE_ENTRY" });
   }
 
   function selectAll() {
     if (selectedList) {
       dispatch({
-        type: "SELECT_ALL",
         entryIds: selectedList.entries.map((e) => e._id),
+        type: "SELECT_ALL",
       });
     }
   }
@@ -172,7 +180,7 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
     const manualValid = entries.reduce<Array<{ name: string; email: string }>>(
       (acc, { name, email }) => {
         if (name.trim() && email.trim()) {
-          acc.push({ name, email });
+          acc.push({ email, name });
         }
         return acc;
       },
@@ -183,7 +191,7 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
       ? selectedList.entries.reduce<Array<{ name: string; email: string }>>(
           (acc, { _id, name, email }) => {
             if (checkedEntryIds.has(_id)) {
-              acc.push({ name, email });
+              acc.push({ email, name });
             }
             return acc;
           },
@@ -206,35 +214,35 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
       return;
     }
 
-    dispatch({ type: "SET_SENDING", sending: true });
+    dispatch({ sending: true, type: "SET_SENDING" });
     try {
       const result = await sendInvites({
-        sessionId: session._id,
         gameId,
         invites: valid,
         locale,
+        sessionId: session._id,
       });
       let successMsg: string;
       if (result.failed > 0) {
         successMsg = t("sendSuccessPartial", {
-          sent: result.sent,
           failed: result.failed,
+          sent: result.sent,
         });
       } else {
         successMsg = t("sendSuccess", { sent: result.sent });
       }
       toast.success(successMsg);
-      dispatch({ type: "SET_SENDING", sending: false });
-      dispatch({ type: "SET_OPEN", open: false });
+      dispatch({ sending: false, type: "SET_SENDING" });
+      dispatch({ open: false, type: "SET_OPEN" });
     } catch {
       toast.error(t("sendFailed"));
-      dispatch({ type: "SET_SENDING", sending: false });
+      dispatch({ sending: false, type: "SET_SENDING" });
     }
   }
 
   return (
     <Dialog
-      onOpenChange={(o) => dispatch({ type: "SET_OPEN", open: o })}
+      onOpenChange={(o) => dispatch({ open: o, type: "SET_OPEN" })}
       open={open}
     >
       <DialogTrigger asChild>
@@ -371,7 +379,7 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
 
           <div className="flex justify-end gap-2">
             <Button
-              onClick={() => dispatch({ type: "SET_OPEN", open: false })}
+              onClick={() => dispatch({ open: false, type: "SET_OPEN" })}
               variant="outline"
             >
               Cancel

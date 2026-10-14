@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Hakoot",
 };
 
+/** Root layout; adds the WebApplication JSON-LD schema for search engines. */
 export default function RootLayout({
   children,
 }: {
@@ -13,11 +14,11 @@ export default function RootLayout({
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Hakoot",
-    description: "Interactive learning platform for real education",
-    url: "https://dev.hakoot.albertocaserta.it",
     applicationCategory: "EducationalApplication",
+    description: "Interactive learning platform for real education",
+    name: "Hakoot",
     operatingSystem: "Web",
+    url: "https://dev.hakoot.albertocaserta.it",
   };
 
   return (

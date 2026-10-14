@@ -33,23 +33,24 @@ const statusConfig: Record<
   string,
   { accent: string; badge: string; dot: string }
 > = {
-  waiting: {
-    accent: "border-l-choice-yellow",
-    badge: "bg-choice-yellow/15 text-choice-yellow",
-    dot: "bg-choice-yellow",
+  finished: {
+    accent: "border-l-muted-foreground/30",
+    badge: "bg-muted text-muted-foreground",
+    dot: "bg-muted-foreground/40",
   },
   in_progress: {
     accent: "border-l-choice-green",
     badge: "bg-choice-green/15 text-choice-green",
     dot: "bg-choice-green animate-pulse",
   },
-  finished: {
-    accent: "border-l-muted-foreground/30",
-    badge: "bg-muted text-muted-foreground",
-    dot: "bg-muted-foreground/40",
+  waiting: {
+    accent: "border-l-choice-yellow",
+    badge: "bg-choice-yellow/15 text-choice-yellow",
+    dot: "bg-choice-yellow",
   },
 };
 
+/** Lists a game's sessions (with invite codes and email invites) and starts new ones. */
 export function SessionManager({ game, sessions }: Props) {
   const t = useTranslations("session");
   const tNav = useTranslations("nav");
@@ -104,7 +105,7 @@ export function SessionManager({ game, sessions }: Props) {
           </span>
         </div>
         <Button
-          className="press-down h-10 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition-all hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110"
+          className="press-down h-10 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110"
           disabled={creating}
           onClick={handleCreate}
         >
@@ -140,8 +141,8 @@ export function SessionManager({ game, sessions }: Props) {
                 initial={{ opacity: 0, y: 12 }}
                 key={s._id}
                 transition={{
-                  duration: 0.35,
                   delay: i * 0.05,
+                  duration: 0.35,
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
               >

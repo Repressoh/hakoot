@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +9,10 @@ interface Props {
   content: string;
 }
 
+/**
+ * Renders user-authored markdown. Raw HTML is allowed but sanitized (GitHub schema) to block
+ * scripts and other injected markup.
+ */
 export function MarkdownViewer({ content, className }: Props) {
   return (
     <div
@@ -19,7 +24,12 @@ export function MarkdownViewer({ content, className }: Props) {
         className
       )}
     >
-      <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
+      {/* Step content is user-authored: allow raw HTML, then strip anything unsafe
+          (scripts, iframes, styles, event handlers) with GitHub's schema. */}
+      <ReactMarkdown
+        rehypePlugins={[rehypeRaw, rehypeSanitize]}
+        remarkPlugins={[remarkGfm]}
+      >
         {content}
       </ReactMarkdown>
     </div>

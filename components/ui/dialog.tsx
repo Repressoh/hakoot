@@ -47,6 +47,7 @@ function DialogOverlay({
   );
 }
 
+/** Dialog panel with its overlay; shows a close button unless `showCloseButton` is false. */
 function DialogContent({
   className,
   children,
@@ -67,7 +68,7 @@ function DialogContent({
         {...props}
       >
         {children}
-        {showCloseButton && (
+        {showCloseButton ? (
           <DialogPrimitive.Close asChild data-slot="dialog-close">
             <Button
               className="absolute end-2 top-2"
@@ -78,7 +79,7 @@ function DialogContent({
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>
-        )}
+        ) : null}
       </DialogPrimitive.Content>
     </DialogPortal>
   );
@@ -94,6 +95,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Dialog footer for action buttons, with an optional close button. */
 function _DialogFooter({
   className,
   showCloseButton = false,
@@ -112,11 +114,11 @@ function _DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && (
+      {showCloseButton ? (
         <DialogPrimitive.Close asChild>
           <Button variant="outline">Close</Button>
         </DialogPrimitive.Close>
-      )}
+      ) : null}
     </div>
   );
 }

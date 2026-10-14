@@ -59,9 +59,9 @@ async function checkRateLimit(
     }
   } else {
     await ctx.db.insert("rateLimits", {
-      identifier,
-      endpoint,
       attempts: 1,
+      endpoint,
+      identifier,
       windowStart: now,
     });
   }
@@ -98,6 +98,10 @@ export const listForGame = query({
   },
 });
 
+/**
+ * Session, game, steps and participants for the session's host. In the lobby, only players seen in
+ * the last 15 seconds are listed.
+ */
 export const getForHost = query({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -111,11 +115,13 @@ export const getForHost = query({
       return null;
     }
 
-    const game = await ctx.db.get(session.gameId);
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
+    const [game, steps] = await Promise.all([
+      ctx.db.get(session.gameId),
+      ctx.db
+        .query("gameSteps")
+        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
+        .collect(),
+    ]);
     steps.sort((a, b) => a.order - b.order);
 
     const allParticipants = await ctx.db
@@ -131,10 +137,11 @@ export const getForHost = query({
           )
         : allParticipants;
 
-    return { session, game, steps, participants };
+    return { game, participants, session, steps };
   },
 });
 
+/** Look up a session that can still be joined (not finished) by its invite code. */
 export const getByInviteCode = query({
   args: { code: v.string() },
   handler: async (ctx, args) => {
@@ -151,10 +158,10 @@ export const getByInviteCode = query({
 
     const game = await ctx.db.get(session.gameId);
     return {
+      gameTitle: game?.title ?? "",
+      inviteCode: session.inviteCode,
       sessionId: session._id,
       status: session.status,
-      inviteCode: session.inviteCode,
-      gameTitle: game?.title ?? "",
     };
   },
 });
@@ -162,8 +169,8 @@ export const getByInviteCode = query({
 /** Get full session state for a participant (reactive!) */
 export const getPlayerState = query({
   args: {
-    sessionId: v.id("gameSessions"),
     participantToken: v.string(),
+    sessionId: v.id("gameSessions"),
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId);
@@ -187,11 +194,13 @@ export const getPlayerState = query({
       return null;
     }
 
-    const game = await ctx.db.get(session.gameId);
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
+    const [game, steps] = await Promise.all([
+      ctx.db.get(session.gameId),
+      ctx.db
+        .query("gameSteps")
+        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
+        .collect(),
+    ]);
     steps.sort((a, b) => a.order - b.order);
 
     const currentStep =
@@ -221,33 +230,33 @@ export const getPlayerState = query({
     }
 
     return {
+      currentAnswer,
+      currentStep: currentStep
+        ? {
+            choices: currentStep.choices ?? null,
+            codeBlock: currentStep.codeBlock ?? null,
+            id: currentStep._id,
+            markdownContent: currentStep.markdownContent ?? null,
+            order: currentStep.order,
+            question: currentStep.question ?? null,
+            timeLimitSeconds: currentStep.timeLimitSeconds ?? null,
+            type: currentStep.type,
+          }
+        : null,
       participant: {
         id: participant._id,
         name: participant.name,
         totalScore: participant.totalScore,
       },
       session: {
+        answerRevealed: session.answerRevealed,
+        currentStepIndex: session.currentStepIndex,
+        gameTitle: game?.title ?? "",
         id: session._id,
         status: session.status,
-        currentStepIndex: session.currentStepIndex,
         stepStartedAt: session.stepStartedAt ?? null,
-        answerRevealed: session.answerRevealed,
         totalSteps: steps.length,
-        gameTitle: game?.title ?? "",
       },
-      currentStep: currentStep
-        ? {
-            id: currentStep._id,
-            type: currentStep.type,
-            order: currentStep.order,
-            markdownContent: currentStep.markdownContent ?? null,
-            codeBlock: currentStep.codeBlock ?? null,
-            question: currentStep.question ?? null,
-            choices: currentStep.choices ?? null,
-            timeLimitSeconds: currentStep.timeLimitSeconds ?? null,
-          }
-        : null,
-      currentAnswer,
     };
   },
 });
@@ -317,15 +326,16 @@ export const getResults = query({
       return null;
     }
 
-    const storedParticipants = await ctx.db
-      .query("gameParticipants")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .collect();
-
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
+    const [storedParticipants, steps] = await Promise.all([
+      ctx.db
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
+        .collect(),
+      ctx.db
+        .query("gameSteps")
+        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
+        .collect(),
+    ]);
     steps.sort((a, b) => a.order - b.order);
 
     const { answers: allAnswers, restoredParticipants } =
@@ -339,7 +349,7 @@ export const getResults = query({
     const participants = [...storedParticipants, ...restoredParticipants];
     participants.sort((a, b) => b.totalScore - a.totalScore);
 
-    return { session, participants, steps, answers: allAnswers };
+    return { answers: allAnswers, participants, session, steps };
   },
 });
 
@@ -369,6 +379,10 @@ async function collectResultAnswers(
   );
 }
 
+/**
+ * Results fallback for older sessions whose answers have no session id: gather the quiz answers by
+ * step and total the scores of participants that no longer exist.
+ */
 async function collectLegacyResultAnswers(
   ctx: QueryCtx,
   sessionId: Id<"gameSessions">,
@@ -381,16 +395,18 @@ async function collectLegacyResultAnswers(
   const scoreByMissingParticipant = new Map<Id<"gameParticipants">, number>();
   const answers: Doc<"participantAnswers">[] = [];
 
-  for (const step of steps) {
-    if (step.type !== "quiz") {
-      continue;
-    }
+  const answersByStep = await Promise.all(
+    steps
+      .filter((step) => step.type === "quiz")
+      .map((step) =>
+        ctx.db
+          .query("participantAnswers")
+          .withIndex("by_step", (q) => q.eq("stepId", step._id))
+          .collect()
+      )
+  );
 
-    const stepAnswers = await ctx.db
-      .query("participantAnswers")
-      .withIndex("by_step", (q) => q.eq("stepId", step._id))
-      .collect();
-
+  for (const stepAnswers of answersByStep) {
     for (const answer of stepAnswers) {
       if (
         storedParticipants.length > 0 &&
@@ -424,6 +440,9 @@ type RestoredParticipant = Omit<
   "email" | "expiresAt" | "lastSeen"
 >;
 
+/**
+ * Placeholder "Archived participant N" rows so deleted participants still appear in the results.
+ */
 function buildRestoredParticipants(
   sessionId: Id<"gameSessions">,
   scoreByMissingParticipant: Map<Id<"gameParticipants">, number>
@@ -431,11 +450,11 @@ function buildRestoredParticipants(
   return Array.from(
     scoreByMissingParticipant.entries(),
     ([participantId, totalScore], index) => ({
-      _id: participantId,
       _creationTime: 0,
-      sessionId,
+      _id: participantId,
       name: `Archived participant ${index + 1}`,
       participantToken: "",
+      sessionId,
       totalScore,
     })
   );
@@ -453,8 +472,8 @@ export const getLeaderboard = query({
     participants.sort((a, b) => b.totalScore - a.totalScore);
 
     return participants.map((p, i) => ({
-      rank: i + 1,
       name: p.name,
+      rank: i + 1,
       score: p.totalScore,
     }));
   },
@@ -462,6 +481,9 @@ export const getLeaderboard = query({
 
 // ─── Mutations ──────────────────────────────────────────────────────────
 
+/**
+ * Open a new session (in the lobby, with a fresh invite code) for one of the current user's games.
+ */
 export const create = mutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
@@ -478,22 +500,23 @@ export const create = mutation({
     const inviteCode = generateInviteCode();
 
     return await ctx.db.insert("gameSessions", {
+      answerRevealed: false,
+      currentStepIndex: -1,
       gameId: args.gameId,
       hostId: userId,
       inviteCode,
       status: "waiting",
-      currentStepIndex: -1,
-      answerRevealed: false,
     });
   },
 });
 
+/** Join a session by id, or rejoin with an existing participant token. Rate-limited per session. */
 export const join = mutation({
   args: {
-    sessionId: v.id("gameSessions"),
-    name: v.string(),
     email: v.optional(v.string()),
     existingToken: v.optional(v.string()),
+    name: v.string(),
+    sessionId: v.id("gameSessions"),
   },
   handler: async (ctx, args) => {
     // Use session ID only to prevent bypass via name variation
@@ -510,7 +533,7 @@ export const join = mutation({
 
     // Rejoin with existing token
     if (args.existingToken) {
-      const existingToken = args.existingToken;
+      const { existingToken } = args;
       const existing = await ctx.db
         .query("gameParticipants")
         .withIndex("by_token", (q) => q.eq("participantToken", existingToken))
@@ -537,13 +560,13 @@ export const join = mutation({
     const expiresAt = Date.now() + TOKEN_EXPIRATION_MS;
 
     const participantId = await ctx.db.insert("gameParticipants", {
-      sessionId: args.sessionId,
-      name: sanitizedName,
       email: args.email,
-      participantToken: token,
-      totalScore: 0,
-      lastSeen: Date.now(),
       expiresAt,
+      lastSeen: Date.now(),
+      name: sanitizedName,
+      participantToken: token,
+      sessionId: args.sessionId,
+      totalScore: 0,
     });
 
     return { participantId, participantToken: token };
@@ -553,9 +576,9 @@ export const join = mutation({
 /** Join a session by invite code (combines lookup + join in one call) */
 export const joinByCode = mutation({
   args: {
+    existingToken: v.optional(v.string()),
     inviteCode: v.string(),
     name: v.string(),
-    existingToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const sanitizedCode = args.inviteCode.toUpperCase().trim();
@@ -576,7 +599,7 @@ export const joinByCode = mutation({
 
     // Rejoin with existing token
     if (args.existingToken) {
-      const existingToken = args.existingToken;
+      const { existingToken } = args;
       const existing = await ctx.db
         .query("gameParticipants")
         .withIndex("by_token", (q) => q.eq("participantToken", existingToken))
@@ -588,8 +611,8 @@ export const joinByCode = mutation({
         }
         await ctx.db.patch(existing._id, { lastSeen: Date.now() });
         return {
-          sessionId: session._id,
           participantToken: existing.participantToken,
+          sessionId: session._id,
         };
       }
     }
@@ -603,15 +626,15 @@ export const joinByCode = mutation({
     const expiresAt = Date.now() + TOKEN_EXPIRATION_MS;
 
     await ctx.db.insert("gameParticipants", {
-      sessionId: session._id,
+      expiresAt,
+      lastSeen: Date.now(),
       name: sanitizedName,
       participantToken: token,
+      sessionId: session._id,
       totalScore: 0,
-      lastSeen: Date.now(),
-      expiresAt,
     });
 
-    return { sessionId: session._id, participantToken: token };
+    return { participantToken: token, sessionId: session._id };
   },
 });
 
@@ -635,6 +658,10 @@ export const heartbeat = mutation({
 /** Stale threshold: participants unseen for this long are removed in lobby */
 const STALE_THRESHOLD_MS = 15_000; // 15 seconds
 
+/**
+ * Host moves to the next step, or finishes after the last one. Starting from the lobby removes
+ * stale players; timed quizzes get a 10-second reading phase.
+ */
 export const advance = mutation({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -663,20 +690,19 @@ export const advance = mutation({
         .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
         .collect();
       const now = Date.now();
-      for (const p of participants) {
-        if (!p.lastSeen || now - p.lastSeen > STALE_THRESHOLD_MS) {
-          await ctx.db.delete(p._id);
-        }
-      }
+      const staleParticipants = participants.filter(
+        (p) => !p.lastSeen || now - p.lastSeen > STALE_THRESHOLD_MS
+      );
+      await Promise.all(staleParticipants.map((p) => ctx.db.delete(p._id)));
     }
 
     if (nextIndex >= steps.length) {
       // Session is finished
       await ctx.db.patch(args.sessionId, {
-        status: "finished",
         currentStepIndex: session.currentStepIndex,
+        status: "finished",
       });
-      return { stepIndex: session.currentStepIndex, status: "finished" };
+      return { status: "finished", stepIndex: session.currentStepIndex };
     }
 
     const nextStep = steps[nextIndex];
@@ -686,16 +712,20 @@ export const advance = mutation({
     const timerStartsAt = hasTimer ? Date.now() + READING_PHASE_MS : undefined;
 
     await ctx.db.patch(args.sessionId, {
-      status: "in_progress",
-      currentStepIndex: nextIndex,
-      stepStartedAt: timerStartsAt,
       answerRevealed: false,
+      currentStepIndex: nextIndex,
+      status: "in_progress",
+      stepStartedAt: timerStartsAt,
     });
 
-    return { stepIndex: nextIndex, status: "in_progress" };
+    return { status: "in_progress", stepIndex: nextIndex };
   },
 });
 
+/**
+ * Host reveals the current quiz answer and adds this step's scores to the totals. Safe to call
+ * twice.
+ */
 export const reveal = mutation({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -720,7 +750,7 @@ export const reveal = mutation({
     steps.sort((a, b) => a.order - b.order);
 
     const currentStep = steps[session.currentStepIndex];
-    if (!currentStep || currentStep.type !== "quiz") {
+    if (currentStep?.type !== "quiz") {
       return null;
     }
 
@@ -730,34 +760,29 @@ export const reveal = mutation({
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
 
-    for (const p of participants) {
-      const answer = await ctx.db
-        .query("participantAnswers")
-        .withIndex("by_participant_and_step", (q) =>
-          q.eq("participantId", p._id).eq("stepId", currentStep._id)
-        )
-        .first();
-      if (answer) {
-        await ctx.db.patch(p._id, {
-          totalScore: Math.max(0, p.totalScore + answer.score),
-        });
-      }
-    }
-
-    await ctx.db.patch(args.sessionId, { answerRevealed: true });
+    await applyStepScoresAndReveal(
+      ctx,
+      args.sessionId,
+      participants,
+      currentStep._id
+    );
     return null;
   },
 });
 
+/**
+ * Record and score a participant's answer to the current quiz step; reveals automatically once
+ * everyone has answered.
+ */
 export const submitAnswer = mutation({
   args: {
-    sessionId: v.id("gameSessions"),
-    participantToken: v.string(),
     choiceIndex: v.number(),
+    participantToken: v.string(),
+    sessionId: v.id("gameSessions"),
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId);
-    if (!session || session.status !== "in_progress") {
+    if (session?.status !== "in_progress") {
       throw new ConvexError("Session not active");
     }
 
@@ -799,12 +824,12 @@ export const submitAnswer = mutation({
     );
 
     await ctx.db.insert("participantAnswers", {
-      participantId: participant._id,
-      sessionId: args.sessionId,
-      stepId: currentStep._id,
       choiceIndex: args.choiceIndex,
       isCorrect,
+      participantId: participant._id,
       score,
+      sessionId: args.sessionId,
+      stepId: currentStep._id,
     });
 
     // Check if all participants in THIS session have answered → auto-reveal
@@ -835,6 +860,7 @@ export const submitAnswer = mutation({
   },
 });
 
+/** The session's current step; throws if it is not a quiz. */
 async function getActiveQuizStep(
   ctx: MutationCtx,
   gameId: Id<"games">,
@@ -849,13 +875,14 @@ async function getActiveQuizStep(
   steps.sort((a, b) => a.order - b.order);
 
   const currentStep = steps[session.currentStepIndex];
-  if (!currentStep || currentStep.type !== "quiz") {
+  if (currentStep?.type !== "quiz") {
     throw new ConvexError("Not a quiz step");
   }
 
   return currentStep;
 }
 
+/** Throws if the answer was already revealed or the reading phase has not ended yet. */
 function assertAnsweringOpen(session: {
   answerRevealed: boolean;
   stepStartedAt?: number;
@@ -869,25 +896,31 @@ function assertAnsweringOpen(session: {
   }
 }
 
+/**
+ * Add each participant's score for `stepId` to their total (never below 0) and mark the answer
+ * revealed.
+ */
 async function applyStepScoresAndReveal(
   ctx: MutationCtx,
   sessionId: Id<"gameSessions">,
   participants: Array<{ _id: Id<"gameParticipants">; totalScore: number }>,
   stepId: Id<"gameSteps">
 ) {
-  for (const participant of participants) {
-    const answer = await ctx.db
-      .query("participantAnswers")
-      .withIndex("by_participant_and_step", (q) =>
-        q.eq("participantId", participant._id).eq("stepId", stepId)
-      )
-      .first();
-    if (answer) {
-      await ctx.db.patch(participant._id, {
-        totalScore: Math.max(0, participant.totalScore + answer.score),
-      });
-    }
-  }
+  await Promise.all(
+    participants.map(async (participant) => {
+      const answer = await ctx.db
+        .query("participantAnswers")
+        .withIndex("by_participant_and_step", (q) =>
+          q.eq("participantId", participant._id).eq("stepId", stepId)
+        )
+        .first();
+      if (answer) {
+        await ctx.db.patch(participant._id, {
+          totalScore: Math.max(0, participant.totalScore + answer.score),
+        });
+      }
+    })
+  );
 
   await ctx.db.patch(sessionId, { answerRevealed: true });
 }
@@ -931,14 +964,16 @@ export const cleanupExpiredTokens = internalMutation({
       .filter((q) => q.lt(q.field("expiresAt"), now))
       .take(100);
 
-    for (const participant of expiredParticipants) {
-      const session = await ctx.db.get(participant.sessionId);
-      if (session?.status === "finished") {
-        await ctx.db.patch(participant._id, { expiresAt: undefined });
-        continue;
-      }
-      await ctx.db.delete(participant._id);
-    }
+    await Promise.all(
+      expiredParticipants.map(async (participant) => {
+        const session = await ctx.db.get(participant.sessionId);
+        if (session?.status === "finished") {
+          await ctx.db.patch(participant._id, { expiresAt: undefined });
+          return;
+        }
+        await ctx.db.delete(participant._id);
+      })
+    );
 
     return { deleted: expiredParticipants.length };
   },
@@ -954,9 +989,7 @@ export const cleanupOldRateLimits = internalMutation({
       .filter((q) => q.lt(q.field("windowStart"), cutoff))
       .take(100);
 
-    for (const record of oldRecords) {
-      await ctx.db.delete(record._id);
-    }
+    await Promise.all(oldRecords.map((record) => ctx.db.delete(record._id)));
 
     return { deleted: oldRecords.length };
   },

@@ -18,6 +18,7 @@ interface Props {
   user: { name: string; email: string; image: string | null };
 }
 
+/** Dashboard header with navigation links and the signed-in user's menu (including sign-out). */
 export function DashboardNav({ user }: Props) {
   const t = useTranslations();
   const { push } = useRouter();
@@ -45,7 +46,7 @@ export function DashboardNav({ user }: Props) {
 
       <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
         <Link
-          className="group flex items-center gap-2.5 font-black font-display text-lg tracking-tight transition-all"
+          className="group flex items-center gap-2.5 font-black font-display text-lg tracking-tight"
           href="/dashboard"
         >
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary font-black text-primary-foreground text-sm shadow-[0_0_12px_var(--glow-primary)] transition-shadow group-hover:shadow-[0_0_20px_var(--glow-primary)]">
@@ -67,7 +68,7 @@ export function DashboardNav({ user }: Props) {
                 size="sm"
                 variant="ghost"
               >
-                <Avatar className="size-7 ring-2 ring-primary/20 transition-all group-hover:ring-primary/40">
+                <Avatar className="size-7 ring-2 ring-primary/20 transition-shadow group-hover:ring-primary/40">
                   <AvatarImage alt={user.name} src={user.image ?? undefined} />
                   <AvatarFallback className="bg-primary/15 font-bold font-mono text-primary text-xs">
                     {initials}

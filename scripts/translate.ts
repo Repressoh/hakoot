@@ -3,7 +3,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type Language, type TargetLanguageCode, Translator } from "deepl-node";
 
-const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
+const { DEEPL_API_KEY } = process.env;
 const SOURCE_LANG = "en";
 const RATE_LIMIT_DELAY = 200;
 const LANGUAGE_CONCURRENCY = 10;
@@ -240,6 +240,7 @@ async function translateString(
   }
 }
 
+/** Translate every string in `obj`, keeping existing translations from `existing` where present. */
 async function translateObject(
   obj: TranslationValue,
   targetLang: Language,
@@ -253,43 +254,35 @@ async function translateObject(
     return translateString(obj, targetLang, path);
   }
 
+  // One value at a time, so RATE_LIMIT_DELAY spaces out each language's requests.
   if (Array.isArray(obj)) {
-    const translatedArray: TranslationValue[] = [];
-
-    for (let index = 0; index < obj.length; index += 1) {
-      const newPath = path ? `${path}[${index}]` : `[${index}]`;
-      translatedArray[index] = await translateObject(
-        obj[index],
+    return await mapLimit(obj, 1, (item, index) =>
+      translateObject(
+        item,
         targetLang,
         getExistingValue(existing, index),
-        newPath
-      );
-    }
-
-    return translatedArray;
+        path ? `${path}[${index}]` : `[${index}]`
+      )
+    );
   }
 
   if (typeof obj === "object" && obj !== null) {
-    const translated: Record<string, TranslationValue> = {};
-
-    for (const key in obj) {
-      if (Object.hasOwn(obj, key)) {
-        const newPath = path ? `${path}.${key}` : key;
-        const existingValue = getExistingValue(existing, key);
-        translated[key] = await translateObject(
-          obj[key],
-          targetLang,
-          existingValue,
-          newPath
-        );
-      }
-    }
-    return translated;
+    const keys = Object.keys(obj);
+    const values = await mapLimit(keys, 1, (key) =>
+      translateObject(
+        obj[key],
+        targetLang,
+        getExistingValue(existing, key),
+        path ? `${path}.${key}` : key
+      )
+    );
+    return Object.fromEntries(keys.map((key, index) => [key, values[index]]));
   }
 
   return obj;
 }
 
+/** Map over `items` with at most `concurrency` calls in flight, keeping results in input order. */
 async function mapLimit<T, R>(
   items: T[],
   concurrency: number,
@@ -303,20 +296,20 @@ async function mapLimit<T, R>(
   const results: R[] = new Array(items.length);
   let currentIndex = 0;
 
-  const workers = Array.from({ length: workerCount }, async () => {
-    while (true) {
-      const index = currentIndex;
-      currentIndex += 1;
+  // Each worker claims the next unprocessed index until none remain.
+  const runWorker = async (): Promise<void> => {
+    const index = currentIndex;
+    currentIndex += 1;
 
-      if (index >= items.length) {
-        return;
-      }
-
-      results[index] = await mapper(items[index], index);
+    if (index >= items.length) {
+      return;
     }
-  });
 
-  await Promise.all(workers);
+    results[index] = await mapper(items[index], index);
+    await runWorker();
+  };
+
+  await Promise.all(Array.from({ length: workerCount }, () => runWorker()));
   return results;
 }
 
@@ -367,6 +360,7 @@ async function translateLanguage(
   return { code: targetLang.code, status: "updated" };
 }
 
+/** Translate the source messages file into every target language and print a summary. */
 async function main() {
   const messagesDir = join(process.cwd(), "messages");
   const sourceFile = join(messagesDir, `${SOURCE_LANG}.json`);
@@ -418,9 +412,9 @@ async function main() {
       return acc;
     },
     {
-      updated: 0,
-      skipped: 0,
       failed: 0,
+      skipped: 0,
+      updated: 0,
     } as Record<TranslationStatus, number>
   );
 

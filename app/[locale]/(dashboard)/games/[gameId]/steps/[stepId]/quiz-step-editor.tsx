@@ -30,6 +30,7 @@ interface Props {
   step: Step;
 }
 
+/** Editor for a quiz step's question, answer choices and time limit. */
 export function QuizStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateQuiz = useMutation(api.steps.updateQuiz);
@@ -38,10 +39,10 @@ export function QuizStepEditor({ step }: Props) {
   const [question, setQuestion] = useState(step.question ?? "");
   const [choices, setChoices] = useState<QuizChoice[]>(
     step.choices ?? [
-      { text: "", isCorrect: false },
-      { text: "", isCorrect: false },
-      { text: "", isCorrect: false },
-      { text: "", isCorrect: false },
+      { isCorrect: false, text: "" },
+      { isCorrect: false, text: "" },
+      { isCorrect: false, text: "" },
+      { isCorrect: false, text: "" },
     ]
   );
   const [timeLimitSeconds, setTimeLimitSeconds] = useState<number | null>(
@@ -75,16 +76,16 @@ export function QuizStepEditor({ step }: Props) {
     const timeLimitValue = timeLimitSeconds ?? undefined;
     try {
       await updateQuiz({
-        stepId: step._id,
-        question,
         choices,
+        question,
+        stepId: step._id,
         timeLimitSeconds: timeLimitValue,
       });
       toast.success("Saved!");
       setSaving(false);
     } catch {
-      toast.error("Failed to save");
       setSaving(false);
+      toast.error("Failed to save");
     }
   }
 
@@ -186,11 +187,11 @@ export function QuizStepEditor({ step }: Props) {
             return options;
           }, [])}
         </select>
-        {timeLimitSeconds && (
+        {timeLimitSeconds ? (
           <p className="text-muted-foreground text-xs">
             Faster answers earn more points (Kahoot-style scoring)
           </p>
-        )}
+        ) : null}
       </div>
     </div>
   );

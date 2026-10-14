@@ -98,6 +98,7 @@ function buildCsv(
   return lines.join("\n");
 }
 
+/** Results of a finished session: final leaderboard, per-question breakdown and CSV export. */
 export function SessionResultsView({ sessionId }: { sessionId: string }) {
   const t = useTranslations("results");
   const results = useQuery(api.sessions.getResults, {
@@ -145,8 +146,8 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
   const { session, participants, answers, steps } = results;
 
   const leaderboard = participants.map((p, i) => ({
-    rank: i + 1,
     name: p.name,
+    rank: i + 1,
     score: p.totalScore,
   }));
 
@@ -250,10 +251,10 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
 
                 const choiceDistribution = (step.choices ?? []).map(
                   (c, ci) => ({
-                    text: c.text,
-                    isCorrect: c.isCorrect,
                     count: stepAnswers.filter((a) => a.choiceIndex === ci)
                       .length,
+                    isCorrect: c.isCorrect,
+                    text: c.text,
                   })
                 );
 
@@ -299,25 +300,24 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
                                 }
                               >
                                 {c.text}
-                                {c.isCorrect && " ✓"}
+                                {c.isCorrect ? " ✓" : null}
                               </span>
                               <span className="ml-auto font-mono text-muted-foreground text-xs tabular-nums">
                                 {c.count}
+                                <span className="sr-only">
+                                  {` (${Math.round(pct)}%)`}
+                                </span>
                               </span>
                             </div>
                             <div className="h-2.5 overflow-hidden rounded-full bg-muted">
                               <div
-                                aria-label={`${Math.round(pct)}% chose ${c.text}`}
-                                aria-valuemax={100}
-                                aria-valuemin={0}
-                                aria-valuenow={pct}
+                                aria-hidden="true"
                                 className={`h-full rounded-full transition-all ${
                                   c.isCorrect
                                     ? "bg-choice-green"
                                     : (CHOICE_BAR_COLORS[ci] ??
                                       "bg-muted-foreground/30")
                                 }`}
-                                role="progressbar"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>

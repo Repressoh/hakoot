@@ -26,38 +26,38 @@ const CARD_ACCENTS = [
   {
     bg: "bg-primary/8",
     border: "border-primary/20",
-    icon: "bg-primary/15 text-primary",
     glow: "group-hover:shadow-[0_0_30px_var(--glow-primary)]",
+    icon: "bg-primary/15 text-primary",
   },
   {
     bg: "bg-accent/8",
     border: "border-accent/20",
-    icon: "bg-accent/15 text-accent",
     glow: "group-hover:shadow-[0_0_30px_var(--glow-accent)]",
+    icon: "bg-accent/15 text-accent",
   },
   {
     bg: "bg-choice-blue/8",
     border: "border-choice-blue/20",
-    icon: "bg-choice-blue/15 text-choice-blue",
     glow: "group-hover:shadow-[0_0_30px_var(--glow-blue)]",
+    icon: "bg-choice-blue/15 text-choice-blue",
   },
   {
     bg: "bg-choice-yellow/8",
     border: "border-choice-yellow/20",
-    icon: "bg-choice-yellow/15 text-choice-yellow",
     glow: "group-hover:shadow-[0_0_25px_oklch(0.78_0.17_70/20%)]",
+    icon: "bg-choice-yellow/15 text-choice-yellow",
   },
   {
     bg: "bg-choice-green/8",
     border: "border-choice-green/20",
-    icon: "bg-choice-green/15 text-choice-green",
     glow: "group-hover:shadow-[0_0_25px_oklch(0.68_0.2_150/20%)]",
+    icon: "bg-choice-green/15 text-choice-green",
   },
   {
     bg: "bg-choice-red/8",
     border: "border-choice-red/20",
-    icon: "bg-choice-red/15 text-choice-red",
     glow: "group-hover:shadow-[0_0_25px_oklch(0.62_0.24_18/20%)]",
+    icon: "bg-choice-red/15 text-choice-red",
   },
 ];
 
@@ -76,6 +76,7 @@ interface Props {
   index?: number;
 }
 
+/** Dashboard card for one game, with links to its editor and sessions and a confirmed delete. */
 export function GameCard({ game, index = 0 }: Props) {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
@@ -91,8 +92,8 @@ export function GameCard({ game, index = 0 }: Props) {
       await removeGame({ gameId: game._id });
       toast.success(t("deleteSuccess"));
     } catch {
-      toast.error("Failed to delete game");
       setDeleting(false);
+      toast.error("Failed to delete game");
     }
   }
 
@@ -123,11 +124,11 @@ export function GameCard({ game, index = 0 }: Props) {
             <h3 className="line-clamp-2 font-display font-semibold text-base text-foreground leading-snug">
               {game.title}
             </h3>
-            {game.description && (
+            {game.description ? (
               <p className="mt-1 line-clamp-2 text-muted-foreground text-sm leading-relaxed">
                 {game.description}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
 

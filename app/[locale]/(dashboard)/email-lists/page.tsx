@@ -31,6 +31,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 
 // ─── Create list dialog ────────────────────────────────────────────────
 
+/** Dialog for creating a new, empty email list. */
 function CreateListDialog() {
   const t = useTranslations("emailLists");
   const [open, setOpen] = useState(false);
@@ -53,15 +54,15 @@ function CreateListDialog() {
       setLoading(false);
       setOpen(false);
     } catch {
-      toast.error("Something went wrong");
       setLoading(false);
+      toast.error("Something went wrong");
     }
   }
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button className="press-down h-11 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition-all hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110">
+        <Button className="press-down h-11 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110">
           <svg
             aria-hidden="true"
             className="mr-2"
@@ -123,6 +124,7 @@ function CreateListDialog() {
 
 // ─── Add entry form ─────────────────────────────────────────────────────
 
+/** Inline form that adds a name and email address to the list `listId`. */
 function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
   const t = useTranslations("emailLists");
   const addEntry = useMutation(api.emailLists.addEntry);
@@ -138,7 +140,7 @@ function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
     const trimmedEmail = email.trim();
     setName("");
     setEmail("");
-    addEntry({ listId, name: trimmedName, email: trimmedEmail }).catch(() => {
+    addEntry({ email: trimmedEmail, listId, name: trimmedName }).catch(() => {
       toast.error("Failed to add entry");
     });
   }
@@ -175,6 +177,10 @@ function AddEntryForm({ listId }: { listId: Id<"emailLists"> }) {
 
 // ─── Single list card ──────────────────────────────────────────────────
 
+/**
+ * Expandable card for one email list: its entries, plus controls to add or remove entries and
+ * delete the list.
+ */
 function EmailListCard({
   list,
 }: {
@@ -194,7 +200,7 @@ function EmailListCard({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="group rounded-2xl border border-border/50 bg-card/60 p-5 backdrop-blur-sm transition-all hover:border-border/80 hover:shadow-black/5 hover:shadow-lg">
+    <div className="group rounded-2xl border border-border/50 bg-card/60 p-5 backdrop-blur-sm transition hover:border-border/80 hover:shadow-black/5 hover:shadow-lg">
       <div className="flex items-center justify-between gap-3">
         <button
           className="flex flex-1 items-center gap-3 text-left"
@@ -265,7 +271,7 @@ function EmailListCard({
         </AlertDialog>
       </div>
 
-      {expanded && (
+      {expanded ? (
         <div className="mt-4 space-y-3">
           {list.entries.length > 0 && (
             <div className="space-y-1.5">
@@ -299,7 +305,7 @@ function EmailListCard({
           )}
           <AddEntryForm listId={list._id} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

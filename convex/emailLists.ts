@@ -1,7 +1,21 @@
 // biome-ignore lint/style/useFilenamingConvention: convex's fault
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import { type MutationCtx, mutation, query } from "./_generated/server";
+
+/** Delete an email list and all of its entries. */
+export async function deleteEmailListCascade(
+  ctx: MutationCtx,
+  listId: Id<"emailLists">
+): Promise<void> {
+  const entries = await ctx.db
+    .query("emailListEntries")
+    .withIndex("by_list", (q) => q.eq("listId", listId))
+    .collect();
+  await Promise.all(entries.map((entry) => ctx.db.delete(entry._id)));
+  await ctx.db.delete(listId);
+}
 
 // ─── Queries ───────────────────────────────────────────────────────────
 
@@ -21,6 +35,7 @@ export const list = query({
   },
 });
 
+/** One of the current user's email lists with its entries, or null if it is not theirs. */
 export const getWithEntries = query({
   args: { listId: v.id("emailLists") },
   handler: async (ctx, args) => {
@@ -29,8 +44,8 @@ export const getWithEntries = query({
       return null;
     }
 
-    const list = await ctx.db.get(args.listId);
-    if (!list || list.createdById !== userId) {
+    const emailList = await ctx.db.get(args.listId);
+    if (!emailList || emailList.createdById !== userId) {
       return null;
     }
 
@@ -39,10 +54,11 @@ export const getWithEntries = query({
       .withIndex("by_list", (q) => q.eq("listId", args.listId))
       .collect();
 
-    return { ...list, entries };
+    return { ...emailList, entries };
   },
 });
 
+/** All of the current user's email lists, each with its entries. */
 export const listWithEntries = query({
   args: {},
   handler: async (ctx) => {
@@ -58,12 +74,12 @@ export const listWithEntries = query({
       .collect();
 
     return await Promise.all(
-      lists.map(async (list) => {
+      lists.map(async (emailList) => {
         const entries = await ctx.db
           .query("emailListEntries")
-          .withIndex("by_list", (q) => q.eq("listId", list._id))
+          .withIndex("by_list", (q) => q.eq("listId", emailList._id))
           .collect();
-        return { ...list, entries };
+        return { ...emailList, entries };
       })
     );
   },
@@ -71,6 +87,7 @@ export const listWithEntries = query({
 
 // ─── Mutations ─────────────────────────────────────────────────────────
 
+/** Create an empty email list for the current user. */
 export const create = mutation({
   args: { title: v.string() },
   handler: async (ctx, args) => {
@@ -88,12 +105,13 @@ export const create = mutation({
     }
 
     return await ctx.db.insert("emailLists", {
-      title,
       createdById: userId,
+      title,
     });
   },
 });
 
+/** Rename one of the current user's email lists. */
 export const rename = mutation({
   args: { listId: v.id("emailLists"), title: v.string() },
   handler: async (ctx, args) => {
@@ -102,8 +120,8 @@ export const rename = mutation({
       throw new ConvexError("Not authenticated");
     }
 
-    const list = await ctx.db.get(args.listId);
-    if (!list || list.createdById !== userId) {
+    const emailList = await ctx.db.get(args.listId);
+    if (!emailList || emailList.createdById !== userId) {
       throw new ConvexError("Not found");
     }
 
@@ -111,6 +129,7 @@ export const rename = mutation({
   },
 });
 
+/** Delete one of the current user's email lists and its entries. */
 export const remove = mutation({
   args: { listId: v.id("emailLists") },
   handler: async (ctx, args) => {
@@ -119,29 +138,21 @@ export const remove = mutation({
       throw new ConvexError("Not authenticated");
     }
 
-    const list = await ctx.db.get(args.listId);
-    if (!list || list.createdById !== userId) {
+    const emailList = await ctx.db.get(args.listId);
+    if (!emailList || emailList.createdById !== userId) {
       throw new ConvexError("Not found");
     }
 
-    // Delete all entries first
-    const entries = await ctx.db
-      .query("emailListEntries")
-      .withIndex("by_list", (q) => q.eq("listId", args.listId))
-      .collect();
-    for (const entry of entries) {
-      await ctx.db.delete(entry._id);
-    }
-
-    await ctx.db.delete(args.listId);
+    await deleteEmailListCascade(ctx, args.listId);
   },
 });
 
+/** Add a name and email address to one of the current user's lists. */
 export const addEntry = mutation({
   args: {
+    email: v.string(),
     listId: v.id("emailLists"),
     name: v.string(),
-    email: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -149,24 +160,25 @@ export const addEntry = mutation({
       throw new ConvexError("Not authenticated");
     }
 
-    const list = await ctx.db.get(args.listId);
-    if (!list || list.createdById !== userId) {
+    const emailList = await ctx.db.get(args.listId);
+    if (!emailList || emailList.createdById !== userId) {
       throw new ConvexError("Not found");
     }
 
     return await ctx.db.insert("emailListEntries", {
+      email: args.email,
       listId: args.listId,
       name: args.name,
-      email: args.email,
     });
   },
 });
 
+/** Edit the name and email address of an entry in one of the current user's lists. */
 export const updateEntry = mutation({
   args: {
+    email: v.string(),
     entryId: v.id("emailListEntries"),
     name: v.string(),
-    email: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -179,18 +191,19 @@ export const updateEntry = mutation({
       throw new ConvexError("Not found");
     }
 
-    const list = await ctx.db.get(entry.listId);
-    if (!list || list.createdById !== userId) {
+    const emailList = await ctx.db.get(entry.listId);
+    if (!emailList || emailList.createdById !== userId) {
       throw new ConvexError("Not found");
     }
 
     await ctx.db.patch(args.entryId, {
-      name: args.name,
       email: args.email,
+      name: args.name,
     });
   },
 });
 
+/** Remove an entry from one of the current user's lists. */
 export const removeEntry = mutation({
   args: { entryId: v.id("emailListEntries") },
   handler: async (ctx, args) => {
@@ -204,8 +217,8 @@ export const removeEntry = mutation({
       throw new ConvexError("Not found");
     }
 
-    const list = await ctx.db.get(entry.listId);
-    if (!list || list.createdById !== userId) {
+    const emailList = await ctx.db.get(entry.listId);
+    if (!emailList || emailList.createdById !== userId) {
       throw new ConvexError("Not found");
     }
 

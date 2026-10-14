@@ -5,51 +5,37 @@ import { v } from "convex/values";
 export default defineSchema({
   ...authTables,
 
-  // ─── Game template ───────────────────────────────────────────────────
-  games: defineTable({
-    title: v.string(),
-    description: v.optional(v.string()),
+  // ─── Email list entry ───────────────────────────────────────────────
+  emailListEntries: defineTable({
+    email: v.string(),
+    listId: v.id("emailLists"),
+    name: v.string(),
+  }).index("by_list", ["listId"]),
+
+  // ─── Email list ──────────────────────────────────────────────────────
+  emailLists: defineTable({
     createdById: v.id("users"),
-    updatedAt: v.number(),
+    title: v.string(),
   }).index("by_creator", ["createdById"]),
 
-  // ─── Game step (theory or quiz) ─────────────────────────────────────
-  gameSteps: defineTable({
-    gameId: v.id("games"),
-    order: v.number(),
-    type: v.union(v.literal("theory"), v.literal("quiz")),
-    // Theory fields
-    markdownContent: v.optional(v.string()),
-    codeBlock: v.optional(
-      v.object({
-        code: v.string(),
-        language: v.string(),
-        annotations: v.array(
-          v.object({
-            label: v.string(),
-            explanation: v.string(),
-            lines: v.array(v.number()),
-          })
-        ),
-      })
-    ),
-    // Quiz fields
-    question: v.optional(v.string()),
-    choices: v.optional(
-      v.array(
-        v.object({
-          text: v.string(),
-          isCorrect: v.boolean(),
-        })
-      )
-    ),
-    timeLimitSeconds: v.optional(v.number()),
+  // ─── Game participant (guest player) ────────────────────────────────
+  gameParticipants: defineTable({
+    email: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
+    lastSeen: v.optional(v.number()),
+    name: v.string(),
+    participantToken: v.string(),
+    sessionId: v.id("gameSessions"),
+    totalScore: v.number(),
   })
-    .index("by_game", ["gameId"])
-    .index("by_game_and_order", ["gameId", "order"]),
+    .index("by_session", ["sessionId"])
+    .index("by_token", ["participantToken"])
+    .index("by_expiration", ["expiresAt"]),
 
   // ─── Game session (live run) ────────────────────────────────────────
   gameSessions: defineTable({
+    answerRevealed: v.boolean(),
+    currentStepIndex: v.number(),
     gameId: v.id("games"),
     hostId: v.id("users"),
     inviteCode: v.string(),
@@ -58,49 +44,63 @@ export default defineSchema({
       v.literal("in_progress"),
       v.literal("finished")
     ),
-    currentStepIndex: v.number(),
     stepStartedAt: v.optional(v.number()),
-    answerRevealed: v.boolean(),
   })
     .index("by_game", ["gameId"])
     .index("by_host", ["hostId"])
     .index("by_invite_code", ["inviteCode"]),
 
-  // ─── Game participant (guest player) ────────────────────────────────
-  gameParticipants: defineTable({
-    sessionId: v.id("gameSessions"),
-    name: v.string(),
-    email: v.optional(v.string()),
-    participantToken: v.string(),
-    totalScore: v.number(),
-    lastSeen: v.optional(v.number()),
-    expiresAt: v.optional(v.number()),
+  // ─── Game step (theory or quiz) ─────────────────────────────────────
+  gameSteps: defineTable({
+    choices: v.optional(
+      v.array(
+        v.object({
+          isCorrect: v.boolean(),
+          text: v.string(),
+        })
+      )
+    ),
+    codeBlock: v.optional(
+      v.object({
+        annotations: v.array(
+          v.object({
+            explanation: v.string(),
+            label: v.string(),
+            lines: v.array(v.number()),
+          })
+        ),
+        code: v.string(),
+        language: v.string(),
+      })
+    ),
+    gameId: v.id("games"),
+    // Theory fields
+    markdownContent: v.optional(v.string()),
+    order: v.number(),
+    // Quiz fields
+    question: v.optional(v.string()),
+    timeLimitSeconds: v.optional(v.number()),
+    type: v.union(v.literal("theory"), v.literal("quiz")),
   })
-    .index("by_session", ["sessionId"])
-    .index("by_token", ["participantToken"])
-    .index("by_expiration", ["expiresAt"]),
+    .index("by_game", ["gameId"])
+    .index("by_game_and_order", ["gameId", "order"]),
 
-  // ─── Email list ──────────────────────────────────────────────────────
-  emailLists: defineTable({
-    title: v.string(),
+  // ─── Game template ───────────────────────────────────────────────────
+  games: defineTable({
     createdById: v.id("users"),
+    description: v.optional(v.string()),
+    title: v.string(),
+    updatedAt: v.number(),
   }).index("by_creator", ["createdById"]),
-
-  // ─── Email list entry ───────────────────────────────────────────────
-  emailListEntries: defineTable({
-    listId: v.id("emailLists"),
-    name: v.string(),
-    email: v.string(),
-  }).index("by_list", ["listId"]),
 
   // ─── Participant answer ──────────────────────────────────────────────
   participantAnswers: defineTable({
-    participantId: v.id("gameParticipants"),
-    sessionId: v.optional(v.id("gameSessions")),
-    stepId: v.id("gameSteps"),
     choiceIndex: v.number(),
     isCorrect: v.boolean(),
+    participantId: v.id("gameParticipants"),
     score: v.number(),
+    sessionId: v.optional(v.id("gameSessions")),
+    stepId: v.id("gameSteps"),
   })
     .index("by_session", ["sessionId"])
     .index("by_participant", ["participantId"])
@@ -109,9 +109,9 @@ export default defineSchema({
 
   // ─── Rate limiting ───────────────────────────────────────────────────
   rateLimits: defineTable({
-    identifier: v.string(),
-    endpoint: v.string(),
     attempts: v.number(),
+    endpoint: v.string(),
+    identifier: v.string(),
     windowStart: v.number(),
   }).index("by_identifier_and_endpoint", ["identifier", "endpoint"]),
 });

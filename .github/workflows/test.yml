@@ -1,0 +1,42 @@
+# Runs the Convex function tests (convex/tests/*.test.ts) with convex-test and
+# Vitest. They use an in-memory backend, so no Convex deployment or secrets are
+# needed.
+
+name: Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+# Only the latest commit of a PR (or branch, on push) needs a result.
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  convex-tests:
+    runs-on: ubuntu-latest
+    steps:
+      # The tests run repository code, so don't leave the token in .git/config
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      # Same Bun version as the Dockerfile, so the lockfile is read the same way
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      # Vitest 5 needs Node ^22.12 || ^24
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - run: bun install --frozen-lockfile --ignore-scripts
+
+      - run: bun run test

@@ -103,6 +103,9 @@ interface StepContentProps {
   step: StepDoc;
 }
 
+/**
+ * The current step as the host sees it: theory content, or the quiz question with answer progress.
+ */
 function StepContent({
   step,
   answerRevealed,
@@ -112,15 +115,15 @@ function StepContent({
   if (step.type === "theory") {
     return (
       <>
-        {step.markdownContent && (
+        {step.markdownContent ? (
           <MarkdownViewer content={step.markdownContent} />
-        )}
-        {step.codeBlock && (
+        ) : null}
+        {step.codeBlock ? (
           <ClientCodeBlock
             code={step.codeBlock.code}
             language={step.codeBlock.language}
           />
-        )}
+        ) : null}
       </>
     );
   }
@@ -145,9 +148,9 @@ function StepContent({
               {String.fromCharCode(65 + i)}.
             </span>
             {choice.text}
-            {answerRevealed && choice.isCorrect && (
+            {answerRevealed && choice.isCorrect ? (
               <span className="ml-2 text-choice-green">✓</span>
-            )}
+            ) : null}
           </div>
         ))}
       </div>
@@ -192,6 +195,7 @@ interface ParticipantsPanelProps {
   participants: ParticipantDoc[];
 }
 
+/** Panel listing the session's participants, with a count. */
 function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
   const t = useTranslations();
   const count = participants.length;
@@ -230,13 +234,189 @@ function ParticipantsPanel({ participants }: ParticipantsPanelProps) {
   );
 }
 
+interface WaitingRoomProps {
+  advancing: boolean;
+  onStart: () => void;
+  participantCount: number;
+  session: SessionDoc;
+}
+
+/** Lobby shown before the session starts: invite code, player count and the start button. */
+function WaitingRoom({
+  advancing,
+  onStart,
+  participantCount,
+  session,
+}: WaitingRoomProps) {
+  const t = useTranslations();
+
+  return (
+    <div className="surface-raised p-6">
+      <div className="space-y-6 py-10 text-center">
+        <h2 className="font-display font-semibold text-2xl text-foreground">
+          {t("session.waitingRoom")}
+        </h2>
+        <p className="text-muted-foreground">
+          {t("session.participantsJoined", {
+            count: participantCount,
+          })}
+        </p>
+        <InviteCodeDisplay
+          code={session.inviteCode}
+          large
+          sessionId={session._id}
+        />
+        <Button
+          className="glow-primary press-down rounded-xl bg-primary px-10 font-bold font-display text-primary-foreground hover:brightness-110"
+          disabled={advancing || participantCount === 0}
+          onClick={onStart}
+          size="lg"
+        >
+          {t("session.startSession")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface CurrentStepCardProps {
+  answeredCount: number;
+  answerRevealed: boolean;
+  participantCount: number;
+  step: StepDoc;
+  stepStartedAt?: number;
+}
+
+/**
+ * Card for the step being played. Owns the 1-second clock, so only this card re-renders while the
+ * timer runs.
+ */
+function CurrentStepCard({
+  answeredCount,
+  answerRevealed,
+  participantCount,
+  step,
+  stepStartedAt,
+}: CurrentStepCardProps) {
+  // Track current time so the timer appears once the reading phase ends
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const timeLimitSeconds = step.timeLimitSeconds ?? 0;
+  const showTimer =
+    timeLimitSeconds > 0 &&
+    stepStartedAt !== undefined &&
+    stepStartedAt <= now &&
+    !answerRevealed;
+
+  return (
+    <div className="surface-raised p-6">
+      <div className="mb-4 flex items-center gap-2">
+        <Badge
+          className={cn(
+            "text-xs",
+            step.type === "theory"
+              ? "border-choice-blue/30 bg-choice-blue/15 text-choice-blue"
+              : "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow"
+          )}
+          variant="outline"
+        >
+          {step.type === "theory" ? "Theory" : "Quiz"}
+        </Badge>
+        {showTimer ? (
+          <CircularTimer
+            stepStartedAt={stepStartedAt}
+            timeLimitSeconds={timeLimitSeconds}
+          />
+        ) : null}
+        {timeLimitSeconds > 0 && answerRevealed ? (
+          <Badge
+            className="border-border bg-muted text-muted-foreground"
+            variant="outline"
+          >
+            ⏱ {timeLimitSeconds}s
+          </Badge>
+        ) : null}
+      </div>
+      <div className="space-y-4">
+        <StepContent
+          answeredCount={answeredCount}
+          answerRevealed={answerRevealed}
+          participantCount={participantCount}
+          step={step}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface HostControlsProps {
+  advancing: boolean;
+  answerRevealed: boolean;
+  isLastStep: boolean;
+  isQuiz: boolean;
+  onAdvance: () => void;
+  onReveal: () => void;
+  revealing: boolean;
+  status: SessionDoc["status"];
+}
+
+/** Host buttons to reveal the quiz answer and move to the next step (or finish on the last one). */
+function HostControls({
+  advancing,
+  answerRevealed,
+  isLastStep,
+  isQuiz,
+  onAdvance,
+  onReveal,
+  revealing,
+  status,
+}: HostControlsProps) {
+  const t = useTranslations();
+
+  return (
+    <div className="surface-raised p-5">
+      <h3 className="mb-3 font-display text-foreground text-sm">Controls</h3>
+      <div className="space-y-2">
+        {status === "in_progress" && isQuiz && !answerRevealed && (
+          <Button
+            className="w-full rounded-xl border-border text-foreground hover:bg-muted/50"
+            disabled={revealing}
+            onClick={onReveal}
+            variant="outline"
+          >
+            {t("session.revealAnswer")}
+          </Button>
+        )}
+        {status === "in_progress" && (
+          <Button
+            className="glow-sm press-down w-full rounded-xl bg-primary font-bold text-primary-foreground hover:brightness-110"
+            disabled={advancing || (isQuiz && !answerRevealed)}
+            onClick={onAdvance}
+          >
+            {isLastStep ? t("session.endSession") : t("session.nextStep")}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Host screen for a live session: lobby, then the current step, leaderboard and controls; redirects
+ * to the results when finished.
+ */
 function HostSessionView({ data }: Props) {
   const t = useTranslations();
 
   const { session, game, steps, participants } = data;
-  const status = session.status;
-  const currentIndex = session.currentStepIndex;
-  const answerRevealed = session.answerRevealed;
+  const { answerRevealed, currentStepIndex: currentIndex, status } = session;
 
   const [advancing, setAdvancing] = useState(false);
   const [revealing, setRevealing] = useState(false);
@@ -257,17 +437,6 @@ function HostSessionView({ data }: Props) {
   const answeredCount = answerCount?.answered ?? 0;
   const participantCount = participants.length;
   const showLeaderboard = answerRevealed && (leaderboard?.length ?? 0) > 0;
-
-  // Use useState to track current time for timer calculations
-  const [now, setNow] = useState(() => Date.now());
-
-  // Update time every second for timer display
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(Date.now());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Track previous participant count for join toasts
   const prevParticipantCount = useRef(participants.length);
@@ -363,74 +532,22 @@ function HostSessionView({ data }: Props) {
           )}
 
           {status === "waiting" && (
-            <div className="surface-raised p-6">
-              <div className="space-y-6 py-10 text-center">
-                <h2 className="font-display font-semibold text-2xl text-foreground">
-                  {t("session.waitingRoom")}
-                </h2>
-                <p className="text-muted-foreground">
-                  {t("session.participantsJoined", {
-                    count: participantCount,
-                  })}
-                </p>
-                <InviteCodeDisplay
-                  code={session.inviteCode}
-                  large
-                  sessionId={session._id}
-                />
-                <Button
-                  className="glow-primary press-down rounded-xl bg-primary px-10 font-bold font-display text-primary-foreground hover:brightness-110"
-                  disabled={advancing || participantCount === 0}
-                  onClick={handleAdvance}
-                  size="lg"
-                >
-                  {t("session.startSession")}
-                </Button>
-              </div>
-            </div>
+            <WaitingRoom
+              advancing={advancing}
+              onStart={handleAdvance}
+              participantCount={participantCount}
+              session={session}
+            />
           )}
 
           {status === "in_progress" && currentStep && (
-            <div className="surface-raised p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Badge
-                  className={cn(
-                    "text-xs",
-                    currentStep.type === "theory"
-                      ? "border-choice-blue/30 bg-choice-blue/15 text-choice-blue"
-                      : "border-choice-yellow/30 bg-choice-yellow/15 text-choice-yellow"
-                  )}
-                  variant="outline"
-                >
-                  {currentStep.type === "theory" ? "Theory" : "Quiz"}
-                </Badge>
-                {currentStep.timeLimitSeconds &&
-                  session.stepStartedAt &&
-                  session.stepStartedAt <= now &&
-                  !answerRevealed && (
-                    <CircularTimer
-                      stepStartedAt={session.stepStartedAt}
-                      timeLimitSeconds={currentStep.timeLimitSeconds}
-                    />
-                  )}
-                {currentStep.timeLimitSeconds && answerRevealed && (
-                  <Badge
-                    className="border-border bg-muted text-muted-foreground"
-                    variant="outline"
-                  >
-                    ⏱ {currentStep.timeLimitSeconds}s
-                  </Badge>
-                )}
-              </div>
-              <div className="space-y-4">
-                <StepContent
-                  answeredCount={answeredCount}
-                  answerRevealed={answerRevealed}
-                  participantCount={participantCount}
-                  step={currentStep}
-                />
-              </div>
-            </div>
+            <CurrentStepCard
+              answeredCount={answeredCount}
+              answerRevealed={answerRevealed}
+              participantCount={participantCount}
+              step={currentStep}
+              stepStartedAt={session.stepStartedAt}
+            />
           )}
 
           {showLeaderboard && leaderboard && leaderboard.length > 0 && (
@@ -444,32 +561,16 @@ function HostSessionView({ data }: Props) {
         </div>
 
         <div className="space-y-4">
-          <div className="surface-raised p-5">
-            <h3 className="mb-3 font-display text-foreground text-sm">
-              Controls
-            </h3>
-            <div className="space-y-2">
-              {status === "in_progress" && isQuiz && !answerRevealed && (
-                <Button
-                  className="w-full rounded-xl border-border text-foreground hover:bg-muted/50"
-                  disabled={revealing}
-                  onClick={handleReveal}
-                  variant="outline"
-                >
-                  {t("session.revealAnswer")}
-                </Button>
-              )}
-              {status === "in_progress" && (
-                <Button
-                  className="glow-sm press-down w-full rounded-xl bg-primary font-bold text-primary-foreground hover:brightness-110"
-                  disabled={advancing || (isQuiz && !answerRevealed)}
-                  onClick={handleAdvance}
-                >
-                  {isLastStep ? t("session.endSession") : t("session.nextStep")}
-                </Button>
-              )}
-            </div>
-          </div>
+          <HostControls
+            advancing={advancing}
+            answerRevealed={answerRevealed}
+            isLastStep={isLastStep}
+            isQuiz={isQuiz}
+            onAdvance={handleAdvance}
+            onReveal={handleReveal}
+            revealing={revealing}
+            status={status}
+          />
 
           <ParticipantsPanel participants={participants} />
         </div>

@@ -223,6 +223,7 @@ function SortableStepItem({
   );
 }
 
+/** A game's steps in order, with drag-and-drop reordering, move up/down and delete. */
 export function StepList({ gameId, steps }: Props) {
   const t = useTranslations("gameEditor");
   const removeStep = useMutation(api.steps.remove);
@@ -265,7 +266,7 @@ export function StepList({ gameId, steps }: Props) {
 
   async function handleMove(stepId: Id<"gameSteps">, direction: "up" | "down") {
     try {
-      await moveStepMut({ stepId, direction });
+      await moveStepMut({ direction, stepId });
     } catch {
       toast.error("Failed to move step");
     }

@@ -12,29 +12,31 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { JoinCard } from "./join-card";
 
+/** Localized title and description for the landing page. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("landing");
   return {
-    title: t("metaTitle"),
     description: t("metaDescription"),
+    title: t("metaTitle"),
   };
 }
 
 const FEATURE_ICONS = [
-  { icon: BookOpen01Icon, color: "text-primary" },
-  { icon: SourceCodeIcon, color: "text-sky-400" },
-  { icon: ChampionIcon, color: "text-accent" },
-  { icon: FlashIcon, color: "text-primary" },
+  { color: "text-primary", icon: BookOpen01Icon },
+  { color: "text-sky-400", icon: SourceCodeIcon },
+  { color: "text-accent", icon: ChampionIcon },
+  { color: "text-primary", icon: FlashIcon },
 ] as const;
 
+/** Public landing page: hero with the join card, features, how it works and a call to action. */
 export default async function LandingPage() {
   const t = await getTranslations();
 
   const features = [
-    { title: t("landing.feature1Title"), desc: t("landing.feature1Desc") },
-    { title: t("landing.feature2Title"), desc: t("landing.feature2Desc") },
-    { title: t("landing.feature3Title"), desc: t("landing.feature3Desc") },
-    { title: t("landing.feature4Title"), desc: t("landing.feature4Desc") },
+    { desc: t("landing.feature1Desc"), title: t("landing.feature1Title") },
+    { desc: t("landing.feature2Desc"), title: t("landing.feature2Title") },
+    { desc: t("landing.feature3Desc"), title: t("landing.feature3Title") },
+    { desc: t("landing.feature4Desc"), title: t("landing.feature4Title") },
   ];
 
   const steps = [t("landing.step1"), t("landing.step2"), t("landing.step3")];
@@ -45,7 +47,7 @@ export default async function LandingPage() {
       <header className="pointer-events-none fixed top-0 right-0 left-0 z-50">
         <div className="pointer-events-auto mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
           <Link className="group press-down flex items-center gap-2" href="/">
-            <span className="font-black font-display text-2xl text-foreground tracking-tight transition-all group-hover:text-glow">
+            <span className="font-black font-display text-2xl text-foreground tracking-tight transition-[text-shadow] group-hover:text-glow">
               HAKOOT<span className="animate-glow-pulse text-primary">_</span>
             </span>
           </Link>
@@ -103,7 +105,7 @@ export default async function LandingPage() {
         <p className="relative z-10 mt-8 text-center font-mono text-muted-foreground text-sm">
           {t("landing.makeGame")}{" "}
           <Link
-            className="font-bold text-accent uppercase tracking-widest transition-all hover:text-glow-accent"
+            className="font-bold text-accent uppercase tracking-widest transition-[text-shadow] hover:text-glow-accent"
             href="/sign-in"
           >
             {t("landing.authenticate")}
@@ -133,7 +135,7 @@ export default async function LandingPage() {
                 >
                   {/* Arcade Ticket Shape wrapper */}
                   <div
-                    className="surface-elevated group-hover:glow-border relative flex h-full flex-col gap-6 border-2 border-border/50 p-8 transition-all duration-300 group-hover:-translate-y-2 group-hover:border-primary"
+                    className="surface-elevated group-hover:glow-border relative flex h-full flex-col gap-6 border-2 border-border/50 p-8 transition duration-300 group-hover:-translate-y-2 group-hover:border-primary"
                     style={{ borderRadius: "24px" }}
                   >
                     {/* Ticket "hole punch" decors */}
@@ -205,7 +207,7 @@ export default async function LandingPage() {
                 className="relative flex w-full items-center gap-8 text-center sm:flex-1 sm:flex-col sm:gap-6"
                 key={step}
               >
-                <div className="hover:glow-primary group relative z-10 flex size-24 shrink-0 items-center justify-center rounded-[2rem] border-4 border-border bg-background shadow-[0_0_0_8px_var(--background)] transition-all hover:border-primary">
+                <div className="hover:glow-primary group relative z-10 flex size-24 shrink-0 items-center justify-center rounded-[2rem] border-4 border-border bg-background shadow-[0_0_0_8px_var(--background)] transition hover:border-primary">
                   <span className="font-black font-mono text-4xl text-foreground transition-colors group-hover:text-glow group-hover:text-primary">
                     {i + 1}
                   </span>
@@ -239,7 +241,7 @@ export default async function LandingPage() {
           </h2>
           <Button
             asChild
-            className="press-down h-auto rounded-[2rem] border-4 border-accent-foreground/20 bg-accent px-12 py-8 font-black font-display text-2xl text-accent-foreground uppercase tracking-wider shadow-[0_0_40px_var(--accent)] transition-all hover:-translate-y-1 hover:bg-accent hover:shadow-[0_0_60px_var(--accent)]"
+            className="press-down h-auto rounded-[2rem] border-4 border-accent-foreground/20 bg-accent px-12 py-8 font-black font-display text-2xl text-accent-foreground uppercase tracking-wider shadow-[0_0_40px_var(--accent)] transition hover:-translate-y-1 hover:bg-accent hover:shadow-[0_0_60px_var(--accent)]"
           >
             <Link href="/sign-up">{t("landing.ctaButton")}</Link>
           </Button>

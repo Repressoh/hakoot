@@ -38,20 +38,22 @@ type HighlightState =
 
 type HighlightAction = { type: "RESOLVE"; html: string } | { type: "REJECT" };
 
+/** Tracks the async syntax-highlighting result: loading, ready or error (keeping the last HTML). */
 function highlightReducer(
   state: HighlightState,
   action: HighlightAction
 ): HighlightState {
   if (action.type === "RESOLVE") {
-    return { status: "ready", html: action.html };
+    return { html: action.html, status: "ready" };
   }
-  return { status: "error", html: state.html };
+  return { html: state.html, status: "error" };
 }
 
+/** Code block highlighted in the browser with Shiki, debounced while the code changes. */
 export function ClientCodeBlock({ code, language }: Props) {
   const [state, dispatch] = useReducer(highlightReducer, {
-    status: "loading",
     html: null,
+    status: "loading",
   });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -69,8 +71,8 @@ export function ClientCodeBlock({ code, language }: Props) {
       let cancelled = false;
 
       createHighlighter({
-        themes: ["github-dark"],
         langs: [safeLang],
+        themes: ["github-dark"],
       })
         .then((highlighter) => {
           if (cancelled) {
@@ -80,7 +82,7 @@ export function ClientCodeBlock({ code, language }: Props) {
             lang: safeLang,
             theme: "github-dark",
           });
-          dispatch({ type: "RESOLVE", html });
+          dispatch({ html, type: "RESOLVE" });
         })
         .catch(() => {
           if (!cancelled) {

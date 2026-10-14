@@ -13,7 +13,7 @@ export function parseLineRange(input: string): number[] {
     if (part.includes("-")) {
       const [start, end] = part.split("-").map(Number);
       if (!(Number.isNaN(start) || Number.isNaN(end))) {
-        for (let i = start; i <= end; i++) {
+        for (let i = start; i <= end; i += 1) {
           lines.push(i);
         }
       }
@@ -34,10 +34,10 @@ export function formatLineNumbers(lines: number[]): string {
   }
   const sorted = [...lines].sort((a, b) => a - b);
   const ranges: string[] = [];
-  let start = sorted[0];
-  let prev = sorted[0];
+  let [start] = sorted;
+  let prev = start;
 
-  for (let i = 1; i <= sorted.length; i++) {
+  for (let i = 1; i <= sorted.length; i += 1) {
     if (i === sorted.length || sorted[i] !== prev + 1) {
       ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
       if (i < sorted.length) {

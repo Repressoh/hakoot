@@ -10,6 +10,9 @@ interface Props {
   sessionId: string;
 }
 
+/**
+ * Session invite code with a copy button; `large` is the prominent version for the host's lobby.
+ */
 export function InviteCodeDisplay({ code, sessionId, large }: Props) {
   const t = useTranslations("session");
   const [copied, setCopied] = useState(false);
@@ -48,6 +51,8 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
     );
   }
 
+  const buttonLabel = copied ? "✓" : code;
+
   return (
     <Button
       aria-label={`Invite code: ${code}. Click to copy.`}
@@ -56,7 +61,7 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
       size="sm"
       variant="outline"
     >
-      {copied ? "✓" : code}
+      {buttonLabel}
     </Button>
   );
 }
