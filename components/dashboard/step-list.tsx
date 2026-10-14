@@ -265,7 +265,7 @@ export function StepList({ gameId, steps }: Props) {
 
   async function handleMove(stepId: Id<"gameSteps">, direction: "up" | "down") {
     try {
-      await moveStepMut({ stepId, direction });
+      await moveStepMut({ direction, stepId });
     } catch {
       toast.error("Failed to move step");
     }

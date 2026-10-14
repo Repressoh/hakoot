@@ -53,8 +53,8 @@ export function GameList({ games }: Props) {
           initial={{ opacity: 0, y: 16 }}
           key={game._id}
           transition={{
-            duration: 0.4,
             delay: i * 0.06,
+            duration: 0.4,
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
         >

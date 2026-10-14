@@ -30,11 +30,11 @@ export function ResetPasswordForm({ resetCode }: Props) {
         flow: "reset",
         redirectTo: "/reset-password",
       });
+      setLoading(false);
       toast.success("Check your email for a password reset link.");
     } catch {
-      toast.error("Could not send a reset link. Please try again.");
-    } finally {
       setLoading(false);
+      toast.error("Could not send a reset link. Please try again.");
     }
   }
 
@@ -65,16 +65,16 @@ export function ResetPasswordForm({ resetCode }: Props) {
 
     try {
       await signIn("password", {
+        code: resetCode,
         email,
         flow: "reset-verification",
-        code: resetCode,
         newPassword,
       });
       toast.success("Password reset successfully.");
       push("/dashboard");
     } catch {
-      toast.error("Could not reset the password. Check the link and email.");
       setLoading(false);
+      toast.error("Could not reset the password. Check the link and email.");
     }
   }
 

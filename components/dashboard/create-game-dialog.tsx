@@ -38,23 +38,23 @@ export function CreateGameDialog() {
 
     try {
       const gameId = await createGame({
-        title,
         description: descriptionValue,
+        title,
       });
       toast.success(t("dashboard.createSuccess"));
       setLoading(false);
       setOpen(false);
       push(`/games/${gameId}`);
     } catch {
-      toast.error(t("common.error"));
       setLoading(false);
+      toast.error(t("common.error"));
     }
   }
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button className="press-down h-11 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition-all hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110">
+        <Button className="press-down h-11 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110">
           <svg
             aria-hidden="true"
             className="mr-2"

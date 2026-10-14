@@ -3,7 +3,7 @@
 import { useMutation } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { AddStepMenu } from "@/components/dashboard/add-step-menu";
 import { Button } from "@/components/ui/button";
@@ -18,13 +18,13 @@ import { Link } from "@/i18n/routing";
 const StepList = dynamic(
   () => import("@/components/dashboard/step-list").then((mod) => mod.StepList),
   {
-    ssr: false,
     loading: () => (
       <div className="animate-pulse space-y-3">
         <Skeleton className="h-16 w-full rounded-xl" />
         <Skeleton className="h-16 w-full rounded-xl" />
       </div>
     ),
+    ssr: false,
   }
 );
 
@@ -55,34 +55,89 @@ interface Props {
   game: Game;
 }
 
-export function GameEditor({ game }: Props) {
+interface GameDetailsFormProps {
+  gameId: Id<"games">;
+  initialDescription: string;
+  initialTitle: string;
+}
+
+/** Editable copy of the title/description. Render with a `key` derived from
+ * the saved values so the form resets when they change on the server. */
+function GameDetailsForm({
+  gameId,
+  initialDescription,
+  initialTitle,
+}: GameDetailsFormProps) {
   const t = useTranslations();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState(initialTitle);
+  const [description, setDescription] = useState(initialDescription);
   const [saving, setSaving] = useState(false);
   const updateGame = useMutation(api.games.update);
-
-  useEffect(() => {
-    setTitle(game.title);
-    setDescription(game.description ?? "");
-  }, [game.description, game.title]);
 
   async function handleSave() {
     setSaving(true);
     const descriptionValue = description || undefined;
     try {
       await updateGame({
-        gameId: game._id,
-        title,
         description: descriptionValue,
+        gameId,
+        title,
       });
       toast.success("Saved!");
       setSaving(false);
     } catch {
-      toast.error(t("common.error"));
       setSaving(false);
+      toast.error(t("common.error"));
     }
   }
+
+  return (
+    <div className="max-w-xl space-y-4">
+      <div className="space-y-2">
+        <Label
+          className="font-medium text-foreground/80 text-sm"
+          htmlFor="game-title"
+        >
+          {t("gameEditor.gameTitleLabel")}
+        </Label>
+        <Input
+          className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
+          id="game-title"
+          maxLength={100}
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label
+          className="font-medium text-foreground/80 text-sm"
+          htmlFor="game-desc"
+        >
+          {t("gameEditor.gameDescLabel")}
+        </Label>
+        <Textarea
+          className="rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
+          id="game-desc"
+          maxLength={500}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={2}
+          value={description}
+        />
+      </div>
+      <Button
+        className="glow-sm press-down rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
+        disabled={saving}
+        onClick={handleSave}
+        size="sm"
+      >
+        {saving ? "Saving..." : t("gameEditor.saveGame")}
+      </Button>
+    </div>
+  );
+}
+
+export function GameEditor({ game }: Props) {
+  const t = useTranslations();
 
   return (
     <div className="space-y-8">
@@ -120,47 +175,12 @@ export function GameEditor({ game }: Props) {
             </h1>
           </div>
 
-          <div className="max-w-xl space-y-4">
-            <div className="space-y-2">
-              <Label
-                className="font-medium text-foreground/80 text-sm"
-                htmlFor="game-title"
-              >
-                {t("gameEditor.gameTitleLabel")}
-              </Label>
-              <Input
-                className="h-11 rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
-                id="game-title"
-                maxLength={100}
-                onChange={(e) => setTitle(e.target.value)}
-                value={title}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label
-                className="font-medium text-foreground/80 text-sm"
-                htmlFor="game-desc"
-              >
-                {t("gameEditor.gameDescLabel")}
-              </Label>
-              <Textarea
-                className="rounded-xl border-border/60 bg-muted/40 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/50"
-                id="game-desc"
-                maxLength={500}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={2}
-                value={description}
-              />
-            </div>
-            <Button
-              className="glow-sm press-down rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
-              disabled={saving}
-              onClick={handleSave}
-              size="sm"
-            >
-              {saving ? "Saving..." : t("gameEditor.saveGame")}
-            </Button>
-          </div>
+          <GameDetailsForm
+            gameId={game._id}
+            initialDescription={game.description ?? ""}
+            initialTitle={game.title}
+            key={`${game.title}\n${game.description ?? ""}`}
+          />
         </div>
       </div>
 

@@ -69,7 +69,7 @@ function lcgRng(seed: number): () => number {
 /** Hash a string to a non-negative integer using only + and * operators */
 function hashString(str: string): number {
   let h = 0;
-  for (let i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i += 1) {
     h = (h * 31 + str.charCodeAt(i)) % 2_147_483_647;
   }
   return h;
@@ -91,7 +91,7 @@ function shuffleChoices(
     originalIndex,
   }));
   // Fisher-Yates shuffle
-  for (let i = arr.length - 1; i > 0; i--) {
+  for (let i = arr.length - 1; i > 0; i -= 1) {
     const j = Math.floor(rng() * (i + 1));
     [arr[i], arr[j]] = [arr[j] as (typeof arr)[0], arr[i] as (typeof arr)[0]];
   }
@@ -138,7 +138,7 @@ function ChoiceGrid({
             onClick={() => onSubmit(originalIndex)}
             type="button"
           >
-            {ShapeIcon && <ShapeIcon className="opacity-60" size={18} />}
+            {ShapeIcon ? <ShapeIcon className="opacity-60" size={18} /> : null}
             <span className="text-sm leading-tight">{choice.text}</span>
           </button>
         );
@@ -305,7 +305,7 @@ function LeaderboardPanel({
   const t = useTranslations();
   return (
     <div className="surface-raised space-y-4 p-5">
-      {currentAnswer && (
+      {currentAnswer ? (
         <output
           aria-live="polite"
           className={cn(
@@ -329,7 +329,7 @@ function LeaderboardPanel({
             </p>
           )}
         </output>
-      )}
+      ) : null}
       <div>
         <h3 className="mb-3 font-display text-base text-foreground">
           {t("play.leaderboardTitle")}
@@ -355,6 +355,75 @@ interface QuizStepProps {
   timeLimitSeconds?: number;
   timerExpired: boolean;
   token: string;
+}
+
+function QuizTimer({
+  hidden,
+  stepStartedAt,
+  timeLimitSeconds,
+}: {
+  hidden: boolean;
+  stepStartedAt?: number;
+  timeLimitSeconds?: number;
+}) {
+  if (hidden || !timeLimitSeconds || !stepStartedAt) {
+    return null;
+  }
+  return (
+    <div className="flex justify-center">
+      <CircularTimer
+        stepStartedAt={stepStartedAt}
+        timeLimitSeconds={timeLimitSeconds}
+      />
+    </div>
+  );
+}
+
+function ReadingCountdown({ secondsLeft }: { secondsLeft: number }) {
+  return (
+    <div className="flex justify-center">
+      <div
+        aria-label={`${secondsLeft} seconds to read`}
+        className="flex size-20 flex-col items-center justify-center rounded-full border-4 border-primary/30 bg-primary/10"
+        role="timer"
+      >
+        <span className="font-bold font-display text-2xl text-primary">
+          {secondsLeft}
+        </span>
+        <span className="text-muted-foreground text-xs">read</span>
+      </div>
+    </div>
+  );
+}
+
+function AnswerResult({ currentAnswer }: { currentAnswer: CurrentAnswer }) {
+  const t = useTranslations();
+
+  return (
+    <output
+      aria-live="polite"
+      className={cn(
+        "block space-y-1 rounded-2xl border p-5 text-center",
+        currentAnswer.isCorrect
+          ? "border-choice-green/30 bg-choice-green/10"
+          : "border-choice-red/30 bg-choice-red/10"
+      )}
+    >
+      <p className="font-black font-display text-2xl text-foreground">
+        {currentAnswer.isCorrect ? t("play.correct") : t("play.incorrect")}
+      </p>
+      {currentAnswer.score > 0 && (
+        <p className="font-bold font-mono text-glow text-primary">
+          {t("play.pointsEarned", { points: currentAnswer.score })}
+        </p>
+      )}
+      {!currentAnswer.isCorrect && currentAnswer.score < 0 && (
+        <p className="font-bold font-mono text-destructive">
+          {currentAnswer.score} pts
+        </p>
+      )}
+    </output>
+  );
 }
 
 function QuizStep({
@@ -384,28 +453,12 @@ function QuizStep({
 
   return (
     <div className="flex-1 space-y-5">
-      {timeLimitSeconds && stepStartedAt && !currentAnswer && !isReading && (
-        <div className="flex justify-center">
-          <CircularTimer
-            stepStartedAt={stepStartedAt}
-            timeLimitSeconds={timeLimitSeconds}
-          />
-        </div>
-      )}
-      {isReading && (
-        <div className="flex justify-center">
-          <div
-            aria-label={`${readingSecondsLeft} seconds to read`}
-            className="flex size-20 flex-col items-center justify-center rounded-full border-4 border-primary/30 bg-primary/10"
-            role="timer"
-          >
-            <span className="font-bold font-display text-2xl text-primary">
-              {readingSecondsLeft}
-            </span>
-            <span className="text-muted-foreground text-xs">read</span>
-          </div>
-        </div>
-      )}
+      <QuizTimer
+        hidden={Boolean(currentAnswer) || isReading}
+        stepStartedAt={stepStartedAt}
+        timeLimitSeconds={timeLimitSeconds}
+      />
+      {isReading ? <ReadingCountdown secondsLeft={readingSecondsLeft} /> : null}
       <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
         {t("play.quizLabel")}
       </p>
@@ -420,29 +473,7 @@ function QuizStep({
         </div>
       )}
       {answerRevealed && correctIndex !== null && currentAnswer && (
-        <output
-          aria-live="polite"
-          className={cn(
-            "block space-y-1 rounded-2xl border p-5 text-center",
-            currentAnswer.isCorrect
-              ? "border-choice-green/30 bg-choice-green/10"
-              : "border-choice-red/30 bg-choice-red/10"
-          )}
-        >
-          <p className="font-black font-display text-2xl text-foreground">
-            {currentAnswer.isCorrect ? t("play.correct") : t("play.incorrect")}
-          </p>
-          {currentAnswer.score > 0 && (
-            <p className="font-bold font-mono text-glow text-primary">
-              {t("play.pointsEarned", { points: currentAnswer.score })}
-            </p>
-          )}
-          {!currentAnswer.isCorrect && currentAnswer.score < 0 && (
-            <p className="font-bold font-mono text-destructive">
-              {currentAnswer.score} pts
-            </p>
-          )}
-        </output>
+        <AnswerResult currentAnswer={currentAnswer} />
       )}
       {!(currentAnswer || isReading) && (
         <ChoiceGrid
@@ -507,48 +538,27 @@ function useReadingPhase(state: PlayerState | null | undefined): {
 function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
   const step = state?.currentStep;
   const stepStartedAt = state?.session.stepStartedAt;
-  const stepKey =
+  const deadline =
     step?.type === "quiz" && step.timeLimitSeconds && stepStartedAt
-      ? `${step.timeLimitSeconds}-${stepStartedAt}`
+      ? stepStartedAt + step.timeLimitSeconds * 1000
       : null;
 
-  // Track (stepKey, expired) so we can reset expired when step changes
-  const [expiryState, setExpiryState] = useState<{
-    key: string | null;
-    expired: boolean;
-  }>({ key: stepKey, expired: false });
-
-  const timerExpired =
-    expiryState.key === stepKey ? expiryState.expired : false;
+  // Wall-clock time of the last deadline check (0 = not checked yet).
+  const [checkedAt, setCheckedAt] = useState(0);
 
   useEffect(() => {
-    if (step?.type !== "quiz" || !step.timeLimitSeconds || !stepStartedAt) {
+    if (deadline === null || checkedAt >= deadline) {
       return;
     }
+    // Check again once the deadline should have passed; re-arms if it fires early.
+    const timeout = setTimeout(
+      () => setCheckedAt(Date.now()),
+      Math.max(0, deadline - Date.now())
+    );
+    return () => clearTimeout(timeout);
+  }, [checkedAt, deadline]);
 
-    const timeLimitSeconds = step.timeLimitSeconds;
-
-    const checkExpiry = () => {
-      const elapsed = (Date.now() - stepStartedAt) / 1000;
-      if (elapsed >= timeLimitSeconds) {
-        setExpiryState({ key: stepKey, expired: true });
-        return true;
-      }
-      return false;
-    };
-
-    if (checkExpiry()) {
-      return;
-    }
-    const interval = setInterval(() => {
-      if (checkExpiry()) {
-        clearInterval(interval);
-      }
-    }, 200);
-    return () => clearInterval(interval);
-  }, [stepKey, step, stepStartedAt]);
-
-  return timerExpired;
+  return deadline !== null && checkedAt >= deadline;
 }
 
 function useHeartbeat(token: string | null): void {
@@ -585,17 +595,17 @@ function useSubmitAnswer(
     setSubmitting(true);
     try {
       await submitAnswerMut({
-        sessionId: sessionId as Id<"gameSessions">,
-        participantToken: token,
         choiceIndex,
+        participantToken: token,
+        sessionId: sessionId as Id<"gameSessions">,
       });
       setSubmitting(false);
     } catch (e) {
+      setSubmitting(false);
       const msg = e instanceof Error ? e.message : "Failed to submit answer";
       if (!msg.includes("Already answered")) {
         toast.error(msg);
       }
-      setSubmitting(false);
     }
   }
 
@@ -687,15 +697,15 @@ function SessionContent({
                 <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
                   {t("play.theoryLabel")}
                 </p>
-                {currentStep.markdownContent && (
+                {currentStep.markdownContent ? (
                   <MarkdownViewer content={currentStep.markdownContent} />
-                )}
-                {currentStep.codeBlock && (
+                ) : null}
+                {currentStep.codeBlock ? (
                   <ClientCodeBlock
                     code={currentStep.codeBlock.code}
                     language={currentStep.codeBlock.language}
                   />
-                )}
+                ) : null}
               </div>
             )}
 
@@ -744,7 +754,7 @@ export function PlayerSessionView({ sessionId }: Props) {
   const state = useQuery(
     api.sessions.getPlayerState,
     token
-      ? { sessionId: sessionId as Id<"gameSessions">, participantToken: token }
+      ? { participantToken: token, sessionId: sessionId as Id<"gameSessions"> }
       : "skip"
   );
 
@@ -791,7 +801,7 @@ export function PlayerSessionView({ sessionId }: Props) {
   }
 
   const { participant, session, currentStep, currentAnswer } = state;
-  const answerRevealed = session.answerRevealed;
+  const { answerRevealed } = session;
 
   // Derive correct choice index when answer is revealed
   const correctIndex = (() => {

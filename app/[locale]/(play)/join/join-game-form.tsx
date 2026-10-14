@@ -3,13 +3,14 @@
 import { useMutation } from "convex/react";
 import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 interface Props {
   prefilledCode?: string;
@@ -27,24 +28,25 @@ export function JoinGameForm({
   const t = useTranslations("join");
   const [state, setState] = useState({
     code: prefilledCode ?? "",
-    name: prefilledName ?? "",
     loading: !!(prefilledSessionId && prefilledName),
+    name: prefilledName ?? "",
     redirectUrl: null as string | null,
     turnstileToken: null as string | null,
   });
   const joinSession = useMutation(api.sessions.join);
   const joinByCode = useMutation(api.sessions.joinByCode);
+  const autoJoinStarted = useRef<boolean>(false);
 
-  // Auto-join on mount when prefilled props are provided.
+  // Auto-join once when prefilled props are provided.
   // loading is pre-initialized to true in this case so no setState fires synchronously.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs once on mount with prefilled props
   useEffect(() => {
-    if (!(prefilledSessionId && prefilledName)) {
+    if (autoJoinStarted.current || !(prefilledSessionId && prefilledName)) {
       return;
     }
+    autoJoinStarted.current = true;
     const sessionId = prefilledSessionId as Id<"gameSessions">;
     const joinName = prefilledName;
-    joinSession({ sessionId, name: joinName })
+    joinSession({ name: joinName, sessionId })
       .then((result) => {
         localStorage.setItem(
           `participantToken_${sessionId}`,
@@ -56,7 +58,7 @@ export function JoinGameForm({
         toast.error(err instanceof Error ? err.message : t("invalidCode"));
         setState((prev) => ({ ...prev, loading: false }));
       });
-  }, []);
+  }, [joinSession, prefilledName, prefilledSessionId, t]);
 
   if (state.redirectUrl) {
     redirect(state.redirectUrl);
@@ -72,20 +74,11 @@ export function JoinGameForm({
 
     setState((prev) => ({ ...prev, loading: true }));
     try {
-      const verifyResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/verify-turnstile`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: state.turnstileToken }),
-        }
-      );
+      const verified = await verifyTurnstileToken(state.turnstileToken);
 
-      const verifyResult = await verifyResponse.json();
-
-      if (!verifyResult.success) {
+      if (!verified) {
         toast.error("Security check failed. Please try again.");
-        setState((prev) => ({ ...prev, turnstileToken: null, loading: false }));
+        setState((prev) => ({ ...prev, loading: false, turnstileToken: null }));
         return;
       }
 

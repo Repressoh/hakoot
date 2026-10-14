@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export function JoinCard() {
   const t = useTranslations("landing");
@@ -30,18 +31,9 @@ export function JoinCard() {
 
     setLoading(true);
     try {
-      const verifyResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/verify-turnstile`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: turnstileToken }),
-        }
-      );
+      const verified = await verifyTurnstileToken(turnstileToken);
 
-      const verifyResult = await verifyResponse.json();
-
-      if (!verifyResult.success) {
+      if (!verified) {
         toast.error("Security check failed. Please try again.");
         setTurnstileToken(null);
         setLoading(false);
@@ -59,15 +51,15 @@ export function JoinCard() {
       setLoading(false);
       push(`/session/${result.sessionId}`);
     } catch {
-      toast.error(tj("invalidCode"));
       setLoading(false);
+      toast.error(tj("invalidCode"));
     }
   }
 
   return (
     <section
       aria-label="Join a game"
-      className="surface-elevated group relative mx-auto w-full max-w-md transition-all duration-300"
+      className="surface-elevated group relative mx-auto w-full max-w-md"
       style={{
         borderRadius: "32px",
         boxShadow: "0 20px 0 -10px var(--border)",
@@ -99,7 +91,7 @@ export function JoinCard() {
                 aria-label={t("joinCodeLabel")}
                 autoCapitalize="characters"
                 autoComplete="off"
-                className="focus-visible:glow-border h-24 w-full rounded-2xl border-4 border-border bg-background text-center font-mono text-5xl text-glow text-primary uppercase tracking-[0.4em] shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] transition-all placeholder:text-muted/30 placeholder:tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
+                className="focus-visible:glow-border h-24 w-full rounded-2xl border-4 border-border bg-background text-center font-mono text-5xl text-glow text-primary uppercase tracking-[0.4em] shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] transition-[border-color,box-shadow] placeholder:text-muted/30 placeholder:tracking-[0.4em] focus-visible:border-primary focus-visible:ring-0"
                 id="join-code"
                 maxLength={8}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
@@ -153,7 +145,7 @@ export function JoinCard() {
           </div>
 
           <Button
-            className="group/btn relative h-20 w-full overflow-hidden rounded-2xl border-primary-foreground/30 border-b-[6px] bg-primary font-black font-display text-2xl text-primary-foreground uppercase tracking-widest transition-all hover:bg-primary active:translate-y-[6px] active:border-b-0"
+            className="group/btn relative h-20 w-full overflow-hidden rounded-2xl border-primary-foreground/30 border-b-[6px] bg-primary font-black font-display text-2xl text-primary-foreground uppercase tracking-widest transition-[background-color,border-bottom-width,translate] hover:bg-primary active:translate-y-[6px] active:border-b-0"
             disabled={loading || !code || !name || !turnstileToken}
             style={{
               boxShadow:

@@ -48,6 +48,8 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
     );
   }
 
+  const buttonLabel = copied ? "✓" : code;
+
   return (
     <Button
       aria-label={`Invite code: ${code}. Click to copy.`}
@@ -56,7 +58,7 @@ export function InviteCodeDisplay({ code, sessionId, large }: Props) {
       size="sm"
       variant="outline"
     >
-      {copied ? "✓" : code}
+      {buttonLabel}
     </Button>
   );
 }

@@ -43,15 +43,15 @@ function highlightReducer(
   action: HighlightAction
 ): HighlightState {
   if (action.type === "RESOLVE") {
-    return { status: "ready", html: action.html };
+    return { html: action.html, status: "ready" };
   }
-  return { status: "error", html: state.html };
+  return { html: state.html, status: "error" };
 }
 
 export function ClientCodeBlock({ code, language }: Props) {
   const [state, dispatch] = useReducer(highlightReducer, {
-    status: "loading",
     html: null,
+    status: "loading",
   });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -69,8 +69,8 @@ export function ClientCodeBlock({ code, language }: Props) {
       let cancelled = false;
 
       createHighlighter({
-        themes: ["github-dark"],
         langs: [safeLang],
+        themes: ["github-dark"],
       })
         .then((highlighter) => {
           if (cancelled) {
@@ -80,7 +80,7 @@ export function ClientCodeBlock({ code, language }: Props) {
             lang: safeLang,
             theme: "github-dark",
           });
-          dispatch({ type: "RESOLVE", html });
+          dispatch({ html, type: "RESOLVE" });
         })
         .catch(() => {
           if (!cancelled) {

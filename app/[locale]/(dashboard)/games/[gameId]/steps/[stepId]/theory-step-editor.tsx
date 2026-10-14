@@ -24,13 +24,13 @@ const ClientCodeBlock = dynamic(
       (mod) => mod.ClientCodeBlock
     ),
   {
-    ssr: false,
     loading: () => (
       <div className="animate-pulse rounded-lg border border-border bg-[#0d1117] p-4">
         <Skeleton className="h-4 w-3/4 rounded bg-muted/20" />
         <Skeleton className="mt-2 h-4 w-1/2 rounded bg-muted/20" />
       </div>
     ),
+    ssr: false,
   }
 );
 
@@ -40,7 +40,6 @@ const MarkdownViewer = dynamic(
       (mod) => mod.MarkdownViewer
     ),
   {
-    ssr: false,
     loading: () => (
       <div className="animate-pulse space-y-2">
         <Skeleton className="h-4 w-full rounded" />
@@ -48,6 +47,7 @@ const MarkdownViewer = dynamic(
         <Skeleton className="h-4 w-3/4 rounded" />
       </div>
     ),
+    ssr: false,
   }
 );
 
@@ -139,10 +139,10 @@ function theoryFormReducer(
         annotations: [
           ...state.annotations,
           {
-            id: crypto.randomUUID(),
-            linesInput: "",
-            label: "",
             explanation: "",
+            id: crypto.randomUUID(),
+            label: "",
+            linesInput: "",
           },
         ],
       };
@@ -169,17 +169,17 @@ export function TheoryStepEditor({ step }: Props) {
   const [saving, setSaving] = useState(false);
 
   const [form, dispatch] = useReducer(theoryFormReducer, {
-    markdown: step.markdownContent ?? "",
-    hasCodeBlock: !!step.codeBlock,
-    code: step.codeBlock?.code ?? "",
-    language: step.codeBlock?.language ?? "typescript",
     annotations:
       step.codeBlock?.annotations.map((a) => ({
-        id: crypto.randomUUID(),
-        linesInput: formatLineNumbers(a.lines),
-        label: a.label,
         explanation: a.explanation,
+        id: crypto.randomUUID(),
+        label: a.label,
+        linesInput: formatLineNumbers(a.lines),
       })) ?? [],
+    code: step.codeBlock?.code ?? "",
+    hasCodeBlock: !!step.codeBlock,
+    language: step.codeBlock?.language ?? "typescript",
+    markdown: step.markdownContent ?? "",
   });
 
   const { markdown, hasCodeBlock, code, language, annotations } = form;
@@ -189,7 +189,7 @@ export function TheoryStepEditor({ step }: Props) {
   }
 
   function removeAnnotation(i: number) {
-    dispatch({ type: "REMOVE_ANNOTATION", index: i });
+    dispatch({ index: i, type: "REMOVE_ANNOTATION" });
   }
 
   function updateAnnotation(
@@ -197,7 +197,7 @@ export function TheoryStepEditor({ step }: Props) {
     field: keyof AnnotationForm,
     value: string
   ) {
-    dispatch({ type: "UPDATE_ANNOTATION", index: i, field, value });
+    dispatch({ field, index: i, type: "UPDATE_ANNOTATION", value });
   }
 
   async function handleSave() {
@@ -212,9 +212,9 @@ export function TheoryStepEditor({ step }: Props) {
             annotation.explanation
           ) {
             acc.push({
-              lines: parseLineRange(annotation.linesInput),
-              label: annotation.label,
               explanation: annotation.explanation,
+              label: annotation.label,
+              lines: parseLineRange(annotation.linesInput),
             });
           }
           return acc;
@@ -222,19 +222,19 @@ export function TheoryStepEditor({ step }: Props) {
         []
       );
 
-      codeBlock = { code, language, annotations: parsedAnnotations };
+      codeBlock = { annotations: parsedAnnotations, code, language };
     }
     try {
       await updateTheory({
-        stepId: step._id,
-        markdownContent: markdown,
         codeBlock,
+        markdownContent: markdown,
+        stepId: step._id,
       });
       toast.success("Saved!");
       setSaving(false);
     } catch {
-      toast.error("Failed to save");
       setSaving(false);
+      toast.error("Failed to save");
     }
   }
 
@@ -292,7 +292,7 @@ export function TheoryStepEditor({ step }: Props) {
         <Label htmlFor="has-code">{t("codeBlockToggle")}</Label>
       </div>
 
-      {hasCodeBlock && (
+      {hasCodeBlock ? (
         <div className="space-y-4 border-border border-l-2 pl-4">
           {/* Language */}
           <div className="space-y-1.5">
@@ -410,16 +410,16 @@ export function TheoryStepEditor({ step }: Props) {
           </div>
 
           {/* Preview */}
-          {code && (
+          {code ? (
             <div className="space-y-1.5">
               <Label className="text-muted-foreground text-xs">
                 {t("previewTab")}
               </Label>
               <ClientCodeBlock code={code} language={language} />
             </div>
-          )}
+          ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

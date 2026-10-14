@@ -103,7 +103,7 @@ export function CircularTimer({ timeLimitSeconds, stepStartedAt }: Props) {
           x={CIRCLE_SIZE / 2}
           y={CIRCLE_SIZE / 2}
         >
-          {isExpired ? "0" : displaySeconds}
+          {Math.max(0, displaySeconds)}
         </text>
       </svg>
     </div>

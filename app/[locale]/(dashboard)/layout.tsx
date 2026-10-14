@@ -95,9 +95,9 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       </a>
       <DashboardNav
         user={{
-          name: viewer.name ?? "",
           email: viewer.email ?? "",
           image: viewer.image ?? null,
+          name: viewer.name ?? "",
         }}
       />
       <main
