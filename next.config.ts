@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
   // cacheComponents: true,
   allowedDevOrigins: ["hakoot-dev.albertocaserta.it"],
   experimental: {
-    cssChunking: "strict",
     inlineCss: true,
     optimizeCss: true,
     optimizePackageImports: [
