@@ -237,7 +237,7 @@ export const remove = mutation({
   },
 });
 
-/** Set the order of a game's steps to match `orderedIds`. */
+/** Set the order of a game's steps to match `orderedIds`, which must all belong to that game. */
 export const reorder = mutation({
   args: {
     gameId: v.id("games"),
@@ -245,6 +245,16 @@ export const reorder = mutation({
   },
   handler: async (ctx, args) => {
     await requireGameOwner(ctx, args.gameId);
+
+    // Owning this game must not allow reordering another game's steps
+    const steps = await ctx.db
+      .query("gameSteps")
+      .withIndex("by_game", (q) => q.eq("gameId", args.gameId))
+      .collect();
+    const gameStepIds = new Set(steps.map((step) => step._id));
+    if (!args.orderedIds.every((id) => gameStepIds.has(id))) {
+      throw new ConvexError("Not found");
+    }
 
     await Promise.all(
       args.orderedIds.map((id, i) => ctx.db.patch(id, { order: i }))
