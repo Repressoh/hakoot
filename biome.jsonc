@@ -17,7 +17,19 @@
       "drizzle.config.ts",
       "next.config.ts",
       "!types",
-      "!.agents"
+      "!.agents",
+      "!.claude",
+      "!.vscode"
     ]
+  },
+  "linter": {
+    "rules": {
+      "performance": {
+        // React Compiler (reactCompiler: true in next.config.ts) memoizes
+        // handlers automatically; react-doctor reports any component it
+        // can't compile.
+        "noJsxPropsBind": "off"
+      }
+    }
   }
 }
