@@ -33,6 +33,7 @@ interface InviteEntry {
 
 interface Props {
   children: React.ReactNode;
+  defaultOpen?: boolean;
   gameId: Id<"games">;
   gameName: string;
   session: { _id: Id<"gameSessions">; inviteCode: string };
@@ -130,6 +131,7 @@ function reducer(state: State, action: Action): State {
  */
 export function InviteEmailDialog({
   children,
+  defaultOpen = false,
   gameId,
   session,
   gameName,
@@ -137,7 +139,10 @@ export function InviteEmailDialog({
   const t = useTranslations("session");
   const locale = useLocale();
   const sendInvites = useAction(api.emails.sendInviteEmails);
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    open: defaultOpen,
+  });
   const { open, entries, sending, selectedListId, checkedEntryIds } = state;
   // Saved lists (with all their addresses) are only needed while the dialog is
   // open; the sessions page renders one dialog per open session.

@@ -78,6 +78,20 @@ const TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 /** Stale threshold: participants unseen for this long are removed in lobby */
 const STALE_THRESHOLD_MS = 15_000; // 15 seconds
 
+/**
+ * Whether a participant has stopped sending heartbeats: last seen (from `lastSeen`, by
+ * participant, else the participant's legacy `lastSeen` field) over STALE_THRESHOLD_MS ago, or
+ * never.
+ */
+function isStale(
+  participant: Doc<"gameParticipants">,
+  lastSeen: Map<Id<"gameParticipants">, number>,
+  now: number
+): boolean {
+  const seen = lastSeen.get(participant._id) ?? participant.lastSeen;
+  return seen === undefined || now - seen > STALE_THRESHOLD_MS;
+}
+
 // ─── Queries ────────────────────────────────────────────────────────────
 
 export const listForGame = query({
@@ -121,29 +135,21 @@ export const getForHost = query({
       return null;
     }
 
-    const [game, steps] = await Promise.all([
+    const [game, steps, allParticipants] = await Promise.all([
       ctx.db.get(session.gameId),
+      getOrderedSteps(ctx, session.gameId),
       ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
         .collect(),
     ]);
-    steps.sort((a, b) => a.order - b.order);
-
-    const allParticipants = await ctx.db
-      .query("gameParticipants")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .collect();
 
     // In the waiting lobby, hide participants who stopped sending heartbeats
     let participants = allParticipants;
     if (session.status === "waiting") {
       const lastSeen = await getLastSeenByParticipant(ctx, args.sessionId);
       const now = Date.now();
-      participants = allParticipants.filter((p) => {
-        const seen = lastSeen.get(p._id) ?? p.lastSeen;
-        return seen !== undefined && now - seen <= STALE_THRESHOLD_MS;
-      });
+      participants = allParticipants.filter((p) => !isStale(p, lastSeen, now));
     }
 
     return { game, participants, session, steps };
@@ -222,9 +228,14 @@ export const getHostView = query({
 /**
  * The session's participants for its host. In the lobby, only players seen in the last 15 seconds
  * are listed.
+ *
+ * Convex re-runs a query when data it read changes, not as time passes, so in the lobby the host
+ * screen passes a `clock` that changes every few seconds: otherwise a player who left would stay
+ * listed until someone else's heartbeat re-ran the query. Its value isn't used: the check uses the
+ * server's time.
  */
 export const listHostParticipants = query({
-  args: { sessionId: v.id("gameSessions") },
+  args: { clock: v.optional(v.number()), sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
     const session = await getHostedSession(ctx, args.sessionId);
     if (!session) {
@@ -242,10 +253,7 @@ export const listHostParticipants = query({
     if (session.status === "waiting") {
       const lastSeen = await getLastSeenByParticipant(ctx, args.sessionId);
       const now = Date.now();
-      visible = participants.filter((p) => {
-        const seen = lastSeen.get(p._id) ?? p.lastSeen;
-        return seen !== undefined && now - seen <= STALE_THRESHOLD_MS;
-      });
+      visible = participants.filter((p) => !isStale(p, lastSeen, now));
     }
 
     return visible.map((p) => ({
@@ -344,12 +352,8 @@ export const getPlayerState = query({
 
     const [game, steps] = await Promise.all([
       ctx.db.get(session.gameId),
-      ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-        .collect(),
+      getOrderedSteps(ctx, session.gameId),
     ]);
-    steps.sort((a, b) => a.order - b.order);
 
     const currentStep =
       session.currentStepIndex >= 0 && session.currentStepIndex < steps.length
@@ -434,11 +438,7 @@ export const getAnswerCount = query({
       return null;
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
+    const steps = await getOrderedSteps(ctx, session.gameId);
 
     if (
       session.currentStepIndex < 0 ||
@@ -495,12 +495,8 @@ export const getResults = query({
         .query("gameParticipants")
         .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
         .collect(),
-      ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-        .collect(),
+      getOrderedSteps(ctx, session.gameId),
     ]);
-    steps.sort((a, b) => a.order - b.order);
 
     const { answers: allAnswers, restoredParticipants } =
       await collectResultAnswers(
@@ -916,11 +912,7 @@ export const advance = mutation({
       throw new ConvexError("Not found");
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
+    const steps = await getOrderedSteps(ctx, session.gameId);
 
     const nextIndex = session.currentStepIndex + 1;
 
@@ -941,10 +933,9 @@ export const advance = mutation({
         presence.map((p) => [p.participantId, p.lastSeen])
       );
       const now = Date.now();
-      const staleParticipants = participants.filter((p) => {
-        const seen = lastSeen.get(p._id) ?? p.lastSeen;
-        return seen === undefined || now - seen > STALE_THRESHOLD_MS;
-      });
+      const staleParticipants = participants.filter((p) =>
+        isStale(p, lastSeen, now)
+      );
       await Promise.all([
         ...staleParticipants.map((p) => ctx.db.delete(p._id)),
         ...presence.map((p) => ctx.db.delete(p._id)),
@@ -998,11 +989,7 @@ export const reveal = mutation({
       return null; // Idempotent
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
+    const steps = await getOrderedSteps(ctx, session.gameId);
 
     const currentStep = steps[session.currentStepIndex];
     if (currentStep?.type !== "quiz") {
@@ -1123,11 +1110,7 @@ async function getActiveQuizStep(
     currentStepIndex: number;
   }
 ) {
-  const steps = await ctx.db
-    .query("gameSteps")
-    .withIndex("by_game", (q) => q.eq("gameId", gameId))
-    .collect();
-  steps.sort((a, b) => a.order - b.order);
+  const steps = await getOrderedSteps(ctx, gameId);
 
   const currentStep = steps[session.currentStepIndex];
   if (currentStep?.type !== "quiz") {

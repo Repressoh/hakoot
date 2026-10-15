@@ -7,6 +7,7 @@ import { GameList } from "@/components/dashboard/game-list";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { useCachedQuery } from "@/lib/use-cached-query";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 
 // The dialog (Radix, focus trapping, scroll locking) loads after the page
 // shows, keeping it out of the initial JavaScript; until then the button is
@@ -54,6 +55,7 @@ function DashboardSkeleton() {
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
+  const createDialog = useLazyOpen();
   const games = useCachedQuery(api.games.list);
 
   if (games === undefined) {
@@ -74,8 +76,10 @@ export default function DashboardPage() {
               : `${games.length} ${games.length === 1 ? "game" : "games"} in your library`}
           </p>
         </div>
-        <Suspense fallback={<CreateGameButton />}>
-          <CreateGameDialog>
+        <Suspense
+          fallback={<CreateGameButton {...createDialog.placeholderProps} />}
+        >
+          <CreateGameDialog defaultOpen={createDialog.defaultOpen}>
             <CreateGameButton />
           </CreateGameDialog>
         </Suspense>

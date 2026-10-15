@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 
 // The menu (Radix dropdown, positioning, scroll locking) loads after the
 // editor shows, keeping it out of the initial JavaScript; until then the
@@ -118,6 +119,7 @@ function GameDetailsForm({
 /** Game editor page: breadcrumb, editable title and description, and the list of steps. */
 export function GameEditor({ game }: Props) {
   const t = useTranslations();
+  const addStepMenu = useLazyOpen();
 
   return (
     <div className="space-y-8">
@@ -184,8 +186,13 @@ export function GameEditor({ game }: Props) {
             >
               <Link href={`/games/${game._id}/sessions`}>Sessions</Link>
             </Button>
-            <Suspense fallback={<AddStepButton />}>
-              <AddStepMenu gameId={game._id} />
+            <Suspense
+              fallback={<AddStepButton {...addStepMenu.placeholderProps} />}
+            >
+              <AddStepMenu
+                defaultOpen={addStepMenu.defaultOpen}
+                gameId={game._id}
+              />
             </Suspense>
           </div>
         </div>

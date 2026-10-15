@@ -1,13 +1,14 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { lazy, Suspense } from "react";
+import { type ComponentProps, lazy, Suspense } from "react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 
 // The menu (Radix dropdown, positioning, scroll locking) loads after the nav
 // shows, keeping it out of the initial JavaScript; until then the avatar
@@ -19,6 +20,7 @@ const UserMenu = lazy(() =>
 /** Dashboard header with navigation links and the signed-in user's menu (including sign-out). */
 export function DashboardNav() {
   const viewer = useQuery(api.users.viewer);
+  const userMenu = useLazyOpen();
   const user = {
     email: viewer?.email ?? "",
     image: viewer?.image ?? null,
@@ -32,12 +34,13 @@ export function DashboardNav() {
     .toUpperCase()
     .slice(0, 2);
 
-  const userButton = (
+  const userButton = (props?: ComponentProps<typeof Button>) => (
     <Button
       aria-label="User menu"
       className="h-9 gap-2.5 rounded-xl text-foreground transition-colors hover:bg-muted/60"
       size="sm"
       variant="ghost"
+      {...props}
     >
       <Avatar className="size-7 ring-2 ring-primary/20 transition-shadow group-hover:ring-primary/40">
         <AvatarImage alt={user.name} src={user.image ?? undefined} />
@@ -53,9 +56,13 @@ export function DashboardNav() {
     <DashboardHeader>
       <LocaleSwitcher />
       {viewer ? (
-        <Suspense fallback={userButton}>
-          <UserMenu email={user.email} name={user.name}>
-            {userButton}
+        <Suspense fallback={userButton(userMenu.placeholderProps)}>
+          <UserMenu
+            defaultOpen={userMenu.defaultOpen}
+            email={user.email}
+            name={user.name}
+          >
+            {userButton()}
           </UserMenu>
         </Suspense>
       ) : (

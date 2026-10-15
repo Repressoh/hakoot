@@ -3,10 +3,11 @@
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useTranslations } from "next-intl";
-import { lazy, Suspense } from "react";
+import { type ComponentProps, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 
 // The dialog (Radix, focus trapping, scroll locking) loads after the cards
 // show, keeping it out of the dashboard's initial JavaScript; until then the
@@ -79,12 +80,14 @@ export function GameCard({ game, index = 0 }: Props) {
   const accent = CARD_ACCENTS[index % CARD_ACCENTS.length];
   const emoji = CARD_EMOJIS[index % CARD_EMOJIS.length];
 
-  const deleteButton = (
+  const deleteDialog = useLazyOpen();
+  const deleteButton = (props?: ComponentProps<typeof Button>) => (
     <Button
       aria-label={`${tc("delete")} ${game.title}`}
       className="size-9 rounded-xl text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
       size="sm"
       variant="ghost"
+      {...props}
     >
       <HugeiconsIcon icon={Delete02Icon} size={15} strokeWidth={2} />
     </Button>
@@ -177,9 +180,12 @@ export function GameCard({ game, index = 0 }: Props) {
           >
             <Link href={`/games/${game._id}/sessions`}>Sessions</Link>
           </Button>
-          <Suspense fallback={deleteButton}>
-            <DeleteGameDialog gameId={game._id}>
-              {deleteButton}
+          <Suspense fallback={deleteButton(deleteDialog.placeholderProps)}>
+            <DeleteGameDialog
+              defaultOpen={deleteDialog.defaultOpen}
+              gameId={game._id}
+            >
+              {deleteButton()}
             </DeleteGameDialog>
           </Suspense>
         </div>

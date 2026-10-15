@@ -19,13 +19,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { lazy, Suspense, useState } from "react";
+import { type ComponentProps, lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 import { cn } from "@/lib/utils";
 
 // The confirmation dialog (Radix, focus trapping, scroll locking) loads after
@@ -81,12 +82,14 @@ function SortableStepItem({
     transition,
   };
 
-  const deleteButton = (
+  const deleteDialog = useLazyOpen();
+  const deleteButton = (props?: ComponentProps<typeof Button>) => (
     <Button
       aria-label={t("deleteStep")}
       className="size-7 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
       size="sm"
       variant="ghost"
+      {...props}
     >
       ×
     </Button>
@@ -192,9 +195,12 @@ function SortableStepItem({
           </Link>
         </Button>
 
-        <Suspense fallback={deleteButton}>
-          <DeleteStepDialog onConfirm={() => onDelete(step._id)}>
-            {deleteButton}
+        <Suspense fallback={deleteButton(deleteDialog.placeholderProps)}>
+          <DeleteStepDialog
+            defaultOpen={deleteDialog.defaultOpen}
+            onConfirm={() => onDelete(step._id)}
+          >
+            {deleteButton()}
           </DeleteStepDialog>
         </Suspense>
       </div>

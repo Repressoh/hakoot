@@ -50,3 +50,12 @@ export function formatLineNumbers(lines: number[]): string {
   }
   return ranges.join(", ");
 }
+
+/**
+ * Entrance-animation delay of the i-th item of a list, `stepMs` after the previous one. Capped at
+ * the 7th item so items further down (usually off screen at first) don't stay hidden while the
+ * earlier ones animate in.
+ */
+export function staggerDelay(i: number, stepMs: number): string {
+  return `${Math.min(i, 6) * stepMs}ms`;
+}

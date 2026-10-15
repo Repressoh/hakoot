@@ -548,13 +548,50 @@ function HostSessionView({ participants, view }: Props) {
   );
 }
 
+/** How often the lobby's participant list is re-checked for players who left. */
+const LOBBY_REFRESH_MS = 5000;
+
+/**
+ * The session's participants. In the lobby the query gets a `clock` that changes every
+ * LOBBY_REFRESH_MS, so players who stopped sending heartbeats drop off the list (see
+ * `listHostParticipants`). Each new `clock` is a new subscription with no result at first, so the
+ * previous list is returned until the new one arrives.
+ */
+function useHostParticipants(sessionId: Id<"gameSessions">, inLobby: boolean) {
+  const [clock, setClock] = useState(0);
+  useEffect(() => {
+    if (!inLobby) {
+      return;
+    }
+    const interval = setInterval(
+      () => setClock((c) => c + 1),
+      LOBBY_REFRESH_MS
+    );
+    return () => clearInterval(interval);
+  }, [inLobby]);
+
+  const result = useQuery(api.sessions.listHostParticipants, {
+    clock,
+    sessionId,
+  });
+  const [latest, setLatest] = useState({ result, sessionId });
+  if (
+    result !== undefined &&
+    (result !== latest.result || sessionId !== latest.sessionId)
+  ) {
+    setLatest({ result, sessionId });
+  }
+  return result ?? (latest.sessionId === sessionId ? latest.result : undefined);
+}
+
 export function HostSessionPage({ sessionId }: { sessionId: string }) {
   const view = useQuery(api.sessions.getHostView, {
     sessionId: sessionId as Id<"gameSessions">,
   });
-  const participants = useQuery(api.sessions.listHostParticipants, {
-    sessionId: sessionId as Id<"gameSessions">,
-  });
+  const participants = useHostParticipants(
+    sessionId as Id<"gameSessions">,
+    view?.session.status === "waiting"
+  );
   usePreloadStepRenderers(view?.codeLanguages);
 
   // Wait for both: the join toasts compare against the first participant list.

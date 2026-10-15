@@ -10,26 +10,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link, useRouter } from "@/i18n/routing";
+import { releaseCachedQueries } from "@/lib/use-cached-query";
 
 interface Props {
   children: React.ReactNode;
+  defaultOpen?: boolean;
   email: string;
   name: string;
 }
 
 /** The signed-in user's menu (pages and sign-out), opened by `children` (the avatar button). */
-export function UserMenu({ children, email, name }: Props) {
+export function UserMenu({ children, defaultOpen, email, name }: Props) {
   const t = useTranslations();
   const { push } = useRouter();
   const { signOut } = useAuthActions();
 
   async function handleSignOut() {
     await signOut();
+    releaseCachedQueries();
     push("/");
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu defaultOpen={defaultOpen}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

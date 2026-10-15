@@ -20,11 +20,12 @@ import type { Id } from "@/convex/_generated/dataModel";
 
 interface Props {
   children: React.ReactNode;
+  defaultOpen?: boolean;
   gameId: Id<"games">;
 }
 
 /** Confirmation dialog for deleting a game, opened by `children` (the trigger button). */
-export function DeleteGameDialog({ children, gameId }: Props) {
+export function DeleteGameDialog({ children, defaultOpen, gameId }: Props) {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
   const [deleting, setDeleting] = useState(false);
@@ -42,7 +43,7 @@ export function DeleteGameDialog({ children, gameId }: Props) {
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog defaultOpen={defaultOpen}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent className="rounded-2xl border-border/60 bg-card/95 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <AlertDialogHeader>

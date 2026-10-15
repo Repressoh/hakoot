@@ -2,12 +2,14 @@
 
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { lazy, Suspense, useState } from "react";
+import { type ComponentProps, lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link, useRouter } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
+import { staggerDelay } from "@/lib/utils";
 
 // The invite dialog (Radix dialog, select and tabs) loads after the list
 // shows, keeping it out of the initial JavaScript; until then its button is
@@ -56,15 +58,41 @@ const statusConfig: Record<
   },
 };
 
+/** A session's "Send email invites" button and its dialog, which loads lazily. */
+function InviteEmailsButton({
+  gameId,
+  gameName,
+  session,
+}: {
+  gameId: Id<"games">;
+  gameName: string;
+  session: Session;
+}) {
+  const t = useTranslations("session");
+  const dialog = useLazyOpen();
+  const button = (props?: ComponentProps<typeof Button>) => (
+    <Button size="sm" variant="outline" {...props}>
+      {t("sendEmailInvites")}
+    </Button>
+  );
+  return (
+    <Suspense fallback={button(dialog.placeholderProps)}>
+      <InviteEmailDialog
+        defaultOpen={dialog.defaultOpen}
+        gameId={gameId}
+        gameName={gameName}
+        session={session}
+      >
+        {button()}
+      </InviteEmailDialog>
+    </Suspense>
+  );
+}
+
 /** Lists a game's sessions (with invite codes and email invites) and starts new ones. */
 export function SessionManager({ game, sessions }: Props) {
   const t = useTranslations("session");
   const tNav = useTranslations("nav");
-  const inviteButton = (
-    <Button size="sm" variant="outline">
-      {t("sendEmailInvites")}
-    </Button>
-  );
   const { push } = useRouter();
   const [creating, setCreating] = useState(false);
   const createSession = useMutation(api.sessions.create);
@@ -147,8 +175,7 @@ export function SessionManager({ game, sessions }: Props) {
               <div
                 className={`group rounded-2xl border border-border/60 border-l-4 ${config.accent} fade-in slide-in-from-bottom-3 animation-duration-350 animate-in bg-card/80 fill-mode-backwards p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-black/10 hover:shadow-lg motion-reduce:animate-none`}
                 key={s._id}
-                // Capped so older sessions further down aren't kept hidden.
-                style={{ animationDelay: `${Math.min(i, 6) * 50}ms` }}
+                style={{ animationDelay: staggerDelay(i, 50) }}
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -175,15 +202,11 @@ export function SessionManager({ game, sessions }: Props) {
                   </p>
                   {s.status !== "finished" && (
                     <>
-                      <Suspense fallback={inviteButton}>
-                        <InviteEmailDialog
-                          gameId={game._id}
-                          gameName={game.title}
-                          session={s}
-                        >
-                          {inviteButton}
-                        </InviteEmailDialog>
-                      </Suspense>
+                      <InviteEmailsButton
+                        gameId={game._id}
+                        gameName={game.title}
+                        session={s}
+                      />
                       <Button
                         asChild
                         className="press-down rounded-xl bg-primary/10 font-semibold text-primary transition-colors hover:bg-primary/20"

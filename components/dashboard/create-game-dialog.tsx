@@ -22,10 +22,16 @@ import { useRouter } from "@/i18n/routing";
  * Dialog for creating a game, opened by `children` (the trigger button); opens the new game's
  * editor on success.
  */
-export function CreateGameDialog({ children }: { children: React.ReactNode }) {
+export function CreateGameDialog({
+  children,
+  defaultOpen = false,
+}: {
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
   const t = useTranslations();
   const { push } = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [loading, setLoading] = useState(false);
   const createGame = useMutation(api.games.create);
 

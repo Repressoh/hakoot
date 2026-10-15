@@ -14,13 +14,14 @@ import {
 
 interface Props {
   children: React.ReactNode;
+  defaultOpen?: boolean;
   onConfirm: () => void;
 }
 
 /** Confirmation dialog for deleting a step, opened by `children` (the trigger button). */
-export function DeleteStepDialog({ children, onConfirm }: Props) {
+export function DeleteStepDialog({ children, defaultOpen, onConfirm }: Props) {
   return (
-    <AlertDialog>
+    <AlertDialog defaultOpen={defaultOpen}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent className="surface-elevated border-border">
         <AlertDialogHeader>

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { Id } from "@/convex/_generated/dataModel";
+import { staggerDelay } from "@/lib/utils";
 import { GameCard } from "./game-card";
 
 interface Game {
@@ -14,14 +15,6 @@ interface Game {
 
 interface Props {
   games: Game[];
-}
-
-/**
- * Entrance delay of the i-th card. Capped so cards further down (usually off screen at first)
- * don't stay hidden while the earlier ones animate in.
- */
-function staggerDelay(i: number) {
-  return `${Math.min(i, 6) * 60}ms`;
 }
 
 /** Grid of the user's games, or an empty state when there are none. */
@@ -53,7 +46,7 @@ export function GameList({ games }: Props) {
         <li
           className="fade-in slide-in-from-bottom-4 animation-duration-400 animate-in fill-mode-backwards ease-out motion-reduce:animate-none"
           key={game._id}
-          style={{ animationDelay: staggerDelay(i) }}
+          style={{ animationDelay: staggerDelay(i, 60) }}
         >
           <GameCard game={game} index={i} />
         </li>

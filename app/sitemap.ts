@@ -15,12 +15,10 @@ const PAGES: {
   { changeFrequency: "monthly", path: "/sign-up", priority: 0.6 },
 ];
 
-/** Locales listed in the sitemap; every page also links its translations. */
-const LISTED_LOCALES = ["en", "it"];
-
 /**
- * Sitemap of the public, localized pages. The alternate-language links live here rather than in
- * a `Link` header on every response, where all the locales add ~7 KB to each page load.
+ * Sitemap of the public, localized pages: every page in every locale, each linking all its
+ * translations. The alternate-language links live here rather than in a `Link` header on every
+ * response, where all the locales add ~7 KB to each page load.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -36,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       const languages = Object.fromEntries(
         locales.map((locale) => [locale, `${baseUrl}/${locale}${path}`])
       );
-      return LISTED_LOCALES.map((locale) => ({
+      return locales.map((locale) => ({
         alternates: { languages },
         changeFrequency,
         lastModified,

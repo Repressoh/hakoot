@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
+import { releaseCachedQueries } from "@/lib/use-cached-query";
 
 /**
  * Account settings: linked sign-in methods, email and password changes (password accounts only) and
@@ -325,6 +326,7 @@ function DeleteAccountSection() {
     try {
       await deleteUserDataAction({});
       await signOut();
+      releaseCachedQueries();
       replace("/");
     } catch {
       setDeleteLoading(false);

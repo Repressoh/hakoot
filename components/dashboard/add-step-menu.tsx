@@ -16,11 +16,12 @@ import { useRouter } from "@/i18n/routing";
 import { AddStepButton } from "./add-step-button";
 
 interface Props {
+  defaultOpen?: boolean;
   gameId: Id<"games">;
 }
 
 /** Menu that adds a theory or quiz step to the game and opens its editor. */
-export function AddStepMenu({ gameId }: Props) {
+export function AddStepMenu({ defaultOpen, gameId }: Props) {
   const t = useTranslations("gameEditor");
   const { push } = useRouter();
   const [loading, setLoading] = useState(false);
@@ -59,7 +60,7 @@ export function AddStepMenu({ gameId }: Props) {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu defaultOpen={defaultOpen}>
       <DropdownMenuTrigger asChild>
         <AddStepButton disabled={loading} />
       </DropdownMenuTrigger>
