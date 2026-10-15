@@ -11,9 +11,10 @@ import githubDark from "shiki/themes/github-dark.mjs";
 // with the worker's own chunks; importing it on demand added a round trip and
 // highlighted code ~1-2.5s later on 2G.
 
-// Grammars load one at a time, on demand: each is its own chunk. A Map, not an
-// object: the language comes from the step's data, and on an object a name like
-// "constructor" or "__proto__" would find an inherited property instead.
+// Grammars load one at a time, on demand: each is its own chunk. The language
+// comes from the step's data, so it's looked up in a Map (on an object, a name
+// like "constructor" or "__proto__" finds an inherited property) and what comes
+// back is checked to be a function before it's called.
 const LANGUAGE_LOADERS = new Map<string, () => LanguageInput>([
   ["bash", () => import("shiki/langs/bash.mjs")],
   ["css", () => import("shiki/langs/css.mjs")],
@@ -54,14 +55,20 @@ function getHighlighter(): Promise<HighlighterCore> {
 
 /** Download `language`'s grammar module (if it has one) without loading it into a highlighter. */
 export async function prefetchGrammar(language: string): Promise<void> {
-  await LANGUAGE_LOADERS.get(language)?.();
+  const loader = LANGUAGE_LOADERS.get(language);
+  if (typeof loader === "function") {
+    await loader();
+  }
 }
 
 /** Load the highlighter and `language`'s grammar (if it has one) without highlighting anything. */
 export async function loadLanguage(language: string): Promise<void> {
   const highlighter = await getHighlighter();
   const loader = LANGUAGE_LOADERS.get(language);
-  if (loader && !highlighter.getLoadedLanguages().includes(language)) {
+  if (
+    typeof loader === "function" &&
+    !highlighter.getLoadedLanguages().includes(language)
+  ) {
     await highlighter.loadLanguage(loader());
   }
 }
