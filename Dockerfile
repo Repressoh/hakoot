@@ -1,7 +1,7 @@
 # ──────────────────────────────────────────────────────────────
 # Stage 1: Install dependencies
 # ──────────────────────────────────────────────────────────────
-FROM oven/bun:1.3.13-alpine AS deps
+FROM oven/bun:1.4.3-alpine AS deps
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # ──────────────────────────────────────────────────────────────
 # Stage 2: Build the application
 # ──────────────────────────────────────────────────────────────
-FROM oven/bun:1.3.13-alpine AS builder
+FROM oven/bun:1.4.3-alpine AS builder
 
 WORKDIR /app
 
@@ -44,7 +44,7 @@ RUN bun run build
 # ──────────────────────────────────────────────────────────────
 # Stage 3: Production runtime (distroless — no shell, hardened)
 # ──────────────────────────────────────────────────────────────
-FROM oven/bun:1.3.13-distroless AS runner
+FROM oven/bun:1.4.3-distroless AS runner
 
 WORKDIR /app
 
