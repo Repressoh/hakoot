@@ -57,9 +57,9 @@ ENV PORT=3000
 # Copy the standalone server output
 COPY --from=builder /app/.next/standalone ./
 
-# Copy static assets (not included in standalone)
+# Copy static assets and public files (neither is included in standalone)
 COPY --from=builder /app/.next/static ./.next/static
-
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
