@@ -22,6 +22,8 @@ export default defineSchema({
   gameParticipants: defineTable({
     email: v.optional(v.string()),
     expiresAt: v.optional(v.number()),
+    // Legacy: heartbeats now go to participantPresence. Still read as a
+    // fallback for players who joined before that table existed.
     lastSeen: v.optional(v.number()),
     name: v.string(),
     participantToken: v.string(),
@@ -106,6 +108,18 @@ export default defineSchema({
     .index("by_participant", ["participantId"])
     .index("by_step", ["stepId"])
     .index("by_participant_and_step", ["participantId", "stepId"]),
+
+  // ─── Participant presence (lobby heartbeats) ────────────────────────
+  // Kept apart from gameParticipants so a heartbeat every few seconds per
+  // player doesn't re-run every query that reads the participants
+  // (leaderboard, answer count, player state, host view).
+  participantPresence: defineTable({
+    lastSeen: v.number(),
+    participantId: v.id("gameParticipants"),
+    sessionId: v.id("gameSessions"),
+  })
+    .index("by_participant", ["participantId"])
+    .index("by_session", ["sessionId"]),
 
   // ─── Rate limiting ───────────────────────────────────────────────────
   rateLimits: defineTable({

@@ -2,25 +2,21 @@
 
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { type ComponentProps, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
+
+// The dialog (Radix, focus trapping, scroll locking) loads after the cards
+// show, keeping it out of the dashboard's initial JavaScript; until then the
+// button is shown without it.
+const DeleteGameDialog = lazy(() =>
+  import("./delete-game-dialog").then((mod) => ({
+    default: mod.DeleteGameDialog,
+  }))
+);
 
 const CARD_ACCENTS = [
   {
@@ -80,26 +76,29 @@ interface Props {
 export function GameCard({ game, index = 0 }: Props) {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
-  const [deleting, setDeleting] = useState(false);
-  const removeGame = useMutation(api.games.remove);
 
   const accent = CARD_ACCENTS[index % CARD_ACCENTS.length];
   const emoji = CARD_EMOJIS[index % CARD_EMOJIS.length];
 
-  async function handleDelete() {
-    setDeleting(true);
-    try {
-      await removeGame({ gameId: game._id });
-      toast.success(t("deleteSuccess"));
-    } catch {
-      setDeleting(false);
-      toast.error("Failed to delete game");
-    }
-  }
+  const deleteDialog = useLazyOpen();
+  const deleteButton = (props?: ComponentProps<typeof Button>) => (
+    <Button
+      aria-label={`${tc("delete")} ${game.title}`}
+      className="size-9 rounded-xl text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+      size="sm"
+      variant="ghost"
+      {...props}
+    >
+      <HugeiconsIcon icon={Delete02Icon} size={15} strokeWidth={2} />
+    </Button>
+  );
 
+  // No backdrop blur on cards in scrolling lists: behind their mostly opaque
+  // background it made no visible difference, and on phones it left blank
+  // tiles on screen during fast scrolls.
   return (
     <div
-      className={`group relative flex flex-col overflow-hidden rounded-2xl border ${accent.border} bg-card/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 ${accent.glow}`}
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border ${accent.border} bg-card/80 transition-all duration-300 hover:-translate-y-1 ${accent.glow}`}
     >
       {/* Accent top bar */}
       <div
@@ -181,40 +180,14 @@ export function GameCard({ game, index = 0 }: Props) {
           >
             <Link href={`/games/${game._id}/sessions`}>Sessions</Link>
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                aria-label={`${tc("delete")} ${game.title}`}
-                className="size-9 rounded-xl text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-                size="sm"
-                variant="ghost"
-              >
-                <HugeiconsIcon icon={Delete02Icon} size={15} strokeWidth={2} />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-2xl border-border/60 bg-card/95 shadow-2xl shadow-black/30 backdrop-blur-xl">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-display text-foreground">
-                  {tc("delete")}
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-muted-foreground">
-                  {t("deleteConfirm")}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-xl border-border text-foreground hover:bg-muted/50">
-                  {tc("cancel")}
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  className="rounded-xl bg-destructive text-white hover:bg-destructive/90"
-                  disabled={deleting}
-                  onClick={handleDelete}
-                >
-                  {tc("delete")}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Suspense fallback={deleteButton(deleteDialog.placeholderProps)}>
+            <DeleteGameDialog
+              defaultOpen={deleteDialog.defaultOpen}
+              gameId={game._id}
+            >
+              {deleteButton()}
+            </DeleteGameDialog>
+          </Suspense>
         </div>
       </div>
     </div>

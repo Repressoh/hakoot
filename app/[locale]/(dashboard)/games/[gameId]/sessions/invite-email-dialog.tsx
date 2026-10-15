@@ -32,6 +32,8 @@ interface InviteEntry {
 }
 
 interface Props {
+  children: React.ReactNode;
+  defaultOpen?: boolean;
   gameId: Id<"games">;
   gameName: string;
   session: { _id: Id<"gameSessions">; inviteCode: string };
@@ -125,16 +127,29 @@ function reducer(state: State, action: Action): State {
 
 /**
  * Dialog for emailing session invites to recipients typed in by hand or picked from a saved email
- * list.
+ * list. Opened by `children`, the trigger button.
  */
-export function InviteEmailDialog({ gameId, session, gameName }: Props) {
+export function InviteEmailDialog({
+  children,
+  defaultOpen = false,
+  gameId,
+  session,
+  gameName,
+}: Props) {
   const t = useTranslations("session");
   const locale = useLocale();
   const sendInvites = useAction(api.emails.sendInviteEmails);
-  const emailLists = useQuery(api.emailLists.listWithEntries);
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    open: defaultOpen,
+  });
   const { open, entries, sending, selectedListId, checkedEntryIds } = state;
+  // Saved lists (with all their addresses) are only needed while the dialog is
+  // open; the sessions page renders one dialog per open session.
+  const emailLists = useQuery(
+    api.emailLists.listWithEntries,
+    open ? {} : "skip"
+  );
 
   const selectedList = emailLists?.find((l) => l._id === selectedListId);
 
@@ -245,11 +260,7 @@ export function InviteEmailDialog({ gameId, session, gameName }: Props) {
       onOpenChange={(o) => dispatch({ open: o, type: "SET_OPEN" })}
       open={open}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          {t("sendEmailInvites")}
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t("sendEmailInvites")}</DialogTitle>

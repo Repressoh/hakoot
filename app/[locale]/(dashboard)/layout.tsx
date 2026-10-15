@@ -1,15 +1,11 @@
 "use client";
 
-import {
-  Authenticated,
-  AuthLoading,
-  Unauthenticated,
-  useQuery,
-} from "convex/react";
+import { useAuthToken } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
 import { useEffect } from "react";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { DashboardNav } from "./dashboard-nav";
+import { DashboardHeader, DashboardNav } from "./dashboard-nav";
 
 function AuthRedirect() {
   useEffect(() => {
@@ -19,69 +15,80 @@ function AuthRedirect() {
   return null;
 }
 
+/**
+ * Dashboard shell. Pages mount as soon as a stored sign-in token is found, without waiting for the
+ * server to confirm it: the Convex client sends the token before any query on the new connection,
+ * so the page's queries share that round trip instead of each adding their own.
+ */
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <AuthLoading>
-        <DashboardSkeleton />
-      </AuthLoading>
-      <Unauthenticated>
-        <AuthRedirect />
-      </Unauthenticated>
-      <Authenticated>
-        <DashboardLayoutInner>{children}</DashboardLayoutInner>
-      </Authenticated>
-    </>
-  );
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const token = useAuthToken();
+
+  if (!(isLoading || isAuthenticated)) {
+    return <AuthRedirect />;
+  }
+
+  // The stored token is read after the first render (and the server never has
+  // it); until then we don't know whether anyone is signed in, so hold off on
+  // queries. The shell stays mounted when the token is found: only the user
+  // menu and the page replace their placeholders.
+  if (token === null) {
+    return (
+      <DashboardShell
+        loading
+        nav={
+          <DashboardHeader>
+            <LocaleSwitcher />
+            <Skeleton className="size-8 rounded-full" />
+          </DashboardHeader>
+        }
+      >
+        <PageSkeleton />
+      </DashboardShell>
+    );
+  }
+
+  return <DashboardShell nav={<DashboardNav />}>{children}</DashboardShell>;
 }
 
-function DashboardSkeleton() {
+function PageSkeleton() {
   return (
-    <div className="flex min-h-screen flex-col bg-background bg-gradient-brand-radial">
-      {/* Skeleton nav */}
-      <header className="sticky top-0 z-40 border-border/40 border-b bg-card/60 backdrop-blur-xl">
-        <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
-          <Skeleton className="h-6 w-20 rounded-lg" />
-          <div className="flex items-center gap-3">
-            <Skeleton className="size-8 rounded-full" />
-          </div>
+    <div className="space-y-8">
+      <div className="flex items-end justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48 rounded-lg" />
+          <Skeleton className="h-4 w-64 rounded-md" />
         </div>
-      </header>
-      {/* Skeleton content */}
-      <main className="container mx-auto max-w-6xl flex-1 px-6 py-10">
-        <div className="space-y-8">
-          <div className="flex items-end justify-between">
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-48 rounded-lg" />
-              <Skeleton className="h-4 w-64 rounded-md" />
-            </div>
-            <Skeleton className="h-10 w-32 rounded-xl" />
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {["a", "b", "c"].map((id) => (
-              <Skeleton className="h-48 rounded-2xl" key={id} />
-            ))}
-          </div>
-        </div>
-      </main>
+        <Skeleton className="h-10 w-32 rounded-xl" />
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {["a", "b", "c"].map((id) => (
+          <Skeleton className="h-48 rounded-2xl" key={id} />
+        ))}
+      </div>
     </div>
   );
 }
 
-/** Dashboard shell for the signed-in user; shows a skeleton until the viewer has loaded. */
-function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
-  const viewer = useQuery(api.users.viewer);
-
-  if (!viewer) {
-    return <DashboardSkeleton />;
-  }
-
+function DashboardShell({
+  children,
+  loading = false,
+  nav,
+}: {
+  children: React.ReactNode;
+  /** Server-rendered loading state: text in the fallback fonts (see globals.css). */
+  loading?: boolean;
+  nav: React.ReactNode;
+}) {
   return (
-    <div className="relative flex min-h-screen flex-col bg-background bg-gradient-brand-radial">
+    <div
+      className="relative flex min-h-screen flex-col bg-background bg-gradient-brand-radial"
+      data-fallback-fonts={loading ? "" : undefined}
+    >
       {/* Subtle grid texture overlay */}
       <div
         aria-hidden="true"
@@ -94,13 +101,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       >
         Skip to main content
       </a>
-      <DashboardNav
-        user={{
-          email: viewer.email ?? "",
-          image: viewer.image ?? null,
-          name: viewer.name ?? "",
-        }}
-      />
+      {nav}
       <main
         className="container relative mx-auto max-w-6xl flex-1 px-6 py-10"
         id="main-content"

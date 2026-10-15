@@ -23,6 +23,7 @@ const USER_DATA_TABLES = [
   "gameSessions",
   "gameParticipants",
   "participantAnswers",
+  "participantPresence",
   "emailLists",
   "emailListEntries",
 ] as const;
@@ -38,13 +39,14 @@ const ONE_USER = {
   gameSteps: 1,
   games: 1,
   participantAnswers: 4,
+  participantPresence: 2,
   users: 1,
 };
 
 /** Seed a user with one of everything they can own: a game with a step, a
- * finished session with two participants and their answers (including a
- * legacy answer saved without a sessionId), an email list with an entry, and
- * a password account with an unused sign-in code. */
+ * finished session with two participants, their answers (including a legacy
+ * answer saved without a sessionId) and presence rows, an email list with an
+ * entry, and a password account with an unused sign-in code. */
 async function seedUser(t: TestConvex, label: string) {
   return await t.run(async (ctx) => {
     const userId = await ctx.db.insert("users", { email: `${label}@x.test` });
@@ -88,6 +90,11 @@ async function seedUser(t: TestConvex, label: string) {
           totalScore: 0,
         });
         await Promise.all([
+          ctx.db.insert("participantPresence", {
+            lastSeen: 0,
+            participantId,
+            sessionId,
+          }),
           ctx.db.insert("participantAnswers", {
             choiceIndex: 0,
             isCorrect: true,

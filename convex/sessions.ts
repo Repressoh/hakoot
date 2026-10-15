@@ -75,6 +75,23 @@ function sanitizeInput(input: string, maxLength = 100): string {
 /** Token expiration time: 24 hours */
 const TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000;
 
+/** Stale threshold: participants unseen for this long are removed in lobby */
+const STALE_THRESHOLD_MS = 15_000; // 15 seconds
+
+/**
+ * Whether a participant has stopped sending heartbeats: last seen (from `lastSeen`, by
+ * participant, else the participant's legacy `lastSeen` field) over STALE_THRESHOLD_MS ago, or
+ * never.
+ */
+function isStale(
+  participant: Doc<"gameParticipants">,
+  lastSeen: Map<Id<"gameParticipants">, number>,
+  now: number
+): boolean {
+  const seen = lastSeen.get(participant._id) ?? participant.lastSeen;
+  return seen === undefined || now - seen > STALE_THRESHOLD_MS;
+}
+
 // ─── Queries ────────────────────────────────────────────────────────────
 
 export const listForGame = query({
@@ -101,6 +118,9 @@ export const listForGame = query({
 /**
  * Session, game, steps and participants for the session's host. In the lobby, only players seen in
  * the last 15 seconds are listed.
+ *
+ * @deprecated Replaced by `getHostView` and `listHostParticipants`, which send far less on every
+ * change. Kept so host screens opened before the switch keep working; remove in a later release.
  */
 export const getForHost = query({
   args: { sessionId: v.id("gameSessions") },
@@ -115,31 +135,167 @@ export const getForHost = query({
       return null;
     }
 
-    const [game, steps] = await Promise.all([
+    const [game, steps, allParticipants] = await Promise.all([
       ctx.db.get(session.gameId),
+      getOrderedSteps(ctx, session.gameId),
       ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
         .collect(),
     ]);
-    steps.sort((a, b) => a.order - b.order);
-
-    const allParticipants = await ctx.db
-      .query("gameParticipants")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .collect();
 
     // In the waiting lobby, hide participants who stopped sending heartbeats
-    const participants =
-      session.status === "waiting"
-        ? allParticipants.filter(
-            (p) => p.lastSeen && Date.now() - p.lastSeen <= 15_000
-          )
-        : allParticipants;
+    let participants = allParticipants;
+    if (session.status === "waiting") {
+      const lastSeen = await getLastSeenByParticipant(ctx, args.sessionId);
+      const now = Date.now();
+      participants = allParticipants.filter((p) => !isStale(p, lastSeen, now));
+    }
 
     return { game, participants, session, steps };
   },
 });
+
+/** A game's steps in play order. */
+async function getOrderedSteps(ctx: QueryCtx, gameId: Id<"games">) {
+  return await ctx.db
+    .query("gameSteps")
+    .withIndex("by_game_and_order", (q) => q.eq("gameId", gameId))
+    .collect();
+}
+
+/** The session if the current user hosts it, otherwise null. */
+async function getHostedSession(ctx: QueryCtx, sessionId: Id<"gameSessions">) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
+    return null;
+  }
+  const session = await ctx.db.get(sessionId);
+  if (!session || session.hostId !== userId) {
+    return null;
+  }
+  return session;
+}
+
+/**
+ * The host screen: session state, game title, step count and only the current step's content.
+ * It doesn't read participants, so joins, answers and heartbeats don't re-send it; the
+ * participant list is `listHostParticipants`.
+ */
+export const getHostView = query({
+  args: { sessionId: v.id("gameSessions") },
+  handler: async (ctx, args) => {
+    const session = await getHostedSession(ctx, args.sessionId);
+    if (!session) {
+      return null;
+    }
+
+    const [game, steps] = await Promise.all([
+      ctx.db.get(session.gameId),
+      getOrderedSteps(ctx, session.gameId),
+    ]);
+    const step = steps[session.currentStepIndex];
+
+    return {
+      codeLanguages: getCodeLanguages(steps),
+      currentStep: step
+        ? {
+            _id: step._id,
+            choices: step.choices,
+            codeBlock: step.codeBlock
+              ? { code: step.codeBlock.code, language: step.codeBlock.language }
+              : undefined,
+            markdownContent: step.markdownContent,
+            question: step.question,
+            timeLimitSeconds: step.timeLimitSeconds,
+            type: step.type,
+          }
+        : null,
+      gameTitle: game?.title ?? "",
+      session: {
+        _id: session._id,
+        answerRevealed: session.answerRevealed,
+        currentStepIndex: session.currentStepIndex,
+        inviteCode: session.inviteCode,
+        status: session.status,
+        stepStartedAt: session.stepStartedAt,
+      },
+      stepCount: steps.length,
+    };
+  },
+});
+
+/**
+ * The session's participants for its host. In the lobby, only players seen in the last 15 seconds
+ * are listed.
+ *
+ * Convex re-runs a query when data it read changes, not as time passes, so in the lobby the host
+ * screen passes a `clock` that changes every few seconds: otherwise a player who left would stay
+ * listed until someone else's heartbeat re-ran the query. Its value isn't used: the check uses the
+ * server's time.
+ */
+export const listHostParticipants = query({
+  args: { clock: v.optional(v.number()), sessionId: v.id("gameSessions") },
+  handler: async (ctx, args) => {
+    const session = await getHostedSession(ctx, args.sessionId);
+    if (!session) {
+      return [];
+    }
+
+    const participants = await ctx.db
+      .query("gameParticipants")
+      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
+      .collect();
+
+    let visible = participants;
+    // Only the lobby reads presence, so heartbeats don't re-run this query
+    // once the game has started.
+    if (session.status === "waiting") {
+      const lastSeen = await getLastSeenByParticipant(ctx, args.sessionId);
+      const now = Date.now();
+      visible = participants.filter((p) => !isStale(p, lastSeen, now));
+    }
+
+    return visible.map((p) => ({
+      _id: p._id,
+      name: p.name,
+      totalScore: p.totalScore,
+    }));
+  },
+});
+
+/** Last heartbeat time per participant of a session. */
+async function getLastSeenByParticipant(
+  ctx: QueryCtx,
+  sessionId: Id<"gameSessions">
+) {
+  const presence = await ctx.db
+    .query("participantPresence")
+    .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
+    .collect();
+  return new Map(presence.map((p) => [p.participantId, p.lastSeen]));
+}
+
+/** Record that a lobby player is still connected. */
+async function touchPresence(
+  ctx: MutationCtx,
+  participantId: Id<"gameParticipants">,
+  sessionId: Id<"gameSessions">
+) {
+  const presence = await ctx.db
+    .query("participantPresence")
+    .withIndex("by_participant", (q) => q.eq("participantId", participantId))
+    .unique();
+  if (presence) {
+    await ctx.db.patch(presence._id, { lastSeen: Date.now() });
+  } else {
+    await ctx.db.insert("participantPresence", {
+      lastSeen: Date.now(),
+      participantId,
+      sessionId,
+    });
+  }
+}
 
 /** Look up a session that can still be joined (not finished) by its invite code. */
 export const getByInviteCode = query({
@@ -196,12 +352,8 @@ export const getPlayerState = query({
 
     const [game, steps] = await Promise.all([
       ctx.db.get(session.gameId),
-      ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-        .collect(),
+      getOrderedSteps(ctx, session.gameId),
     ]);
-    steps.sort((a, b) => a.order - b.order);
 
     const currentStep =
       session.currentStepIndex >= 0 && session.currentStepIndex < steps.length
@@ -230,6 +382,8 @@ export const getPlayerState = query({
     }
 
     return {
+      // Lets the client preload syntax highlighting before a code step shows.
+      codeLanguages: getCodeLanguages(steps),
       currentAnswer,
       currentStep: currentStep
         ? {
@@ -261,6 +415,15 @@ export const getPlayerState = query({
   },
 });
 
+/** The distinct languages of the steps' code blocks. */
+function getCodeLanguages(steps: Doc<"gameSteps">[]): string[] {
+  return [
+    ...new Set(
+      steps.flatMap((step) => (step.codeBlock ? [step.codeBlock.language] : []))
+    ),
+  ];
+}
+
 /** Get answer count for host view (reactive!) */
 export const getAnswerCount = query({
   args: { sessionId: v.id("gameSessions") },
@@ -275,11 +438,7 @@ export const getAnswerCount = query({
       return null;
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
+    const steps = await getOrderedSteps(ctx, session.gameId);
 
     if (
       session.currentStepIndex < 0 ||
@@ -312,7 +471,12 @@ export const getAnswerCount = query({
   },
 });
 
-/** Get session results for host */
+/**
+ * Get session results for host.
+ *
+ * @deprecated Replaced by `getResultsView`, which leaves out step content and unused fields. Kept
+ * so results screens opened before the switch keep working; remove in a later release.
+ */
 export const getResults = query({
   args: { sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
@@ -331,12 +495,8 @@ export const getResults = query({
         .query("gameParticipants")
         .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
         .collect(),
-      ctx.db
-        .query("gameSteps")
-        .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-        .collect(),
+      getOrderedSteps(ctx, session.gameId),
     ]);
-    steps.sort((a, b) => a.order - b.order);
 
     const { answers: allAnswers, restoredParticipants } =
       await collectResultAnswers(
@@ -350,6 +510,71 @@ export const getResults = query({
     participants.sort((a, b) => b.totalScore - a.totalScore);
 
     return { answers: allAnswers, participants, session, steps };
+  },
+});
+
+/**
+ * Results of a session for its host, with only the fields the results screen and CSV export use:
+ * quiz steps (no theory content), slim answers and participants (no tokens).
+ */
+export const getResultsView = query({
+  args: { sessionId: v.id("gameSessions") },
+  handler: async (ctx, args) => {
+    const session = await getHostedSession(ctx, args.sessionId);
+    if (!session) {
+      return null;
+    }
+
+    const [storedParticipants, steps] = await Promise.all([
+      ctx.db
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
+        .collect(),
+      getOrderedSteps(ctx, session.gameId),
+    ]);
+
+    const { answers, restoredParticipants } = await collectResultAnswers(
+      ctx,
+      args.sessionId,
+      steps,
+      storedParticipants
+    );
+
+    const participants = [
+      ...storedParticipants.map(({ _id, email, name, totalScore }) => ({
+        _id,
+        email,
+        name,
+        totalScore,
+      })),
+      ...restoredParticipants.map(({ _id, name, totalScore }) => ({
+        _id,
+        email: undefined,
+        name,
+        totalScore,
+      })),
+    ];
+    participants.sort((a, b) => b.totalScore - a.totalScore);
+
+    return {
+      answers: answers.map((a) => ({
+        choiceIndex: a.choiceIndex,
+        isCorrect: a.isCorrect,
+        participantId: a.participantId,
+        score: a.score,
+        stepId: a.stepId,
+      })),
+      gameId: session.gameId,
+      participants,
+      quizSteps: steps
+        .filter((step) => step.type === "quiz")
+        .map((step) => ({
+          _id: step._id,
+          choices: step.choices ?? [],
+          question: step.question ?? "",
+        })),
+      stepCount: steps.length,
+    };
   },
 });
 
@@ -543,7 +768,9 @@ export const join = mutation({
         if (existing.expiresAt && Date.now() > existing.expiresAt) {
           throw new ConvexError("Token expired. Please rejoin.");
         }
-        await ctx.db.patch(existing._id, { lastSeen: Date.now() });
+        if (session.status === "waiting") {
+          await touchPresence(ctx, existing._id, session._id);
+        }
         return {
           participantId: existing._id,
           participantToken: existing.participantToken,
@@ -562,12 +789,14 @@ export const join = mutation({
     const participantId = await ctx.db.insert("gameParticipants", {
       email: args.email,
       expiresAt,
-      lastSeen: Date.now(),
       name: sanitizedName,
       participantToken: token,
       sessionId: args.sessionId,
       totalScore: 0,
     });
+    if (session.status === "waiting") {
+      await touchPresence(ctx, participantId, session._id);
+    }
 
     return { participantId, participantToken: token };
   },
@@ -609,7 +838,9 @@ export const joinByCode = mutation({
         if (existing.expiresAt && Date.now() > existing.expiresAt) {
           throw new ConvexError("Token expired. Please rejoin.");
         }
-        await ctx.db.patch(existing._id, { lastSeen: Date.now() });
+        if (session.status === "waiting") {
+          await touchPresence(ctx, existing._id, session._id);
+        }
         return {
           participantToken: existing.participantToken,
           sessionId: session._id,
@@ -625,20 +856,25 @@ export const joinByCode = mutation({
     const token = generateToken();
     const expiresAt = Date.now() + TOKEN_EXPIRATION_MS;
 
-    await ctx.db.insert("gameParticipants", {
+    const participantId = await ctx.db.insert("gameParticipants", {
       expiresAt,
-      lastSeen: Date.now(),
       name: sanitizedName,
       participantToken: token,
       sessionId: session._id,
       totalScore: 0,
     });
+    if (session.status === "waiting") {
+      await touchPresence(ctx, participantId, session._id);
+    }
 
     return { participantToken: token, sessionId: session._id };
   },
 });
 
-/** Heartbeat: update lastSeen for a participant */
+/**
+ * Heartbeat from a player in the lobby, so the host's lobby only lists connected players. Once
+ * the game has started nothing reads it, so it isn't stored.
+ */
 export const heartbeat = mutation({
   args: { participantToken: v.string() },
   handler: async (ctx, args) => {
@@ -651,12 +887,13 @@ export const heartbeat = mutation({
     if (!participant) {
       return;
     }
-    await ctx.db.patch(participant._id, { lastSeen: Date.now() });
+    const session = await ctx.db.get(participant.sessionId);
+    if (session?.status !== "waiting") {
+      return;
+    }
+    await touchPresence(ctx, participant._id, participant.sessionId);
   },
 });
-
-/** Stale threshold: participants unseen for this long are removed in lobby */
-const STALE_THRESHOLD_MS = 15_000; // 15 seconds
 
 /**
  * Host moves to the next step, or finishes after the last one. Starting from the lobby removes
@@ -675,25 +912,34 @@ export const advance = mutation({
       throw new ConvexError("Not found");
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
+    const steps = await getOrderedSteps(ctx, session.gameId);
 
     const nextIndex = session.currentStepIndex + 1;
 
-    // When starting from lobby, remove stale participants
+    // When starting from lobby, remove stale participants. Presence is only
+    // kept for the lobby, so it is cleared too.
     if (session.status === "waiting") {
-      const participants = await ctx.db
-        .query("gameParticipants")
-        .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-        .collect();
-      const now = Date.now();
-      const staleParticipants = participants.filter(
-        (p) => !p.lastSeen || now - p.lastSeen > STALE_THRESHOLD_MS
+      const [participants, presence] = await Promise.all([
+        ctx.db
+          .query("gameParticipants")
+          .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
+          .collect(),
+        ctx.db
+          .query("participantPresence")
+          .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
+          .collect(),
+      ]);
+      const lastSeen = new Map(
+        presence.map((p) => [p.participantId, p.lastSeen])
       );
-      await Promise.all(staleParticipants.map((p) => ctx.db.delete(p._id)));
+      const now = Date.now();
+      const staleParticipants = participants.filter((p) =>
+        isStale(p, lastSeen, now)
+      );
+      await Promise.all([
+        ...staleParticipants.map((p) => ctx.db.delete(p._id)),
+        ...presence.map((p) => ctx.db.delete(p._id)),
+      ]);
     }
 
     if (nextIndex >= steps.length) {
@@ -743,11 +989,7 @@ export const reveal = mutation({
       return null; // Idempotent
     }
 
-    const steps = await ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", session.gameId))
-      .collect();
-    steps.sort((a, b) => a.order - b.order);
+    const steps = await getOrderedSteps(ctx, session.gameId);
 
     const currentStep = steps[session.currentStepIndex];
     if (currentStep?.type !== "quiz") {
@@ -868,11 +1110,7 @@ async function getActiveQuizStep(
     currentStepIndex: number;
   }
 ) {
-  const steps = await ctx.db
-    .query("gameSteps")
-    .withIndex("by_game", (q) => q.eq("gameId", gameId))
-    .collect();
-  steps.sort((a, b) => a.order - b.order);
+  const steps = await getOrderedSteps(ctx, gameId);
 
   const currentStep = steps[session.currentStepIndex];
   if (currentStep?.type !== "quiz") {
@@ -971,7 +1209,16 @@ export const cleanupExpiredTokens = internalMutation({
           await ctx.db.patch(participant._id, { expiresAt: undefined });
           return;
         }
-        await ctx.db.delete(participant._id);
+        const presence = await ctx.db
+          .query("participantPresence")
+          .withIndex("by_participant", (q) =>
+            q.eq("participantId", participant._id)
+          )
+          .unique();
+        await Promise.all([
+          ctx.db.delete(participant._id),
+          presence ? ctx.db.delete(presence._id) : undefined,
+        ]);
       })
     );
 

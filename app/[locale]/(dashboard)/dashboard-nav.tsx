@@ -1,33 +1,31 @@
 "use client";
 
-import { useAuthActions } from "@convex-dev/auth/react";
-import { useTranslations } from "next-intl";
+import { useQuery } from "convex/react";
+import { type ComponentProps, lazy, Suspense } from "react";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Link, useRouter } from "@/i18n/routing";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 
-interface Props {
-  user: { name: string; email: string; image: string | null };
-}
+// The menu (Radix dropdown, positioning, scroll locking) loads after the nav
+// shows, keeping it out of the initial JavaScript; until then the avatar
+// button is shown without it.
+const UserMenu = lazy(() =>
+  import("./user-menu").then((mod) => ({ default: mod.UserMenu }))
+);
 
 /** Dashboard header with navigation links and the signed-in user's menu (including sign-out). */
-export function DashboardNav({ user }: Props) {
-  const t = useTranslations();
-  const { push } = useRouter();
-  const { signOut } = useAuthActions();
-
-  async function handleSignOut() {
-    await signOut();
-    push("/");
-  }
+export function DashboardNav() {
+  const viewer = useQuery(api.users.viewer);
+  const userMenu = useLazyOpen();
+  const user = {
+    email: viewer?.email ?? "",
+    image: viewer?.image ?? null,
+    name: viewer?.name ?? "",
+  };
 
   const initials = user.name
     .split(" ")
@@ -36,6 +34,49 @@ export function DashboardNav({ user }: Props) {
     .toUpperCase()
     .slice(0, 2);
 
+  const userButton = (props?: ComponentProps<typeof Button>) => (
+    <Button
+      aria-label="User menu"
+      className="h-9 gap-2.5 rounded-xl text-foreground transition-colors hover:bg-muted/60"
+      size="sm"
+      variant="ghost"
+      {...props}
+    >
+      <Avatar className="size-7 ring-2 ring-primary/20 transition-shadow group-hover:ring-primary/40">
+        <AvatarImage alt={user.name} src={user.image ?? undefined} />
+        <AvatarFallback className="bg-primary/15 font-bold font-mono text-primary text-xs">
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+      <span className="hidden font-medium text-sm sm:block">{user.name}</span>
+    </Button>
+  );
+
+  return (
+    <DashboardHeader>
+      <LocaleSwitcher />
+      {viewer ? (
+        <Suspense fallback={userButton(userMenu.placeholderProps)}>
+          <UserMenu
+            defaultOpen={userMenu.defaultOpen}
+            email={user.email}
+            name={user.name}
+          >
+            {userButton()}
+          </UserMenu>
+        </Suspense>
+      ) : (
+        <Skeleton className="size-8 rounded-full" />
+      )}
+    </DashboardHeader>
+  );
+}
+
+/**
+ * The dashboard header's frame and logo, with `children` on the right. Also rendered by the
+ * layout's loading state, so the server-rendered page already shows the real header.
+ */
+export function DashboardHeader({ children }: { children: React.ReactNode }) {
   return (
     <header className="sticky top-0 z-40 border-border/40 border-b bg-background/70 backdrop-blur-xl">
       {/* Subtle glow line at bottom of nav */}
@@ -57,69 +98,7 @@ export function DashboardNav({ user }: Props) {
           </span>
         </Link>
 
-        <div className="flex items-center gap-1.5">
-          <LocaleSwitcher />
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="User menu"
-                className="h-9 gap-2.5 rounded-xl text-foreground transition-colors hover:bg-muted/60"
-                size="sm"
-                variant="ghost"
-              >
-                <Avatar className="size-7 ring-2 ring-primary/20 transition-shadow group-hover:ring-primary/40">
-                  <AvatarImage alt={user.name} src={user.image ?? undefined} />
-                  <AvatarFallback className="bg-primary/15 font-bold font-mono text-primary text-xs">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="hidden font-medium text-sm sm:block">
-                  {user.name}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-52 rounded-xl border-border/60 bg-card/95 shadow-black/20 shadow-xl backdrop-blur-xl"
-            >
-              <div className="px-3 py-2.5">
-                <p className="font-semibold text-foreground text-sm">
-                  {user.name}
-                </p>
-                <p className="mt-0.5 truncate font-mono text-muted-foreground text-xs">
-                  {user.email}
-                </p>
-              </div>
-              <DropdownMenuSeparator className="bg-border/50" />
-              <DropdownMenuItem
-                asChild
-                className="mx-1 rounded-lg text-foreground focus:bg-muted/50"
-              >
-                <Link href="/dashboard">{t("nav.dashboard")}</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                asChild
-                className="mx-1 rounded-lg text-foreground focus:bg-muted/50"
-              >
-                <Link href="/email-lists">{t("nav.emailLists")}</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                asChild
-                className="mx-1 rounded-lg text-foreground focus:bg-muted/50"
-              >
-                <Link href="/settings">{t("nav.accountSettings")}</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border/50" />
-              <DropdownMenuItem
-                className="mx-1 rounded-lg text-destructive focus:bg-destructive/10 focus:text-destructive"
-                onClick={handleSignOut}
-              >
-                {t("nav.signOut")}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <div className="flex items-center gap-1.5">{children}</div>
       </div>
     </header>
   );

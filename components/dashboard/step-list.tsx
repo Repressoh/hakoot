@@ -19,40 +19,35 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type ComponentProps, lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useLazyOpen } from "@/lib/use-lazy-open";
 import { cn } from "@/lib/utils";
 
-interface Step {
+// The confirmation dialog (Radix, focus trapping, scroll locking) loads after
+// the list shows, keeping it out of the editor's initial JavaScript; until then
+// the delete buttons are shown without it.
+const DeleteStepDialog = lazy(() =>
+  import("./delete-step-dialog").then((mod) => ({
+    default: mod.DeleteStepDialog,
+  }))
+);
+
+/** One row of the step list: the step's type and the start of its content. */
+export interface StepSummary {
   _id: Id<"gameSteps">;
-  choices?: Array<{ text: string; isCorrect: boolean }>;
-  gameId: Id<"games">;
-  markdownContent?: string;
-  order: number;
-  question?: string;
-  timeLimitSeconds?: number;
+  preview: string;
   type: "theory" | "quiz";
 }
 
 interface Props {
   gameId: Id<"games">;
-  steps: Step[];
+  steps: StepSummary[];
 }
 
 interface SortableItemProps {
@@ -60,7 +55,7 @@ interface SortableItemProps {
   index: number;
   onDelete: (id: Id<"gameSteps">) => void;
   onMove: (id: Id<"gameSteps">, dir: "up" | "down") => void;
-  step: Step;
+  step: StepSummary;
   total: number;
 }
 
@@ -87,10 +82,26 @@ function SortableStepItem({
     transition,
   };
 
+  const deleteDialog = useLazyOpen();
+  const deleteButton = (props?: ComponentProps<typeof Button>) => (
+    <Button
+      aria-label={t("deleteStep")}
+      className="size-7 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+      size="sm"
+      variant="ghost"
+      {...props}
+    >
+      ×
+    </Button>
+  );
+
+  // No backdrop blur on cards in scrolling lists: behind their mostly opaque
+  // background it made no visible difference, and on phones it left blank
+  // tiles on screen during fast scrolls.
   return (
     <li
       className={cn(
-        "flex items-center gap-3 rounded-xl border border-border/60 bg-card/80 p-3.5 backdrop-blur-sm",
+        "flex items-center gap-3 rounded-xl border border-border/60 bg-card/80 p-3.5",
         step.type === "theory"
           ? "border-l-4 border-l-choice-blue/70"
           : "border-l-4 border-l-choice-yellow/70",
@@ -144,9 +155,8 @@ function SortableStepItem({
           </Badge>
         </div>
         <p className="mt-0.5 truncate font-medium text-foreground text-sm">
-          {step.type === "theory"
-            ? step.markdownContent?.slice(0, 60) || "Empty theory step"
-            : step.question || "Empty quiz step"}
+          {step.preview ||
+            (step.type === "theory" ? "Empty theory step" : "Empty quiz step")}
         </p>
       </div>
 
@@ -185,39 +195,14 @@ function SortableStepItem({
           </Link>
         </Button>
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              aria-label={t("deleteStep")}
-              className="size-7 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-              size="sm"
-              variant="ghost"
-            >
-              ×
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="surface-elevated border-border">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-foreground">
-                Delete step?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-muted-foreground">
-                This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="border-border text-foreground hover:bg-muted/50">
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-destructive text-white hover:bg-destructive/90"
-                onClick={() => onDelete(step._id)}
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <Suspense fallback={deleteButton(deleteDialog.placeholderProps)}>
+          <DeleteStepDialog
+            defaultOpen={deleteDialog.defaultOpen}
+            onConfirm={() => onDelete(step._id)}
+          >
+            {deleteButton()}
+          </DeleteStepDialog>
+        </Suspense>
       </div>
     </li>
   );
@@ -229,7 +214,7 @@ export function StepList({ gameId, steps }: Props) {
   const removeStep = useMutation(api.steps.remove);
   const moveStepMut = useMutation(api.steps.move);
   const reorderStepsMut = useMutation(api.steps.reorder);
-  const [localSteps, setLocalSteps] = useState<Step[]>([]);
+  const [localSteps, setLocalSteps] = useState<StepSummary[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
   const displaySteps = isDragging ? localSteps : steps;

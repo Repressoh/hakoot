@@ -29,16 +29,24 @@ export async function deleteGameCascade(
       .collect(),
   ]);
 
-  const participants = (
-    await Promise.all(
+  const [participants, presence] = await Promise.all([
+    Promise.all(
       sessions.map((session) =>
         ctx.db
           .query("gameParticipants")
           .withIndex("by_session", (q) => q.eq("sessionId", session._id))
           .collect()
       )
-    )
-  ).flat();
+    ).then((lists) => lists.flat()),
+    Promise.all(
+      sessions.map((session) =>
+        ctx.db
+          .query("participantPresence")
+          .withIndex("by_session", (q) => q.eq("sessionId", session._id))
+          .collect()
+      )
+    ).then((lists) => lists.flat()),
+  ]);
 
   // Find answers by step as well as by participant: cleanupExpiredTokens
   // deletes expired players but keeps their answers, so some answers have no
@@ -62,6 +70,7 @@ export async function deleteGameCascade(
   await Promise.all([
     ...Array.from(answerIds, (id) => ctx.db.delete(id)),
     ...participants.map((p) => ctx.db.delete(p._id)),
+    ...presence.map((p) => ctx.db.delete(p._id)),
     ...sessions.map((session) => ctx.db.delete(session._id)),
     ...steps.map((step) => ctx.db.delete(step._id)),
   ]);
@@ -117,6 +126,12 @@ export const get = query({
   },
 });
 
+/**
+ * A game with all its steps.
+ *
+ * @deprecated Replaced by `getEditorView`, which sends a short preview of each step instead of its
+ * full content. Kept so editors opened before the switch keep working; remove in a later release.
+ */
 export const getWithSteps = query({
   args: { gameId: v.id("games") },
   handler: async (ctx, args) => {
@@ -139,6 +154,44 @@ export const getWithSteps = query({
     steps.sort((a, b) => a.order - b.order);
 
     return { ...game, steps };
+  },
+});
+
+/**
+ * A game with a short summary of each step, for the editor's step list. Full step content is
+ * loaded by the step editor.
+ */
+export const getEditorView = query({
+  args: { gameId: v.id("games") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const game = await ctx.db.get(args.gameId);
+    if (!game || game.createdById !== userId) {
+      return null;
+    }
+
+    const steps = await ctx.db
+      .query("gameSteps")
+      .withIndex("by_game_and_order", (q) => q.eq("gameId", game._id))
+      .collect();
+
+    return {
+      _id: game._id,
+      description: game.description,
+      steps: steps.map((step) => ({
+        _id: step._id,
+        preview:
+          step.type === "theory"
+            ? (step.markdownContent ?? "").slice(0, 60)
+            : (step.question ?? "").slice(0, 200),
+        type: step.type,
+      })),
+      title: game.title,
+    };
   },
 });
 

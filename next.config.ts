@@ -9,12 +9,17 @@ const nextConfig: NextConfig = {
   // cacheComponents: true,
   allowedDevOrigins: ["hakoot-dev.albertocaserta.it"],
   experimental: {
+    // The stylesheet is inlined in the HTML. Linked, it competes for
+    // bandwidth with a dozen JavaScript chunks requested at the same moment,
+    // so on a cold 2G load the first paint came at 4.9s instead of 1.6s.
+    // The cost: each full page load carries the CSS (twice: a <style> tag and
+    // a copy in the RSC payload, ~48KB gzipped) instead of reading it from
+    // the cache, ~1.3s more on a warm 2G load. In-app navigations don't
+    // include it. optimizeCss only applies to the Pages Router.
     inlineCss: true,
-    optimizeCss: true,
     optimizePackageImports: [
       "@hugeicons/core-free-icons",
       "@hugeicons/react",
-      "motion",
       "@dnd-kit/core",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",

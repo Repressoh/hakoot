@@ -1,16 +1,18 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useCachedQuery } from "@/lib/use-cached-query";
 import { QuizStepEditor } from "./quiz-step-editor";
 import { TheoryStepEditor } from "./theory-step-editor";
 
 export default function StepEditorPage() {
   const { gameId, stepId } = useParams<{ gameId: string; stepId: string }>();
-  const step = useQuery(api.steps.get, { stepId: stepId as Id<"gameSteps"> });
+  const step = useCachedQuery(api.steps.get, {
+    stepId: stepId as Id<"gameSteps">,
+  });
 
   if (step === undefined) {
     return (

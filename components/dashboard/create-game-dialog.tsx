@@ -18,11 +18,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
 
-/** Dialog for creating a game; opens its editor on success. */
-export function CreateGameDialog() {
+/**
+ * Dialog for creating a game, opened by `children` (the trigger button); opens the new game's
+ * editor on success.
+ */
+export function CreateGameDialog({
+  children,
+  defaultOpen = false,
+}: {
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
   const t = useTranslations();
   const { push } = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [loading, setLoading] = useState(false);
   const createGame = useMutation(api.games.create);
 
@@ -54,26 +63,7 @@ export function CreateGameDialog() {
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button className="press-down h-11 rounded-xl bg-primary px-5 font-bold font-display text-primary-foreground shadow-[0_0_15px_var(--glow-subtle)] transition hover:shadow-[0_0_25px_var(--glow-primary)] hover:brightness-110">
-          <svg
-            aria-hidden="true"
-            className="mr-2"
-            fill="none"
-            height="16"
-            viewBox="0 0 16 16"
-            width="16"
-          >
-            <path
-              d="M8 3v10M3 8h10"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="2"
-            />
-          </svg>
-          {t("dashboard.createGame")}
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="rounded-2xl border-border/60 bg-card/95 shadow-2xl shadow-black/30 backdrop-blur-xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-bold font-display text-xl">
