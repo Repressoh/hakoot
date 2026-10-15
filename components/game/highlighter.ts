@@ -11,22 +11,24 @@ import githubDark from "shiki/themes/github-dark.mjs";
 // with the worker's own chunks; importing it on demand added a round trip and
 // highlighted code ~1-2.5s later on 2G.
 
-// Grammars load one at a time, on demand: each is its own chunk.
-const LANGUAGE_LOADERS: Record<string, () => LanguageInput> = {
-  bash: () => import("shiki/langs/bash.mjs"),
-  css: () => import("shiki/langs/css.mjs"),
-  go: () => import("shiki/langs/go.mjs"),
-  html: () => import("shiki/langs/html.mjs"),
-  java: () => import("shiki/langs/java.mjs"),
-  javascript: () => import("shiki/langs/javascript.mjs"),
-  json: () => import("shiki/langs/json.mjs"),
-  markdown: () => import("shiki/langs/markdown.mjs"),
-  python: () => import("shiki/langs/python.mjs"),
-  rust: () => import("shiki/langs/rust.mjs"),
-  shell: () => import("shiki/langs/shellscript.mjs"),
-  sql: () => import("shiki/langs/sql.mjs"),
-  typescript: () => import("shiki/langs/typescript.mjs"),
-};
+// Grammars load one at a time, on demand: each is its own chunk. A Map, not an
+// object: the language comes from the step's data, and on an object a name like
+// "constructor" or "__proto__" would find an inherited property instead.
+const LANGUAGE_LOADERS = new Map<string, () => LanguageInput>([
+  ["bash", () => import("shiki/langs/bash.mjs")],
+  ["css", () => import("shiki/langs/css.mjs")],
+  ["go", () => import("shiki/langs/go.mjs")],
+  ["html", () => import("shiki/langs/html.mjs")],
+  ["java", () => import("shiki/langs/java.mjs")],
+  ["javascript", () => import("shiki/langs/javascript.mjs")],
+  ["json", () => import("shiki/langs/json.mjs")],
+  ["markdown", () => import("shiki/langs/markdown.mjs")],
+  ["python", () => import("shiki/langs/python.mjs")],
+  ["rust", () => import("shiki/langs/rust.mjs")],
+  ["shell", () => import("shiki/langs/shellscript.mjs")],
+  ["sql", () => import("shiki/langs/sql.mjs")],
+  ["typescript", () => import("shiki/langs/typescript.mjs")],
+]);
 
 const THEME = "github-dark";
 
@@ -52,13 +54,13 @@ function getHighlighter(): Promise<HighlighterCore> {
 
 /** Download `language`'s grammar module (if it has one) without loading it into a highlighter. */
 export async function prefetchGrammar(language: string): Promise<void> {
-  await LANGUAGE_LOADERS[language]?.();
+  await LANGUAGE_LOADERS.get(language)?.();
 }
 
 /** Load the highlighter and `language`'s grammar (if it has one) without highlighting anything. */
 export async function loadLanguage(language: string): Promise<void> {
   const highlighter = await getHighlighter();
-  const loader = LANGUAGE_LOADERS[language];
+  const loader = LANGUAGE_LOADERS.get(language);
   if (loader && !highlighter.getLoadedLanguages().includes(language)) {
     await highlighter.loadLanguage(loader());
   }
@@ -70,7 +72,7 @@ export async function highlightToHtml(
   language: string
 ): Promise<string> {
   const highlighter = await getHighlighter();
-  if (!LANGUAGE_LOADERS[language]) {
+  if (!LANGUAGE_LOADERS.has(language)) {
     return highlighter.codeToHtml(code, { lang: "text", theme: THEME });
   }
   await loadLanguage(language);
