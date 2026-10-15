@@ -1,53 +1,32 @@
 "use client";
 
 import { useMutation } from "convex/react";
-import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
-import { AddStepMenu } from "@/components/dashboard/add-step-menu";
+import { AddStepButton } from "@/components/dashboard/add-step-button";
+import { StepList, type StepSummary } from "@/components/dashboard/step-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
 
-const StepList = dynamic(
-  () => import("@/components/dashboard/step-list").then((mod) => mod.StepList),
-  {
-    loading: () => (
-      <div className="animate-pulse space-y-3">
-        <Skeleton className="h-16 w-full rounded-xl" />
-        <Skeleton className="h-16 w-full rounded-xl" />
-      </div>
-    ),
-    ssr: false,
-  }
+// The menu (Radix dropdown, positioning, scroll locking) loads after the
+// editor shows, keeping it out of the initial JavaScript; until then the
+// button is shown without it.
+const AddStepMenu = lazy(() =>
+  import("@/components/dashboard/add-step-menu").then((mod) => ({
+    default: mod.AddStepMenu,
+  }))
 );
-
-interface Step {
-  _id: Id<"gameSteps">;
-  choices?: Array<{ text: string; isCorrect: boolean }>;
-  codeBlock?: {
-    code: string;
-    language: string;
-    annotations: Array<{ label: string; explanation: string; lines: number[] }>;
-  };
-  gameId: Id<"games">;
-  markdownContent?: string;
-  order: number;
-  question?: string;
-  timeLimitSeconds?: number;
-  type: "theory" | "quiz";
-}
 
 interface Game {
   _id: Id<"games">;
   description?: string;
-  steps: Step[];
+  steps: StepSummary[];
   title: string;
 }
 
@@ -159,7 +138,7 @@ export function GameEditor({ game }: Props) {
       </nav>
 
       {/* Game details card */}
-      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm">
+      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card/80">
         {/* Accent bar */}
         <div
           aria-hidden="true"
@@ -205,7 +184,9 @@ export function GameEditor({ game }: Props) {
             >
               <Link href={`/games/${game._id}/sessions`}>Sessions</Link>
             </Button>
-            <AddStepMenu gameId={game._id} />
+            <Suspense fallback={<AddStepButton />}>
+              <AddStepMenu gameId={game._id} />
+            </Suspense>
           </div>
         </div>
 

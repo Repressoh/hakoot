@@ -1,16 +1,22 @@
 "use client";
 
 import { useMutation } from "convex/react";
-// biome-ignore lint/performance/noNamespaceImport: motion/react-client requires namespace import
-import * as motion from "motion/react-client";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link, useRouter } from "@/i18n/routing";
-import { InviteEmailDialog } from "./invite-email-dialog";
+
+// The invite dialog (Radix dialog, select and tabs) loads after the list
+// shows, keeping it out of the initial JavaScript; until then its button is
+// shown without it.
+const InviteEmailDialog = lazy(() =>
+  import("./invite-email-dialog").then((mod) => ({
+    default: mod.InviteEmailDialog,
+  }))
+);
 
 interface Game {
   _id: Id<"games">;
@@ -54,6 +60,11 @@ const statusConfig: Record<
 export function SessionManager({ game, sessions }: Props) {
   const t = useTranslations("session");
   const tNav = useTranslations("nav");
+  const inviteButton = (
+    <Button size="sm" variant="outline">
+      {t("sendEmailInvites")}
+    </Button>
+  );
   const { push } = useRouter();
   const [creating, setCreating] = useState(false);
   const createSession = useMutation(api.sessions.create);
@@ -114,12 +125,7 @@ export function SessionManager({ game, sessions }: Props) {
       </div>
 
       {sessions.length === 0 ? (
-        <motion.div
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center rounded-2xl border-2 border-border/30 border-dashed bg-card/30 py-20"
-          initial={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
+        <div className="fade-in slide-in-from-bottom-3 animation-duration-500 flex animate-in flex-col items-center justify-center rounded-2xl border-2 border-border/30 border-dashed bg-card/30 py-20 ease-out motion-reduce:animate-none">
           <div className="flex size-14 animate-float items-center justify-center rounded-2xl bg-primary/10 text-2xl shadow-[0_0_15px_var(--glow-subtle)]">
             📡
           </div>
@@ -129,22 +135,20 @@ export function SessionManager({ game, sessions }: Props) {
           <p className="mt-1.5 text-muted-foreground text-sm">
             Start one to run the game live!
           </p>
-        </motion.div>
+        </div>
       ) : (
         <div className="space-y-3">
           {sessions.map((s, i) => {
             const config = statusConfig[s.status] ?? statusConfig.finished;
+            // No backdrop blur on cards in scrolling lists: behind their mostly opaque
+            // background it made no visible difference, and on phones it left blank
+            // tiles on screen during fast scrolls.
             return (
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                className={`group rounded-2xl border border-border/60 border-l-4 ${config.accent} bg-card/80 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-black/10 hover:shadow-lg`}
-                initial={{ opacity: 0, y: 12 }}
+              <div
+                className={`group rounded-2xl border border-border/60 border-l-4 ${config.accent} fade-in slide-in-from-bottom-3 animation-duration-350 animate-in bg-card/80 fill-mode-backwards p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-black/10 hover:shadow-lg motion-reduce:animate-none`}
                 key={s._id}
-                transition={{
-                  delay: i * 0.05,
-                  duration: 0.35,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
+                // Capped so older sessions further down aren't kept hidden.
+                style={{ animationDelay: `${Math.min(i, 6) * 50}ms` }}
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -171,11 +175,15 @@ export function SessionManager({ game, sessions }: Props) {
                   </p>
                   {s.status !== "finished" && (
                     <>
-                      <InviteEmailDialog
-                        gameId={game._id}
-                        gameName={game.title}
-                        session={s}
-                      />
+                      <Suspense fallback={inviteButton}>
+                        <InviteEmailDialog
+                          gameId={game._id}
+                          gameName={game.title}
+                          session={s}
+                        >
+                          {inviteButton}
+                        </InviteEmailDialog>
+                      </Suspense>
                       <Button
                         asChild
                         className="press-down rounded-xl bg-primary/10 font-semibold text-primary transition-colors hover:bg-primary/20"
@@ -200,7 +208,7 @@ export function SessionManager({ game, sessions }: Props) {
                     </Button>
                   )}
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

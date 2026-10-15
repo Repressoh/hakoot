@@ -1,108 +1,51 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
-import { createHighlighter } from "shiki";
-
-const SUPPORTED_LANGS = [
-  "typescript",
-  "javascript",
-  "python",
-  "java",
-  "rust",
-  "go",
-  "bash",
-  "shell",
-  "json",
-  "html",
-  "css",
-  "sql",
-  "markdown",
-  "plaintext",
-] as const;
-
-type SupportedLang = (typeof SUPPORTED_LANGS)[number];
-
-function isSupportedLang(lang: string): lang is SupportedLang {
-  return SUPPORTED_LANGS.includes(lang as SupportedLang);
-}
+import { useEffect, useRef, useState } from "react";
+import { highlight } from "./highlight-client";
 
 interface Props {
   code: string;
   language: string;
 }
 
-type HighlightState =
-  | { status: "loading"; html: string | null }
-  | { status: "ready"; html: string }
-  | { status: "error"; html: string | null };
-
-type HighlightAction = { type: "RESOLVE"; html: string } | { type: "REJECT" };
-
-/** Tracks the async syntax-highlighting result: loading, ready or error (keeping the last HTML). */
-function highlightReducer(
-  state: HighlightState,
-  action: HighlightAction
-): HighlightState {
-  if (action.type === "RESOLVE") {
-    return { html: action.html, status: "ready" };
-  }
-  return { html: state.html, status: "error" };
-}
-
-/** Code block highlighted in the browser with Shiki, debounced while the code changes. */
+/**
+ * Code block highlighted in the browser with Shiki. The first render highlights at once; later
+ * edits are debounced while the code changes.
+ */
 export function ClientCodeBlock({ code, language }: Props) {
-  const [state, dispatch] = useReducer(highlightReducer, {
-    html: null,
-    status: "loading",
-  });
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Highlighted HTML; null until the first highlight (the plain code shows
+  // meanwhile). A failed highlight keeps whatever was shown before.
+  const [html, setHtml] = useState<string | null>(null);
+  const hasHighlighted = useRef<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      const safeLang: SupportedLang = isSupportedLang(language)
-        ? language
-        : "plaintext";
-
-      let cancelled = false;
-
-      createHighlighter({
-        langs: [safeLang],
-        themes: ["github-dark"],
-      })
-        .then((highlighter) => {
-          if (cancelled) {
-            return;
+    let cancelled = false;
+    const run = () => {
+      highlight(code, language)
+        .then((highlighted) => {
+          if (!cancelled) {
+            hasHighlighted.current = true;
+            setHtml(highlighted);
           }
-          const html = highlighter.codeToHtml(code, {
-            lang: safeLang,
-            theme: "github-dark",
-          });
-          dispatch({ html, type: "RESOLVE" });
         })
         .catch(() => {
-          if (!cancelled) {
-            dispatch({ type: "REJECT" });
-          }
+          // Keep showing the plain or previously highlighted code.
         });
+    };
 
+    if (!hasHighlighted.current) {
+      run();
       return () => {
         cancelled = true;
       };
-    }, 300);
-
+    }
+    const debounce = setTimeout(run, 300);
     return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
+      cancelled = true;
+      clearTimeout(debounce);
     };
   }, [code, language]);
-
-  const { status, html } = state;
 
   // Set innerHTML via ref to avoid dangerouslySetInnerHTML
   useEffect(() => {
@@ -127,31 +70,17 @@ export function ClientCodeBlock({ code, language }: Props) {
 
       {/* Code area */}
       <div className="relative min-h-[3rem] overflow-x-auto">
-        {status === "loading" && !html ? (
-          <div className="space-y-2 p-4">
-            {Array.from({ length: Math.max(code.split("\n").length, 3) }).map(
-              (_line, i) => {
-                const lineNum = i + 1;
-                return (
-                  <div
-                    className="h-4 animate-pulse rounded bg-[oklch(0.22_0.015_260/0.6)]"
-                    key={`skeleton-line-${code.length}-${lineNum}`}
-                    style={{ width: `${55 + ((i * 17 + 31) % 40)}%` }}
-                  />
-                );
-              }
-            )}
-          </div>
+        {html === null ? (
+          // Readable before the highlighter has loaded; the left padding
+          // leaves room for the line numbers the highlighted version adds.
+          <pre className="shiki-fallback">{code}</pre>
         ) : (
-          <div
-            className={`shiki-container transition-opacity duration-200 ${status === "loading" ? "opacity-50" : "opacity-100"}
-            `}
-            ref={containerRef}
-          />
+          <div className="shiki-container" ref={containerRef} />
         )}
       </div>
 
       <style>{`
+        .shiki-fallback,
         .shiki-container pre {
           background: transparent !important;
           margin: 0;
@@ -160,6 +89,10 @@ export function ClientCodeBlock({ code, language }: Props) {
           font-size: 0.8125rem;
           line-height: 1.6;
           tab-size: 2;
+        }
+        .shiki-fallback {
+          color: #e1e4e8;
+          padding-left: 4.25rem;
         }
         .shiki-container code {
           counter-reset: line;

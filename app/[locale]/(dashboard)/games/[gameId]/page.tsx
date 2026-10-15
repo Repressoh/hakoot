@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useCachedQuery } from "@/lib/use-cached-query";
 import { GameEditor } from "./game-editor";
 
 function EditorSkeleton() {
@@ -44,7 +44,7 @@ function EditorSkeleton() {
 
 export default function GameEditorPage() {
   const { gameId } = useParams<{ gameId: string }>();
-  const game = useQuery(api.games.getWithSteps, {
+  const game = useCachedQuery(api.games.getEditorView, {
     gameId: gameId as Id<"games">,
   });
 

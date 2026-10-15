@@ -22,6 +22,7 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
+import { usePreloadStepRenderers } from "@/components/game/use-preload-step-renderers";
 import { CHOICE_SHAPES } from "@/components/session/choice-shapes";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { Leaderboard } from "@/components/session/leaderboard";
@@ -574,10 +575,11 @@ function useStepTimerExpiry(state: PlayerState | null | undefined): boolean {
   return deadline !== null && checkedAt >= deadline;
 }
 
-function useHeartbeat(token: string | null): void {
+/** Tell the host's lobby every 5s that this player is still connected. */
+function useHeartbeat(token: string | null, inLobby: boolean): void {
   const heartbeatMut = useMutation(api.sessions.heartbeat);
   useEffect(() => {
-    if (!token) {
+    if (!(token && inLobby)) {
       return;
     }
     heartbeatMut({ participantToken: token }).catch(() => {
@@ -589,7 +591,7 @@ function useHeartbeat(token: string | null): void {
       });
     }, 5000);
     return () => clearInterval(interval);
-  }, [token, heartbeatMut]);
+  }, [token, inLobby, heartbeatMut]);
 }
 
 /**
@@ -785,8 +787,11 @@ export function PlayerSessionView({ sessionId }: Props) {
     sessionId: sessionId as Id<"gameSessions">,
   });
 
-  // Send heartbeat every 5s so the host knows we're still connected
-  useHeartbeat(token);
+  // Only the lobby shows who is connected, so heartbeats stop once the game
+  // starts (the host removes players who stopped sending them by then).
+  useHeartbeat(token, state?.session.status === "waiting");
+
+  usePreloadStepRenderers(state?.codeLanguages);
 
   // Track whether the timer has expired on the client side
   const timerExpired = useStepTimerExpiry(state);

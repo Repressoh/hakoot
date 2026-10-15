@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { Leaderboard } from "@/components/session/leaderboard";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useCachedQuery } from "@/lib/use-cached-query";
 
 const CHOICE_BAR_COLORS = [
   "bg-choice-red",
@@ -25,9 +25,8 @@ interface CsvParticipant {
 
 interface CsvStep {
   _id: string;
-  choices?: Array<{ text: string; isCorrect: boolean }>;
-  question?: string;
-  type: string;
+  choices: Array<{ text: string; isCorrect: boolean }>;
+  question: string;
 }
 
 interface CsvAnswer {
@@ -40,11 +39,9 @@ interface CsvAnswer {
 
 function buildCsv(
   participants: CsvParticipant[],
-  steps: CsvStep[],
+  quizSteps: CsvStep[],
   answers: CsvAnswer[]
 ): string {
-  const quizSteps = steps.filter((s) => s.type === "quiz");
-
   const headers = [
     "Name",
     "Email",
@@ -69,7 +66,7 @@ function buildCsv(
       if (!ans) {
         return "";
       }
-      return step.choices?.[ans.choiceIndex]?.text ?? String(ans.choiceIndex);
+      return step.choices[ans.choiceIndex]?.text ?? String(ans.choiceIndex);
     });
     const correctCols = quizSteps.map((step) => {
       const ans = getAnswer(p._id, step._id);
@@ -101,7 +98,7 @@ function buildCsv(
 /** Results of a finished session: final leaderboard, per-question breakdown and CSV export. */
 export function SessionResultsView({ sessionId }: { sessionId: string }) {
   const t = useTranslations("results");
-  const results = useQuery(api.sessions.getResults, {
+  const results = useCachedQuery(api.sessions.getResultsView, {
     sessionId: sessionId as Id<"gameSessions">,
   });
 
@@ -110,9 +107,9 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
       return;
     }
     const csv = buildCsv(
-      results.participants as CsvParticipant[],
-      results.steps,
-      results.answers as CsvAnswer[]
+      results.participants,
+      results.quizSteps,
+      results.answers
     );
     const csvBlob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const downloadUrl = URL.createObjectURL(csvBlob);
@@ -143,7 +140,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
     );
   }
 
-  const { session, participants, answers, steps } = results;
+  const { answers, gameId, participants, quizSteps, stepCount } = results;
 
   const leaderboard = participants.map((p, i) => ({
     name: p.name,
@@ -151,7 +148,6 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
     score: p.totalScore,
   }));
 
-  const quizSteps = steps.filter((s) => s.type === "quiz");
   const totalAnswered = answers.length;
   const totalCorrect = answers.filter((a) => a.isCorrect).length;
 
@@ -164,7 +160,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
               {t("title")}
             </h1>
             <p className="font-mono text-muted-foreground text-sm">
-              {participants.length} participants · {steps.length} steps
+              {participants.length} participants · {stepCount} steps
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -181,7 +177,7 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
               className="rounded-xl border-border text-foreground hover:bg-muted/50"
               variant="outline"
             >
-              <Link href={`/games/${session.gameId}/sessions`}>← Sessions</Link>
+              <Link href={`/games/${gameId}/sessions`}>← Sessions</Link>
             </Button>
           </div>
         </div>
@@ -249,14 +245,11 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
                   (a) => a.isCorrect
                 ).length;
 
-                const choiceDistribution = (step.choices ?? []).map(
-                  (c, ci) => ({
-                    count: stepAnswers.filter((a) => a.choiceIndex === ci)
-                      .length,
-                    isCorrect: c.isCorrect,
-                    text: c.text,
-                  })
-                );
+                const choiceDistribution = step.choices.map((c, ci) => ({
+                  count: stepAnswers.filter((a) => a.choiceIndex === ci).length,
+                  isCorrect: c.isCorrect,
+                  text: c.text,
+                }));
 
                 return (
                   <div className="surface-raised p-5" key={step._id}>

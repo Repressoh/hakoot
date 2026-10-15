@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -28,6 +28,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useCachedQuery } from "@/lib/use-cached-query";
 
 // ─── Create list dialog ────────────────────────────────────────────────
 
@@ -200,7 +201,7 @@ function EmailListCard({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="group rounded-2xl border border-border/50 bg-card/60 p-5 backdrop-blur-sm transition hover:border-border/80 hover:shadow-black/5 hover:shadow-lg">
+    <div className="group rounded-2xl border border-border/50 bg-card/60 p-5 transition hover:border-border/80 hover:shadow-black/5 hover:shadow-lg">
       <div className="flex items-center justify-between gap-3">
         <button
           className="flex flex-1 items-center gap-3 text-left"
@@ -314,7 +315,7 @@ function EmailListCard({
 
 export default function EmailListsPage() {
   const t = useTranslations("emailLists");
-  const lists = useQuery(api.emailLists.listWithEntries);
+  const lists = useCachedQuery(api.emailLists.listWithEntries);
 
   if (lists === undefined) {
     return (

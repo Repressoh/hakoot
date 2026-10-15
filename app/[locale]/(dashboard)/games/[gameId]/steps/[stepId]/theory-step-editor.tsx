@@ -3,8 +3,9 @@
 import { useMutation } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { toast } from "sonner";
+import { preloadHighlighter } from "@/components/game/highlight-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -188,6 +189,14 @@ export function TheoryStepEditor({ step }: Props) {
   });
 
   const { markdown, hasCodeBlock, code, language, annotations } = form;
+
+  // Start loading the highlighter when the editor opens rather than when the
+  // code preview first renders.
+  useEffect(() => {
+    if (hasCodeBlock) {
+      preloadHighlighter(language);
+    }
+  }, [hasCodeBlock, language]);
 
   function addAnnotation() {
     dispatch({ type: "ADD_ANNOTATION" });

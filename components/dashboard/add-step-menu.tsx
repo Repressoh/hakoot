@@ -4,7 +4,6 @@ import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +13,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/routing";
+import { AddStepButton } from "./add-step-button";
 
 interface Props {
   gameId: Id<"games">;
@@ -61,28 +61,7 @@ export function AddStepMenu({ gameId }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          className="glow-sm press-down rounded-xl bg-primary font-bold font-display text-primary-foreground hover:brightness-110"
-          disabled={loading}
-          size="sm"
-        >
-          <svg
-            aria-hidden="true"
-            className="mr-1.5"
-            fill="none"
-            height="14"
-            viewBox="0 0 14 14"
-            width="14"
-          >
-            <path
-              d="M7 2v10M2 7h10"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="2"
-            />
-          </svg>
-          {t("addStep")}
-        </Button>
+        <AddStepButton disabled={loading} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

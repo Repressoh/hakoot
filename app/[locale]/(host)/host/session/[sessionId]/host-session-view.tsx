@@ -1,11 +1,13 @@
 "use client";
 
 import { useMutation, useQuery } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { usePreloadStepRenderers } from "@/components/game/use-preload-step-renderers";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
 import { Leaderboard } from "@/components/session/leaderboard";
@@ -32,49 +34,18 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
-interface SessionDoc {
-  _id: Id<"gameSessions">;
-  answerRevealed: boolean;
-  currentStepIndex: number;
-  gameId: Id<"games">;
-  inviteCode: string;
-  status: "waiting" | "in_progress" | "finished";
-  stepStartedAt?: number;
-}
-
-interface GameDoc {
-  _id: Id<"games">;
-  title: string;
-}
-
-interface StepDoc {
-  _id: Id<"gameSteps">;
-  choices?: Array<{ text: string; isCorrect: boolean }>;
-  codeBlock?: {
-    code: string;
-    language: string;
-    annotations: Array<{ label: string; explanation: string; lines: number[] }>;
-  };
-  markdownContent?: string;
-  order: number;
-  question?: string;
-  timeLimitSeconds?: number;
-  type: "theory" | "quiz";
-}
-
-interface ParticipantDoc {
-  _id: Id<"gameParticipants">;
-  name: string;
-  totalScore: number;
-}
+type HostView = NonNullable<
+  FunctionReturnType<typeof api.sessions.getHostView>
+>;
+type SessionDoc = HostView["session"];
+type StepDoc = NonNullable<HostView["currentStep"]>;
+type ParticipantDoc = FunctionReturnType<
+  typeof api.sessions.listHostParticipants
+>[number];
 
 interface Props {
-  data: {
-    session: SessionDoc;
-    game: GameDoc | null;
-    steps: StepDoc[];
-    participants: ParticipantDoc[];
-  };
+  participants: ParticipantDoc[];
+  view: HostView;
 }
 
 const CHOICE_BG = [
@@ -412,10 +383,10 @@ function HostControls({
  * Host screen for a live session: lobby, then the current step, leaderboard and controls; redirects
  * to the results when finished.
  */
-function HostSessionView({ data }: Props) {
+function HostSessionView({ participants, view }: Props) {
   const t = useTranslations();
 
-  const { session, game, steps, participants } = data;
+  const { currentStep, gameTitle, session, stepCount } = view;
   const { answerRevealed, currentStepIndex: currentIndex, status } = session;
 
   const [advancing, setAdvancing] = useState(false);
@@ -455,8 +426,6 @@ function HostSessionView({ data }: Props) {
     redirect(`/host/session/${session._id}/results`);
   }
 
-  const currentStep = currentIndex >= 0 ? steps[currentIndex] : null;
-
   async function handleAdvance() {
     setAdvancing(true);
     try {
@@ -480,7 +449,7 @@ function HostSessionView({ data }: Props) {
   }
 
   const isQuiz = currentStep?.type === "quiz";
-  const isLastStep = currentIndex >= steps.length - 1;
+  const isLastStep = currentIndex >= stepCount - 1;
 
   return (
     <div className="min-h-screen bg-background">
@@ -488,7 +457,7 @@ function HostSessionView({ data }: Props) {
         <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-3">
             <span className="font-bold font-display text-foreground">
-              {game?.title}
+              {gameTitle}
             </span>
             <Badge
               className={cn("text-xs", getStatusBadgeClass(status))}
@@ -515,18 +484,18 @@ function HostSessionView({ data }: Props) {
 
       <div className="container mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          {status !== "waiting" && steps.length > 0 && (
+          {status !== "waiting" && stepCount > 0 && (
             <div className="flex items-center gap-3">
               <span className="font-mono text-muted-foreground text-sm">
                 {t("session.currentStep", {
                   current: currentIndex + 1,
-                  total: steps.length,
+                  total: stepCount,
                 })}
               </span>
               <Progress
                 aria-label="Game progress"
                 className="h-2 flex-1"
-                value={((currentIndex + 1) / steps.length) * 100}
+                value={((currentIndex + 1) / stepCount) * 100}
               />
             </div>
           )}
@@ -580,11 +549,16 @@ function HostSessionView({ data }: Props) {
 }
 
 export function HostSessionPage({ sessionId }: { sessionId: string }) {
-  const data = useQuery(api.sessions.getForHost, {
+  const view = useQuery(api.sessions.getHostView, {
     sessionId: sessionId as Id<"gameSessions">,
   });
+  const participants = useQuery(api.sessions.listHostParticipants, {
+    sessionId: sessionId as Id<"gameSessions">,
+  });
+  usePreloadStepRenderers(view?.codeLanguages);
 
-  if (data === undefined) {
+  // Wait for both: the join toasts compare against the first participant list.
+  if (view === undefined || participants === undefined) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">Loading session&hellip;</p>
@@ -592,7 +566,7 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
     );
   }
 
-  if (data === null) {
+  if (view === null) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-muted-foreground">Session not found</p>
@@ -600,5 +574,5 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
     );
   }
 
-  return <HostSessionView data={data} />;
+  return <HostSessionView participants={participants} view={view} />;
 }

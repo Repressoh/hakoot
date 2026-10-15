@@ -1,15 +1,28 @@
-@import "tailwindcss";
+/* Only scan the UI code for class names. Automatic detection also reads the
+   109 translation files in messages/, where ordinary words ("hidden", "block",
+   "italic", ...) turn into unused CSS rules. */
+@import "tailwindcss" source(none);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
+@source "../app";
+@source "../components";
+@source "../lib";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  /* Family names come from the next/font variables in app/[locale]/layout.tsx.
+     "satoshi Fallback" is Arial resized to Satoshi's metrics, so text doesn't
+     jump when the web font arrives. */
+  --font-sans:
+    "satoshi", "satoshiLatinExt", "satoshi Fallback", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-display:
+    "satoshi", "satoshiLatinExt", "satoshi Fallback", ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -325,16 +338,32 @@
   }
 }
 
+/* ── Fallback fonts while loading ── */
+/* The dashboard's server-rendered loading state shows its few words (logo,
+   language, skip link) in the size-matched fallback faces next/font generates,
+   which is how they look until the web fonts arrive anyway. Otherwise those
+   words make the browser download the web fonts first thing, and on a slow
+   connection they share the bandwidth with the page's JavaScript. Outside any
+   layer so it overrides the font utilities. */
+[data-fallback-fonts],
+[data-fallback-fonts] :is(.font-sans, .font-display) {
+  font-family: "satoshi Fallback", ui-sans-serif, system-ui, sans-serif;
+}
+[data-fallback-fonts] .font-mono {
+  font-family: "Space Mono Fallback", ui-monospace, monospace;
+}
+
 /* ── Glow pulse animation ── */
+/* Fades the strong glow (see .animate-glow-pulse) in and out. Only opacity
+   changes, so the compositor runs it without repainting every frame, which an
+   animated box-shadow would need. */
 @keyframes glow-pulse {
   0%,
   100% {
-    box-shadow: 0 0 15px var(--glow-subtle);
+    opacity: 0;
   }
   50% {
-    box-shadow:
-      0 0 25px var(--glow-primary),
-      0 0 50px var(--glow-subtle);
+    opacity: 1;
   }
 }
 
@@ -349,7 +378,25 @@
 }
 
 .animate-glow-pulse {
+  position: relative;
+  box-shadow: 0 0 15px var(--glow-subtle);
+}
+.animate-glow-pulse::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  border-radius: inherit;
+  box-shadow:
+    0 0 25px var(--glow-primary),
+    0 0 50px var(--glow-subtle);
+  opacity: 0;
   animation: glow-pulse 3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-glow-pulse::after {
+    animation: none;
+  }
 }
 
 .animate-float {

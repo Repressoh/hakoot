@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useCachedQuery } from "@/lib/use-cached-query";
 import { SessionManager } from "./session-manager";
 
 function SessionsSkeleton() {
@@ -32,8 +32,8 @@ function SessionsSkeleton() {
 
 export default function SessionsPage() {
   const { gameId } = useParams<{ gameId: string }>();
-  const game = useQuery(api.games.get, { gameId: gameId as Id<"games"> });
-  const sessions = useQuery(api.sessions.listForGame, {
+  const game = useCachedQuery(api.games.get, { gameId: gameId as Id<"games"> });
+  const sessions = useCachedQuery(api.sessions.listForGame, {
     gameId: gameId as Id<"games">,
   });
 

@@ -1,63 +1,48 @@
 import type { MetadataRoute } from "next";
+import { locales } from "@/i18n/locales";
 
-/** Sitemap of the public, localized pages. */
+const baseUrl = "https://dev.hakoot.albertocaserta.it";
+
+/** Public pages, by path after the locale. */
+const PAGES: {
+  changeFrequency: "weekly" | "monthly";
+  path: string;
+  priority: number;
+}[] = [
+  { changeFrequency: "weekly", path: "", priority: 1 },
+  { changeFrequency: "monthly", path: "/join", priority: 0.8 },
+  { changeFrequency: "monthly", path: "/sign-in", priority: 0.6 },
+  { changeFrequency: "monthly", path: "/sign-up", priority: 0.6 },
+];
+
+/** Locales listed in the sitemap; every page also links its translations. */
+const LISTED_LOCALES = ["en", "it"];
+
+/**
+ * Sitemap of the public, localized pages. The alternate-language links live here rather than in
+ * a `Link` header on every response, where all the locales add ~7 KB to each page load.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://dev.hakoot.albertocaserta.it";
+  const lastModified = new Date();
 
   return [
     {
       changeFrequency: "weekly",
-      lastModified: new Date(),
+      lastModified,
       priority: 1,
       url: baseUrl,
     },
-    {
-      changeFrequency: "weekly",
-      lastModified: new Date(),
-      priority: 1,
-      url: `${baseUrl}/en`,
-    },
-    {
-      changeFrequency: "weekly",
-      lastModified: new Date(),
-      priority: 1,
-      url: `${baseUrl}/it`,
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: new Date(),
-      priority: 0.8,
-      url: `${baseUrl}/en/join`,
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: new Date(),
-      priority: 0.8,
-      url: `${baseUrl}/it/join`,
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: new Date(),
-      priority: 0.6,
-      url: `${baseUrl}/en/sign-in`,
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: new Date(),
-      priority: 0.6,
-      url: `${baseUrl}/it/sign-in`,
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: new Date(),
-      priority: 0.6,
-      url: `${baseUrl}/en/sign-up`,
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: new Date(),
-      priority: 0.6,
-      url: `${baseUrl}/it/sign-up`,
-    },
+    ...PAGES.flatMap(({ changeFrequency, path, priority }) => {
+      const languages = Object.fromEntries(
+        locales.map((locale) => [locale, `${baseUrl}/${locale}${path}`])
+      );
+      return LISTED_LOCALES.map((locale) => ({
+        alternates: { languages },
+        changeFrequency,
+        lastModified,
+        priority,
+        url: `${baseUrl}/${locale}${path}`,
+      }));
+    }),
   ];
 }
