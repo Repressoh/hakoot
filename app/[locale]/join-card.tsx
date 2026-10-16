@@ -1,15 +1,32 @@
 "use client";
 
-import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toast } from "sonner";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/routing";
 import { verifyTurnstileToken } from "@/lib/turnstile";
+
+// The landing page has no Convex provider (see app/[locale]/(app)/layout.tsx).
+// The client is fetched, and its WebSocket opened, once the visitor focuses a
+// field, so it's ready by the time they submit; the session page they go
+// to reuses it. Sonner, too, waits for the first interaction (see
+// LazyToaster in page.tsx).
+const loadJoinGame = () => import("@/lib/join-game");
+
+/** Starts fetching the Convex client (and connecting) ahead of the submit. */
+function preloadConvex() {
+  loadJoinGame().catch(() => {
+    // handleJoin imports it again and reports the failure.
+  });
+}
+
+/** Shows an error toast, fetching Sonner first if it hasn't arrived yet. */
+async function showError(message: string) {
+  const { toast } = await import("sonner");
+  toast.error(message);
+}
 
 /** Landing-page card for joining a game with an invite code and a name, guarded by Turnstile. */
 export function JoinCard() {
@@ -20,13 +37,12 @@ export function JoinCard() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const joinByCode = useMutation(api.sessions.joinByCode);
 
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
 
     if (!turnstileToken) {
-      toast.error("Please complete the security check");
+      await showError("Please complete the security check");
       return;
     }
 
@@ -35,12 +51,13 @@ export function JoinCard() {
       const verified = await verifyTurnstileToken(turnstileToken);
 
       if (!verified) {
-        toast.error("Security check failed. Please try again.");
         setTurnstileToken(null);
         setLoading(false);
+        await showError("Security check failed. Please try again.");
         return;
       }
 
+      const { joinByCode } = await loadJoinGame();
       const result = await joinByCode({
         inviteCode: code.trim(),
         name: name.trim(),
@@ -53,7 +70,7 @@ export function JoinCard() {
       push(`/session/${result.sessionId}`);
     } catch {
       setLoading(false);
-      toast.error(tj("invalidCode"));
+      await showError(tj("invalidCode"));
     }
   }
 
@@ -96,6 +113,7 @@ export function JoinCard() {
                 id="join-code"
                 maxLength={8}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
+                onFocus={preloadConvex}
                 placeholder={"000000"}
                 required
                 value={code}
@@ -124,6 +142,7 @@ export function JoinCard() {
               id="join-name"
               maxLength={50}
               onChange={(e) => setName(e.target.value)}
+              onFocus={preloadConvex}
               placeholder={t("joinNamePlaceholder")}
               required
               value={name}
@@ -135,7 +154,10 @@ export function JoinCard() {
               <TurnstileWidget
                 onError={() => {
                   setTurnstileToken(null);
-                  toast.error("Security check failed");
+                  showError("Security check failed").catch(() => {
+                    // Sonner failed to load; the disabled button still shows
+                    // the check hasn't passed.
+                  });
                 }}
                 onExpire={() => {
                   setTurnstileToken(null);

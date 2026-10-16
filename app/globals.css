@@ -92,7 +92,10 @@
 
   /* ── Muted ── */
   --muted: oklch(0.22 0.015 260);
-  --muted-foreground: oklch(0.58 0.02 260);
+  /* At 0.63 it keeps 4.5:1 (WCAG AA) on every surface it's used on, the
+     lightest being --secondary (4.57:1); at 0.58 it fell to 3.7-4.3:1 on
+     cards. */
+  --muted-foreground: oklch(0.63 0.02 260);
 
   /* ── Accent: Hot Pink ── */
   --accent: oklch(0.7 0.2 350);
@@ -351,6 +354,42 @@
 }
 [data-fallback-fonts] .font-mono {
   font-family: "Space Mono Fallback", ui-monospace, monospace;
+}
+
+/* ── Fallback faces for Satoshi's heavier weights ── */
+/* next/font's "satoshi Fallback" is Arial sized to Satoshi Regular, and served
+   for every weight. Satoshi's Medium, Bold and Black are wider than that, so
+   text in them took fewer lines until the web fonts arrived; on the landing
+   page the subtitle then grew a line and pushed the join card down (layout
+   shift). These faces size Arial to each weight, measured on sentence and
+   uppercase text; the overrides keep Satoshi's vertical metrics (as next/font
+   computes them: metric / size-adjust). */
+@font-face {
+  font-family: "satoshi Fallback";
+  font-weight: 500;
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 101.1%;
+  ascent-override: 99.9%;
+  descent-override: 23.74%;
+  line-gap-override: 9.89%;
+}
+@font-face {
+  font-family: "satoshi Fallback";
+  font-weight: 700;
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  size-adjust: 97.1%;
+  ascent-override: 104.02%;
+  descent-override: 24.72%;
+  line-gap-override: 10.3%;
+}
+@font-face {
+  font-family: "satoshi Fallback";
+  font-weight: 900;
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  size-adjust: 100.5%;
+  ascent-override: 100.5%;
+  descent-override: 23.88%;
+  line-gap-override: 9.95%;
 }
 
 /* ── Glow pulse animation ── */

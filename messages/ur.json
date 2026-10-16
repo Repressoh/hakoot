@@ -123,9 +123,9 @@
     "createGame": "نیا کھیل",
     "emptyTitle": "ابھی تک کوئی کھیل نہیں",
     "emptyDesc": "شروع کرنے کے لیے اپنی پہلی انٹرایکٹو سیکھنے کی گیم بنائیں۔",
-    "steps": "{گنتی، جمع، =0 {کوئی قدم نہیں} =1 {1 قدم} دیگر {# قدم}}",
+    "steps": "{count, plural, =0 {کوئی مرحلہ نہیں} =1 {1 مرحلہ} other {# مراحل}}",
     "sessions": "{count, plural, =0 {کوئی سیشن نہیں} =1 {1 سیشن} other {# سیشنز}}",
-    "lastEdited": "ترمیم شدہ {تاریخ}",
+    "lastEdited": "ترمیم شدہ {date}",
     "deleteConfirm": "کیا آپ واقعی اس کھیل کو حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں کیا جا سکتا۔",
     "deleteSuccess": "گیم حذف ہو گئی۔",
     "createSuccess": "کھیل بن گیا!"
@@ -174,7 +174,7 @@
     "correctAnswer": "صحیح جواب",
     "timerLabel": "وقت کی حد (اختیاری)",
     "timerOff": "وقت کی کوئی حد نہیں",
-    "timerSeconds": "{سیکنڈز} سیکنڈز",
+    "timerSeconds": "{seconds} سیکنڈ",
     "saveStep": "مرحلہ محفوظ کریں"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "سب منتخب کریں",
     "deselectAll": "سب کو غیر منتخب کریں",
     "noValidEntry": "کم از کم ایک درست اندراج شامل کریں۔",
-    "sendSuccess": "بھیجا گیا {sent} {sent, جمع، =1 {invite} دوسرا {invites}}",
-    "sendSuccessPartial": "بھیجا {sent} {sent, جمع، =1 {invite} دوسرا {invites}}، {ناکام} ناکام",
+    "sendSuccess": "{sent, plural, =1 {1 دعوت نامہ بھیجا گیا} other {# دعوت نامے بھیجے گئے}}",
+    "sendSuccessPartial": "{sent, plural, =1 {1 دعوت نامہ بھیجا گیا} other {# دعوت نامے بھیجے گئے}}، ناکام: {failed}",
     "sendFailed": "دعوتیں بھیجنے میں ناکام",
     "waitingRoom": "انتظار گاہ",
     "participants": "شرکاء",
     "waitingForPlayers": "کھلاڑیوں کے شامل ہونے کا انتظار...",
-    "participantsJoined": "{count, plural, =0 {کوئی شرکاء نہیں} =1 {1 شریک} other {# شرکاء}} نے شامل ہوئے",
+    "participantsJoined": "{count, plural, =0 {کوئی شریک شامل نہیں ہوا} =1 {1 شریک شامل ہوا} other {# شرکاء شامل ہوئے}}",
     "startSession": "کھیل شروع کریں",
     "endSession": "آخری مرحلہ",
     "nextStep": "اگلا قدم",
     "revealAnswer": "جواب دکھائیں",
     "showLeaderboard": "لیڈر بورڈ دکھائیں",
-    "answeredCount": "{جواب دیے گئے}/{کل} جواب دیے گئے",
-    "currentStep": "کل میں سے {current} قدم",
+    "answeredCount": "{answered}/{total} نے جواب دیا",
+    "currentStep": "مرحلہ {current} از {total}",
     "sessionEnded": "سیشن ختم ہو گیا",
     "viewResults": "نتائج دیکھیں",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "میزبان کے شروع کرنے کا انتظار...",
-    "waitingParticipants": "آپ شامل ہو گئے ہیں!   اب تک {count, plural, =1 {1 person} other {# people}} شامل ہو چکے ہیں۔",
+    "waitingParticipants": "آپ شامل ہو گئے ہیں! اب تک {count, plural, =1 {1 شخص شامل ہو چکا ہے۔} other {# افراد شامل ہو چکے ہیں۔}}",
     "theoryLabel": "غور سے پڑھیں",
     "quizLabel": "سوال",
     "submitAnswer": "جواب جمع کریں",
@@ -238,18 +238,18 @@
     "correct": "صحیح!",
     "incorrect": "غلط",
     "pointsEarned": "+{points} پوائنٹس",
-    "timerLeft": "{سیکنڈز} باقی ہیں",
+    "timerLeft": "{seconds} سیکنڈ باقی",
     "timeUp": "وقت ختم ہو گیا!",
     "leaderboardTitle": "لیڈر بورڈ",
     "yourScore": "آپ کا اسکور: {score}",
-    "rank": "#{درجہ}",
+    "rank": "#{rank}",
     "finalTitle": "کھیل ختم!",
     "finalScore": "حتمی اسکور: {score}",
     "finalRank": "آپ نے {total} میں سے #{rank} درجہ حاصل کیا۔"
   },
   "timer": {
     "timeUp": "وقت ختم ہو گیا!",
-    "secondsRemaining": "سیکنڈز، جمع، ایک {# باقی سیکنڈ} دوسرا {# باقی سیکنڈز}"
+    "secondsRemaining": "{seconds, plural, one {# سیکنڈ باقی ہے} other {# سیکنڈ باقی ہیں}}"
   },
   "results": {
     "title": "اجلاس کے نتائج",

@@ -123,8 +123,8 @@
     "createGame": "ახალი თამაში",
     "emptyTitle": "ჯერ არ არის თამაშები",
     "emptyDesc": "დაიწყეთ თქვენი პირველი ინტერაქტიული სასწავლო თამაშის შექმნა.",
-    "steps": "{count, plural, =0 {არ არის ნაბიჯები} =1 {1 ნაბიჯი} სხვა {# ნაბიჯები}}",
-    "sessions": "{count, plural, =0 {სესიები არ არის} =1 {1 სესია} სხვა {# სესია}}",
+    "steps": "{count, plural, =0 {ნაბიჯები არ არის} =1 {1 ნაბიჯი} other {# ნაბიჯი}}",
+    "sessions": "{count, plural, =0 {სესიები არ არის} =1 {1 სესია} other {# სესია}}",
     "lastEdited": "რედაქტირებული {date}",
     "deleteConfirm": "დარწმუნებული ხართ, რომ გსურთ ამ თამაშის წაშლა? ამ ქმედების გაუქმება შეუძლებელია.",
     "deleteSuccess": "თამაში წაშლილია.",
@@ -174,7 +174,7 @@
     "correctAnswer": "სწორი პასუხი",
     "timerLabel": "დროის ლიმიტი (არასავალდებულო)",
     "timerOff": "დროის ლიმიტი არ არის",
-    "timerSeconds": "{წამები} წამი",
+    "timerSeconds": "{seconds} წამი",
     "saveStep": "ნაბიჯის შენახვა"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "ყველას მონიშვნა",
     "deselectAll": "ყველას მოხსნა",
     "noValidEntry": "დაამატეთ სულ მცირე ერთი მოქმედი ჩანაწერი",
-    "sendSuccess": "გაგზავნილი {sent} {sent, მრავლობითი, =1 {invite} სხვა {invites}}",
-    "sendSuccessPartial": "გაგზავნილი {sent} {sent, plural, =1 {invite} სხვა {invites}}, {არასწორი} არასწორი",
+    "sendSuccess": "{sent, plural, other {გაიგზავნა # მოწვევა}}",
+    "sendSuccessPartial": "{sent, plural, other {გაიგზავნა # მოწვევა}}, ვერ გაიგზავნა: {failed}",
     "sendFailed": "მოწვევების გაგზავნა ვერ მოხერხდა",
     "waitingRoom": "სათადარიგო ოთახი",
     "participants": "მონაწილეები",
     "waitingForPlayers": "მოთამაშეების შემოერთებას ველოდებით...",
-    "participantsJoined": "{count, plural, =0 {მონაწილეები არ არიან} =1 {1 მონაწილე} სხვა {# მონაწილე}} შეუერთდა",
+    "participantsJoined": "{count, plural, =0 {მონაწილეები არ არიან} other {შეუერთდა # მონაწილე}}",
     "startSession": "თამაშის დაწყება",
     "endSession": "თამაშის დასასრული",
     "nextStep": "შემდეგი ნაბიჯი",
     "revealAnswer": "პასუხის გამხელა",
     "showLeaderboard": "ტოპის ჩვენება",
-    "answeredCount": "{პასუხი}/{სულ} პასუხი",
-    "currentStep": "ნაბიჯი {მიმდინარე} {საერთო რაოდენობიდან}",
+    "answeredCount": "{answered}/{total} უპასუხა",
+    "currentStep": "ნაბიჯი {current} / {total}",
     "sessionEnded": "სესია დასრულდა",
     "viewResults": "შედეგების ნახვა",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "მასპინძლის დაწყებას ველოდებით...",
-    "waitingParticipants": "შენც ერთვები! {count, plural, =1 {1 ადამიანი} სხვა {# ადამიანი}} უკვე ჩაერთო.",
+    "waitingParticipants": "შენ თამაშში ხარ! ჯერჯერობით შეუერთდა {count, plural, other {# ადამიანი}}.",
     "theoryLabel": "ყურადღებით წაიკითხეთ",
     "quizLabel": "კითხვა",
     "submitAnswer": "პასუხის გაგზავნა",
@@ -238,7 +238,7 @@
     "correct": "სწორია!",
     "incorrect": "არასწორი",
     "pointsEarned": "+{points} ქულა",
-    "timerLeft": "{წამები} დარჩა",
+    "timerLeft": "დარჩა {seconds} წმ",
     "timeUp": "დრო ამოიწურა!",
     "leaderboardTitle": "ლიდერბორდი",
     "yourScore": "თქვენი ქულა: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "დრო ამოიწურა!",
-    "secondsRemaining": "{წამები, მრავლობითი, ერთი {# დარჩენილი წამი} სხვა {# დარჩენილი წამები}}"
+    "secondsRemaining": "{seconds, plural, other {დარჩა # წამი}}"
   },
   "results": {
     "title": "სესიის შედეგები",
@@ -260,7 +260,7 @@
     "incorrect": "არასწორი",
     "noAnswer": "პასუხი არ არის",
     "avgTime": "საშუალო დრო",
-    "seconds": "{ნ}ს",
+    "seconds": "{n} წმ",
     "exportCSV": "CSV-ის ექსპორტი",
     "totalScore": "საერთო ქულა",
     "position": "პოზიცია"

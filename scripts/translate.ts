@@ -2,6 +2,7 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type Language, type TargetLanguageCode, Translator } from "deepl-node";
+import { checkMessage, translateMessage } from "./icu-messages";
 
 const { DEEPL_API_KEY } = process.env;
 const SOURCE_LANG = "en";
@@ -13,6 +14,10 @@ const RETRANSLATE_SOURCE_MATCH =
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000;
 const LOCALES_MODULE_PATH = join(process.cwd(), "i18n", "locales.ts");
+// Sent with every request so DeepL picks the right sense (a game's "steps",
+// not stairs). DeepL doesn't bill context characters.
+const TRANSLATION_CONTEXT =
+  "Interface text from Hakoot, a web app for interactive lessons: a host builds a game out of steps (theory, annotated code, quizzes) and runs live sessions that participants join with a code.";
 
 if (!DEEPL_API_KEY) {
   console.error("❌ DEEPL_API_KEY not found in environment variables");
@@ -119,24 +124,27 @@ function createLimiter(concurrency: number) {
 const limitTranslationRequest = createLimiter(REQUEST_CONCURRENCY);
 
 async function translateWithRetry(
-  text: string,
+  texts: string[],
   targetLang: Language,
+  context: string,
   retries = 0
-): Promise<string> {
+): Promise<string[]> {
   try {
     if (RATE_LIMIT_DELAY > 0) {
       await delay(RATE_LIMIT_DELAY);
     }
 
-    const result = await limitTranslationRequest(() =>
+    // Placeholders arrive as XML tags, which DeepL keeps in place.
+    const results = await limitTranslationRequest(() =>
       translator.translateText(
-        text,
+        texts,
         SOURCE_LANG,
-        targetLang.code as TargetLanguageCode
+        targetLang.code as TargetLanguageCode,
+        { context, tagHandling: "xml" }
       )
     );
 
-    return result.text;
+    return results.map((result) => result.text);
   } catch (error) {
     if (retries < MAX_RETRIES) {
       const waitTime = RETRY_DELAY * (retries + 1);
@@ -144,12 +152,13 @@ async function translateWithRetry(
         `⏳ [${targetLang.code}] Rate limited, waiting ${waitTime}ms before retry ${retries + 1}/${MAX_RETRIES}...`
       );
       await delay(waitTime);
-      return translateWithRetry(text, targetLang, retries + 1);
+      return translateWithRetry(texts, targetLang, context, retries + 1);
     }
     throw error;
   }
 }
 
+/** Keep an existing translation unless it is empty, broken ICU (so a rerun repairs it), or equal to the source in strict mode. */
 function shouldSkipTranslation(
   existing: TranslationValue | null,
   source: string
@@ -158,7 +167,8 @@ function shouldSkipTranslation(
     existing !== null &&
     typeof existing === "string" &&
     existing.trim() !== "" &&
-    (!RETRANSLATE_SOURCE_MATCH || existing !== source)
+    (!RETRANSLATE_SOURCE_MATCH || existing !== source) &&
+    checkMessage(source, existing).length === 0
   );
 }
 
@@ -229,7 +239,10 @@ async function translateString(
   path: string
 ): Promise<string> {
   try {
-    const result = await translateWithRetry(text, targetLang);
+    const context = `${TRANSLATION_CONTEXT} Message ID: ${path}.`;
+    const result = await translateMessage(text, targetLang.code, (texts) =>
+      translateWithRetry(texts, targetLang, context)
+    );
     if (path) {
       console.log(`✓ [${targetLang.code}] Translated: ${path}`);
     }
@@ -250,6 +263,14 @@ async function translateObject(
   if (typeof obj === "string") {
     if (shouldSkipTranslation(existing, obj)) {
       return existing as string;
+    }
+    if (typeof existing === "string" && existing.trim() !== "") {
+      const problems = checkMessage(obj, existing);
+      if (problems.length > 0) {
+        console.log(
+          `🔧 [${targetLang.code}] Repairing ${path}: ${problems.join("; ")}`
+        );
+      }
     }
     return translateString(obj, targetLang, path);
   }

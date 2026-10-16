@@ -123,9 +123,9 @@
     "createGame": "بازی جدید",
     "emptyTitle": "هنوز هیچ بازی‌ای وجود ندارد",
     "emptyDesc": "برای شروع، اولین بازی آموزشی تعاملی خود را بسازید.",
-    "steps": "{تعداد، جمع، =0 {بدون مرحله} =1 {۱ مرحله} دیگر {# مرحله}}",
-    "sessions": "{count, plural, =0 {جلسه‌ای وجود ندارد} =1 {۱ جلسه} دیگر {# جلسه}}",
-    "lastEdited": "ویرایش‌شده در {تاریخ}",
+    "steps": "{count, plural, =0 {بدون مرحله} =1 {۱ مرحله} other {# مرحله}}",
+    "sessions": "{count, plural, =0 {بدون جلسه} =1 {۱ جلسه} other {# جلسه}}",
+    "lastEdited": "ویرایش‌شده در {date}",
     "deleteConfirm": "آیا مطمئن هستید که می‌خواهید این بازی را حذف کنید؟ این عمل غیرقابل بازگشت است.",
     "deleteSuccess": "بازی حذف شد.",
     "createSuccess": "بازی ساخته شد!"
@@ -174,7 +174,7 @@
     "correctAnswer": "پاسخ صحیح",
     "timerLabel": "محدودیت زمانی (اختیاری)",
     "timerOff": "محدودیت زمانی وجود ندارد",
-    "timerSeconds": "{ثانیه‌ها} ثانیه",
+    "timerSeconds": "{seconds} ثانیه",
     "saveStep": "مرحله را ذخیره کنید"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "انتخاب همه",
     "deselectAll": "انتخاب همه را لغو کنید",
     "noValidEntry": "حداقل یک ورودی معتبر اضافه کنید",
-    "sendSuccess": "ارسال شده {sent} {sent, جمع، =1 {invite} دیگر {invites}}",
-    "sendSuccessPartial": "ارسال شد {sent} {sent, جمع، =1 {invite} others {invites}}، {failed} شکست خورد",
+    "sendSuccess": "{sent, plural, =1 {۱ دعوت‌نامه ارسال شد} other {# دعوت‌نامه ارسال شد}}",
+    "sendSuccessPartial": "{sent, plural, =1 {۱ دعوت‌نامه ارسال شد} other {# دعوت‌نامه ارسال شد}}، ناموفق: {failed}",
     "sendFailed": "ارسال دعوت‌نامه‌ها ناموفق بود",
     "waitingRoom": "اتاق انتظار",
     "participants": "شرکت‌کنندگان",
     "waitingForPlayers": "منتظر پیوستن بازیکنان...",
-    "participantsJoined": "{count, plural, =0 {شرکت‌کننده‌ای نیست} =1 {۱ شرکت‌کننده} دیگر {# شرکت‌کننده}} پیوست شدند",
+    "participantsJoined": "{count, plural, =0 {هیچ شرکت‌کننده‌ای نپیوسته است} =1 {۱ شرکت‌کننده پیوست} other {# شرکت‌کننده پیوستند}}",
     "startSession": "شروع بازی",
     "endSession": "پایان بازی",
     "nextStep": "گام بعدی",
     "revealAnswer": "نمایش پاسخ",
     "showLeaderboard": "نمایش جدول رده‌بندی",
-    "answeredCount": "{پاسخ‌داده‌شده}/{کل} پاسخ داده شد",
-    "currentStep": "مرحله {جاری} از {کل}",
+    "answeredCount": "{answered}/{total} پاسخ دادند",
+    "currentStep": "مرحلهٔ {current} از {total}",
     "sessionEnded": "جلسه پایان یافت",
     "viewResults": "مشاهده نتایج",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "منتظر شروع میزبان...",
-    "waitingParticipants": "شما قبولید! {count, plural, =1 {1 نفر} دیگر {# نفر}} تاکنون پیوست شده‌اند.",
+    "waitingParticipants": "وارد شدید! تاکنون {count, plural, =1 {۱ نفر} other {# نفر}} پیوسته‌اند.",
     "theoryLabel": "با دقت بخوانید",
     "quizLabel": "سوال",
     "submitAnswer": "ارسال پاسخ",
@@ -238,7 +238,7 @@
     "correct": "درست!",
     "incorrect": "نادرست",
     "pointsEarned": "+{points} امتیاز",
-    "timerLeft": "{ثانیه‌ها} باقی مانده",
+    "timerLeft": "{seconds} ثانیه مانده",
     "timeUp": "وقت تمام شد!",
     "leaderboardTitle": "جدول رده‌بندی",
     "yourScore": "امتیاز شما: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "وقت تمام شد!",
-    "secondsRemaining": "ثانیه‌ها، جمع، یک {# ثانیهٔ باقی‌مانده} دیگر {# ثانیه‌های باقی‌مانده}"
+    "secondsRemaining": "{seconds, plural, other {# ثانیه باقی مانده}}"
   },
   "results": {
     "title": "نتایج جلسه",

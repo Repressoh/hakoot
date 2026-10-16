@@ -123,9 +123,9 @@
     "createGame": "নতুন খেলা",
     "emptyTitle": "এখনও কোনো গেম নেই",
     "emptyDesc": "শুরু করতে আপনার প্রথম ইন্টারেক্টিভ শেখার গেম তৈরি করুন।",
-    "steps": "{count, plural, =0 {কোনও ধাপ নেই} =1 {১ ধাপ} অন্য {# ধাপ}}",
-    "sessions": "{count, plural, =0 {কোনও সেশন নেই} =1 {1টি সেশন} অন্য {# সেশন}}",
-    "lastEdited": "সম্পাদিত {তারিখ}",
+    "steps": "{count, plural, =0 {কোনও ধাপ নেই} =1 {১টি ধাপ} other {#টি ধাপ}}",
+    "sessions": "{count, plural, =0 {কোনও সেশন নেই} =1 {১টি সেশন} other {#টি সেশন}}",
+    "lastEdited": "সম্পাদিত {date}",
     "deleteConfirm": "আপনি কি নিশ্চিত যে আপনি এই গেমটি মুছতে চান? এই কাজটি আর পূর্বাবস্থায় ফেরানো যাবে না।",
     "deleteSuccess": "গেম মুছে গেছে।",
     "createSuccess": "গেম তৈরি!"
@@ -174,7 +174,7 @@
     "correctAnswer": "সঠিক উত্তর",
     "timerLabel": "সময়সীমা (ঐচ্ছিক)",
     "timerOff": "সময়সীমা নেই",
-    "timerSeconds": "{সেকেন্ড} সেকেন্ড",
+    "timerSeconds": "{seconds} সেকেন্ড",
     "saveStep": "ধাপ সংরক্ষণ করুন"
   },
   "session": {
@@ -196,19 +196,19 @@
     "selectAll": "সব নির্বাচন করুন",
     "deselectAll": "সব নির্বাচন বাতিল করুন",
     "noValidEntry": "কমপক্ষে একটি বৈধ এন্ট্রি যোগ করুন",
-    "sendSuccess": "প্রেরিত {প্রেরিত} {প্রেরিত, বহুবচন, =1 {অনুগ্রহ} অন্যান্য {অনুগ্রহগুলি}}",
-    "sendSuccessPartial": "প্রেরিত {প্রেরিত} {প্রেরিত, বহুবচন, =1 {অনুগ্রহ} অন্যান্য {অনুগ্রহগুলি}}, {ব্যর্থ} ব্যর্থ",
+    "sendSuccess": "{sent, plural, =1 {১টি আমন্ত্রণ পাঠানো হয়েছে} other {#টি আমন্ত্রণ পাঠানো হয়েছে}}",
+    "sendSuccessPartial": "{sent, plural, =1 {১টি আমন্ত্রণ পাঠানো হয়েছে} other {#টি আমন্ত্রণ পাঠানো হয়েছে}}, ব্যর্থ: {failed}",
     "sendFailed": "আমন্ত্রণ পাঠাতে ব্যর্থ হয়েছে",
     "waitingRoom": "প্রতীক্ষাকক্ষ",
     "participants": "অংশগ্রহণকারীরা",
     "waitingForPlayers": "খেলোয়াড়দের যোগদানের অপেক্ষায়...",
-    "participantsJoined": "{count, plural, =0 {কোনও অংশগ্রহণকারী নেই} =1 {১ জন অংশগ্রহণকারী} other {# অংশগ্রহণকারী}} যোগ দিয়েছেন",
+    "participantsJoined": "{count, plural, =0 {কোনও অংশগ্রহণকারী যোগ দেননি} =1 {১ জন অংশগ্রহণকারী যোগ দিয়েছেন} other {# জন অংশগ্রহণকারী যোগ দিয়েছেন}}",
     "startSession": "গেম শুরু করুন",
     "endSession": "শেষ খেলা",
     "nextStep": "পরবর্তী ধাপ",
     "revealAnswer": "উত্তর প্রকাশ করুন",
     "showLeaderboard": "লিডারবোর্ড দেখান",
-    "answeredCount": "{উত্তরিত}/{মোট} উত্তরিত",
+    "answeredCount": "{answered}/{total} জন উত্তর দিয়েছেন",
     "currentStep": "{total}-এর {current} ধাপ",
     "sessionEnded": "সেশন শেষ হয়েছে",
     "viewResults": "ফলাফল দেখুন",
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "হোস্ট শুরু করার অপেক্ষায়...",
-    "waitingParticipants": "আপনি অন্তর্ভুক্ত! {count, plural, =1 {1 জন} অন্য {# জন}} এ পর্যন্ত যোগ দিয়েছে।",
+    "waitingParticipants": "আপনি যোগ দিয়েছেন! এ পর্যন্ত {count, plural, =1 {১ জন} other {# জন}} যোগ দিয়েছেন।",
     "theoryLabel": "সতর্কভাবে পড়ুন",
     "quizLabel": "প্রশ্ন",
     "submitAnswer": "উত্তর জমা দিন",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "সময় শেষ!",
-    "secondsRemaining": "{সেকেন্ড, বহুবচন, একটি {# অবশিষ্ট সেকেন্ড} অন্য {# অবশিষ্ট সেকেন্ড}}"
+    "secondsRemaining": "{seconds, plural, other {# সেকেন্ড বাকি}}"
   },
   "results": {
     "title": "সেশনের ফলাফল",

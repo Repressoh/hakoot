@@ -123,8 +123,8 @@
     "createGame": "Нова игра",
     "emptyTitle": "Сè уште нема игри",
     "emptyDesc": "Создадете ја вашата прва интерактивна игра за учење за да започнете.",
-    "steps": "{број, множина, =0 {Нема чекори} =1 {1 чекор} друго {# чекори}}",
-    "sessions": "{број, множина, =0 {Нема сесии} =1 {1 сесија} друго {# сесии}}",
+    "steps": "{count, plural, =0 {Нема чекори} one {# чекор} other {# чекори}}",
+    "sessions": "{count, plural, =0 {Нема сесии} one {# сесија} other {# сесии}}",
     "lastEdited": "Уредено {date}",
     "deleteConfirm": "Дали сте сигурни дека сакате да ја избришете оваа игра? Оваа акција не може да се поништи.",
     "deleteSuccess": "Играта е избришана.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Точен одговор",
     "timerLabel": "Временски лимит (опционално)",
     "timerOff": "Нема временско ограничување",
-    "timerSeconds": "{секунди} секунди",
+    "timerSeconds": "{seconds} секунди",
     "saveStep": "Зачувај чекор"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Избери сè",
     "deselectAll": "Поништување на изборот за сите",
     "noValidEntry": "Додајте најмалку еден валиден запис",
-    "sendSuccess": "Испратено {sent} {sent, множина, =1 {invite} други {invites}}",
-    "sendSuccessPartial": "Испратено {sent} {sent, множина, =1 {invite} други {invites}}, {failed} неуспешно",
+    "sendSuccess": "{sent, plural, one {Испратена е # покана} other {Испратени се # покани}}",
+    "sendSuccessPartial": "{sent, plural, one {Испратена е # покана} other {Испратени се # покани}}, неуспешни: {failed}",
     "sendFailed": "Не успеа да испрати покани",
     "waitingRoom": "Чекаоница",
     "participants": "Учесници",
     "waitingForPlayers": "Чекање на играчи да се приклучат...",
-    "participantsJoined": "{број, множина, =0 {Нема учесници} =1 {1 учесник} друго {# учесници}} се приклучија",
+    "participantsJoined": "{count, plural, =0 {Нема приклучени учесници} one {Се приклучи # учесник} other {Се приклучија # учесници}}",
     "startSession": "Започни игра",
     "endSession": "Крајна фаза",
     "nextStep": "Следен чекор",
     "revealAnswer": "Покажи го одговорот",
     "showLeaderboard": "Прикажи табела",
-    "answeredCount": "{одговорено}/{вкупно} одговорено",
-    "currentStep": "Чекор {тековен} од {вкупно}",
+    "answeredCount": "Одговорија: {answered}/{total}",
+    "currentStep": "Чекор {current} од {total}",
     "sessionEnded": "Сесијата заврши",
     "viewResults": "Прикажи резултати",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Чекање домаќинот да започне...",
-    "waitingParticipants": "Си во игра! {count, plural, =1 {1 лице} други {# лица}} се приклучија досега.",
+    "waitingParticipants": "Во игра си! {count, plural, one {Досега се приклучи # лице.} other {Досега се приклучија # лица.}}",
     "theoryLabel": "Читајте внимателно",
     "quizLabel": "Прашање",
     "submitAnswer": "Поднеси одговор",
@@ -238,7 +238,7 @@
     "correct": "Точно!",
     "incorrect": "Неправилно",
     "pointsEarned": "+{points} поени",
-    "timerLeft": "{секунди} останаа",
+    "timerLeft": "Преостануваат {seconds} с",
     "timeUp": "Времето истече!",
     "leaderboardTitle": "Табела",
     "yourScore": "Вашиот резултат: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Времето истече!",
-    "secondsRemaining": "{секунди, множина, една {# преостаната секунда} друга {# преостанати секунди}}"
+    "secondsRemaining": "{seconds, plural, one {Преостанува # секунда} other {Преостануваат # секунди}}"
   },
   "results": {
     "title": "Резултати од сесијата",
@@ -260,7 +260,7 @@
     "incorrect": "Неправилно",
     "noAnswer": "Нема одговор",
     "avgTime": "Просечно време",
-    "seconds": "{п}р",
+    "seconds": "{n} с",
     "exportCSV": "Извези CSV",
     "totalScore": "Вкупен резултат",
     "position": "Позиција"

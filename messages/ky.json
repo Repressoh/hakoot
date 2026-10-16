@@ -123,8 +123,8 @@
     "createGame": "Жаңы оюн",
     "emptyTitle": "Азырынча оюндар жок",
     "emptyDesc": "Баштоо үчүн биринчи интерактивдүү окуу оюнуңузду түзүңүз.",
-    "steps": "{саны, көптүк, =0 {кадам жок} =1 {1 кадам} башка {# кадам}}",
-    "sessions": "{саны, көптүк, =0 {сессиялар жок} =1 {1 сессия} башка {# сессиялар}}",
+    "steps": "{count, plural, =0 {Кадамдар жок} =1 {1 кадам} other {# кадам}}",
+    "sessions": "{count, plural, =0 {Сессиялар жок} =1 {1 сессия} other {# сессия}}",
     "lastEdited": "Түзөтүлгөн {date}",
     "deleteConfirm": "Бул оюнду өчүргүңүз келеби? Бул аракетти артка кайтаруу мүмкүн эмес.",
     "deleteSuccess": "Оюн өчүрүлдү.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Туура жооп",
     "timerLabel": "Убакыт чеги (эркин)",
     "timerOff": "Убакыт чектөөсү жок",
-    "timerSeconds": "{секунддар} секунддар",
+    "timerSeconds": "{seconds} секунд",
     "saveStep": "Кадамды сактоо"
   },
   "session": {
@@ -196,19 +196,19 @@
     "selectAll": "Баарын тандаңыз",
     "deselectAll": "Баарын тандоодон чыгаруу",
     "noValidEntry": "Кеминде бир жарактуу жазууну кошуңуз",
-    "sendSuccess": "Жөнөтүлгөн {sent} {sent, көптүк, =1 {invite} башка {invites}}",
-    "sendSuccessPartial": "Жөнөтүлгөн {sent} {sent, көптүк, =1 {invite} башка {invites}}, {failed} {failed}",
+    "sendSuccess": "{sent, plural, other {# чакыруу жөнөтүлдү}}",
+    "sendSuccessPartial": "{sent, plural, other {# чакыруу жөнөтүлдү}}, ийгиликсиз: {failed}",
     "sendFailed": "Чакырууларды жөнөтө алган жок",
     "waitingRoom": "Күтүү бөлмөсү",
     "participants": "Катышуучулар",
     "waitingForPlayers": "Оюнчулардын кошулушун күтүп жатат...",
-    "participantsJoined": "{count, plural, =0 {Катышуучулар жок} =1 {1 катышуучу} other {# катышуучулар}} кошулду",
+    "participantsJoined": "{count, plural, =0 {Бир да катышуучу кошулган жок} other {# катышуучу кошулду}}",
     "startSession": "Оюнду баштоо",
     "endSession": "Аягындагы оюн",
     "nextStep": "Кийинки кадам",
     "revealAnswer": "Жоопту көрсөтүү",
     "showLeaderboard": "Лидер тактасын көрсөтүңүз",
-    "answeredCount": "{жооп берилген}/{жалпы} жооп берилди",
+    "answeredCount": "{answered}/{total} жооп берди",
     "currentStep": "{total} кадамдын {current} кадам",
     "sessionEnded": "Сессия аяктады",
     "viewResults": "Натыйжаларды көрүү",
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Хосттун башталышын күтүп жатат...",
-    "waitingParticipants": "Сен кабыл алындың! {count, plural, =1 {1 адам}} башка {# адамдар} азыркыга чейин кошулду.",
+    "waitingParticipants": "Сен оюндасың! Азырынча {count, plural, other {# адам}} кошулду.",
     "theoryLabel": "Көңүл коюп окуңуз",
     "quizLabel": "Суроо",
     "submitAnswer": "Жоопту тапшыруу",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Убакыт бүттү!",
-    "secondsRemaining": "{секунддар, көплик, бир {# калган секунд} башка {# калган секунд}}"
+    "secondsRemaining": "{seconds, plural, other {# секунд калды}}"
   },
   "results": {
     "title": "Сессиянын жыйынтыктары",

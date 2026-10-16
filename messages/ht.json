@@ -123,8 +123,8 @@
     "createGame": "Jwèt nèf",
     "emptyTitle": "Poko gen jwèt",
     "emptyDesc": "Kreye premye jwèt aprantisaj entèaktif ou a pou kòmanse.",
-    "steps": "{count, plural, =0 {Pa gen etap} =1 {1 etap} lòt {# etap}}",
-    "sessions": "{count, plural, =0 {Pa gen sesyon} =1 {1 sesyon} lòt {# sesyon}}",
+    "steps": "{count, plural, =0 {Pa gen etap} =1 {1 etap} other {# etap}}",
+    "sessions": "{count, plural, =0 {Pa gen sesyon} =1 {1 sesyon} other {# sesyon}}",
     "lastEdited": "Revize {date}",
     "deleteConfirm": "Èske ou sèten ou vle efase jwèt sa a? Aksyon sa a pa ka ranvèse.",
     "deleteSuccess": "Jwèt la efase.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Repons kòrèk",
     "timerLabel": "Limit tan (opsyonèl)",
     "timerOff": "Pa gen limit tan",
-    "timerSeconds": "{segonn} segonn",
+    "timerSeconds": "{seconds} segonn",
     "saveStep": "Sove etap"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Chwazi tout",
     "deselectAll": "Dezaktive tout",
     "noValidEntry": "Ajoute omwen yon antre valab",
-    "sendSuccess": "Voye {sent} {sent, pliryèl, =1 {envite} lòt {envite}}",
-    "sendSuccessPartial": "Voye {sent} {sent, pliryèl, =1 {envite} lòt {envite}}, {echwe} echwe",
+    "sendSuccess": "{sent, plural, =1 {Yo voye 1 envitasyon} other {Yo voye # envitasyon}}",
+    "sendSuccessPartial": "{sent, plural, =1 {Yo voye 1 envitasyon} other {Yo voye # envitasyon}}, echwe: {failed}",
     "sendFailed": "Pa t rive voye envitasyon yo",
     "waitingRoom": "Sal d'atant",
     "participants": "Patisipan yo",
     "waitingForPlayers": "Ap tann jwè yo pou yo antre...",
-    "participantsJoined": "{count, plural, =0 {Pa gen patisipan} =1 {1 patisipan} lòt {# patisipan}} te patisipe",
+    "participantsJoined": "{count, plural, =0 {Pa gen patisipan ki antre} =1 {1 patisipan antre} other {# patisipan antre}}",
     "startSession": "Kòmanse jwèt la",
     "endSession": "Fen jwèt",
     "nextStep": "Pwochen etap",
     "revealAnswer": "Montre repons lan",
     "showLeaderboard": "Montre tablo klasman an",
-    "answeredCount": "{repondi}/{total} reponn",
-    "currentStep": "Etap {kouran} sou {total}",
+    "answeredCount": "{answered}/{total} reponn",
+    "currentStep": "Etap {current} sou {total}",
     "sessionEnded": "Sesyon an fini",
     "viewResults": "Gade rezilta yo",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Ap tann mèt kay la kòmanse...",
-    "waitingParticipants": "Ou antre! {count, plural, =1 {1 moun} lòt {# moun}} deja antre.",
+    "waitingParticipants": "Ou antre! {count, plural, =1 {1 moun} other {# moun}} antre deja.",
     "theoryLabel": "Li ak anpil atansyon",
     "quizLabel": "Kesyon",
     "submitAnswer": "Soumèt repons lan",
@@ -238,7 +238,7 @@
     "correct": "Kòrèk!",
     "incorrect": "Pa kòrèk",
     "pointsEarned": "+{points} pwen",
-    "timerLeft": "{segonn} rete",
+    "timerLeft": "{seconds} s ki rete",
     "timeUp": "Tan fini!",
     "leaderboardTitle": "Klasman",
     "yourScore": "Pwen ou: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Tan fini!",
-    "secondsRemaining": "{segonn, pliryèl, youn {# segonn ki rete} lòt {# segonn ki rete}}"
+    "secondsRemaining": "{seconds, plural, other {# segonn ki rete}}"
   },
   "results": {
     "title": "Rezilta Sesyon",

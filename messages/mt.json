@@ -123,9 +123,9 @@
     "createGame": "Logħba ġdida",
     "emptyTitle": "Għad m'hemmx logħob",
     "emptyDesc": "Oħloq l-ewwel logħba interattiva tat-tagħlim tiegħek biex tibda.",
-    "steps": "{count, plural, =0 {L-ebda pass} =1 {1 pass} ieħor {# passi}}",
-    "sessions": "{count, plural, =0 {L-ebda sessjonijiet} =1 {1 sessjoni} ieħor {# sessjonijiet}}",
-    "lastEdited": "Editat {data}",
+    "steps": "{count, plural, =0 {L-ebda pass} one {# pass} two {# passi} few {# passi} many {# pass} other {# pass}}",
+    "sessions": "{count, plural, =0 {L-ebda sessjoni} one {# sessjoni} two {# sessjonijiet} few {# sessjonijiet} other {# sessjoni}}",
+    "lastEdited": "Editjat {date}",
     "deleteConfirm": "Inti ċert li trid tħassar din il-logħba? Din l-azzjoni ma tistax tiġi rtirata.",
     "deleteSuccess": "Il-logħba ġiet imħassra.",
     "createSuccess": "Il-logħba ġiet maħluqa!"
@@ -174,7 +174,7 @@
     "correctAnswer": "It-tweġiba korretta",
     "timerLabel": "Limitu taż-żmien (mhux obbligatorju)",
     "timerOff": "L-ebda limitu taż-żmien",
-    "timerSeconds": "{sekondi} sekondi",
+    "timerSeconds": "{seconds} sekondi",
     "saveStep": "Iffrankar il-pass"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Agħżel kollox",
     "deselectAll": "Neħħi l-għażla kollha",
     "noValidEntry": "Żid mill-inqas daħla valida waħda",
-    "sendSuccess": "Mibgħut {sent} {sent, plural, =1 {invite} oħrajn {invites}}",
-    "sendSuccessPartial": "Mibgħut {sent} {sent, plural, =1 {invite} oħrajn {invites}}, {failed} {failed}",
+    "sendSuccess": "{sent, plural, one {Intbagħtet # stedina} two {Intbagħtu # stediniet} few {Intbagħtu # stediniet} other {Intbagħtu # stedina}}",
+    "sendSuccessPartial": "{sent, plural, one {Intbagħtet # stedina} two {Intbagħtu # stediniet} few {Intbagħtu # stediniet} other {Intbagħtu # stedina}}, fallew: {failed}",
     "sendFailed": "Ma rnexxiex tibgħat l-istedinijiet",
     "waitingRoom": "Kamra tal-istennija",
     "participants": "Parteċipanti",
     "waitingForPlayers": "Qed nistennew li l-plejers jingħaqdu...",
-    "participantsJoined": "{count, plural, =0 {L-ebda parteċipanti} =1 {1 parteċipant} oħrajn {# parteċipanti}} ingħaqdu",
+    "participantsJoined": "{count, plural, =0 {L-ebda parteċipant ma ngħaqad} one {Ingħaqad # parteċipant} two {Ingħaqdu # parteċipanti} few {Ingħaqdu # parteċipanti} other {Ingħaqdu # parteċipant}}",
     "startSession": "Ibda l-logħba",
     "endSession": "Tmiem tal-logħba",
     "nextStep": "Il-pass li jmiss",
     "revealAnswer": "Uri t-tweġiba",
     "showLeaderboard": "Uri l-klassifika",
-    "answeredCount": "{imwieġeb}/{total} imwieġeb",
-    "currentStep": "Pass {kurrenti} minn {totali}",
+    "answeredCount": "{answered}/{total} wieġbu",
+    "currentStep": "Pass {current} minn {total}",
     "sessionEnded": "Is-sessjoni ntemmet",
     "viewResults": "Ara r-riżultati",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Qed nistennew lill-ospitant jibda...",
-    "waitingParticipants": "Int ġejt aċċettat! {count, plural, =1 {1 persuna} oħra {# nies}} ingħaqdu sa issa.",
+    "waitingParticipants": "Int ġewwa! {count, plural, one {S'issa ngħaqdet # persuna.} two {S'issa ngħaqdu # persuni.} few {S'issa ngħaqdu # persuni.} other {S'issa ngħaqdu # persuna.}}",
     "theoryLabel": "Aqra b'attenzjoni",
     "quizLabel": "Mistoqsija",
     "submitAnswer": "Ibgħat it-tweġiba",
@@ -238,7 +238,7 @@
     "correct": "Korrett!",
     "incorrect": "Żbaljat",
     "pointsEarned": "+{points} punti",
-    "timerLeft": "{sekondi}i fadal",
+    "timerLeft": "Fadal {seconds} s",
     "timeUp": "Il-ħin spiċċa!",
     "leaderboardTitle": "Tabella tal-klassifika",
     "yourScore": "Il-punteġġ tiegħek: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Il-ħin spiċċa!",
-    "secondsRemaining": "sekondi, plurali, wieħed {# sekonda li fadal} ieħor {# sekondi li fadal}"
+    "secondsRemaining": "{seconds, plural, one {Fadal # sekonda} two {Fadal # sekondi} few {Fadal # sekondi} other {Fadal # sekonda}}"
   },
   "results": {
     "title": "Riżultati tas-Sessjoni",

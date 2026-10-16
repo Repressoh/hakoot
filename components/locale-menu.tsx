@@ -14,8 +14,14 @@ const localeNames: Record<string, string> = {
   it: "Italiano",
 };
 
-/** Opens the list of locales from `children`, the trigger button. */
-export function LocaleMenu({ children }: { children: React.ReactNode }) {
+/** Opens the list of locales from `children`, the trigger button; `defaultOpen` shows it on mount. */
+export function LocaleMenu({
+  children,
+  defaultOpen = false,
+}: {
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
   const locale = useLocale();
   const { push } = useRouter();
   const pathname = usePathname();
@@ -25,7 +31,7 @@ export function LocaleMenu({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu defaultOpen={defaultOpen}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
