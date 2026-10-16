@@ -42,6 +42,11 @@ components.json
 # Scripts not needed in container
 scripts
 
+# Tests (not needed in container; they import from scripts/, which next build would type-check)
+**/*.test.ts
+**/*.test.tsx
+vitest.config.mts
+
 # Dev lockfiles (bun.lock IS needed)
 package-lock.json
 
