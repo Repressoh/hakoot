@@ -723,7 +723,8 @@ function SessionContent({
                 {currentStep.markdownContent ? (
                   <MarkdownViewer content={currentStep.markdownContent} />
                 ) : null}
-                {currentStep.codeBlock ? (
+                {/* A block without code is an unfinished draft. */}
+                {currentStep.codeBlock?.code.trim() ? (
                   <ClientCodeBlock
                     code={currentStep.codeBlock.code}
                     language={currentStep.codeBlock.language}

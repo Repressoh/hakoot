@@ -89,7 +89,8 @@ function StepContent({
         {step.markdownContent ? (
           <MarkdownViewer content={step.markdownContent} />
         ) : null}
-        {step.codeBlock ? (
+        {/* A block without code is an unfinished draft. */}
+        {step.codeBlock?.code.trim() ? (
           <ClientCodeBlock
             code={step.codeBlock.code}
             language={step.codeBlock.language}

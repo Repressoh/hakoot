@@ -46,6 +46,8 @@ export function useAutosave<T>(
       if (current.hasUnsavedChanges()) {
         current.flush();
         event.preventDefault();
+        // Chrome and Edge before 119 only ask when returnValue is set.
+        event.returnValue = true;
       }
     }
     document.addEventListener("visibilitychange", handleVisibilityChange);

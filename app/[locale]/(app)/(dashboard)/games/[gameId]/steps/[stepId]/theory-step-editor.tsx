@@ -171,8 +171,10 @@ function theoryFormReducer(
 }
 
 /**
- * The code block to store for the form, or null for none. Annotations are kept
- * while partly filled in, so that a draft survives leaving the page.
+ * The code block to store for the form, or null once it is switched off. An
+ * enabled block is kept while its code is empty (sessions skip it), and
+ * annotations while partly filled in, so clearing the code to paste new code,
+ * or leaving mid-edit, doesn't delete the block and its annotations.
  */
 function toCodeBlock({
   annotations,
@@ -180,7 +182,7 @@ function toCodeBlock({
   hasCodeBlock,
   language,
 }: TheoryFormState): CodeBlock | null {
-  if (!(hasCodeBlock && code.trim())) {
+  if (!hasCodeBlock) {
     return null;
   }
   return {
