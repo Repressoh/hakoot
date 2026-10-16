@@ -175,7 +175,10 @@
     "timerLabel": "Umkhawulo wesikhathi (okuzikhethela)",
     "timerOff": "Akukho mkhawulo wesikhathi",
     "timerSeconds": "{seconds} imizuzwana",
-    "saveStep": "Gcina isinyathelo"
+    "saving": "Kugcinwa...",
+    "saved": "Zonke izinguquko zigcinwe",
+    "saveFailed": "Akwenzekanga ukulondoloza izinguquko zakho",
+    "noCorrectAnswer": "Phawula impendulo eyodwa njengokulungile."
   },
   "session": {
     "createSession": "Qala iseshini entsha",

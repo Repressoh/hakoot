@@ -175,7 +175,10 @@
     "timerLabel": "시간 제한(선택 사항)",
     "timerOff": "시간 제한 없음",
     "timerSeconds": "{seconds}초",
-    "saveStep": "저장 단계"
+    "saving": "저장 중...",
+    "saved": "모든 변경 사항이 저장되었습니다.",
+    "saveFailed": "변경 사항을 저장할 수 없습니다",
+    "noCorrectAnswer": "한 가지 답을 정답으로 표시하세요."
   },
   "session": {
     "createSession": "새 세션 시작",

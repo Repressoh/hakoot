@@ -175,7 +175,10 @@
     "timerLabel": "الحد الزمني (اختياري)",
     "timerOff": "لا يوجد حد زمني",
     "timerSeconds": "{seconds} ثانية",
-    "saveStep": "خطوة الحفظ"
+    "saving": "جاري الحفظ...",
+    "saved": "تم حفظ جميع التغييرات",
+    "saveFailed": "تعذر حفظ التغييرات",
+    "noCorrectAnswer": "حدد إجابة واحدة على أنها صحيحة."
   },
   "session": {
     "createSession": "بدء جلسة جديدة",

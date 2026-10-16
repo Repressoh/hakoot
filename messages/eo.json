@@ -175,7 +175,10 @@
     "timerLabel": "Tempolimo (laŭvola)",
     "timerOff": "Neniu tempolimo",
     "timerSeconds": "{seconds} sekundoj",
-    "saveStep": "Konservi paŝon"
+    "saving": "Konservado...",
+    "saved": "Ĉiuj ŝanĝoj konservitaj",
+    "saveFailed": "Ne eblis konservi viajn ŝanĝojn",
+    "noCorrectAnswer": "Marku unu respondon kiel ĝustan."
   },
   "session": {
     "createSession": "Komencu novan sesion",

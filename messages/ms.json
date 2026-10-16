@@ -175,7 +175,10 @@
     "timerLabel": "Had masa (pilihan)",
     "timerOff": "Tiada had masa",
     "timerSeconds": "{seconds} saat",
-    "saveStep": "Simpan langkah"
+    "saving": "Menyimpan...",
+    "saved": "Semua perubahan telah disimpan",
+    "saveFailed": "Tidak dapat menyimpan perubahan anda",
+    "noCorrectAnswer": "Tandakan satu jawapan sebagai betul."
   },
   "session": {
     "createSession": "Mulakan sesi baru",

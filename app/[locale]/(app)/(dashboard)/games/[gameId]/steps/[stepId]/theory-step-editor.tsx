@@ -3,7 +3,7 @@
 import { useMutation } from "convex/react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { toast } from "sonner";
 import { preloadHighlighter } from "@/components/game/highlight-client";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { getUnsavedDraft, useAutosave } from "@/lib/use-autosave";
 import { formatLineNumbers, parseLineRange } from "@/lib/utils";
+import { SaveStatus } from "./save-status";
 
 const ClientCodeBlock = dynamic(
   () =>
@@ -56,6 +58,8 @@ interface CodeAnnotation {
   explanation: string;
   label: string;
   lines: number[];
+  /** The lines as typed, so a half-typed range like "5-" survives reopening. */
+  linesText?: string;
 }
 
 interface CodeBlock {
@@ -168,27 +172,78 @@ function theoryFormReducer(
   }
 }
 
-/** Editor for a theory step's markdown content and optional annotated code block. */
-export function TheoryStepEditor({ step }: Props) {
-  const t = useTranslations("stepEditor");
-  const updateTheory = useMutation(api.steps.updateTheory);
-  const [saving, setSaving] = useState(false);
+/**
+ * The code block to store for the form, or null once it is switched off. An
+ * enabled block is kept while its code is empty (sessions skip it), and
+ * annotations while partly filled in, so clearing the code to paste new code,
+ * or leaving mid-edit, doesn't delete the block and its annotations.
+ */
+function toCodeBlock({
+  annotations,
+  code,
+  hasCodeBlock,
+  language,
+}: TheoryFormState): CodeBlock | null {
+  if (!hasCodeBlock) {
+    return null;
+  }
+  return {
+    annotations: annotations
+      .filter((a) => a.linesInput.trim() || a.label || a.explanation)
+      .map((a) => ({
+        explanation: a.explanation,
+        label: a.label,
+        lines: parseLineRange(a.linesInput),
+        linesText: a.linesInput,
+      })),
+    code,
+    language,
+  };
+}
 
-  const [form, dispatch] = useReducer(theoryFormReducer, {
+/** What the editor saves, and the unsaved draft it can start from. */
+interface TheoryDraft {
+  codeBlock: CodeBlock | null;
+  markdownContent: string;
+}
+
+/** The form for `step`, or for its unsaved draft if a failed save left one. */
+function initTheoryForm(step: Step): TheoryFormState {
+  const draft = getUnsavedDraft<TheoryDraft>(step._id);
+  const codeBlock = draft ? draft.codeBlock : step.codeBlock;
+  return {
     annotations:
-      step.codeBlock?.annotations.map((a) => ({
+      codeBlock?.annotations.map((a) => ({
         explanation: a.explanation,
         id: crypto.randomUUID(),
         label: a.label,
-        linesInput: formatLineNumbers(a.lines),
+        linesInput: a.linesText ?? formatLineNumbers(a.lines),
       })) ?? [],
-    code: step.codeBlock?.code ?? "",
-    hasCodeBlock: !!step.codeBlock,
-    language: step.codeBlock?.language ?? "typescript",
-    markdown: step.markdownContent ?? "",
-  });
+    code: codeBlock?.code ?? "",
+    hasCodeBlock: !!codeBlock,
+    language: codeBlock?.language ?? "typescript",
+    markdown: draft ? draft.markdownContent : (step.markdownContent ?? ""),
+  };
+}
+
+/**
+ * Editor for a theory step's markdown content and optional annotated code block; changes save
+ * automatically.
+ */
+export function TheoryStepEditor({ step }: Props) {
+  const t = useTranslations("stepEditor");
+  const updateTheory = useMutation(api.steps.updateTheory);
+
+  const [form, dispatch] = useReducer(theoryFormReducer, step, initTheoryForm);
 
   const { markdown, hasCodeBlock, code, language, annotations } = form;
+
+  const saveStatus = useAutosave<TheoryDraft>(
+    step._id,
+    { codeBlock: toCodeBlock(form), markdownContent: markdown },
+    (theory) => updateTheory({ ...theory, stepId: step._id }),
+    () => toast.error(t("saveFailed"), { id: "step-autosave" })
+  );
 
   // Start loading the highlighter when the editor opens rather than when the
   // code preview first renders.
@@ -214,51 +269,11 @@ export function TheoryStepEditor({ step }: Props) {
     dispatch({ field, index: i, type: "UPDATE_ANNOTATION", value });
   }
 
-  async function handleSave() {
-    setSaving(true);
-    let codeBlock: CodeBlock | undefined;
-    if (hasCodeBlock && code.trim()) {
-      const parsedAnnotations = annotations.reduce<CodeAnnotation[]>(
-        (acc, annotation) => {
-          if (
-            annotation.linesInput &&
-            annotation.label &&
-            annotation.explanation
-          ) {
-            acc.push({
-              explanation: annotation.explanation,
-              label: annotation.label,
-              lines: parseLineRange(annotation.linesInput),
-            });
-          }
-          return acc;
-        },
-        []
-      );
-
-      codeBlock = { annotations: parsedAnnotations, code, language };
-    }
-    try {
-      await updateTheory({
-        codeBlock,
-        markdownContent: markdown,
-        stepId: step._id,
-      });
-      toast.success("Saved!");
-      setSaving(false);
-    } catch {
-      setSaving(false);
-      toast.error("Failed to save");
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-semibold text-xl">{t("theoryTitle")}</h1>
-        <Button disabled={saving} onClick={handleSave}>
-          {saving ? "Saving..." : t("saveStep")}
-        </Button>
+        <SaveStatus status={saveStatus} />
       </div>
 
       {/* Markdown editor */}

@@ -5,21 +5,36 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Parse a line range string like "5, 10-12" into an array of line numbers */
+/**
+ * The highest line an annotation can point at. The editor parses the ranges on
+ * every keystroke, so a typo like "1-10000000" must not expand to millions of
+ * numbers (Convex arrays also hold at most 8192 values).
+ */
+const MAX_LINE_NUMBER = 5000;
+
+/**
+ * Parse a line range string like "5, 10-12" into an array of line numbers, keeping only lines
+ * 1 to MAX_LINE_NUMBER.
+ */
 export function parseLineRange(input: string): number[] {
   const lines: number[] = [];
-  const parts = input.split(",").map((s) => s.trim());
+  // Empty parts ("", "5,") would otherwise read as line 0.
+  const parts = input
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   for (const part of parts) {
     if (part.includes("-")) {
       const [start, end] = part.split("-").map(Number);
       if (!(Number.isNaN(start) || Number.isNaN(end))) {
-        for (let i = start; i <= end; i += 1) {
+        const last = Math.min(end, MAX_LINE_NUMBER);
+        for (let i = Math.max(start, 1); i <= last; i += 1) {
           lines.push(i);
         }
       }
     } else {
       const n = Number(part);
-      if (!Number.isNaN(n)) {
+      if (n >= 1 && n <= MAX_LINE_NUMBER) {
         lines.push(n);
       }
     }

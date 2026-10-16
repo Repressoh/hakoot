@@ -175,7 +175,10 @@
     "timerLabel": "Fetra ara-potoana (tsy voatery)",
     "timerOff": "Tsy misy fetran'ny fotoana",
     "timerSeconds": "{seconds} {seconds}",
-    "saveStep": "Tehirizo ny dingana"
+    "saving": "Fitehirizana...",
+    "saved": "Voatahiry avokoa ny fanovana rehetra",
+    "saveFailed": "Tsy afaka nitahiry ny fanovanao",
+    "noCorrectAnswer": "Mariho ny valiny iray ho marina."
   },
   "session": {
     "createSession": "Manomboha fivoriana vaovao",

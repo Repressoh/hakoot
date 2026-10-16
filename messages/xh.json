@@ -175,7 +175,10 @@
     "timerLabel": "Umda wexesha (ukhetho)",
     "timerOff": "Akukho mda wexesha",
     "timerSeconds": "{seconds} imizuzwana",
-    "saveStep": "Gcina inyathelo"
+    "saving": "Kugcinwa...",
+    "saved": "Zonke iinguqu zigcinwe",
+    "saveFailed": "Akunakugcinwa utshintsho lwakho",
+    "noCorrectAnswer": "Phawula impendulo enye njengeyiyo."
   },
   "session": {
     "createSession": "Qala iseshoni entsha",

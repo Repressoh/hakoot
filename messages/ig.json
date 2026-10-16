@@ -175,7 +175,10 @@
     "timerLabel": "Oke oge (nhọrọ)",
     "timerOff": "Enweghị oke oge",
     "timerSeconds": "{seconds} sekọnd",
-    "saveStep": "Chekwaa nzọụkwụ"
+    "saving": "Na-echekwa...",
+    "saved": "Echekwara mgbanwe niile",
+    "saveFailed": "Enweghị ike ịchekwa mgbanwe gị",
+    "noCorrectAnswer": "Tọọ otu azịza dị ka ziri ezi."
   },
   "session": {
     "createSession": "Malite oge ọhụrụ",

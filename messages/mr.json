@@ -175,7 +175,10 @@
     "timerLabel": "वेळेची मर्यादा (ऐच्छिक)",
     "timerOff": "वेळेची मर्यादा नाही",
     "timerSeconds": "{seconds} सेकंद",
-    "saveStep": "पाऊल वाचवा"
+    "saving": "सांठवण...",
+    "saved": "सर्व बदल जतन झाले",
+    "saveFailed": "आपले बदल जतन करता आले नाहीत",
+    "noCorrectAnswer": "एक उत्तर बरोबर म्हणून चिन्हांकित करा."
   },
   "session": {
     "createSession": "नवीन सत्र सुरू करा",

@@ -175,7 +175,10 @@
     "timerLabel": "Nkarhi wo hetelela (a swi bohi)",
     "timerOff": "A ku na nkarhi wo hetelela",
     "timerSeconds": "Tisekondi ta {seconds}",
-    "saveStep": "Hlayisa goza"
+    "saving": "Ku hlayisa...",
+    "saved": "Ku cinciwa hinkwako ku hlayisiwile",
+    "saveFailed": "A swi kotekanga ku hlayisa ku cinca ka wena",
+    "noCorrectAnswer": "Komba nhlamulo yin'we tanihi leyi lulameke."
   },
   "session": {
     "createSession": "Sungula seshini leyintshwa",

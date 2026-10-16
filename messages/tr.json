@@ -175,7 +175,10 @@
     "timerLabel": "Zaman sınırı (isteğe bağlı)",
     "timerOff": "Zaman sınırı yok",
     "timerSeconds": "{seconds} saniye",
-    "saveStep": "Adım kaydet"
+    "saving": "Kaydediliyor...",
+    "saved": "Tüm değişiklikler kaydedildi",
+    "saveFailed": "Değişiklikleriniz kaydedilemedi",
+    "noCorrectAnswer": "Bir cevabı doğru olarak işaretleyin."
   },
   "session": {
     "createSession": "Yeni oturum başlat",

@@ -175,7 +175,10 @@
     "timerLabel": "時間限制（選擇性）",
     "timerOff": "無時間限制",
     "timerSeconds": "{seconds} 秒",
-    "saveStep": "節省步驟"
+    "saving": "正在儲存...",
+    "saved": "所有變更已儲存",
+    "saveFailed": "無法儲存您的變更",
+    "noCorrectAnswer": "將其中一個答案標記為正確答案。"
   },
   "session": {
     "createSession": "開始新會話",

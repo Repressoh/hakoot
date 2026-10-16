@@ -15,6 +15,7 @@ const codeBlockValidator = v.object({
       explanation: v.string(),
       label: v.string(),
       lines: v.array(v.number()),
+      linesText: v.optional(v.string()),
     })
   ),
   code: v.string(),

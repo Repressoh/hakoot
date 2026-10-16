@@ -175,7 +175,10 @@
     "timerLabel": "Tímamörk (valkvætt)",
     "timerOff": "Engin tímamörk",
     "timerSeconds": "{seconds} sekúndur",
-    "saveStep": "Vista skref"
+    "saving": "Vistað...",
+    "saved": "Allar breytingar vistaðar",
+    "saveFailed": "Ekki var hægt að vista breytingarnar þínar",
+    "noCorrectAnswer": "Merktu eitt svar sem rétt."
   },
   "session": {
     "createSession": "Byrja nýja lotu",

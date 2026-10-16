@@ -175,7 +175,10 @@
     "timerLabel": "Időhatár (nem kötelező)",
     "timerOff": "Nincs időkorlát",
     "timerSeconds": "{seconds} másodpercek",
-    "saveStep": "Mentés lépés"
+    "saving": "Mentés...",
+    "saved": "Minden módosítás mentve",
+    "saveFailed": "A módosításokat nem sikerült menteni",
+    "noCorrectAnswer": "Jelöljön meg egy választ helyesnek."
   },
   "session": {
     "createSession": "Új munkamenet indítása",

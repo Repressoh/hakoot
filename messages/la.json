@@ -175,7 +175,10 @@
     "timerLabel": "Terminus temporis (ad libitum)",
     "timerOff": "Nullum terminum temporis",
     "timerSeconds": "{seconds} secunda",
-    "saveStep": "Serva gradum"
+    "saving": "Servatur...",
+    "saved": "Omnes mutationes servatae",
+    "saveFailed": "Mutationes tuas servare non potuit",
+    "noCorrectAnswer": "Unam responsionem pro recta nota."
   },
   "session": {
     "createSession": "Novam sessionem incipe",

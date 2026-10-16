@@ -175,7 +175,10 @@
     "timerLabel": "Terfyn amser (dewisol)",
     "timerOff": "Dim terfyn amser",
     "timerSeconds": "{seconds} eiliad",
-    "saveStep": "Cadw cam"
+    "saving": "Cadw...",
+    "saved": "Pob newid wedi'u cadw",
+    "saveFailed": "Methu cadw eich newidiadau",
+    "noCorrectAnswer": "Nodwch un ateb fel yr ateb cywir."
   },
   "session": {
     "createSession": "Cychwyn sesiwn newydd",

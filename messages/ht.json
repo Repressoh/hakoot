@@ -175,7 +175,10 @@
     "timerLabel": "Limit tan (opsyonèl)",
     "timerOff": "Pa gen limit tan",
     "timerSeconds": "{seconds} segonn",
-    "saveStep": "Sove etap"
+    "saving": "Kap sove...",
+    "saved": "Tout chanjman anrejistre",
+    "saveFailed": "Pa t kapab anrejistre chanjman ou yo",
+    "noCorrectAnswer": "Make yon repons kòm kòrèk."
   },
   "session": {
     "createSession": "Kòmanse yon nouvo sesyon",

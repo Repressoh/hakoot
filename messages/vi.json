@@ -175,7 +175,10 @@
     "timerLabel": "Thời hạn (tùy chọn)",
     "timerOff": "Không có giới hạn thời gian",
     "timerSeconds": "{seconds} giây",
-    "saveStep": "Bỏ qua bước"
+    "saving": "Đang lưu...",
+    "saved": "Tất cả các thay đổi đã được lưu",
+    "saveFailed": "Không thể lưu các thay đổi của bạn",
+    "noCorrectAnswer": "Đánh dấu một câu trả lời là đúng."
   },
   "session": {
     "createSession": "Bắt đầu phiên mới",

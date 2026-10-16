@@ -175,7 +175,10 @@
     "timerLabel": "Límit de temps (opcional)",
     "timerOff": "Sense límit de temps",
     "timerSeconds": "{seconds} segons",
-    "saveStep": "Salta el pas"
+    "saving": "Desa...",
+    "saved": "Tots els canvis desats",
+    "saveFailed": "No s'han pogut desar els canvis",
+    "noCorrectAnswer": "Marca una resposta com a correcta."
   },
   "session": {
     "createSession": "Comença una nova sessió",

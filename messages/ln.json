@@ -175,7 +175,10 @@
     "timerLabel": "Ntango ya suka (soki olingi)",
     "timerOff": "Ntango ya suka ezali te",
     "timerSeconds": "{seconds} {seconds}",
-    "saveStep": "Bomba eteni"
+    "saving": "Kobomba...",
+    "saved": "Mbongwana nyonso ebombami",
+    "saveFailed": "Tokokaki te kobomba mbongwana na yo",
+    "noCorrectAnswer": "Tia elembo na eyano moko lokola ya malamu."
   },
   "session": {
     "createSession": "Banda session ya sika",

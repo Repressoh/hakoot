@@ -175,7 +175,10 @@
     "timerLabel": "Kipimo cha muda (hiari)",
     "timerOff": "Hakuna kikomo cha muda",
     "timerSeconds": "Sekunde {seconds}",
-    "saveStep": "Hifadhi hatua"
+    "saving": "Inahifadhiwa...",
+    "saved": "Mabadiliko yote yamehifadhiwa",
+    "saveFailed": "Haikuweza kuhifadhi mabadiliko yako",
+    "noCorrectAnswer": "Weka jibu moja kuwa sahihi."
   },
   "session": {
     "createSession": "Anza kikao kipya",

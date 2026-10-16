@@ -175,7 +175,10 @@
     "timerLabel": "Laiko limitas (neprivaloma)",
     "timerOff": "Laiko limito nėra",
     "timerSeconds": "{seconds} sekundės",
-    "saveStep": "Išsaugoti žingsnį"
+    "saving": "Išsaugoma...",
+    "saved": "Visi pakeitimai išsaugoti",
+    "saveFailed": "Nepavyko išsaugoti jūsų pakeitimų",
+    "noCorrectAnswer": "Pažymėkite vieną atsakymą kaip teisingą."
   },
   "session": {
     "createSession": "Pradėti naują sesiją",

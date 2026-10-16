@@ -175,7 +175,10 @@
     "timerLabel": "Ajaline piirang (vabatahtlik)",
     "timerOff": "Ajaline piirang puudub",
     "timerSeconds": "{seconds} sekundit",
-    "saveStep": "Salvesta samm"
+    "saving": "Salvestatakse...",
+    "saved": "Kõik muudatused on salvestatud",
+    "saveFailed": "Muudatusi ei õnnestunud salvestada",
+    "noCorrectAnswer": "Märgi üks vastus õigeks."
   },
   "session": {
     "createSession": "Uue seansi alustamine",

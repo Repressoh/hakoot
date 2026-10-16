@@ -175,7 +175,10 @@
     "timerLabel": "Limite de tempo (opcional)",
     "timerOff": "Sem limite de tempo",
     "timerSeconds": "{seconds} segundos",
-    "saveStep": "Guardar passo"
+    "saving": "A guardar...",
+    "saved": "Todas as alterações guardadas",
+    "saveFailed": "Não foi possível guardar as suas alterações",
+    "noCorrectAnswer": "Marque uma resposta como correta."
   },
   "session": {
     "createSession": "Iniciar nova sessão",

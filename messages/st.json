@@ -175,7 +175,10 @@
     "timerLabel": "Moedi wa nako (ha ho qobellehe)",
     "timerOff": "Ha ho na moedi oa nako",
     "timerSeconds": "{seconds} metsotswana",
-    "saveStep": "Boloka mohato"
+    "saving": "Ho boloka...",
+    "saved": "Liphetoho tsohle li bolokiloe",
+    "saveFailed": "Ho sitiloe ho boloka liphetoho tsa hau",
+    "noCorrectAnswer": "Tšoaea karabo e le 'ngoe e nepahetse."
   },
   "session": {
     "createSession": "Qala phutuho e ncha",

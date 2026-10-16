@@ -175,7 +175,10 @@
     "timerLabel": "Time limit (optional)",
     "timerOff": "No time limit",
     "timerSeconds": "{seconds} seconds",
-    "saveStep": "Save step"
+    "saving": "Saving...",
+    "saved": "All changes saved",
+    "saveFailed": "Couldn't save your changes",
+    "noCorrectAnswer": "Mark one answer as correct."
   },
   "session": {
     "createSession": "Start new session",

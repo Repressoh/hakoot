@@ -175,7 +175,10 @@
     "timerLabel": "Tydsbeperking (opsioneel)",
     "timerOff": "Geen tydsbeperking nie",
     "timerSeconds": "{seconds} sekondes",
-    "saveStep": "Bewaar stap"
+    "saving": "Bewaring...",
+    "saved": "Alle veranderinge gestoor",
+    "saveFailed": "Kon nie jou veranderinge stoor nie",
+    "noCorrectAnswer": "Merke een antwoord as korrek."
   },
   "session": {
     "createSession": "Begin nuwe sessie",

@@ -175,7 +175,10 @@
     "timerLabel": "Denbora-muga (aukerakoa)",
     "timerOff": "Denbora-mugarik ez",
     "timerSeconds": "{seconds} segundo",
-    "saveStep": "Gorde urratsa"
+    "saving": "Gorde...",
+    "saved": "Aldaketa guztiak gorde dira",
+    "saveFailed": "Zure aldaketak ezin izan dira gorde",
+    "noCorrectAnswer": "Erantzun bat zuzena gisa markatu."
   },
   "session": {
     "createSession": "Saio berri bat hasi",

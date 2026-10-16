@@ -8,6 +8,7 @@ export default defineConfig({
     include: [
       "convex/**/*.test.ts",
       "i18n/**/*.test.ts",
+      "lib/**/*.test.ts",
       "scripts/**/*.test.ts",
     ],
     server: { deps: { inline: ["convex-test"] } },

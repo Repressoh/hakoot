@@ -175,7 +175,10 @@
     "timerLabel": "Batas waktu (opsional)",
     "timerOff": "Tidak ada batas waktu",
     "timerSeconds": "{seconds} detik",
-    "saveStep": "Simpan langkah"
+    "saving": "Menyimpan...",
+    "saved": "Semua perubahan telah disimpan",
+    "saveFailed": "Perubahan Anda tidak dapat disimpan",
+    "noCorrectAnswer": "Tandai satu jawaban sebagai jawaban yang benar."
   },
   "session": {
     "createSession": "Mulai sesi baru",

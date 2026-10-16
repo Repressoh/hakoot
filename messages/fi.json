@@ -175,7 +175,10 @@
     "timerLabel": "Aikaraja (vapaaehtoinen)",
     "timerOff": "Ei aikarajoitusta",
     "timerSeconds": "{seconds} sekuntia",
-    "saveStep": "Tallenna vaihe"
+    "saving": "Tallennetaan...",
+    "saved": "Kaikki muutokset on tallennettu",
+    "saveFailed": "Muutoksia ei voitu tallentaa",
+    "noCorrectAnswer": "Merkitse yksi vastaus oikeaksi."
   },
   "session": {
     "createSession": "Aloita uusi istunto",

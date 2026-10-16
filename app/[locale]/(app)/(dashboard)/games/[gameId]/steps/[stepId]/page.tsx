@@ -41,10 +41,11 @@ export default function StepEditorPage() {
         </Link>
       </div>
 
+      {/* Keyed so the form and its autosave start over on another step. */}
       {step.type === "theory" ? (
-        <TheoryStepEditor step={step} />
+        <TheoryStepEditor key={step._id} step={step} />
       ) : (
-        <QuizStepEditor step={step} />
+        <QuizStepEditor key={step._id} step={step} />
       )}
     </div>
   );

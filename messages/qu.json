@@ -175,7 +175,10 @@
     "timerLabel": "Pacha saywa (munaspaqa)",
     "timerOff": "Mana pacha saywanchu",
     "timerSeconds": "{seconds} segundo",
-    "saveStep": "Pata waqaychay"
+    "saving": "Waqaychachkan...",
+    "saved": "Tukuy t'ikraykuna waqaychasqa",
+    "saveFailed": "Mana atirqankichu hukmanyachisqaykikunata waqaychayta",
+    "noCorrectAnswer": "Huk kutichiyta chiqaqpaq chimp'iy."
   },
   "session": {
     "createSession": "Musuq pukllayta qallariy",

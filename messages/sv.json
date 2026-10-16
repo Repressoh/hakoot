@@ -175,7 +175,10 @@
     "timerLabel": "Tidsgräns (valfritt)",
     "timerOff": "Ingen tidsbegränsning",
     "timerSeconds": "{seconds} sekunder",
-    "saveStep": "Spara steg"
+    "saving": "Sparar...",
+    "saved": "Alla ändringar har sparats",
+    "saveFailed": "Det gick inte att spara dina ändringar",
+    "noCorrectAnswer": "Markera ett svar som rätt."
   },
   "session": {
     "createSession": "Starta ny session",

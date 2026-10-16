@@ -175,7 +175,10 @@
     "timerLabel": "Tijdslimiet (optioneel)",
     "timerOff": "Geen tijdslimiet",
     "timerSeconds": "{seconds} seconden",
-    "saveStep": "Stap opslaan"
+    "saving": "Bezig met opslaan...",
+    "saved": "Alle wijzigingen opgeslagen",
+    "saveFailed": "Je wijzigingen konden niet worden opgeslagen",
+    "noCorrectAnswer": "Markeer één antwoord als juist."
   },
   "session": {
     "createSession": "Nieuwe sessie starten",

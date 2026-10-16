@@ -175,7 +175,10 @@
     "timerLabel": "Teorainn ama (roghnach)",
     "timerOff": "Gan teorainn ama",
     "timerSeconds": "{seconds} soicind",
-    "saveStep": "Sábháil céim"
+    "saving": "Ag sábháil...",
+    "saved": "Gach athrú sábháilte",
+    "saveFailed": "Níorbh fhéidir do chuid athruithe a shábháil",
+    "noCorrectAnswer": "Marcáil freagra amháin mar cheart."
   },
   "session": {
     "createSession": "Tosaigh seisiún nua",

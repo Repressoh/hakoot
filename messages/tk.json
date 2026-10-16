@@ -175,7 +175,10 @@
     "timerLabel": "Wagt çägi (islegli)",
     "timerOff": "Wagt çägi ýok",
     "timerSeconds": "{seconds} sekunt",
-    "saveStep": "Adymy sakla"
+    "saving": "Ýazylýar...",
+    "saved": "Ähli üýtgeşmeler ýazdyryldy",
+    "saveFailed": "Üýtgeşmeleriňizi saklap bolmady",
+    "noCorrectAnswer": "Bir jogaby dogry diýip belläň."
   },
   "session": {
     "createSession": "Täze sessiýa başlat",

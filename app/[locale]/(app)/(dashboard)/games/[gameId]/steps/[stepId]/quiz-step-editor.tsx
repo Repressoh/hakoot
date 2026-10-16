@@ -4,12 +4,13 @@ import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { getUnsavedDraft, useAutosave } from "@/lib/use-autosave";
 import { cn } from "@/lib/utils";
+import { SaveStatus } from "./save-status";
 
 const TIMER_OPTIONS: (number | null)[] = [null, 10, 20, 30, 60, 90, 120];
 
@@ -30,23 +31,45 @@ interface Props {
   step: Step;
 }
 
-/** Editor for a quiz step's question, answer choices and time limit. */
+/** What the editor saves, and the unsaved draft it can start from. */
+interface QuizDraft {
+  choices: QuizChoice[];
+  question: string;
+  timeLimitSeconds: number | null;
+}
+
+/** Editor for a quiz step's question, answer choices and time limit; changes save automatically. */
 export function QuizStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateQuiz = useMutation(api.steps.updateQuiz);
-  const [saving, setSaving] = useState(false);
 
-  const [question, setQuestion] = useState(step.question ?? "");
-  const [choices, setChoices] = useState<QuizChoice[]>(
-    step.choices ?? [
-      { isCorrect: false, text: "" },
-      { isCorrect: false, text: "" },
-      { isCorrect: false, text: "" },
-      { isCorrect: false, text: "" },
-    ]
+  const [initial] = useState<QuizDraft>(
+    () =>
+      getUnsavedDraft<QuizDraft>(step._id) ?? {
+        choices: step.choices ?? [
+          { isCorrect: false, text: "" },
+          { isCorrect: false, text: "" },
+          { isCorrect: false, text: "" },
+          { isCorrect: false, text: "" },
+        ],
+        question: step.question ?? "",
+        timeLimitSeconds: step.timeLimitSeconds ?? null,
+      }
   );
-  const [timeLimitSeconds, setTimeLimitSeconds] = useState<number | null>(
-    step.timeLimitSeconds ?? null
+  const [question, setQuestion] = useState(initial.question);
+  const [choices, setChoices] = useState(initial.choices);
+  const [timeLimitSeconds, setTimeLimitSeconds] = useState(
+    initial.timeLimitSeconds
+  );
+  const hasCorrect = choices.some((c) => c.isCorrect);
+
+  // Drafts are saved as they are: a quiz without a question or a correct
+  // answer can still be played, so the hint below only points it out.
+  const saveStatus = useAutosave<QuizDraft>(
+    step._id,
+    { choices, question, timeLimitSeconds },
+    (quiz) => updateQuiz({ ...quiz, stepId: step._id }),
+    () => toast.error(t("saveFailed"), { id: "step-autosave" })
   );
 
   function updateChoice(i: number, text: string) {
@@ -61,34 +84,6 @@ export function QuizStepEditor({ step }: Props) {
     );
   }
 
-  async function handleSave() {
-    if (!question.trim()) {
-      toast.error("Question is required");
-      return;
-    }
-    const hasCorrect = choices.some((c) => c.isCorrect);
-    if (!hasCorrect) {
-      toast.error("Mark at least one answer as correct");
-      return;
-    }
-
-    setSaving(true);
-    const timeLimitValue = timeLimitSeconds ?? undefined;
-    try {
-      await updateQuiz({
-        choices,
-        question,
-        stepId: step._id,
-        timeLimitSeconds: timeLimitValue,
-      });
-      toast.success("Saved!");
-      setSaving(false);
-    } catch {
-      setSaving(false);
-      toast.error("Failed to save");
-    }
-  }
-
   const CHOICE_COLORS = [
     "bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800",
     "bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800",
@@ -100,9 +95,7 @@ export function QuizStepEditor({ step }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-semibold text-xl">{t("quizTitle")}</h1>
-        <Button disabled={saving} onClick={handleSave}>
-          {saving ? "Saving..." : t("saveStep")}
-        </Button>
+        <SaveStatus status={saveStatus} />
       </div>
 
       {/* Question */}
@@ -162,6 +155,11 @@ export function QuizStepEditor({ step }: Props) {
             </div>
           ))}
         </div>
+        {hasCorrect ? null : (
+          <p className="text-muted-foreground text-xs">
+            {t("noCorrectAnswer")}
+          </p>
+        )}
       </div>
 
       {/* Timer */}

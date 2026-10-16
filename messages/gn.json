@@ -175,7 +175,10 @@
     "timerLabel": "Ára paha (reipotárõ)",
     "timerOff": "Ndaipóri ára paha",
     "timerSeconds": "{seconds} segundo",
-    "saveStep": "Eñongatu pe pa'ũ"
+    "saving": "Oñeñongatúvo...",
+    "saved": "Oñeñongatu opaite ñemoambue",
+    "saveFailed": "Ndaikatúi oñeñongatu ne ñemoambue",
+    "noCorrectAnswer": "Ehechauka peteĩ mbohovái hekopeguáramo."
   },
   "session": {
     "createSession": "Eñepyrũ peteĩ sesión pyahu",
