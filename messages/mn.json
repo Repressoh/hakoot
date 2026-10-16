@@ -123,9 +123,9 @@
     "createGame": "Шинэ тоглоом",
     "emptyTitle": "Одоогоор тоглоом байхгүй",
     "emptyDesc": "Эхлэхийн тулд анхны интерактив сургалтын тоглоомоо үүсгээрэй.",
-    "steps": "{тоо, олон тоо, =0 {алхамгүй} =1 {1 алхам} бусад {# алхам}}",
-    "sessions": "{тоо, олон тоо, =0 {сесс байхгүй} =1 {1 сесс} бусад {# сесс}}",
-    "lastEdited": "Засварлагдсан {огноо}",
+    "steps": "{count, plural, =0 {Алхам байхгүй} =1 {1 алхам} other {# алхам}}",
+    "sessions": "{count, plural, =0 {Сесс байхгүй} =1 {1 сесс} other {# сесс}}",
+    "lastEdited": "Засварласан: {date}",
     "deleteConfirm": "Та энэ тоглоомыг устгахыг үнэхээр хүсэж байна уу? Энэ үйлдлийг буцаах боломжгүй.",
     "deleteSuccess": "Тоглоом устгагдсан.",
     "createSuccess": "Тоглоом бүтээгдлээ!"
@@ -136,7 +136,7 @@
     "addTheoryStep": "Теоремийн алхам",
     "addQuizStep": "Сорилтын алхам",
     "noSteps": "Одоогоор алхам байхгүй байна. Эхлэхийн тулд онол эсвэл тестийн алхам нэмнэ үү.",
-    "stepOrder": "Алхам {тоо}",
+    "stepOrder": "Алхам {number}",
     "moveUp": "Дээш шилжих",
     "moveDown": "Доош шилжих",
     "deleteStep": "Алхмыг устгах",
@@ -174,7 +174,7 @@
     "correctAnswer": "Зөв хариулт",
     "timerLabel": "Цаг хязгаар (сонголттой)",
     "timerOff": "Цаг хязгааргүй",
-    "timerSeconds": "{секунд} секунд",
+    "timerSeconds": "{seconds} секунд",
     "saveStep": "Алхмыг хадгалах"
   },
   "session": {
@@ -196,19 +196,19 @@
     "selectAll": "Бүгдийг сонго",
     "deselectAll": "Бүгдийг сонголтоос хасах",
     "noValidEntry": "Дор хаяж нэг хүчинтэй бичлэг нэмнэ үү",
-    "sendSuccess": "Илгээсэн {sent} {sent, олон тоо, =1 {invite} бусад {invites}}",
-    "sendSuccessPartial": "Илгээсэн {sent} {sent, олон тоо, =1 {invite} бусад {invites}}, {failed} бүтэлгүйтсэн",
+    "sendSuccess": "{sent, plural, other {# урилга илгээлээ}}",
+    "sendSuccessPartial": "{sent, plural, other {# урилга илгээлээ}}, амжилтгүй: {failed}",
     "sendFailed": "Урилга илгээхэд алдаа гарлаа",
     "waitingRoom": "Хүлээлгийн өрөө",
     "participants": "Оролцогчид",
     "waitingForPlayers": "Тоглогчид нэгдэхийг хүлээж байна...",
-    "participantsJoined": "{count, plural, =0 {Оролцогч байхгүй} =1 {1 оролцогч} other {# оролцогч}} нэгдсэн",
+    "participantsJoined": "{count, plural, =0 {Оролцогч нэгдээгүй} other {# оролцогч нэгдлээ}}",
     "startSession": "Тоглоом эхлүүлэх",
     "endSession": "Эцсийн тоглолт",
     "nextStep": "Дараагийн алхам",
     "revealAnswer": "Хариултыг харуулах",
     "showLeaderboard": "Удирдах самбарыг харуулах",
-    "answeredCount": "{хариулсан}/{нийт} хариулсан",
+    "answeredCount": "{answered}/{total} хариулсан",
     "currentStep": "Нийт {total}-ийн {current} алхам",
     "sessionEnded": "Хурал дууслаа",
     "viewResults": "Үр дүнг үзэх",
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Зохион байгуулагч эхлэхийг хүлээж байна...",
-    "waitingParticipants": "Та оролцож байна! Одоогоор {# хүмүүс} хүн нэгдсэн байна.",
+    "waitingParticipants": "Та нэгдлээ! Одоогоор {count, plural, other {# хүн}} нэгдсэн байна.",
     "theoryLabel": "Анхааралтай уншаарай",
     "quizLabel": "Асуулт",
     "submitAnswer": "Хариултыг илгээх",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Цаг дууслаа!",
-    "secondsRemaining": "{секундүүд, олон тоо, нэг {# үлдсэн секунд} бусад {# үлдсэн секунд}}"
+    "secondsRemaining": "{seconds, plural, other {# секунд үлдлээ}}"
   },
   "results": {
     "title": "Хуралдааны үр дүн",

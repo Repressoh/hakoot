@@ -123,8 +123,8 @@
     "createGame": "Jòc nòu",
     "emptyTitle": "Pas de jòcs encara",
     "emptyDesc": "Crea ton primièr jòc d'aprendissatge interactiu per començar.",
-    "steps": "{comptar, plural, =0 {pas d'etapas} =1 {1 etapa} autra {# d'etapas}}",
-    "sessions": "{count, plural, =0 {Cap de session} =1 {1 session} autre {# sessions}}",
+    "steps": "{count, plural, =0 {Cap d'etapa} =1 {1 etapa} other {# etapas}}",
+    "sessions": "{count, plural, =0 {Cap de session} =1 {1 session} other {# sessions}}",
     "lastEdited": "Modificat {date}",
     "deleteConfirm": "Sètz segur que volètz suprimir aqueste jòc? Aquesta accion es irreversible.",
     "deleteSuccess": "Jòc suprimit.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Rèsposta corrècta",
     "timerLabel": "Limita de temps (opcional)",
     "timerOff": "Pas de limit de temps",
-    "timerSeconds": "{segondas} segondas",
+    "timerSeconds": "{seconds} segondas",
     "saveStep": "Salvar pas"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Seleccionar tot",
     "deselectAll": "Deseleccionar tot",
     "noValidEntry": "Apondètz almens una entrada valida.",
-    "sendSuccess": "Mandat {mandat} {mandats, plural, =1 {convidar} autres {convidas}}",
-    "sendSuccessPartial": "Mandat {mandat} {mandats, plural, =1 {convidar} autres {convidas}}, {fallit} fallit",
+    "sendSuccess": "{sent, plural, =1 {1 convit mandat} other {# convits mandats}}",
+    "sendSuccessPartial": "{sent, plural, =1 {1 convit mandat} other {# convits mandats}}, fracassats: {failed}",
     "sendFailed": "Mandada de las invitacions pas reüssida",
     "waitingRoom": "Sala d'espèra",
     "participants": "Participants",
     "waitingForPlayers": "En esperant que los jogaires se jónhen...",
-    "participantsJoined": "{count, plural, =0 {Cap de participant} =1 {1 participant} autre {# participants}} se son units",
+    "participantsJoined": "{count, plural, =0 {Cap de participant s'es junt} =1 {1 participant s'es junt} other {# participants se son junts}}",
     "startSession": "Començar lo jòc",
     "endSession": "Fin de partida",
     "nextStep": "Lo pas seguent",
     "revealAnswer": "Mostrar la responsa",
     "showLeaderboard": "Mostrar lo classament",
-    "answeredCount": "{respondut}/{total} respondut",
-    "currentStep": "Etapa {actuala} de {totala}",
+    "answeredCount": "{answered}/{total} an respondut",
+    "currentStep": "Etapa {current} de {total}",
     "sessionEnded": "La session s'es acabada",
     "viewResults": "Veire los resultats",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Esperant que l'amfitrion comence...",
-    "waitingParticipants": "Siás dedins! {count, plural, =1 {1 persona} autras {# personas}} se son ja inscrichas.",
+    "waitingParticipants": "Siás dedins! {count, plural, =1 {Fins ara, 1 persona s'es juntada.} other {Fins ara, # personas se son juntadas.}}",
     "theoryLabel": "Legissètz atentivament",
     "quizLabel": "Pregunta",
     "submitAnswer": "Sometre la responsa",
@@ -238,7 +238,7 @@
     "correct": "Correcte!",
     "incorrect": "Incorrècte",
     "pointsEarned": "+{points} punts",
-    "timerLeft": "{segondas} demòran",
+    "timerLeft": "Demòran {seconds} s",
     "timeUp": "Lo temps es acabat!",
     "leaderboardTitle": "Classament",
     "yourScore": "Ton puntatge: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Lo temps es acabat!",
-    "secondsRemaining": "segondas, plural, una {# segonda demoranta} l'autra {# segondas demorantas}"
+    "secondsRemaining": "{seconds, plural, one {Demòra # segonda} other {Demòran # segondas}}"
   },
   "results": {
     "title": "Resultats de la session",

@@ -123,9 +123,9 @@
     "createGame": "Ný leikur",
     "emptyTitle": "Ekki ennþá neinir leikir",
     "emptyDesc": "Búðu til þitt fyrsta gagnvirka námsleik til að byrja.",
-    "steps": "{fjöldi, fleirtala, =0 {engin skref} =1 {1 skref} annað {# skref}}",
-    "sessions": "{fjöldi, fleirtala, =0 {Engar lotur} =1 {1 lota} önnur {# lotur}}",
-    "lastEdited": "Breytt {dagsetning}",
+    "steps": "{count, plural, =0 {Engin skref} other {# skref}}",
+    "sessions": "{count, plural, =0 {Engar lotur} one {# lota} other {# lotur}}",
+    "lastEdited": "Breytt {date}",
     "deleteConfirm": "Ertu viss um að þú viljir eyða þessum leik? Þessa aðgerð er ekki hægt að ógilda.",
     "deleteSuccess": "Leikurinn var eyddur.",
     "createSuccess": "Leikur búinn til!"
@@ -174,7 +174,7 @@
     "correctAnswer": "Rétt svar",
     "timerLabel": "Tímamörk (valkvætt)",
     "timerOff": "Engin tímamörk",
-    "timerSeconds": "{sekúndur} sekúndur",
+    "timerSeconds": "{seconds} sekúndur",
     "saveStep": "Vista skref"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Velja allt",
     "deselectAll": "Afvelja allt",
     "noValidEntry": "Bættu við að minnsta kosti einni gildri færslu",
-    "sendSuccess": "Sent {sent} {sent, fleirtala, =1 {boð} annar {boð}}",
-    "sendSuccessPartial": "Sent {sent} {sent, fleirtala, =1 {boð} önnur {boð}}, {misheppnað} misheppnað",
+    "sendSuccess": "{sent, plural, one {# boð sent} other {# boð send}}",
+    "sendSuccessPartial": "{sent, plural, one {# boð sent} other {# boð send}}, mistókst: {failed}",
     "sendFailed": "Ekki tókst að senda boð",
     "waitingRoom": "Bíðurými",
     "participants": "Þátttakendur",
     "waitingForPlayers": "Bíður eftir að leikmenn bætist við...",
-    "participantsJoined": "{count, plural, =0 {Engir þátttakendur} =1 {1 þátttakandi} other {# þátttakendur}} tóku þátt",
+    "participantsJoined": "{count, plural, =0 {Engir þátttakendur hafa bæst við} one {# þátttakandi bættist við} other {# þátttakendur bættust við}}",
     "startSession": "Ræsa leikinn",
     "endSession": "Endaleikur",
     "nextStep": "Næsta skref",
     "revealAnswer": "Birta svar",
     "showLeaderboard": "Sýna forystutöflu",
-    "answeredCount": "{svarað}/{heild} svarað",
-    "currentStep": "Skref {núverandi} af {heildarfjöldi}",
+    "answeredCount": "{answered}/{total} hafa svarað",
+    "currentStep": "Skref {current} af {total}",
     "sessionEnded": "Fundur lauk",
     "viewResults": "Skoða niðurstöður",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Bíða eftir að gestgjafinn byrji...",
-    "waitingParticipants": "Þú ert kominn með! {count, plural, =1 {1 manneskja} önnur {# manneskjur}} hafa skráð sig hingað til.",
+    "waitingParticipants": "Þú ert með! {count, plural, one {# manneskja hefur bæst við hingað til.} other {# manneskjur hafa bæst við hingað til.}}",
     "theoryLabel": "Lesið vandlega",
     "quizLabel": "Spurning",
     "submitAnswer": "Senda svar",
@@ -238,7 +238,7 @@
     "correct": "Rétt!",
     "incorrect": "Rangt",
     "pointsEarned": "+{points} stig",
-    "timerLeft": "{sekúndur} eftir",
+    "timerLeft": "{seconds} s eftir",
     "timeUp": "Tíminn er úti!",
     "leaderboardTitle": "Stigatöflu",
     "yourScore": "Stig þitt: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Tíminn er úti!",
-    "secondsRemaining": "{sekúndur, fleirtala, ein {# sekúnda eftir} önnur {# sekúndur eftir}}"
+    "secondsRemaining": "{seconds, plural, one {# sekúnda eftir} other {# sekúndur eftir}}"
   },
   "results": {
     "title": "Niðurstöður fundarins",

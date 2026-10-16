@@ -123,8 +123,8 @@
     "createGame": "Lojë e re",
     "emptyTitle": "Ende asnjë lojë",
     "emptyDesc": "Krijoni lojën tuaj të parë interaktive të të nxënit për t'u nisur.",
-    "steps": "{numër, shumës, =0 {Pa hapa} =1 {1 hap} tjetër {# hapa}}",
-    "sessions": "{numër, shumës, =0 {Pa seanca} =1 {1 seancë} tjetër {# seanca}}",
+    "steps": "{count, plural, =0 {Asnjë hap} =1 {1 hap} other {# hapa}}",
+    "sessions": "{count, plural, =0 {Asnjë seancë} =1 {1 seancë} other {# seanca}}",
     "lastEdited": "Redaktuar {date}",
     "deleteConfirm": "A jeni të sigurt që dëshironi të fshini këtë lojë? Kjo veprim nuk mund të kthehet mbrapsht.",
     "deleteSuccess": "Loja u fshi.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Përgjigjja e saktë",
     "timerLabel": "Kufizimi i kohës (opsional)",
     "timerOff": "Nuk ka kufizim kohe",
-    "timerSeconds": "{sekonda} sekonda",
+    "timerSeconds": "{seconds} sekonda",
     "saveStep": "Ruaj hapin"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Zgjidh të gjitha",
     "deselectAll": "Hiqni të gjitha",
     "noValidEntry": "Shto të paktën një hyrje të vlefshme",
-    "sendSuccess": "Dërguar {sent} {sent, shumës, =1 {ftoj} të tjerë {fton}}",
-    "sendSuccessPartial": "Dërguar {sent} {sent, plural, =1 {invite} other {invites}}, {failed} dështuar",
+    "sendSuccess": "{sent, plural, =1 {U dërgua 1 ftesë} other {U dërguan # ftesa}}",
+    "sendSuccessPartial": "{sent, plural, =1 {U dërgua 1 ftesë} other {U dërguan # ftesa}}, dështuan: {failed}",
     "sendFailed": "Dështoi dërgimi i ftesave",
     "waitingRoom": "Dhoma e pritjes",
     "participants": "Pjesëmarrësit",
     "waitingForPlayers": "Po presim që lojtarët të bashkohen...",
-    "participantsJoined": "{count, plural, =0 {Asnjë pjesëmarrës} =1 {1 pjesëmarrës} other {# pjesëmarrës}} u bashkuan",
+    "participantsJoined": "{count, plural, =0 {Nuk është bashkuar asnjë pjesëmarrës} =1 {U bashkua 1 pjesëmarrës} other {U bashkuan # pjesëmarrës}}",
     "startSession": "Fillo lojën",
     "endSession": "Fundi i lojës",
     "nextStep": "Hapi tjetër",
     "revealAnswer": "Zbuloni përgjigjen",
     "showLeaderboard": "Tregoni tabelën e renditjes",
-    "answeredCount": "{përgjigjur}/{total} përgjigjur",
-    "currentStep": "Hapi {aktuali} nga {totali}",
+    "answeredCount": "{answered}/{total} janë përgjigjur",
+    "currentStep": "Hapi {current} nga {total}",
     "sessionEnded": "Seanca përfundoi",
     "viewResults": "Shiko rezultatet",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Po presim që nikoqiri të fillojë...",
-    "waitingParticipants": "Je brenda! {count, plural, =1 {1 person} other {# people}} janë bashkuar deri tani.",
+    "waitingParticipants": "Je brenda! {count, plural, =1 {Deri tani është bashkuar 1 person.} other {Deri tani janë bashkuar # persona.}}",
     "theoryLabel": "Lexo me kujdes",
     "quizLabel": "Pyetje",
     "submitAnswer": "Dorëzo përgjigjen",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Koha ka mbaruar!",
-    "secondsRemaining": "{sekonda, shumës, një {# sekondë e mbetur} tjetra {# sekonda të mbetura}}"
+    "secondsRemaining": "{seconds, plural, one {Ka mbetur # sekondë} other {Kanë mbetur # sekonda}}"
   },
   "results": {
     "title": "Rezultatet e seancës",

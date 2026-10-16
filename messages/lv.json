@@ -123,8 +123,8 @@
     "createGame": "Jauna spēle",
     "emptyTitle": "Vēl nav spēļu",
     "emptyDesc": "Izveidojiet savu pirmo interaktīvo mācību spēli, lai sāktu.",
-    "steps": "{skaitlis, daudzskaitlī, =0 {Nav soļu} =1 {1 solis} cits {# soļu}}",
-    "sessions": "{skaitlis, daudzskaitlī, =0 {No sesijas} =1 {1 sesija} citi {# sesijas}}",
+    "steps": "{count, plural, =0 {Nav soļu} one {# solis} other {# soļi}}",
+    "sessions": "{count, plural, =0 {Nav sesiju} one {# sesija} other {# sesijas}}",
     "lastEdited": "Rediģēts {date}",
     "deleteConfirm": "Vai esat pārliecināts, ka vēlaties izdzēst šo spēli? Šo darbību nevar atsaukt.",
     "deleteSuccess": "Spēle dzēsta.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Pareiza atbilde",
     "timerLabel": "Laika ierobežojums (pēc izvēles)",
     "timerOff": "Bez laika ierobežojuma",
-    "timerSeconds": "{sekundes} sekundes",
+    "timerSeconds": "{seconds} sekundes",
     "saveStep": "Saglabāt soli"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Atlasiet visus",
     "deselectAll": "Atcelt visu",
     "noValidEntry": "Pievienojiet vismaz vienu derīgu ierakstu",
-    "sendSuccess": "Nosūtīts {nosūtīts} {nosūtīts, daudzskaitlī, =1 {uzaicina} citus {uzaicina}}.",
-    "sendSuccessPartial": "Nosūtīts {nosūtīts} {nosūtīts, daudzskaitlī, =1 {uzaicinājums} citi {uzaicinājumi}}, {neizdevās} neizdevās",
+    "sendSuccess": "{sent, plural, one {Nosūtīts # uzaicinājums} other {Nosūtīti # uzaicinājumi}}",
+    "sendSuccessPartial": "{sent, plural, one {Nosūtīts # uzaicinājums} other {Nosūtīti # uzaicinājumi}}, neizdevās: {failed}",
     "sendFailed": "Neizdevās nosūtīt ielūgumus",
     "waitingRoom": "Gaidīšanas telpa",
     "participants": "Dalībnieki",
     "waitingForPlayers": "Gaidām spēlētājus, lai pievienotos...",
-    "participantsJoined": "{skaitlis, daudzskaitlī, =0 {No dalībnieku} =1 {1 dalībnieks} citi {# dalībnieki}} pievienojās",
+    "participantsJoined": "{count, plural, =0 {Neviens dalībnieks nav pievienojies} one {Pievienojās # dalībnieks} other {Pievienojās # dalībnieki}}",
     "startSession": "Spēles sākšana",
     "endSession": "Spēles beigas",
     "nextStep": "Nākamais solis",
     "revealAnswer": "Atklājiet atbildi",
     "showLeaderboard": "Rādīt līderu tablo",
-    "answeredCount": "{atbildēts}/{kopskaits} atbildēts",
-    "currentStep": "Solis {pašreizējais} no {kopējais}",
+    "answeredCount": "Atbildējuši: {answered}/{total}",
+    "currentStep": "Solis {current} no {total}",
     "sessionEnded": "Sesijas beigas",
     "viewResults": "Apskatīt rezultātus",
     "sessionStatus": {
@@ -230,14 +230,14 @@
   },
   "play": {
     "waitingTitle": "Gaidām, kad sāksies saimnieks...",
-    "waitingParticipants": "Jūs esat iekļauts! {count, plurāli, =1 {1 persona} citi {# cilvēki}} līdz šim pievienojušies.",
+    "waitingParticipants": "Tu esi iekšā! {count, plural, one {Līdz šim pievienojies # cilvēks.} other {Līdz šim pievienojušies # cilvēki.}}",
     "theoryLabel": "Uzmanīgi izlasiet",
     "quizLabel": "Jautājums",
     "submitAnswer": "Iesniegt atbildi",
     "waitingReveal": "Atbilde bloķēta! Gaidām rezultātus...",
     "correct": "Pareizi!",
     "incorrect": "Nepareizs",
-    "pointsEarned": "+{punkti} punkti",
+    "pointsEarned": "+{points} punkti",
     "timerLeft": "{seconds}s left",
     "timeUp": "Laiks ir beidzies!",
     "leaderboardTitle": "Līderu saraksts",
@@ -245,11 +245,11 @@
     "rank": "#{rank}",
     "finalTitle": "Spēles beigas!",
     "finalScore": "Galīgais rezultāts: {score}",
-    "finalRank": "Jūs ierindojāties #{rank} no {kopskaita}"
+    "finalRank": "Tu ieņēmi #{rank}. vietu no {total}"
   },
   "timer": {
     "timeUp": "Laiks ir beidzies!",
-    "secondsRemaining": "{sekundes, daudzskaitlī, viena {# atlikusī sekunde} otra {# atlikušās sekundes}}"
+    "secondsRemaining": "{seconds, plural, one {Atlikusi # sekunde} other {Atlikušas # sekundes}}"
   },
   "results": {
     "title": "Sesijas rezultāti",

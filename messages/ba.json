@@ -123,9 +123,9 @@
     "createGame": "Яңы уйын",
     "emptyTitle": "Әле уйындар юҡ",
     "emptyDesc": "Башлау өсөн үҙегеҙҙең тәүге интерактив уҡыу уйынын булдырығыҙ.",
-    "steps": "{count, plural, =0 {адымдар юҡ} =1 {1 адым} башҡа {# адымдар}}",
-    "sessions": "{count, plural, =0 {сессиялар юҡ} =1 {1 сессия} other {# сессиялар}}",
-    "lastEdited": "Мөхәррирләнде {дата}",
+    "steps": "{count, plural, =0 {Аҙымдар юҡ} =1 {1 аҙым} other {# аҙым}}",
+    "sessions": "{count, plural, =0 {Сессиялар юҡ} =1 {1 сессия} other {# сессия}}",
+    "lastEdited": "Мөхәррирләнде: {date}",
     "deleteConfirm": "Һеҙ был уйынды бөтөнләй юйырға теләйһегеҙме? Был эш кире ҡайтарылмай.",
     "deleteSuccess": "Уйын юйылды.",
     "createSuccess": "Уйын барлыҡҡа килде!"
@@ -136,7 +136,7 @@
     "addTheoryStep": "Теория аҙымы",
     "addQuizStep": "Викторина аҙымы",
     "noSteps": "Әле бер ҙә аҙым юҡ. Башлау өсөн теория йәки тест аҙымын өҫтәгеҙ.",
-    "stepOrder": "Аҙым {сан}",
+    "stepOrder": "Аҙым {number}",
     "moveUp": "Юғары күсер",
     "moveDown": "Түбәнгә күсер",
     "deleteStep": "Аҙымды бөтөрөү",
@@ -174,7 +174,7 @@
     "correctAnswer": "Дөрөҫ яуап",
     "timerLabel": "Ваҡыт сикләүе (ихтыяри)",
     "timerOff": "Ваҡыт сикләүе юҡ",
-    "timerSeconds": "{секундтар} секунд",
+    "timerSeconds": "{seconds} секунд",
     "saveStep": "Аҙымды һаҡларға"
   },
   "session": {
@@ -196,19 +196,19 @@
     "selectAll": "Барыһын да һайларға",
     "deselectAll": "Барыһын да һайлауҙан сығарыу",
     "noValidEntry": "Ким тигәндә бер дөрөҫ яҙма өҫтәгеҙ",
-    "sendSuccess": "Ебәрелгән {sent} {sent, күплек, =1 {invite} башҡа {invites}}",
-    "sendSuccessPartial": "Ебәрелгән {sent} {sent, күплек, =1 {invite} башҡа {invites}}, {failed} уңышһыҙ булған",
+    "sendSuccess": "{sent, plural, =1 {1 саҡырыу ебәрелде} other {# саҡырыу ебәрелде}}",
+    "sendSuccessPartial": "{sent, plural, =1 {1 саҡырыу ебәрелде} other {# саҡырыу ебәрелде}}, уңышһыҙ: {failed}",
     "sendFailed": "Ҡотлау ебәреү уңышһыҙ булды",
     "waitingRoom": "Көтөү бүлмәһе",
     "participants": "Ҡатнашыусылар",
     "waitingForPlayers": "Уйынсыларҙың ҡушылыуын көтәбеҙ...",
-    "participantsJoined": "{count, plural, =0 {Ҡатнашыусылар юҡ} =1 {1 ҡатнашыусы} other {# ҡатнашыусылар}} ҡушылды",
+    "participantsJoined": "{count, plural, =0 {Ҡатнашыусылар ҡушылманы} =1 {1 ҡатнашыусы ҡушылды} other {# ҡатнашыусы ҡушылды}}",
     "startSession": "Уйынды башла",
     "endSession": "Ахырғы уйын",
     "nextStep": "Киләһе аҙым",
     "revealAnswer": "Яуапты күрһәтеү",
     "showLeaderboard": "Лидерҙар таблицаһын күрһәтегеҙ",
-    "answeredCount": "{яуапланды}/{барлығы} яуап бирелде",
+    "answeredCount": "{answered}/{total} яуап бирҙе",
     "currentStep": "{total}-ҙән {current} аҙым",
     "sessionEnded": "Сессия тамамланды",
     "viewResults": "Нәтижәләрҙе ҡарау",
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Һосттың башлауын көтәбеҙ...",
-    "waitingParticipants": "Һин ҡатнаша алаһың! {count, plural, =1 {1 кеше}} хәҙерге ваҡытта ҡушылды.",
+    "waitingParticipants": "Һин ҡатнашаһың! Әлегә {count, plural, =1 {1 кеше} other {# кеше}} ҡушылды.",
     "theoryLabel": "Иғтибар менән уҡығыҙ",
     "quizLabel": "Һорау",
     "submitAnswer": "Яуап ебәрергә",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Ваҡыт тамамланды!",
-    "secondsRemaining": "{секундтар, күплек, бер {# ҡалған секунд} икенсе {# ҡалған секундтар}}"
+    "secondsRemaining": "{seconds, plural, other {# секунд ҡалды}}"
   },
   "results": {
     "title": "Сессия һөҙөмтәләре",
@@ -260,7 +260,7 @@
     "incorrect": "Дөрөҫ түгел",
     "noAnswer": "Яуап юҡ",
     "avgTime": "Уртаса ваҡыт",
-    "seconds": "{иҫәпһеҙ күп}",
+    "seconds": "{n} с",
     "exportCSV": "CSV-ға экспортлау",
     "totalScore": "Бөтөн балл",
     "position": "Вазифа"

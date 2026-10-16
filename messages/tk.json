@@ -123,8 +123,8 @@
     "createGame": "Täze oýun",
     "emptyTitle": "Heniz oýun ýok",
     "emptyDesc": "Başlamak üçin ilkinji interaktiw okuw oýunyňyzy dörediň.",
-    "steps": "{sayy, köp, =0 {ädimler ýok} =1 {1 ädim} beýleki {# ädim}}",
-    "sessions": "{sayy, köp sanly, =0 { sessiýalary ýok } =1 { 1 sessiýa } beýleki { # sessiýa }}",
+    "steps": "{count, plural, =0 {Ädim ýok} =1 {1 ädim} other {# ädim}}",
+    "sessions": "{count, plural, =0 {Sessiýa ýok} =1 {1 sessiýa} other {# sessiýa}}",
     "lastEdited": "Redaktirlenildi {date}",
     "deleteConfirm": "Bu oýny öçürmek isleýäniňize doly ynanýarsyňyzmy? Bu hereketi gaýtaryp bolmaz.",
     "deleteSuccess": "Oýun pozuldy.",
@@ -174,7 +174,7 @@
     "correctAnswer": "Dogry jogap",
     "timerLabel": "Wagt çägi (islegli)",
     "timerOff": "Wagt çägi ýok",
-    "timerSeconds": "{sekundlar} sekunt",
+    "timerSeconds": "{seconds} sekunt",
     "saveStep": "Adymy sakla"
   },
   "session": {
@@ -196,20 +196,20 @@
     "selectAll": "Hemmesini saýlaň",
     "deselectAll": "Hemmesini saýlamagy aýyrmak",
     "noValidEntry": "Iň azyndan bir dogry ýazgy goşuň",
-    "sendSuccess": "Göndürilen {sent} {sent, köp sanly, =1 {invite} başga {invites}}",
-    "sendSuccessPartial": "Göndürildi {sent} {sent, köp sanly, =1 {invite} beýleki {invites}}, {failed} şowsuz boldy",
+    "sendSuccess": "{sent, plural, other {# çakylyk iberildi}}",
+    "sendSuccessPartial": "{sent, plural, other {# çakylyk iberildi}}, şowsuz: {failed}",
     "sendFailed": "Çagyryşlary ibermek başa barmady",
     "waitingRoom": "Gözläp oturyş otagy",
     "participants": "Iştirakçylar",
     "waitingForPlayers": "Oýunçylaryň goşulmagyny garaşýar...",
-    "participantsJoined": "{sayy, köp sanly, =0 {gatnaşyjy ýok} =1 {1 gatnaşyjy} beýleki {# gatnaşyjy}} goşuldy",
+    "participantsJoined": "{count, plural, =0 {Hiç bir gatnaşyjy goşulmady} other {# gatnaşyjy goşuldy}}",
     "startSession": "Oýny başlat",
     "endSession": "Ahyrky oýun",
     "nextStep": "Indiki ädim",
     "revealAnswer": "Jogaby görkez",
     "showLeaderboard": "Liderler tablisasyny görkez",
-    "answeredCount": "{jogap berlen}/{jemi} jogap berildi",
-    "currentStep": "{jemi}den {häzirki} ädim",
+    "answeredCount": "{answered}/{total} jogap berdi",
+    "currentStep": "Ädim {current}/{total}",
     "sessionEnded": "Sessiya tamamlandy",
     "viewResults": "Netijeleri görmek",
     "sessionStatus": {
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Mezbiniň başlamagyny garaşýar...",
-    "waitingParticipants": "Siz gatnaşdyňyz! {count, plural, =1 {1 adam}} häzire çenli goşuldy.",
+    "waitingParticipants": "Siz oýunda! Häzire çenli {count, plural, other {# adam}} goşuldy.",
     "theoryLabel": "Üns bilen okaň",
     "quizLabel": "Sorag",
     "submitAnswer": "Jogaby iberiň",
@@ -238,7 +238,7 @@
     "correct": "Dogry!",
     "incorrect": "Nädogry",
     "pointsEarned": "+{points} bal",
-    "timerLeft": "{sekundlar} galdy",
+    "timerLeft": "{seconds} s galdy",
     "timeUp": "Wagt gutardy!",
     "leaderboardTitle": "Liderler tablisasy",
     "yourScore": "Siziň balyňyz: {score}",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Wagt gutardy!",
-    "secondsRemaining": "{sekundlar, köp sanly, bir {# galan sekunt} başga {# galan sekundlar}}"
+    "secondsRemaining": "{seconds, plural, other {# sekunt galdy}}"
   },
   "results": {
     "title": "Sessia netijeleri",

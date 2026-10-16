@@ -123,9 +123,9 @@
     "createGame": "Яңа уен",
     "emptyTitle": "Һаман да уеннар юк",
     "emptyDesc": "Башлау өчен үзегезнең беренче интерактив уку уеныгызны булдырыгыз.",
-    "steps": "{сан, күплек, =0 {адымнар юк} =1 {1 адым} башка {# адым}}",
-    "sessions": "{сан, күплек, =0 {сессияләр юк} =1 {1 сессия} башка {# сессияләр}}",
-    "lastEdited": "Төзәтелде {дата}",
+    "steps": "{count, plural, =0 {Адымнар юк} =1 {1 адым} other {# адым}}",
+    "sessions": "{count, plural, =0 {Сессияләр юк} =1 {1 сессия} other {# сессия}}",
+    "lastEdited": "Төзәтелде: {date}",
     "deleteConfirm": "Сез бу уенны бетерергә чынлап та телисезме? Бу гамәлне кире кайтару мөмкин түгел.",
     "deleteSuccess": "Уен бетерелде.",
     "createSuccess": "Уен ясалды!"
@@ -136,7 +136,7 @@
     "addTheoryStep": "Теория адымы",
     "addQuizStep": "Викторина адымы",
     "noSteps": "Әле бернинди адым да юк. Башлау өчен теория яки тест адымын өстәгез.",
-    "stepOrder": "Адым {сан}",
+    "stepOrder": "Адым {number}",
     "moveUp": "Югарырак күч",
     "moveDown": "Түбәнрәк күч",
     "deleteStep": "Адымны бетерү",
@@ -174,7 +174,7 @@
     "correctAnswer": "Дөрес җавап",
     "timerLabel": "Вакыт чикләве (ихтыяри)",
     "timerOff": "Вакыт чикләүләре юк",
-    "timerSeconds": "{секунд} секунд",
+    "timerSeconds": "{seconds} секунд",
     "saveStep": "Адымны сакла"
   },
   "session": {
@@ -196,19 +196,19 @@
     "selectAll": "Барысын да сайлагыз",
     "deselectAll": "Барысын да сайланудан чыгару",
     "noValidEntry": "Ким дигәндә бер дөрес язма өстәгез",
-    "sendSuccess": "Җибәрелде {sent} {sent, күплек, =1 {invite} башка {invites}}",
-    "sendSuccessPartial": "Җибәрелде {sent} {sent, күплек, =1 {invite} башка {invites}}, {уңышсыз} уңышсыз",
+    "sendSuccess": "{sent, plural, other {# чакыру җибәрелде}}",
+    "sendSuccessPartial": "{sent, plural, other {# чакыру җибәрелде}}, уңышсыз: {failed}",
     "sendFailed": "Чакыруларны җибәрү уңышсыз булды",
     "waitingRoom": "Көтү бүлмәсе",
     "participants": "Катнашучылар",
     "waitingForPlayers": "Уенчылар кушылуын көтәбез...",
-    "participantsJoined": "{count, plural, =0 {Катнашучылар юк} =1 {1 катнашучы} other {# катнашучылар}} кушылды",
+    "participantsJoined": "{count, plural, =0 {Бер катнашучы да кушылмады} other {# катнашучы кушылды}}",
     "startSession": "Уенны башларга",
     "endSession": "Ахыр уены",
     "nextStep": "Киләсе адым",
     "revealAnswer": "Җавапны күрсәт",
     "showLeaderboard": "Лидерлар тактасын күрсәтегез",
-    "answeredCount": "{җавап бирелгән}/{барлыгы} җавап бирелде",
+    "answeredCount": "{answered}/{total} җавап бирде",
     "currentStep": "{total}-дән {current} адым",
     "sessionEnded": "Сессия тәмамланды",
     "viewResults": "Нәтиҗәләрне карау",
@@ -230,7 +230,7 @@
   },
   "play": {
     "waitingTitle": "Хостның башлануын көтеп торабыз...",
-    "waitingParticipants": "Син катнашасың! {count, plural, =1 {1 кеше}} башка {# кеше} әлегә кушылды.",
+    "waitingParticipants": "Син уенда! Әлегә {count, plural, other {# кеше}} кушылды.",
     "theoryLabel": "Игътибар белән укыгыз",
     "quizLabel": "Сорау",
     "submitAnswer": "Җавапны җибәрегез",
@@ -249,7 +249,7 @@
   },
   "timer": {
     "timeUp": "Вакыт бетте!",
-    "secondsRemaining": "{секундлар, күплек, бер {# калган секунд} башка {# калган секундлар}}"
+    "secondsRemaining": "{seconds, plural, other {# секунд калды}}"
   },
   "results": {
     "title": "Сессия нәтиҗәләре",
