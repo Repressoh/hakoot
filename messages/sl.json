@@ -175,7 +175,10 @@
     "timerLabel": "Časovna omejitev (neobvezno)",
     "timerOff": "Brez časovne omejitve",
     "timerSeconds": "{seconds, plural, one {# sekunda} two {# sekundi} few {# sekunde} other {# sekund}}",
-    "saveStep": "Shrani korak"
+    "saving": "Shranjevanje...",
+    "saved": "Vse spremembe so shranjene",
+    "saveFailed": "Sprememb ni bilo mogoče shraniti",
+    "noCorrectAnswer": "Označi en odgovor kot pravilen."
   },
   "session": {
     "createSession": "Začetek nove seje",

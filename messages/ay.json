@@ -175,7 +175,10 @@
     "timerLabel": "Pacha sayt'awi (munsta ukhaxa)",
     "timerOff": "Jan pacha sayt'awini",
     "timerSeconds": "{seconds} segundos",
-    "saveStep": "Mayjt'ayaña"
+    "saving": "Imañkama...",
+    "saved": "Taqi mayjt'awinakax imatawa",
+    "saveFailed": "Mayjt'awinakamax janiw imaskaspati",
+    "noCorrectAnswer": "Mä jaysäwi chiqawa sas uñt'ayaña."
   },
   "session": {
     "createSession": "Machaq tantachäwi qalltaña",

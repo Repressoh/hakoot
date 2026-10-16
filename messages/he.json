@@ -175,7 +175,10 @@
     "timerLabel": "מגבלת זמן (לא חובה)",
     "timerOff": "ללא הגבלת זמן",
     "timerSeconds": "{seconds} שניות",
-    "saveStep": "שמור שלב"
+    "saving": "שומר...",
+    "saved": "כל השינויים נשמרו",
+    "saveFailed": "לא ניתן לשמור את השינויים שלך",
+    "noCorrectAnswer": "סמן תשובה אחת כתשובה הנכונה."
   },
   "session": {
     "createSession": "התחל הפעלה חדשה",

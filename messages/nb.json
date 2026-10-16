@@ -175,7 +175,10 @@
     "timerLabel": "Tidsbegrensning (valgfritt)",
     "timerOff": "Ingen tidsbegrensning",
     "timerSeconds": "{seconds} sekunder",
-    "saveStep": "Lagre trinn"
+    "saving": "Lagrer...",
+    "saved": "Alle endringer er lagret",
+    "saveFailed": "Kunne ikke lagre endringene dine",
+    "noCorrectAnswer": "Merk ett svar som riktig."
   },
   "session": {
     "createSession": "Start ny økt",

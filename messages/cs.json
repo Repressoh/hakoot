@@ -175,7 +175,10 @@
     "timerLabel": "Časový limit (nepovinné)",
     "timerOff": "Bez časového omezení",
     "timerSeconds": "{seconds} sekund",
-    "saveStep": "Uložit krok"
+    "saving": "Ukládání...",
+    "saved": "Všechny změny byly uloženy",
+    "saveFailed": "Změny se nepodařilo uložit",
+    "noCorrectAnswer": "Označte jednu odpověď jako správnou."
   },
   "session": {
     "createSession": "Spuštění nové relace",

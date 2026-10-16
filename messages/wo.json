@@ -175,7 +175,10 @@
     "timerLabel": "Diirub waxtu (bu la neexee)",
     "timerOff": "Amul diggante waxtu",
     "timerSeconds": "{seconds} {seconds}",
-    "saveStep": "Denc jéego"
+    "saving": "Denc...",
+    "saved": "Soppi yépp denc nañu",
+    "saveFailed": "Mënul denc say coppite",
+    "noCorrectAnswer": "Tànnal benn tontu ne mooy bu baax bi."
   },
   "session": {
     "createSession": "Door beneen session",

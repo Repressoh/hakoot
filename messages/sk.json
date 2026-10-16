@@ -175,7 +175,10 @@
     "timerLabel": "Časový limit (voliteľný)",
     "timerOff": "Bez časového obmedzenia",
     "timerSeconds": "{seconds, plural, one {# sekunda} few {# sekundy} many {# sekundy} other {# sekúnd}}",
-    "saveStep": "Uložiť krok"
+    "saving": "Ukladá sa...",
+    "saved": "Všetky zmeny boli uložené",
+    "saveFailed": "Zmeny sa nepodarilo uložiť",
+    "noCorrectAnswer": "Označte jednu odpoveď ako správnu."
   },
   "session": {
     "createSession": "Spustenie novej relácie",

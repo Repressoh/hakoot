@@ -175,7 +175,10 @@
     "timerLabel": "Zäitlimit (optional)",
     "timerOff": "Keng Zäitlimite",
     "timerSeconds": "{seconds} Sekonnen",
-    "saveStep": "Schrëtt spueren"
+    "saving": "Späicheren...",
+    "saved": "All Ännerungen gespäichert",
+    "saveFailed": "Är Ännerungen konnten net gespäichert ginn",
+    "noCorrectAnswer": "Markéiert eng Äntwert als korrekt."
   },
   "session": {
     "createSession": "Nei Sessioun ufänken",

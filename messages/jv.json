@@ -175,7 +175,10 @@
     "timerLabel": "Wates wektu (opsional)",
     "timerOff": "Ora ana wates wektu",
     "timerSeconds": "{seconds} detik",
-    "saveStep": "Simpen langkah"
+    "saving": "Nyimpen...",
+    "saved": "Kabeh owah-owahan wis disimpen",
+    "saveFailed": "Ora bisa nyimpen owah-owahanmu",
+    "noCorrectAnswer": "Tandha siji jawaban minangka bener."
   },
   "session": {
     "createSession": "Miwiwiti sesi anyar",

@@ -175,7 +175,10 @@
     "timerLabel": "Wates waktos (opsional)",
     "timerOff": "Teu aya wates waktos",
     "timerSeconds": "{seconds} detik",
-    "saveStep": "Simpen léngkah"
+    "saving": "Nyimpen...",
+    "saved": "Sadaya parobahan geus disimpen",
+    "saveFailed": "Teu tiasa nyimpen parobahan anjeun",
+    "noCorrectAnswer": "Tandaan hiji jawaban salaku leres."
   },
   "session": {
     "createSession": "Mimitian sesi anyar",

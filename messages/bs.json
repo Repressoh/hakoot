@@ -175,7 +175,10 @@
     "timerLabel": "Vremensko ograničenje (opcionalno)",
     "timerOff": "Nema vremenskog ograničenja",
     "timerSeconds": "{seconds, plural, one {# sekunda} few {# sekunde} other {# sekundi}}",
-    "saveStep": "Sačuvaj korak"
+    "saving": "Snimanje...",
+    "saved": "Sve izmjene su sačuvane",
+    "saveFailed": "Nije moguće sačuvati vaše izmjene",
+    "noCorrectAnswer": "Označi jedan odgovor kao ispravan."
   },
   "session": {
     "createSession": "Pokreni novu sesiju",

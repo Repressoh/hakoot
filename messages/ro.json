@@ -175,7 +175,10 @@
     "timerLabel": "Termen limită (opțional)",
     "timerOff": "Fără limită de timp",
     "timerSeconds": "{seconds, plural, one {# secundă} few {# secunde} other {# de secunde}}",
-    "saveStep": "Salvați pasul"
+    "saving": "Se salvează...",
+    "saved": "Toate modificările au fost salvate",
+    "saveFailed": "Nu s-au putut salva modificările",
+    "noCorrectAnswer": "Marcați un răspuns ca fiind corect."
   },
   "session": {
     "createSession": "Începeți o nouă sesiune",

@@ -175,7 +175,10 @@
     "timerLabel": "Kufizimi i kohës (opsional)",
     "timerOff": "Nuk ka kufizim kohe",
     "timerSeconds": "{seconds} sekonda",
-    "saveStep": "Ruaj hapin"
+    "saving": "Ruajtje...",
+    "saved": "Të gjitha ndryshimet janë ruajtur",
+    "saveFailed": "Nuk mund të ruhen ndryshimet tuaja",
+    "noCorrectAnswer": "Shëno një përgjigje si të saktë."
   },
   "session": {
     "createSession": "Filloni një seancë të re",

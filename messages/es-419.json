@@ -175,7 +175,10 @@
     "timerLabel": "Plazo (opcional)",
     "timerOff": "Sin límite de tiempo",
     "timerSeconds": "{seconds} segundos",
-    "saveStep": "Guardar paso"
+    "saving": "Guardando...",
+    "saved": "Todos los cambios guardados",
+    "saveFailed": "No se pudieron guardar tus cambios",
+    "noCorrectAnswer": "Marca una respuesta como correcta."
   },
   "session": {
     "createSession": "Iniciar una nueva sesión",

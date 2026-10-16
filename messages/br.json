@@ -175,7 +175,10 @@
     "timerLabel": "Bevenn an amzer (diret)",
     "timerOff": "Bepred",
     "timerSeconds": "{seconds} eilenn",
-    "saveStep": "Enrollañ pazenn"
+    "saving": "O enrollañ...",
+    "saved": "An holl gemmoù zo enrollet",
+    "saveFailed": "N'eo ket bet tu enrollañ ho kemmoù",
+    "noCorrectAnswer": "Merkañ ur respont evel reizh."
   },
   "session": {
     "createSession": "Kregiñ gant ur prantad nevez",

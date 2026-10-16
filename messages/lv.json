@@ -175,7 +175,10 @@
     "timerLabel": "Laika ierobežojums (pēc izvēles)",
     "timerOff": "Bez laika ierobežojuma",
     "timerSeconds": "{seconds} sekundes",
-    "saveStep": "Saglabāt soli"
+    "saving": "Saglabāšana...",
+    "saved": "Visas izmaiņas saglabātas",
+    "saveFailed": "Neizdevās saglabāt izmaiņas",
+    "noCorrectAnswer": "Atzīmējiet vienu atbildi kā pareizo."
   },
   "session": {
     "createSession": "Sākt jaunu sesiju",

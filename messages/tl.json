@@ -175,7 +175,10 @@
     "timerLabel": "Takdang oras (opsyonal)",
     "timerOff": "Walang limitasyon sa oras",
     "timerSeconds": "{seconds} segundo",
-    "saveStep": "I-save ang hakbang"
+    "saving": "Ina-save...",
+    "saved": "Lahat ng pagbabago ay na-save",
+    "saveFailed": "Hindi mai-save ang iyong mga pagbabago",
+    "noCorrectAnswer": "Markahan ang isang sagot bilang tama."
   },
   "session": {
     "createSession": "Magsimula ng bagong sesyon",

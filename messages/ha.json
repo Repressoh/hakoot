@@ -175,7 +175,10 @@
     "timerLabel": "Iyakacin lokaci (zaɓi)",
     "timerOff": "Babu iyaka lokaci",
     "timerSeconds": "{seconds} daƙiƙu",
-    "saveStep": "Ajiye mataki"
+    "saving": "Ana adanawa...",
+    "saved": "An adana duk canje-canje",
+    "saveFailed": "Ba a iya adana canje-canjenka ba",
+    "noCorrectAnswer": "Alama amsa ɗaya a matsayin daidai."
   },
   "session": {
     "createSession": "Fara sabon zaman",

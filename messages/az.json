@@ -175,7 +175,10 @@
     "timerLabel": "Vaxt limiti (isteğe bağlı)",
     "timerOff": "Vaxt məhdudiyyəti yoxdur",
     "timerSeconds": "{seconds} saniyə",
-    "saveStep": "Addımı saxla"
+    "saving": "Yadda saxlamaq...",
+    "saved": "Bütün dəyişikliklər yadda saxlanıldı",
+    "saveFailed": "Dəyişikliklərinizi saxlaya bilmədik",
+    "noCorrectAnswer": "Bir cavabı düzgün kimi işarələyin."
   },
   "session": {
     "createSession": "Yeni sessiyanı başladın",

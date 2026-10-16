@@ -175,7 +175,10 @@
     "timerLabel": "समय सीमा (वैकल्पिक)",
     "timerOff": "कोई समय सीमा नहीं",
     "timerSeconds": "{seconds} सेकंड",
-    "saveStep": "चरण सहेजें"
+    "saving": "सहेज रहे हैं...",
+    "saved": "सभी परिवर्तन सहेजे गए",
+    "saveFailed": "आपके बदलाव सहेज नहीं पाए गए",
+    "noCorrectAnswer": "एक उत्तर को सही के रूप में चिह्नित करें।"
   },
   "session": {
     "createSession": "नया सत्र शुरू करें",

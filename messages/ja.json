@@ -175,7 +175,10 @@
     "timerLabel": "制限時間（オプション）",
     "timerOff": "時間制限なし",
     "timerSeconds": "{seconds}秒",
-    "saveStep": "セーブステップ"
+    "saving": "保存中...",
+    "saved": "すべての変更が保存されました",
+    "saveFailed": "変更を保存できませんでした",
+    "noCorrectAnswer": "1つの回答を正解としてマークしてください。"
   },
   "session": {
     "createSession": "新しいセッションを開始する",

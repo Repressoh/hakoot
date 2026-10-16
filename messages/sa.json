@@ -175,7 +175,10 @@
     "timerLabel": "समयसीमा (ऐच्छिकी)",
     "timerOff": "कालसीमा नास्ति",
     "timerSeconds": "{seconds} क्षणाः",
-    "saveStep": "चरणं रक्षतु"
+    "saving": "संरक्षणम्...",
+    "saved": "सर्वे परिवर्तनानि संरक्षितानि",
+    "saveFailed": "तव परिवर्तनानि रक्षितुं न शक्यन्ते",
+    "noCorrectAnswer": "एकं उत्तरं सम्यक् इति चिह्नय।"
   },
   "session": {
     "createSession": "नवीनं सत्रं आरभ",

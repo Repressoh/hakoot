@@ -175,7 +175,10 @@
     "timerLabel": "Limita de temps (opcional)",
     "timerOff": "Pas de limit de temps",
     "timerSeconds": "{seconds} segondas",
-    "saveStep": "Salvar pas"
+    "saving": "Enregistrament...",
+    "saved": "Totes los cambiaments salvats",
+    "saveFailed": "Non se poguèt pas enregistrar vòstras modificacions",
+    "noCorrectAnswer": "Marcar una responsa coma corrècta."
   },
   "session": {
     "createSession": "Començar una session novèla",

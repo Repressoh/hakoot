@@ -175,7 +175,10 @@
     "timerLabel": "Herenga wā (kōwhiringa)",
     "timerOff": "Kāore he here wā",
     "timerSeconds": "{seconds} hēkona",
-    "saveStep": "Whakaora i te hiko"
+    "saving": "Kei te penapena...",
+    "saved": "Kua tiakina ngā panonitanga katoa",
+    "saveFailed": "Kāore i taea te penapena i ō whakarerekētanga",
+    "noCorrectAnswer": "Tohua tētahi whakautu hei tika."
   },
   "session": {
     "createSession": "Tīmatahia he wāhanga hou",

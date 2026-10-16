@@ -8,7 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 /** Parse a line range string like "5, 10-12" into an array of line numbers */
 export function parseLineRange(input: string): number[] {
   const lines: number[] = [];
-  const parts = input.split(",").map((s) => s.trim());
+  // Empty parts ("", "5,") would otherwise read as line 0.
+  const parts = input
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   for (const part of parts) {
     if (part.includes("-")) {
       const [start, end] = part.split("-").map(Number);

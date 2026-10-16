@@ -175,7 +175,10 @@
     "timerLabel": "Vaqt chegarasi (ixtiyoriy)",
     "timerOff": "Vaqt cheklovi yo'q",
     "timerSeconds": "{seconds} soniya",
-    "saveStep": "Bosqichni saqlash"
+    "saving": "Saqlash...",
+    "saved": "Barcha o'zgartirishlar saqlandi",
+    "saveFailed": "O'zgartirishlaringizni saqlab bo'lmadi",
+    "noCorrectAnswer": "Bir javobni to'g'ri deb belgilang."
   },
   "session": {
     "createSession": "Yangi sessiyani boshlang",

@@ -175,7 +175,10 @@
     "timerLabel": "Daangaa yeroo (filannoo)",
     "timerOff": "Daangaa yeroo hin jiru",
     "timerSeconds": "{seconds} sekondii",
-    "saveStep": "Tarkaanfii qusadhu"
+    "saving": "Ol kaa'amaa jira...",
+    "saved": "Jijjiiramoonni hundi olkaa'amaniiru",
+    "saveFailed": "Jijjiirama kee ol kaa'uun hin danda'amne",
+    "noCorrectAnswer": "Deebii tokko sirrii godhi."
   },
   "session": {
     "createSession": "Yeroo haaraa jalqabi",

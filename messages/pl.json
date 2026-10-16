@@ -175,7 +175,10 @@
     "timerLabel": "Limit czasu (opcjonalnie)",
     "timerOff": "Bez ograniczeń czasowych",
     "timerSeconds": "{seconds, plural, one {# sekunda} few {# sekundy} many {# sekund} other {# sekundy}}",
-    "saveStep": "Zapisz krok"
+    "saving": "Zapisywanie...",
+    "saved": "Wszystkie zmiany zostały zapisane",
+    "saveFailed": "Nie udało się zapisać zmian",
+    "noCorrectAnswer": "Oznacz jedną odpowiedź jako poprawną."
   },
   "session": {
     "createSession": "Rozpoczęcie nowej sesji",

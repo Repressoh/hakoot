@@ -175,7 +175,10 @@
     "timerLabel": "Límite de tiempo (opcional)",
     "timerOff": "Garra limite de tiempo",
     "timerSeconds": "{seconds} segundos",
-    "saveStep": "Alzar o piet"
+    "saving": "Alzando...",
+    "saved": "Toz os cambeos alzaus",
+    "saveFailed": "No s'han puesto alzar os tuyos cambeos",
+    "noCorrectAnswer": "Marca una respuesta como correcta."
   },
   "session": {
     "createSession": "Prencipiar sesión nueva",

@@ -175,7 +175,10 @@
     "timerLabel": "Délai (facultatif)",
     "timerOff": "Pas de limite de temps",
     "timerSeconds": "{seconds} secondes",
-    "saveStep": "Sauvegarder l'étape"
+    "saving": "Enregistrement en cours...",
+    "saved": "Toutes les modifications ont été enregistrées",
+    "saveFailed": "Impossible d'enregistrer vos modifications",
+    "noCorrectAnswer": "Marquer une réponse comme correcte."
   },
   "session": {
     "createSession": "Démarrer une nouvelle session",

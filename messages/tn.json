@@ -175,7 +175,10 @@
     "timerLabel": "Nako e e beilweng (go ikgethela)",
     "timerOff": "Ga gona nako e e beilweng",
     "timerSeconds": "{seconds} metsotswana",
-    "saveStep": "Boloka kgato"
+    "saving": "Go boloka...",
+    "saved": "Diphetogo tsotlhe di bolokilwe",
+    "saveFailed": "Ga go a kgonega go boloka diphetogo tsa gago",
+    "noCorrectAnswer": "Tshwaya karabo e le nngwe e le e e nepagetseng."
   },
   "session": {
     "createSession": "Simolola tshebetso e ntšha",

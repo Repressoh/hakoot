@@ -175,7 +175,10 @@
     "timerLabel": "Limitu taż-żmien (mhux obbligatorju)",
     "timerOff": "L-ebda limitu taż-żmien",
     "timerSeconds": "{seconds} sekondi",
-    "saveStep": "Iffrankar il-pass"
+    "saving": "Qed tinħażen...",
+    "saved": "Il-bidliet kollha ġew salvati",
+    "saveFailed": "Ma setgħetx tissejvja l-bidliet tiegħek",
+    "noCorrectAnswer": "Agħżel tweġiba waħda bħala korretta."
   },
   "session": {
     "createSession": "Ibda sessjoni ġdida",

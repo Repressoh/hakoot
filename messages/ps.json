@@ -175,7 +175,10 @@
     "timerLabel": "د وخت محدودیت (اختیاري)",
     "timerOff": "وختي محدودیت نشته",
     "timerSeconds": "{seconds} ثانیې",
-    "saveStep": "پړاو وسپموه"
+    "saving": "ژغورل...",
+    "saved": "ټول بدلونونه خوندي شول",
+    "saveFailed": "ستاسو بدلونونه خوندي نشول کیدای",
+    "noCorrectAnswer": "یو ځواب د سم په توګه نښه کړئ."
   },
   "session": {
     "createSession": "نوی سیشن پیل کړئ",
