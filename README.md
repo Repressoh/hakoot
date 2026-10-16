@@ -175,11 +175,12 @@ docker run -p 3000:3000 hakoot
 
 ```
 app/                    # Next.js App Router pages and layouts
-  [locale]/             # Locale-based routing (en, it)
-    (auth)/             # Sign-in and sign-up pages
-    (dashboard)/        # Game management (host)
-    (host)/             # Live session hosting
-    (play)/             # Player join and session view
+  [locale]/             # Locale-based routing (en, it); page.tsx is the landing page
+    (app)/              # Everything behind the Convex provider (the landing page isn't)
+      (auth)/           # Sign-in and sign-up pages
+      (dashboard)/      # Game management (host)
+      (host)/           # Live session hosting
+      (play)/           # Player join and session view
 components/             # React components
   ui/                   # shadcn/ui primitives
   dashboard/            # Game editor components

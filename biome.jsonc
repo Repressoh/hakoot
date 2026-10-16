@@ -19,7 +19,9 @@
       "!types",
       "!.agents",
       "!.claude",
-      "!.vscode"
+      "!.vscode",
+      // Lighthouse JSON exports, as Chrome saves them
+      "!lighthouse-reports"
     ]
   },
   "linter": {

@@ -4,8 +4,6 @@ import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { ConvexClientProvider } from "@/components/convex-client-provider";
-import { Toaster } from "@/components/ui/sonner";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -151,17 +149,15 @@ export default async function LocaleLayout({ children, params }: Props) {
     >
       <head>
         <link href="/favicon.ico" rel="icon" sizes="any" />
-        <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
         <link href="/manifest.json" rel="manifest" />
         <meta content="#000000" name="theme-color" />
       </head>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <ConvexClientProvider>
-          <NextIntlClientProvider messages={messages}>
-            {children}
-            <Toaster position="top-right" richColors />
-          </NextIntlClientProvider>
-        </ConvexClientProvider>
+        {/* The Convex provider and toast container are in (app)/layout.tsx:
+            the landing page doesn't need them up front. */}
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
