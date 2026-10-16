@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
-const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    // Compiles the ICU messages at build time, so the ICU parser (~12KB
+    // gzipped) stays out of the client bundle. The build fails on a malformed
+    // message; i18n/messages.test.ts catches those first.
+    messages: {
+      format: "json",
+      locales: "infer",
+      path: "./messages",
+      precompile: true,
+      sourceLocale: "en",
+    },
+  },
+  requestConfig: "./i18n/request.ts",
+});
 
 const nextConfig: NextConfig = {
   // cacheComponents requires next-intl to support next/root-params
