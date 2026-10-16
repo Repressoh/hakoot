@@ -7,6 +7,11 @@ export type AutosaveStatus = "saved" | "pending" | "saving" | "error";
 export interface AutosaverOptions<T> {
   /** How long the edits must pause before a save starts. */
   delayMs: number;
+  /**
+   * False when `initialValue` isn't stored yet, like a draft restored after a
+   * failed save: it then counts as a failed save, which `flush` retries.
+   */
+  initialValueSaved?: boolean;
   /** The longest a change waits while edits keep coming. */
   maxWaitMs: number;
   onError: (error: unknown) => void;
@@ -20,23 +25,33 @@ export interface Autosaver<T> {
   hasUnsavedChanges: () => boolean;
   /** Records the latest value; values are compared by their JSON. */
   update: (value: T) => void;
+  /** The latest value recorded, or the initial value. */
+  value: () => T;
 }
 
 /**
  * Saves a form's value some time after it changes, one save at a time, and
- * reports whether the latest value is stored. `initialValue` counts as saved.
+ * reports whether the latest value is stored. `initialValue` counts as saved
+ * unless `initialValueSaved` is false.
  */
 export function createAutosaver<T>(
   initialValue: T,
-  { delayMs, maxWaitMs, onError, onStatusChange, save }: AutosaverOptions<T>
+  {
+    delayMs,
+    initialValueSaved = true,
+    maxWaitMs,
+    onError,
+    onStatusChange,
+    save,
+  }: AutosaverOptions<T>
 ): Autosaver<T> {
   let latest = initialValue;
   let latestJson = JSON.stringify(initialValue);
   // The value of the last save started, or the initial value.
   let sentJson = latestJson;
-  let failed = false;
+  let failed = !initialValueSaved;
   let saving = false;
-  let status: AutosaveStatus = "saved";
+  let status: AutosaveStatus = initialValueSaved ? "saved" : "error";
   let timer: ReturnType<typeof setTimeout> | undefined;
   let pendingSince: number | undefined;
 
@@ -126,5 +141,6 @@ export function createAutosaver<T>(
     flush,
     hasUnsavedChanges: () => saving || isDirty(),
     update,
+    value: () => latest,
   };
 }

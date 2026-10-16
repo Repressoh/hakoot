@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useAutosave } from "@/lib/use-autosave";
+import { getUnsavedDraft, useAutosave } from "@/lib/use-autosave";
 import { cn } from "@/lib/utils";
 import { SaveStatus } from "./save-status";
 
@@ -31,28 +31,42 @@ interface Props {
   step: Step;
 }
 
+/** What the editor saves, and the unsaved draft it can start from. */
+interface QuizDraft {
+  choices: QuizChoice[];
+  question: string;
+  timeLimitSeconds: number | null;
+}
+
 /** Editor for a quiz step's question, answer choices and time limit; changes save automatically. */
 export function QuizStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateQuiz = useMutation(api.steps.updateQuiz);
 
-  const [question, setQuestion] = useState(step.question ?? "");
-  const [choices, setChoices] = useState<QuizChoice[]>(
-    step.choices ?? [
-      { isCorrect: false, text: "" },
-      { isCorrect: false, text: "" },
-      { isCorrect: false, text: "" },
-      { isCorrect: false, text: "" },
-    ]
+  const [initial] = useState<QuizDraft>(
+    () =>
+      getUnsavedDraft<QuizDraft>(step._id) ?? {
+        choices: step.choices ?? [
+          { isCorrect: false, text: "" },
+          { isCorrect: false, text: "" },
+          { isCorrect: false, text: "" },
+          { isCorrect: false, text: "" },
+        ],
+        question: step.question ?? "",
+        timeLimitSeconds: step.timeLimitSeconds ?? null,
+      }
   );
-  const [timeLimitSeconds, setTimeLimitSeconds] = useState<number | null>(
-    step.timeLimitSeconds ?? null
+  const [question, setQuestion] = useState(initial.question);
+  const [choices, setChoices] = useState(initial.choices);
+  const [timeLimitSeconds, setTimeLimitSeconds] = useState(
+    initial.timeLimitSeconds
   );
   const hasCorrect = choices.some((c) => c.isCorrect);
 
   // Drafts are saved as they are: a quiz without a question or a correct
   // answer can still be played, so the hint below only points it out.
-  const saveStatus = useAutosave(
+  const saveStatus = useAutosave<QuizDraft>(
+    step._id,
     { choices, question, timeLimitSeconds },
     (quiz) => updateQuiz({ ...quiz, stepId: step._id }),
     () => toast.error(t("saveFailed"), { id: "step-autosave" })

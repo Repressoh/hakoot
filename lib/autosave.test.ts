@@ -188,3 +188,32 @@ describe("createAutosaver", () => {
     expect(saves.map((s) => s.value)).toEqual(["b", "c"]);
   });
 });
+
+describe("createAutosaver with an unsaved initial value", () => {
+  test("flush stores the initial value, and nothing before", async () => {
+    const saves: string[] = [];
+    const statuses: AutosaveStatus[] = [];
+    const autosaver = createAutosaver("draft", {
+      delayMs: DELAY_MS,
+      initialValueSaved: false,
+      maxWaitMs: MAX_WAIT_MS,
+      onError: () => undefined,
+      onStatusChange: (status) => statuses.push(status),
+      save: (value) => {
+        saves.push(value);
+        return Promise.resolve();
+      },
+    });
+
+    vi.advanceTimersByTime(MAX_WAIT_MS);
+    expect(saves).toEqual([]);
+    expect(autosaver.hasUnsavedChanges()).toBe(true);
+
+    autosaver.flush();
+    await settle();
+    expect(saves).toEqual(["draft"]);
+    expect(statuses).toEqual(["saving", "saved"]);
+    expect(autosaver.hasUnsavedChanges()).toBe(false);
+    expect(autosaver.value()).toBe("draft");
+  });
+});

@@ -69,6 +69,9 @@ export default defineSchema({
             explanation: v.string(),
             label: v.string(),
             lines: v.array(v.number()),
+            // The lines as typed ("5, 10-12"), so a half-typed range like
+            // "5-" survives reopening the step; `lines` is what it parses to.
+            linesText: v.optional(v.string()),
           })
         ),
         code: v.string(),

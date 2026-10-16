@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useAutosave } from "@/lib/use-autosave";
+import { getUnsavedDraft, useAutosave } from "@/lib/use-autosave";
 import { formatLineNumbers, parseLineRange } from "@/lib/utils";
 import { SaveStatus } from "./save-status";
 
@@ -58,6 +58,8 @@ interface CodeAnnotation {
   explanation: string;
   label: string;
   lines: number[];
+  /** The lines as typed, so a half-typed range like "5-" survives reopening. */
+  linesText?: string;
 }
 
 interface CodeBlock {
@@ -192,9 +194,35 @@ function toCodeBlock({
         explanation: a.explanation,
         label: a.label,
         lines: parseLineRange(a.linesInput),
+        linesText: a.linesInput,
       })),
     code,
     language,
+  };
+}
+
+/** What the editor saves, and the unsaved draft it can start from. */
+interface TheoryDraft {
+  codeBlock: CodeBlock | null;
+  markdownContent: string;
+}
+
+/** The form for `step`, or for its unsaved draft if a failed save left one. */
+function initTheoryForm(step: Step): TheoryFormState {
+  const draft = getUnsavedDraft<TheoryDraft>(step._id);
+  const codeBlock = draft ? draft.codeBlock : step.codeBlock;
+  return {
+    annotations:
+      codeBlock?.annotations.map((a) => ({
+        explanation: a.explanation,
+        id: crypto.randomUUID(),
+        label: a.label,
+        linesInput: a.linesText ?? formatLineNumbers(a.lines),
+      })) ?? [],
+    code: codeBlock?.code ?? "",
+    hasCodeBlock: !!codeBlock,
+    language: codeBlock?.language ?? "typescript",
+    markdown: draft ? draft.markdownContent : (step.markdownContent ?? ""),
   };
 }
 
@@ -206,23 +234,12 @@ export function TheoryStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateTheory = useMutation(api.steps.updateTheory);
 
-  const [form, dispatch] = useReducer(theoryFormReducer, {
-    annotations:
-      step.codeBlock?.annotations.map((a) => ({
-        explanation: a.explanation,
-        id: crypto.randomUUID(),
-        label: a.label,
-        linesInput: formatLineNumbers(a.lines),
-      })) ?? [],
-    code: step.codeBlock?.code ?? "",
-    hasCodeBlock: !!step.codeBlock,
-    language: step.codeBlock?.language ?? "typescript",
-    markdown: step.markdownContent ?? "",
-  });
+  const [form, dispatch] = useReducer(theoryFormReducer, step, initTheoryForm);
 
   const { markdown, hasCodeBlock, code, language, annotations } = form;
 
-  const saveStatus = useAutosave(
+  const saveStatus = useAutosave<TheoryDraft>(
+    step._id,
     { codeBlock: toCodeBlock(form), markdownContent: markdown },
     (theory) => updateTheory({ ...theory, stepId: step._id }),
     () => toast.error(t("saveFailed"), { id: "step-autosave" })
