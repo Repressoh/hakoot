@@ -39,8 +39,20 @@ export default defineSchema({
     answerRevealed: v.boolean(),
     currentStepIndex: v.number(),
     gameId: v.id("games"),
-    hostId: v.id("users"),
+    // The signed-in host: the game's owner. Absent on a session started from
+    // the game's share link, whose host proves it with a token instead.
+    hostId: v.optional(v.id("users")),
+    // SHA-256 (hex) of the token given to whoever started the session from
+    // the share link.
+    hostTokenHash: v.optional(v.string()),
     inviteCode: v.string(),
+    // The game's share generation when the session was started from its
+    // share link (see games.shareGeneration).
+    shareGeneration: v.optional(v.number()),
+    // The share token the session was started with. Its host keeps access
+    // only while that token is still the game's enabled link, in the same
+    // share generation.
+    shareToken: v.optional(v.string()),
     status: v.union(
       v.literal("waiting"),
       v.literal("in_progress"),
@@ -49,8 +61,15 @@ export default defineSchema({
     stepStartedAt: v.optional(v.number()),
   })
     .index("by_game", ["gameId"])
+    .index("by_game_and_host", ["gameId", "hostId"])
     .index("by_host", ["hostId"])
-    .index("by_invite_code", ["inviteCode"]),
+    .index("by_host_and_status", ["hostId", "status"])
+    .index("by_invite_code", ["inviteCode"])
+    .index("by_share_token_and_status_and_share_generation", [
+      "shareToken",
+      "status",
+      "shareGeneration",
+    ]),
 
   // ─── Game step (theory or quiz) ─────────────────────────────────────
   gameSteps: defineTable({
@@ -94,9 +113,20 @@ export default defineSchema({
   games: defineTable({
     createdById: v.id("users"),
     description: v.optional(v.string()),
+    // Whether the share link works: anyone who has it can host the game, and
+    // signed-in users can copy it. Off unless the owner turns it on.
+    shareEnabled: v.optional(v.boolean()),
+    // Goes up each time the share link is turned off or reset. Sessions
+    // started from the link in an earlier generation are over.
+    shareGeneration: v.optional(v.number()),
+    // The share link's secret. Kept when sharing is turned off, so turning
+    // it back on restores the same link; replaced when the owner resets it.
+    shareToken: v.optional(v.string()),
     title: v.string(),
     updatedAt: v.number(),
-  }).index("by_creator", ["createdById"]),
+  })
+    .index("by_creator", ["createdById"])
+    .index("by_share_token", ["shareToken"]),
 
   // ─── Participant answer ──────────────────────────────────────────────
   participantAnswers: defineTable({
@@ -107,7 +137,9 @@ export default defineSchema({
     sessionId: v.optional(v.id("gameSessions")),
     stepId: v.id("gameSteps"),
   })
-    .index("by_session", ["sessionId"])
+    // Answers saved before answers had a session id are found with
+    // `sessionId: undefined`.
+    .index("by_session_and_step", ["sessionId", "stepId"])
     .index("by_participant", ["participantId"])
     .index("by_step", ["stepId"])
     .index("by_participant_and_step", ["participantId", "stepId"]),

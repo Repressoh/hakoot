@@ -11,6 +11,13 @@ crons.interval(
 );
 
 crons.interval(
+  "cleanup abandoned share link lobbies",
+  { hours: 1 },
+  internal.sharing.cleanupAbandonedLinkSessions,
+  {}
+);
+
+crons.interval(
   "cleanup old rate limits",
   { hours: 6 },
   internal.sessions.cleanupOldRateLimits,

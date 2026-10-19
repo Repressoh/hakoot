@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { AddStepButton } from "@/components/dashboard/add-step-button";
+import { ShareLinkCard } from "@/components/dashboard/share-link-card";
 import { StepList, type StepSummary } from "@/components/dashboard/step-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,8 @@ const AddStepMenu = lazy(() =>
 interface Game {
   _id: Id<"games">;
   description?: string;
+  shareEnabled: boolean;
+  shareToken: string | null;
   steps: StepSummary[];
   title: string;
 }
@@ -165,6 +168,12 @@ export function GameEditor({ game }: Props) {
           />
         </div>
       </div>
+
+      <ShareLinkCard
+        gameId={game._id}
+        shareEnabled={game.shareEnabled}
+        shareToken={game.shareToken}
+      />
 
       {/* Steps section */}
       <div className="space-y-4">

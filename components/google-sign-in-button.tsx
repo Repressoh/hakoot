@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { getAuthRedirect } from "@/lib/auth-redirect";
 
 /** "Continue with Google" button that starts the Google OAuth sign-in. */
 export function GoogleSignInButton() {
@@ -15,7 +16,9 @@ export function GoogleSignInButton() {
   async function handleGoogle() {
     setGoogleLoading(true);
     try {
-      await signIn("google", { redirectTo: "/dashboard" });
+      await signIn("google", {
+        redirectTo: getAuthRedirect(window.location.search),
+      });
     } catch (err) {
       setGoogleLoading(false);
       console.error("[Google sign-in] error:", err);

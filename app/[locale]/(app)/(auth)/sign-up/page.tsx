@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { AuthSwitchLink } from "@/components/auth-switch-link";
 import { SignUpForm } from "./sign-up-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,12 +43,12 @@ export default async function SignUpPage() {
 
         <p className="text-center text-muted-foreground text-sm">
           {t("haveAccount")}{" "}
-          <Link
+          <AuthSwitchLink
             className="font-medium text-primary underline underline-offset-4 hover:text-primary/80"
             href="/sign-in"
           >
             {t("signInLink")}
-          </Link>
+          </AuthSwitchLink>
         </p>
       </div>
     </div>

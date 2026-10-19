@@ -1,11 +1,12 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
+import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
 
 /** Generate a random alphanumeric invite code */
-function generateInviteCode(length = 6): string {
+export function generateInviteCode(length = 6): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   return Array.from(
     { length },
@@ -13,21 +14,56 @@ function generateInviteCode(length = 6): string {
   ).join("");
 }
 
-/** Generate a cryptographically random token */
-function generateToken(): string {
-  const array = new Uint8Array(32);
-  crypto.getRandomValues(array);
-  return Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
+/** Hex-encode bytes. */
+function toHex(bytes: Uint8Array): string {
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
+
+/** Generate a cryptographically random token of `byteLength` bytes, hex-encoded. */
+export function generateToken(byteLength = 32): string {
+  const array = new Uint8Array(byteLength);
+  crypto.getRandomValues(array);
+  return toHex(array);
+}
+
+/** SHA-256 of `token`, hex-encoded: what is stored of a host token. */
+export async function hashToken(token: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(token)
+  );
+  return toHex(new Uint8Array(digest));
+}
+
+/**
+ * Whether the share link `session` was started from still works: sharing is on, and the link
+ * wasn't reset or turned off since (which also ends the session, a moment later).
+ */
+function isShareLinkActive(
+  game: Doc<"games"> | null,
+  session: Doc<"gameSessions">
+): boolean {
+  return (
+    game?.shareEnabled === true &&
+    session.shareToken !== undefined &&
+    game.shareToken === session.shareToken &&
+    (game.shareGeneration ?? 0) === session.shareGeneration
+  );
+}
+
+/** The longest an email address can be (RFC 5321). */
+const MAX_EMAIL_LENGTH = 254;
 
 /** Rate limiting configuration */
 const RATE_LIMIT_CONFIG = {
+  copyGame: { maxAttempts: 10, windowMs: 60_000 },
+  hostFromLink: { maxAttempts: 30, windowMs: 60_000 },
   join: { maxAttempts: 10, windowMs: 60_000 },
   joinByCode: { maxAttempts: 10, windowMs: 60_000 },
 } as const;
 
 /** Check and enforce rate limiting */
-async function checkRateLimit(
+export async function checkRateLimit(
   ctx: MutationCtx,
   identifier: string,
   endpoint: keyof typeof RATE_LIMIT_CONFIG
@@ -107,9 +143,12 @@ export const listForGame = query({
       return [];
     }
 
+    // Sessions started from the share link belong to whoever started them.
     return await ctx.db
       .query("gameSessions")
-      .withIndex("by_game", (q) => q.eq("gameId", args.gameId))
+      .withIndex("by_game_and_host", (q) =>
+        q.eq("gameId", args.gameId).eq("hostId", userId)
+      )
       .order("desc")
       .collect();
   },
@@ -143,6 +182,10 @@ export const getForHost = query({
         .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
         .collect(),
     ]);
+    // A deleted game's sessions are deleted in the background.
+    if (!game) {
+      return null;
+    }
 
     // In the waiting lobby, hide participants who stopped sending heartbeats
     let participants = allParticipants;
@@ -164,18 +207,58 @@ async function getOrderedSteps(ctx: QueryCtx, gameId: Id<"games">) {
     .collect();
 }
 
-/** The session if the current user hosts it, otherwise null. */
-async function getHostedSession(ctx: QueryCtx, sessionId: Id<"gameSessions">) {
-  const userId = await getAuthUserId(ctx);
-  if (!userId) {
-    return null;
-  }
+/**
+ * The session if the caller hosts it, otherwise null. The game's owner hosts the sessions they
+ * start signed in. A session started from the share link is hosted by whoever holds its host
+ * token, and only while that link still works. Nobody hosts a session of a deleted game, whose
+ * sessions are being deleted in the background.
+ */
+async function getHostedSession(
+  ctx: QueryCtx,
+  sessionId: Id<"gameSessions">,
+  hostToken: string | undefined
+) {
   const session = await ctx.db.get(sessionId);
-  if (!session || session.hostId !== userId) {
+  if (!session) {
     return null;
   }
-  return session;
+  const game = await ctx.db.get(session.gameId);
+  if (!game) {
+    return null;
+  }
+  if (session.hostId !== undefined) {
+    const userId = await getAuthUserId(ctx);
+    return userId === session.hostId ? session : null;
+  }
+  if (
+    hostToken === undefined ||
+    session.hostTokenHash === undefined ||
+    (await hashToken(hostToken)) !== session.hostTokenHash
+  ) {
+    return null;
+  }
+  return isShareLinkActive(game, session) ? session : null;
 }
+
+/**
+ * Throws unless players can join `session`: it isn't over, its game still exists and, if it was
+ * started from a share link, that link still works.
+ */
+async function assertJoinable(ctx: QueryCtx, session: Doc<"gameSessions">) {
+  if (session.status === "finished") {
+    throw new ConvexError("Session has ended");
+  }
+  const game = await ctx.db.get(session.gameId);
+  if (
+    !game ||
+    (session.hostId === undefined && !isShareLinkActive(game, session))
+  ) {
+    throw new ConvexError("Session has ended");
+  }
+}
+
+/** Host token argument: required for sessions started from a share link. */
+const hostTokenArg = v.optional(v.string());
 
 /**
  * The host screen: session state, game title, step count and only the current step's content.
@@ -183,9 +266,9 @@ async function getHostedSession(ctx: QueryCtx, sessionId: Id<"gameSessions">) {
  * participant list is `listHostParticipants`.
  */
 export const getHostView = query({
-  args: { sessionId: v.id("gameSessions") },
+  args: { hostToken: hostTokenArg, sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
-    const session = await getHostedSession(ctx, args.sessionId);
+    const session = await getHostedSession(ctx, args.sessionId, args.hostToken);
     if (!session) {
       return null;
     }
@@ -235,9 +318,13 @@ export const getHostView = query({
  * server's time.
  */
 export const listHostParticipants = query({
-  args: { clock: v.optional(v.number()), sessionId: v.id("gameSessions") },
+  args: {
+    clock: v.optional(v.number()),
+    hostToken: hostTokenArg,
+    sessionId: v.id("gameSessions"),
+  },
   handler: async (ctx, args) => {
-    const session = await getHostedSession(ctx, args.sessionId);
+    const session = await getHostedSession(ctx, args.sessionId, args.hostToken);
     if (!session) {
       return [];
     }
@@ -312,9 +399,13 @@ export const getByInviteCode = query({
       return null;
     }
 
+    // A deleted game's sessions are deleted in the background.
     const game = await ctx.db.get(session.gameId);
+    if (!game) {
+      return null;
+    }
     return {
-      gameTitle: game?.title ?? "",
+      gameTitle: game.title,
       inviteCode: session.inviteCode,
       sessionId: session._id,
       status: session.status,
@@ -354,6 +445,10 @@ export const getPlayerState = query({
       ctx.db.get(session.gameId),
       getOrderedSteps(ctx, session.gameId),
     ]);
+    // A deleted game's sessions are deleted in the background.
+    if (!game) {
+      return null;
+    }
 
     const currentStep =
       session.currentStepIndex >= 0 && session.currentStepIndex < steps.length
@@ -405,7 +500,7 @@ export const getPlayerState = query({
       session: {
         answerRevealed: session.answerRevealed,
         currentStepIndex: session.currentStepIndex,
-        gameTitle: game?.title ?? "",
+        gameTitle: game.title,
         id: session._id,
         status: session.status,
         stepStartedAt: session.stepStartedAt ?? null,
@@ -426,15 +521,10 @@ function getCodeLanguages(steps: Doc<"gameSteps">[]): string[] {
 
 /** Get answer count for host view (reactive!) */
 export const getAnswerCount = query({
-  args: { sessionId: v.id("gameSessions") },
+  args: { hostToken: hostTokenArg, sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return null;
-    }
-
-    const session = await ctx.db.get(args.sessionId);
-    if (!session || session.hostId !== userId) {
+    const session = await getHostedSession(ctx, args.sessionId, args.hostToken);
+    if (!session) {
       return null;
     }
 
@@ -456,20 +546,43 @@ export const getAnswerCount = query({
       .query("gameParticipants")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
-
-    // Count answers only from participants in THIS session
-    const participantIds = new Set(participants.map((p) => p._id));
-    const allAnswers = await ctx.db
-      .query("participantAnswers")
-      .withIndex("by_step", (q) => q.eq("stepId", currentStep._id))
-      .collect();
-    const answered = allAnswers.filter((a) =>
-      participantIds.has(a.participantId)
-    ).length;
+    const answered = await countStepAnswers(
+      ctx,
+      args.sessionId,
+      currentStep._id,
+      participants
+    );
 
     return { answered, total: participants.length };
   },
 });
+
+/**
+ * How many of `participants` answered `stepId` in `sessionId`. Only reads this session's answers
+ * (and any saved before answers had a session id): the step's answers from every other session of
+ * the game, including those started from its share link, could be far too many to read.
+ */
+async function countStepAnswers(
+  ctx: QueryCtx,
+  sessionId: Id<"gameSessions">,
+  stepId: Id<"gameSteps">,
+  participants: Array<{ _id: Id<"gameParticipants"> }>
+) {
+  const [answers, legacyAnswers] = await Promise.all(
+    [sessionId, undefined].map((answerSessionId) =>
+      ctx.db
+        .query("participantAnswers")
+        .withIndex("by_session_and_step", (q) =>
+          q.eq("sessionId", answerSessionId).eq("stepId", stepId)
+        )
+        .collect()
+    )
+  );
+  const participantIds = new Set(participants.map((p) => p._id));
+  return [...answers, ...legacyAnswers].filter((answer) =>
+    participantIds.has(answer.participantId)
+  ).length;
+}
 
 /**
  * Get session results for host.
@@ -499,12 +612,7 @@ export const getResults = query({
     ]);
 
     const { answers: allAnswers, restoredParticipants } =
-      await collectResultAnswers(
-        ctx,
-        args.sessionId,
-        steps,
-        storedParticipants
-      );
+      await collectResultAnswers(ctx, session, steps, storedParticipants);
 
     const participants = [...storedParticipants, ...restoredParticipants];
     participants.sort((a, b) => b.totalScore - a.totalScore);
@@ -518,9 +626,9 @@ export const getResults = query({
  * quiz steps (no theory content), slim answers and participants (no tokens).
  */
 export const getResultsView = query({
-  args: { sessionId: v.id("gameSessions") },
+  args: { hostToken: hostTokenArg, sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
-    const session = await getHostedSession(ctx, args.sessionId);
+    const session = await getHostedSession(ctx, args.sessionId, args.hostToken);
     if (!session) {
       return null;
     }
@@ -535,7 +643,7 @@ export const getResultsView = query({
 
     const { answers, restoredParticipants } = await collectResultAnswers(
       ctx,
-      args.sessionId,
+      session,
       steps,
       storedParticipants
     );
@@ -573,6 +681,9 @@ export const getResultsView = query({
           choices: step.choices ?? [],
           question: step.question ?? "",
         })),
+      // Set for a session started from the share link: its host goes back
+      // to the share page instead of the game's sessions.
+      shareToken: session.shareToken ?? null,
       stepCount: steps.length,
     };
   },
@@ -580,32 +691,37 @@ export const getResultsView = query({
 
 async function collectResultAnswers(
   ctx: QueryCtx,
-  sessionId: Id<"gameSessions">,
+  session: Doc<"gameSessions">,
   steps: Doc<"gameSteps">[],
   storedParticipants: Doc<"gameParticipants">[]
 ) {
   const sessionAnswers = await ctx.db
     .query("participantAnswers")
-    .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
+    .withIndex("by_session_and_step", (q) => q.eq("sessionId", session._id))
     .collect();
 
-  if (sessionAnswers.length > 0) {
+  // Sessions started from a share link are newer than answers saved without
+  // a session id, and their host isn't the owner of the game's other
+  // sessions, so they never fall back to reading answers by step.
+  if (sessionAnswers.length > 0 || session.hostId === undefined) {
+    // A removed step's answers are deleted in the background.
+    const stepIds = new Set(steps.map((step) => step._id));
     return {
-      answers: sessionAnswers,
+      answers: sessionAnswers.filter((answer) => stepIds.has(answer.stepId)),
       restoredParticipants: [] as RestoredParticipant[],
     };
   }
 
   return await collectLegacyResultAnswers(
     ctx,
-    sessionId,
+    session._id,
     steps,
     storedParticipants
   );
 }
 
 /**
- * Results fallback for older sessions whose answers have no session id: gather the quiz answers by
+ * Results fallback for older sessions whose answers have no session id: gather those answers by
  * step and total the scores of participants that no longer exist.
  */
 async function collectLegacyResultAnswers(
@@ -620,13 +736,17 @@ async function collectLegacyResultAnswers(
   const scoreByMissingParticipant = new Map<Id<"gameParticipants">, number>();
   const answers: Doc<"participantAnswers">[] = [];
 
+  // Only answers without a session id: any other answer belongs to another
+  // session, since this one has none.
   const answersByStep = await Promise.all(
     steps
       .filter((step) => step.type === "quiz")
       .map((step) =>
         ctx.db
           .query("participantAnswers")
-          .withIndex("by_step", (q) => q.eq("stepId", step._id))
+          .withIndex("by_session_and_step", (q) =>
+            q.eq("sessionId", undefined).eq("stepId", step._id)
+          )
           .collect()
       )
   );
@@ -752,9 +872,7 @@ export const join = mutation({
     if (!session) {
       throw new ConvexError("Session not found");
     }
-    if (session.status === "finished") {
-      throw new ConvexError("Session has ended");
-    }
+    await assertJoinable(ctx, session);
 
     // Rejoin with existing token
     if (args.existingToken) {
@@ -781,6 +899,10 @@ export const join = mutation({
     const sanitizedName = sanitizeInput(args.name, 50);
     if (!sanitizedName) {
       throw new ConvexError("Invalid name");
+    }
+    // No longer than an email address can be
+    if (args.email !== undefined && args.email.length > MAX_EMAIL_LENGTH) {
+      throw new ConvexError("Invalid email");
     }
 
     const token = generateToken();
@@ -822,9 +944,7 @@ export const joinByCode = mutation({
     if (!session) {
       throw new ConvexError("Invalid invite code");
     }
-    if (session.status === "finished") {
-      throw new ConvexError("Session has ended");
-    }
+    await assertJoinable(ctx, session);
 
     // Rejoin with existing token
     if (args.existingToken) {
@@ -900,16 +1020,14 @@ export const heartbeat = mutation({
  * stale players; timed quizzes get a 10-second reading phase.
  */
 export const advance = mutation({
-  args: { sessionId: v.id("gameSessions") },
+  args: { hostToken: hostTokenArg, sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ConvexError("Unauthorized");
-    }
-
-    const session = await ctx.db.get(args.sessionId);
-    if (!session || session.hostId !== userId) {
+    const session = await getHostedSession(ctx, args.sessionId, args.hostToken);
+    if (!session) {
       throw new ConvexError("Not found");
+    }
+    if (session.status === "finished") {
+      throw new ConvexError("Session has ended");
     }
 
     const steps = await getOrderedSteps(ctx, session.gameId);
@@ -973,19 +1091,14 @@ export const advance = mutation({
  * twice.
  */
 export const reveal = mutation({
-  args: { sessionId: v.id("gameSessions") },
+  args: { hostToken: hostTokenArg, sessionId: v.id("gameSessions") },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ConvexError("Unauthorized");
-    }
-
-    const session = await ctx.db.get(args.sessionId);
-    if (!session || session.hostId !== userId) {
+    const session = await getHostedSession(ctx, args.sessionId, args.hostToken);
+    if (!session) {
       throw new ConvexError("Not found");
     }
 
-    if (session.answerRevealed) {
+    if (session.answerRevealed || session.status !== "in_progress") {
       return null; // Idempotent
     }
 
@@ -1079,15 +1192,12 @@ export const submitAnswer = mutation({
       .query("gameParticipants")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .collect();
-
-    const participantIds = new Set(participants.map((p) => p._id));
-    const allStepAnswers = await ctx.db
-      .query("participantAnswers")
-      .withIndex("by_step", (q) => q.eq("stepId", currentStep._id))
-      .collect();
-    const sessionAnswerCount = allStepAnswers.filter((a) =>
-      participantIds.has(a.participantId)
-    ).length;
+    const sessionAnswerCount = await countStepAnswers(
+      ctx,
+      args.sessionId,
+      currentStep._id,
+      participants
+    );
 
     if (sessionAnswerCount >= participants.length && !session.answerRevealed) {
       await applyStepScoresAndReveal(
@@ -1188,6 +1298,75 @@ function computeScore(
   const ratio = timeRemaining / timeLimitSeconds;
   return Math.round(basePoints * (0.5 + 0.5 * ratio));
 }
+
+/** Answers, and presence rows, `deleteSessionChildren` deletes per run. They are small. */
+const CHILD_BATCH_SIZE = 500;
+/**
+ * Most bytes of players `deleteSessionChildren` reads per run, well under a transaction's 16 MiB.
+ * Players who joined before emails were limited may carry an email of up to 1 MiB.
+ */
+const PLAYER_BATCH_BYTES = 4 * 1024 * 1024;
+
+/**
+ * Delete a session at once, so nobody can host, join or play it any more, and its players, their
+ * presence rows and answers in the background, a bounded batch at a time.
+ */
+export async function deleteSession(
+  ctx: MutationCtx,
+  sessionId: Id<"gameSessions">
+) {
+  await ctx.db.delete(sessionId);
+  await ctx.scheduler.runAfter(0, internal.sessions.deleteSessionChildren, {
+    sessionId,
+  });
+}
+
+/**
+ * Delete a batch of a deleted session's answers, presence rows and players, then schedule itself
+ * until none are left.
+ */
+export const deleteSessionChildren = internalMutation({
+  args: { sessionId: v.id("gameSessions") },
+  handler: async (ctx, { sessionId }) => {
+    const [answers, presence, players] = await Promise.all([
+      ctx.db
+        .query("participantAnswers")
+        .withIndex("by_session_and_step", (q) => q.eq("sessionId", sessionId))
+        .take(CHILD_BATCH_SIZE),
+      ctx.db
+        .query("participantPresence")
+        .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
+        .take(CHILD_BATCH_SIZE),
+      // Bounded by size, not only by count: always returns at least one
+      // player while any are left.
+      ctx.db
+        .query("gameParticipants")
+        .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
+        .paginate({
+          cursor: null,
+          maximumBytesRead: PLAYER_BATCH_BYTES,
+          numItems: CHILD_BATCH_SIZE,
+        }),
+    ]);
+
+    await Promise.all(
+      [...answers, ...presence, ...players.page].map((row) =>
+        ctx.db.delete(row._id)
+      )
+    );
+
+    if (
+      answers.length === CHILD_BATCH_SIZE ||
+      presence.length === CHILD_BATCH_SIZE ||
+      !players.isDone
+    ) {
+      await ctx.scheduler.runAfter(0, internal.sessions.deleteSessionChildren, {
+        sessionId,
+      });
+    }
+    return null;
+  },
+});
 
 // ─── Internal Mutations (Cron Jobs) ─────────────────────────────────
 

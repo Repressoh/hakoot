@@ -1,5 +1,6 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
+import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import {
   internalMutation,
@@ -7,75 +8,59 @@ import {
   mutation,
   query,
 } from "./_generated/server";
+import { deleteSession } from "./sessions";
 
 /** Sanitize user input */
 function sanitizeInput(input: string, maxLength = 500): string {
   return input.trim().replace(/[<>]/g, "").trim().slice(0, maxLength);
 }
 
-/** Delete a game and everything under it: steps, sessions, participants and their answers. */
-export async function deleteGameCascade(
+/** Sessions deleted per run of `deleteGameData` (each schedules the deletion of its rows). */
+const SESSION_BATCH_SIZE = 100;
+/** Steps deleted per run of `deleteGameData`, once its sessions are gone. */
+const STEP_BATCH_SIZE = 10;
+/** Most answers deleted per step per run of `deleteGameData`. */
+const STEP_ANSWER_BUDGET = 200;
+
+/**
+ * Delete part of a deleted game's data in a bounded batch: some of its sessions (their players,
+ * presence rows and answers follow in the background), then, once those are gone, its steps with
+ * any answers left by step. Answers saved without a session id are only found by step.
+ *
+ * @returns Whether nothing is left.
+ */
+async function deleteGameBatch(
   ctx: MutationCtx,
   gameId: Id<"games">
-): Promise<void> {
-  const [steps, sessions] = await Promise.all([
-    ctx.db
-      .query("gameSteps")
-      .withIndex("by_game", (q) => q.eq("gameId", gameId))
-      .collect(),
-    ctx.db
-      .query("gameSessions")
-      .withIndex("by_game", (q) => q.eq("gameId", gameId))
-      .collect(),
-  ]);
+): Promise<boolean> {
+  const sessions = await ctx.db
+    .query("gameSessions")
+    .withIndex("by_game", (q) => q.eq("gameId", gameId))
+    .take(SESSION_BATCH_SIZE);
+  if (sessions.length > 0) {
+    await Promise.all(
+      sessions.map((session) => deleteSession(ctx, session._id))
+    );
+    return false;
+  }
 
-  const [participants, presence] = await Promise.all([
-    Promise.all(
-      sessions.map((session) =>
-        ctx.db
-          .query("gameParticipants")
-          .withIndex("by_session", (q) => q.eq("sessionId", session._id))
-          .collect()
-      )
-    ).then((lists) => lists.flat()),
-    Promise.all(
-      sessions.map((session) =>
-        ctx.db
-          .query("participantPresence")
-          .withIndex("by_session", (q) => q.eq("sessionId", session._id))
-          .collect()
-      )
-    ).then((lists) => lists.flat()),
-  ]);
-
-  // Find answers by step as well as by participant: cleanupExpiredTokens
-  // deletes expired players but keeps their answers, so some answers have no
-  // participant left. The Set avoids deleting an answer twice.
-  const answerLists = await Promise.all([
-    ...steps.map((step) =>
-      ctx.db
+  const steps = await ctx.db
+    .query("gameSteps")
+    .withIndex("by_game", (q) => q.eq("gameId", gameId))
+    .take(STEP_BATCH_SIZE);
+  await Promise.all(
+    steps.map(async (step) => {
+      const answers = await ctx.db
         .query("participantAnswers")
         .withIndex("by_step", (q) => q.eq("stepId", step._id))
-        .collect()
-    ),
-    ...participants.map((p) =>
-      ctx.db
-        .query("participantAnswers")
-        .withIndex("by_participant", (q) => q.eq("participantId", p._id))
-        .collect()
-    ),
-  ]);
-  const answerIds = new Set(answerLists.flat().map((answer) => answer._id));
-
-  await Promise.all([
-    ...Array.from(answerIds, (id) => ctx.db.delete(id)),
-    ...participants.map((p) => ctx.db.delete(p._id)),
-    ...presence.map((p) => ctx.db.delete(p._id)),
-    ...sessions.map((session) => ctx.db.delete(session._id)),
-    ...steps.map((step) => ctx.db.delete(step._id)),
-  ]);
-
-  await ctx.db.delete(gameId);
+        .take(STEP_ANSWER_BUDGET);
+      await Promise.all(answers.map((answer) => ctx.db.delete(answer._id)));
+      if (answers.length < STEP_ANSWER_BUDGET) {
+        await ctx.db.delete(step._id);
+      }
+    })
+  );
+  return steps.length === 0;
 }
 
 export const list = query({
@@ -179,9 +164,13 @@ export const getEditorView = query({
       .withIndex("by_game_and_order", (q) => q.eq("gameId", game._id))
       .collect();
 
+    const shareEnabled = game.shareEnabled === true;
     return {
       _id: game._id,
       description: game.description,
+      shareEnabled,
+      // Only while sharing is on: there is no link to show otherwise.
+      shareToken: shareEnabled ? (game.shareToken ?? null) : null,
       steps: steps.map((step) => ({
         _id: step._id,
         preview:
@@ -272,19 +261,32 @@ export const remove = mutation({
       throw new ConvexError("Not found");
     }
 
-    await deleteGameCascade(ctx, args.gameId);
+    // The game is gone at once; its sessions, players, answers and steps
+    // follow in the background, a batch at a time.
+    await ctx.db.delete(args.gameId);
+    await ctx.scheduler.runAfter(0, internal.games.deleteGameData, {
+      gameId: args.gameId,
+    });
     return null;
   },
 });
 
-/** Deletes one game's data. Scheduled per game by account deletion so each
- * game gets its own transaction (and its own write limits). */
+/**
+ * Delete a game and everything under it: steps, sessions, participants and their answers. Runs a
+ * bounded batch, then schedules itself until nothing is left, so a game with any number of
+ * sessions can be deleted. Scheduled by `remove` and, per game, by account deletion.
+ */
 export const deleteGameData = internalMutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, { gameId }) => {
-    // The owner may have deleted it in the meantime.
+    // Already gone when the owner deleted it.
     if (await ctx.db.get(gameId)) {
-      await deleteGameCascade(ctx, gameId);
+      await ctx.db.delete(gameId);
+    }
+    if (!(await deleteGameBatch(ctx, gameId))) {
+      await ctx.scheduler.runAfter(0, internal.games.deleteGameData, {
+        gameId,
+      });
     }
     return null;
   },

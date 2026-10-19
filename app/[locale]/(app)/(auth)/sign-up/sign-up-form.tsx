@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "@/i18n/routing";
+import { getAuthRedirect } from "@/lib/auth-redirect";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 
 /** Host sign-up with name, email and password, guarded by Turnstile. */
@@ -49,7 +50,7 @@ export function SignUpForm() {
       }
 
       await signIn("password", { email, flow: "signUp", name, password });
-      push("/dashboard");
+      push(getAuthRedirect(window.location.search));
     } catch (err) {
       setLoading(false);
       const message = err instanceof Error ? err.message : "";

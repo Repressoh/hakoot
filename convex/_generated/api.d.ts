@@ -16,6 +16,7 @@ import type * as emails from "../emails.js";
 import type * as games from "../games.js";
 import type * as http from "../http.js";
 import type * as sessions from "../sessions.js";
+import type * as sharing from "../sharing.js";
 import type * as steps from "../steps.js";
 import type * as users from "../users.js";
 
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   games: typeof games;
   http: typeof http;
   sessions: typeof sessions;
+  sharing: typeof sharing;
   steps: typeof steps;
   users: typeof users;
 }>;

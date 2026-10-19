@@ -3,10 +3,12 @@
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { Leaderboard } from "@/components/session/leaderboard";
+import { LinkUnavailable } from "@/components/session/link-unavailable";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Link } from "@/i18n/routing";
+import { useHostToken } from "@/lib/host-token";
 import { useCachedQuery } from "@/lib/use-cached-query";
 
 const CHOICE_BAR_COLORS = [
@@ -98,9 +100,19 @@ function buildCsv(
 /** Results of a finished session: final leaderboard, per-question breakdown and CSV export. */
 export function SessionResultsView({ sessionId }: { sessionId: string }) {
   const t = useTranslations("results");
-  const results = useCachedQuery(api.sessions.getResultsView, {
-    sessionId: sessionId as Id<"gameSessions">,
-  });
+  const tSharing = useTranslations("sharing");
+  // Only a session started from a share link has one; the query waits until
+  // it has been read.
+  const hostToken = useHostToken(sessionId);
+  const results = useCachedQuery(
+    api.sessions.getResultsView,
+    hostToken === undefined
+      ? "skip"
+      : {
+          hostToken: hostToken ?? undefined,
+          sessionId: sessionId as Id<"gameSessions">,
+        }
+  );
 
   const handleExportCsv = useCallback(() => {
     if (!results) {
@@ -134,13 +146,19 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
 
   if (results === null) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Results not found</p>
+      <div className="flex items-center justify-center px-4 py-12">
+        {/* A session started from a share link closes with the link. */}
+        {hostToken === null ? (
+          <p className="text-muted-foreground">Results not found</p>
+        ) : (
+          <LinkUnavailable />
+        )}
       </div>
     );
   }
 
-  const { answers, gameId, participants, quizSteps, stepCount } = results;
+  const { answers, gameId, participants, quizSteps, shareToken, stepCount } =
+    results;
 
   const leaderboard = participants.map((p, i) => ({
     name: p.name,
@@ -177,7 +195,13 @@ export function SessionResultsView({ sessionId }: { sessionId: string }) {
               className="rounded-xl border-border text-foreground hover:bg-muted/50"
               variant="outline"
             >
-              <Link href={`/games/${gameId}/sessions`}>← Sessions</Link>
+              {shareToken === null ? (
+                <Link href={`/games/${gameId}/sessions`}>← Sessions</Link>
+              ) : (
+                <Link href={`/share/${shareToken}`}>
+                  ← {tSharing("backToGame")}
+                </Link>
+              )}
             </Button>
           </div>
         </div>

@@ -230,14 +230,23 @@ describe("account.deleteAllData", () => {
 });
 
 describe("games.deleteGameData", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test("is a no-op when the game is already gone", async () => {
+    vi.useFakeTimers();
     const t = newTest();
     const alice = await seedUser(t, "alice");
 
     await t.mutation(internal.games.deleteGameData, { gameId: alice.gameId });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
     await t.mutation(internal.games.deleteGameData, { gameId: alice.gameId });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
 
     expect(await countRows(t)).toMatchObject({
+      gameSessions: 0,
+      gameSteps: 0,
       games: 0,
       participantAnswers: 0,
     });
@@ -245,13 +254,21 @@ describe("games.deleteGameData", () => {
 });
 
 describe("games.remove", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test("deletes the game with its steps, sessions, participants and answers", async () => {
+    vi.useFakeTimers();
     const t = newTest();
     const alice = await seedUser(t, "alice");
 
     await asUser(t, alice.userId).mutation(api.games.remove, {
       gameId: alice.gameId,
     });
+    // The game is gone at once, the rest in the background
+    expect(await countRows(t)).toMatchObject({ gameSessions: 1, games: 0 });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
 
     expect(await countRows(t)).toMatchObject({
       gameParticipants: 0,
