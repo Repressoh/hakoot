@@ -156,6 +156,28 @@ describe("stepImageSource", () => {
     shown();
   });
 
+  test("an image renders thrown away asked for is let go of", async () => {
+    const calls = deferFetch();
+    const { file, key } = await encryptImage(IMAGE);
+    const image = { key, type: "image/png", url: "https://x.test/thrown-away" };
+    const thrownAway = stepImageSource(image);
+    for (const n of [1, 2, 3, 4]) {
+      stepImageSource({ key, type: "image/png", url: `https://x.test/n${n}` });
+    }
+    expect(await thrownAway).toHaveProperty("retryAt");
+
+    // Shown later, it is downloaded afresh.
+    const shown = holdStepImageFile(image.url);
+    await settle();
+    expect(calls).toHaveLength(0);
+    const source = stepImageSource(image);
+    await settle();
+    expect(calls).toHaveLength(1);
+    calls[0].respond(file);
+    expect(contents(await source)).toMatchObject({ bytes: IMAGE });
+    shown();
+  });
+
   test("stops a preload nothing needs any more", async () => {
     const calls = deferFetch();
     const release = holdStepImageFile("https://x.test/skipped");

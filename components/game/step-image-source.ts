@@ -45,14 +45,6 @@ const MAX_DECRYPTED = 4;
 /** How long an image that failed to download or decrypt shows as failed before another try. */
 const RETRY_AFTER_MS = 10_000;
 
-/** Forget the oldest entries of `cache` once it holds more than `max`. */
-function trim(cache: Map<string, unknown>, max: number) {
-  const [oldest] = cache.keys();
-  if (cache.size > max && oldest !== undefined) {
-    cache.delete(oldest);
-  }
-}
-
 /**
  * The download of the encrypted file at `url`, made once however many times it is asked for. Its
  * request only goes out once something holds the image (`holdStepImageFile`): a render can ask for
@@ -209,6 +201,14 @@ export function stepImageSource(
   // Replaced, it becomes the newest.
   decrypted.delete(image.url);
   decrypted.set(image.url, entry);
-  trim(decrypted, MAX_DECRYPTED);
+  const [oldest] = decrypted.keys();
+  if (decrypted.size > MAX_DECRYPTED && oldest !== undefined) {
+    decrypted.delete(oldest);
+    // Asked for by a render React threw away, and never shown: its download,
+    // waiting for a hold, is stopped rather than kept.
+    if (!holds.has(oldest)) {
+      abandon(oldest);
+    }
+  }
   return entry.source;
 }
