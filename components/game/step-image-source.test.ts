@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { encryptImage } from "@/convex/images";
 import {
+  type FailedStepImage,
   preloadStepImageFile,
   releaseStepImageFile,
   stepImageSource,
@@ -26,8 +27,9 @@ function serve(files: Record<string, Blob>) {
 const DATA_URL = /^data:([^;]+);base64,(.*)$/;
 
 /** The type and bytes of the data URL `source`. */
-function contents(source: string | null) {
-  const [, type, base64] = source?.match(DATA_URL) ?? [];
+function contents(source: string | FailedStepImage) {
+  const [, type, base64] =
+    typeof source === "string" ? (source.match(DATA_URL) ?? []) : [];
   return type
     ? { bytes: new Uint8Array(Buffer.from(base64, "base64")), type }
     : null;
@@ -51,7 +53,7 @@ describe("stepImageSource", () => {
     expect(stepImageSource(image)).toBe(decrypted);
   });
 
-  test("gives null for a file it can't download or decrypt, and tries again only after a while", async () => {
+  test("gives when to try again for a file it can't download or decrypt, and only tries then", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     const { file } = await encryptImage(IMAGE);
     const other = await encryptImage(IMAGE);
@@ -63,7 +65,7 @@ describe("stepImageSource", () => {
     };
 
     const failed = stepImageSource(image);
-    expect(await failed).toBe(null);
+    expect(await failed).toEqual({ retryAt: Date.now() + 10_000 });
     // The same settled promise, so a component showing it doesn't suspend
     // and fetch again on every render.
     expect(stepImageSource(image)).toBe(failed);
@@ -72,14 +74,18 @@ describe("stepImageSource", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(1001);
-    const retried = stepImageSource(image);
+    // Only a later attempt tries again: a render for anything else (or a
+    // memoized call) gets the same failure.
+    expect(stepImageSource(image)).toBe(failed);
+    expect(stepImageSource(image, 1)).toBe(stepImageSource(image, 1));
+    const retried = stepImageSource(image, 1);
     expect(retried).not.toBe(failed);
-    expect(await retried).toBe(null);
+    expect(await retried).toEqual({ retryAt: Date.now() + 10_000 });
     expect(fetch).toHaveBeenCalledTimes(2);
 
     expect(
       await stepImageSource({ ...image, url: "https://x.test/missing" })
-    ).toBe(null);
+    ).toMatchObject({ retryAt: expect.any(Number) });
   });
 
   test("keeps only the two newest preloads, and lets go of released ones", async () => {

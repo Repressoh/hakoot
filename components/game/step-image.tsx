@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type CSSProperties, Suspense, use } from "react";
+import { type CSSProperties, Suspense, use, useEffect, useState } from "react";
 import { stepImageSource } from "./step-image-source";
 
 /** A step's image as the Convex queries return it. */
@@ -29,10 +29,28 @@ interface DecryptedImageProps {
   style: CSSProperties;
 }
 
-/** The image, once its file is downloaded and decrypted; an empty box of its size if that fails. */
+/**
+ * The image, once its file is downloaded and decrypted; an empty box of its size if that fails,
+ * until a later try succeeds.
+ */
 function DecryptedImage({ image, style }: DecryptedImageProps) {
-  const src = use(stepImageSource(image));
-  if (!src) {
+  const [attempt, setAttempt] = useState(0);
+  const source = use(stepImageSource(image, attempt));
+
+  // A failed image is tried again once it may be, on its own: a step's view
+  // can otherwise stay unchanged for as long as it shows.
+  useEffect(() => {
+    if (typeof source === "string") {
+      return;
+    }
+    const timer = setTimeout(
+      () => setAttempt((previous) => previous + 1),
+      Math.max(0, source.retryAt - Date.now())
+    );
+    return () => clearTimeout(timer);
+  }, [source]);
+
+  if (typeof source !== "string") {
     return (
       <div
         aria-label={image.alt || undefined}
@@ -47,7 +65,7 @@ function DecryptedImage({ image, style }: DecryptedImageProps) {
       alt={image.alt}
       className={BOX_CLASS}
       height={image.height}
-      src={src}
+      src={source}
       style={style}
       // A decrypted data URL: there is nothing for an image optimizer to
       // fetch, and the editor already shrinks large photos.

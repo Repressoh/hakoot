@@ -13,6 +13,7 @@ import { StepImage } from "./step-image";
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllGlobals();
   document.body.innerHTML = "";
 });
@@ -71,6 +72,47 @@ describe("StepImage", () => {
     expect(
       container.querySelector("[role=img]")?.getAttribute("aria-label")
     ).toBe("A cat");
+    act(() => root.unmount());
+  });
+
+  test("tries a failed image again on its own once the network is back", async () => {
+    vi.useFakeTimers();
+    const { file, key } = await encryptImage(PNG);
+    // Down for the first try, back for the next.
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 500 }))
+      .mockResolvedValueOnce(new Response(file));
+    vi.stubGlobal("fetch", fetch);
+
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+    const image = {
+      alt: "A dog",
+      height: 300,
+      key,
+      type: "image/png",
+      url: "https://x.test/flaky",
+      width: 400,
+    };
+    await act(async () => {
+      root.render(<StepImage image={image} />);
+      await vi.advanceTimersByTimeAsync(100);
+    });
+    expect(container.querySelector("img")).toBe(null);
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    // Nothing else renders it again: the view just sits there.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5100);
+    });
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(container.querySelector("img")?.getAttribute("alt")).toBe("A dog");
     act(() => root.unmount());
   });
 });
