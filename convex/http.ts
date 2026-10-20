@@ -219,26 +219,52 @@ function matchesStoredSize(declared: ImageSize, stored: ImageSize): boolean {
 }
 
 /**
- * The rest of `reader`'s bytes, after `chunks`, as one blob; null as soon as they add
- * up to more than `limit` bytes, so an oversized body is never held in memory whole.
+ * Most chunks an upload's body may arrive in. A browser's arrive in far fewer; a body cut into
+ * tiny chunks would otherwise take millions of reads.
  */
-async function readUpTo(
-  reader: ReadableStreamDefaultReader<Uint8Array<ArrayBuffer>>,
-  limit: number,
-  chunks: Uint8Array<ArrayBuffer>[] = [],
-  size = 0
-): Promise<Blob | null> {
-  const { done, value } = await reader.read();
-  if (done) {
-    return new Blob(chunks);
+const MAX_BODY_CHUNKS = 16_384;
+
+/** Bytes set aside for a body at first; doubled as more arrive. */
+const INITIAL_BODY_BUFFER = 64 * 1024;
+
+/**
+ * `body`'s bytes, read into one buffer as they arrive. Stops reading as soon as they add up to more
+ * than `limit` bytes ("tooLarge"), so an oversized body is never held in memory whole, or once
+ * they take more than `MAX_BODY_CHUNKS` chunks ("tooManyChunks").
+ */
+async function readBody(
+  body: ReadableStream<Uint8Array<ArrayBuffer>> | null,
+  limit: number
+): Promise<
+  { bytes: Uint8Array<ArrayBuffer> } | { error: "tooLarge" | "tooManyChunks" }
+> {
+  if (!body) {
+    return { bytes: new Uint8Array() };
   }
-  const total = size + value.byteLength;
-  if (total > limit) {
-    await reader.cancel();
-    return null;
+  const reader = body.getReader();
+  let buffer = new Uint8Array(Math.min(limit, INITIAL_BODY_BUFFER));
+  let size = 0;
+  for (let chunks = 0; ; chunks += 1) {
+    // biome-ignore lint/performance/noAwaitInLoops: a stream's chunks can only be read one after another.
+    const { done, value } = await reader.read();
+    if (done) {
+      return { bytes: buffer.subarray(0, size) };
+    }
+    const total = size + value.byteLength;
+    if (total > limit || chunks === MAX_BODY_CHUNKS) {
+      await reader.cancel();
+      return { error: total > limit ? "tooLarge" : "tooManyChunks" };
+    }
+    if (total > buffer.length) {
+      const grown = new Uint8Array(
+        Math.min(limit, Math.max(buffer.length * 2, total))
+      );
+      grown.set(buffer.subarray(0, size));
+      buffer = grown;
+    }
+    buffer.set(value, size);
+    size = total;
   }
-  chunks.push(value);
-  return await readUpTo(reader, limit, chunks, total);
 }
 
 /**
@@ -297,13 +323,13 @@ http.route({
 
     // Counted as it arrives: a body sent without a Content-Length, or with
     // a false one, is cut off at the limit too.
-    const body = req.body
-      ? await readUpTo(req.body.getReader(), MAX_IMAGE_BYTES)
-      : new Blob([]);
-    if (!body) {
-      return error("Image too large", 413);
+    const body = await readBody(req.body, MAX_IMAGE_BYTES);
+    if ("error" in body) {
+      return body.error === "tooLarge"
+        ? error("Image too large", 413)
+        : error("Upload sent in too many chunks", 400);
     }
-    const bytes = new Uint8Array(await body.arrayBuffer());
+    const { bytes } = body;
     const type = sniffImageType(bytes);
     // The size comes from the file itself, so a huge image can't pass as a
     // small one.
@@ -320,7 +346,7 @@ http.route({
 
     try {
       // Stored with the type its bytes show, not the one it was sent with.
-      await storeStepImage(ctx, body.slice(0, body.size, type), {
+      await storeStepImage(ctx, new Blob([bytes], { type }), {
         height,
         stepId,
         width,

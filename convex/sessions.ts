@@ -4,7 +4,7 @@ import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
-import { getImageView } from "./images";
+import { getImageView, getNextImageUrl } from "./images";
 
 /** Generate a random alphanumeric invite code */
 export function generateInviteCode(length = 6): string {
@@ -298,6 +298,7 @@ export const getHostView = query({
           }
         : null,
       gameTitle: game?.title ?? "",
+      nextImageUrl: await getNextImageUrl(ctx, session, steps),
       session: {
         _id: session._id,
         answerRevealed: session.answerRevealed,
@@ -496,6 +497,7 @@ export const getPlayerState = query({
             type: currentStep.type,
           }
         : null,
+      nextImageUrl: await getNextImageUrl(ctx, session, steps),
       participant: {
         id: participant._id,
         name: participant.name,

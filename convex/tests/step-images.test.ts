@@ -7,6 +7,7 @@ import {
   isAnimatedImage,
   MAX_IMAGE_BYTES,
   readImageSize,
+  scanPngChunks,
   sniffImageType,
 } from "../images";
 import schema from "../schema";
@@ -325,6 +326,11 @@ describe("isAnimatedImage", () => {
     );
     expect(isAnimatedImage(ftyp("avif", ["mif1"]), "image/avif")).toBe(false);
 
+    // The prefix ends before either: read on.
+    expect(isAnimatedImage(png(40), "image/png")).toBe(false);
+    expect(scanPngChunks(png(40).subarray(8), 8)).toEqual({ next: 33 });
+    expect(scanPngChunks(new Uint8Array(acTL), 33)).toEqual({ animated: true });
+
     expect(isAnimatedImage(bytes("GIF89a"), "image/gif")).toBe(true);
     expect(isAnimatedImage(bytes([0xff, 0xd8, 0xff]), "image/jpeg")).toBe(
       false
@@ -481,6 +487,59 @@ describe("uploading a step image", () => {
     // Stopped reading just past the limit.
     expect(pulled).toBeLessThanOrEqual(MAX_IMAGE_BYTES / chunk.length + 2);
     expect(await storedFiles(t)).toEqual([]);
+  });
+
+  test("stops reading a body sent in tiny chunks", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { theoryId } = await seedGame(t, owner.userId);
+
+    const image = png(100_000);
+    let pulled = 0;
+    // One byte at a time: within the size limit, but as many reads as bytes.
+    const trickle = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (pulled === image.length) {
+          controller.close();
+          return;
+        }
+        controller.enqueue(image.subarray(pulled, pulled + 1));
+        pulled += 1;
+      },
+    });
+    const query = new URLSearchParams({
+      height: "300",
+      stepId: theoryId,
+      width: "400",
+    });
+    const response = await owner.as.fetch(`/step-image?${query}`, {
+      body: trickle,
+      // @ts-expect-error: needed to send a stream; not yet in RequestInit's types.
+      duplex: "half",
+      method: "POST",
+    });
+    expect(response.status).toBe(400);
+    expect(pulled).toBeLessThan(20_000);
+    expect(await storedFiles(t)).toEqual([]);
+
+    // The same image in a few chunks is fine.
+    const chunked = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(image.subarray(0, 10));
+        controller.enqueue(image.subarray(10, 70_000));
+        controller.enqueue(image.subarray(70_000));
+        controller.close();
+      },
+    });
+    const accepted = await owner.as.fetch(`/step-image?${query}`, {
+      body: chunked,
+      // @ts-expect-error: needed to send a stream; not yet in RequestInit's types.
+      duplex: "half",
+      method: "POST",
+    });
+    expect(accepted.status).toBe(200);
+    const [file] = await storedFiles(t);
+    expect(file.size).toBe(100_000);
   });
 
   test("deletes the stored file if the step goes away during the upload", async () => {
@@ -732,6 +791,45 @@ describe("images in sessions", () => {
       sessionId,
     });
     expect(playerState?.currentStep?.image).toEqual(expected);
+  });
+});
+
+describe("preloading the next step's image", () => {
+  test("the host and the players get it a step ahead, and nothing once the session ends", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { gameId, quizId } = await seedGame(t, owner.userId);
+    await upload(owner.as, quizId, png());
+    const quizUrl = (await owner.as.query(api.steps.get, { stepId: quizId }))
+      ?.image?.url;
+
+    const sessionId = await owner.as.mutation(api.sessions.create, { gameId });
+    const session = await t.run(async (ctx) => await ctx.db.get(sessionId));
+    const player = await t.mutation(api.sessions.joinByCode, {
+      inviteCode: session?.inviteCode ?? "",
+      name: "Ada",
+    });
+    const nextImageUrls = async () => [
+      (await owner.as.query(api.sessions.getHostView, { sessionId }))
+        ?.nextImageUrl,
+      (
+        await t.query(api.sessions.getPlayerState, {
+          participantToken: player.participantToken,
+          sessionId,
+        })
+      )?.nextImageUrl,
+    ];
+
+    // In the lobby, the next step is the theory step, without an image.
+    expect(await nextImageUrls()).toEqual([null, null]);
+    // On the theory step, the quiz's image is next.
+    await owner.as.mutation(api.sessions.advance, { sessionId });
+    expect(await nextImageUrls()).toEqual([quizUrl, quizUrl]);
+    // On the quiz, the last step, nothing is.
+    await owner.as.mutation(api.sessions.advance, { sessionId });
+    expect(await nextImageUrls()).toEqual([null, null]);
+    await owner.as.mutation(api.sessions.advance, { sessionId });
+    expect((await nextImageUrls())[0]).toBe(null);
   });
 });
 

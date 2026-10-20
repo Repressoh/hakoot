@@ -225,6 +225,43 @@ describe("prepareStepImage re-encoding", () => {
       expect(requestedTypes).toEqual([]);
     }
   );
+
+  test("finds an APNG's animation past more metadata than one read holds", async () => {
+    const { requestedTypes } = stubCanvas({ height: 3000, width: 4000 }, (t) =>
+      blobOf(1000, t)
+    );
+    const chunk = (type: string, length: number) => {
+      const bytes = new Uint8Array(12 + length);
+      new DataView(bytes.buffer).setUint32(0, length);
+      bytes.set(
+        [...type].map((char) => char.charCodeAt(0)),
+        4
+      );
+      return bytes;
+    };
+    const parts = [
+      new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      chunk("IHDR", 13),
+      // A large color profile, then more than a read's worth of text.
+      chunk("iCCP", 100_000),
+      chunk("tEXt", 30_000),
+      chunk("tEXt", 30_000),
+      chunk("acTL", 8),
+      chunk("IDAT", 2_000_000),
+    ];
+    const apng = new File(parts, "a.png", { type: "image/png" });
+    expect((await prepareStepImage(apng)).file).toBe(apng);
+    expect(requestedTypes).toEqual([]);
+
+    // The same file without the animation chunk is still re-encoded.
+    const still = new File(
+      parts.filter((_, i) => i !== 5),
+      "b.png",
+      { type: "image/png" }
+    );
+    expect((await prepareStepImage(still)).file).not.toBe(still);
+    expect(requestedTypes).toEqual(["image/webp"]);
+  });
 });
 
 describe("uploadStepImage", () => {

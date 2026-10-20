@@ -1,5 +1,9 @@
 import type { Id } from "@/convex/_generated/dataModel";
-import { IMAGE_HEADER_BYTES, isAnimatedImage } from "@/convex/images";
+import {
+  IMAGE_HEADER_BYTES,
+  isAnimatedImage,
+  scanPngChunks,
+} from "@/convex/images";
 
 /** The image types a step accepts: the ones `convex/images.ts` recognizes. */
 export const STEP_IMAGE_TYPES = [
@@ -99,6 +103,35 @@ async function reencode(
 }
 
 /**
+ * Whether the PNG `file` is an APNG, following its chunks from `offset` a window at a time, past
+ * however much metadata comes before its animation control chunk or image data. Chunks' data is
+ * skipped, not read.
+ */
+async function isAnimatedPng(file: Blob, offset = 8): Promise<boolean> {
+  if (offset + 8 > file.size) {
+    return false;
+  }
+  const window = new Uint8Array(
+    await file.slice(offset, offset + IMAGE_HEADER_BYTES).arrayBuffer()
+  );
+  const scan = scanPngChunks(window, offset);
+  return "animated" in scan
+    ? scan.animated
+    : await isAnimatedPng(file, scan.next);
+}
+
+/** Whether `file`, of one of `STEP_IMAGE_TYPES`, is animated. */
+async function isAnimated(file: File): Promise<boolean> {
+  if (file.type === "image/png") {
+    return await isAnimatedPng(file);
+  }
+  const header = new Uint8Array(
+    await file.slice(0, IMAGE_HEADER_BYTES).arrayBuffer()
+  );
+  return isAnimatedImage(header, file.type);
+}
+
+/**
  * `file` ready to upload as a step image: photos larger than a projector needs are shrunk and
  * re-encoded, while animated images (GIFs, APNGs, animated WebPs and AVIF sequences) are kept as
  * they are: a canvas would keep only their first frame.
@@ -124,11 +157,8 @@ export async function prepareStepImage(file: File): Promise<PreparedStepImage> {
       height: bitmap.height,
       width: bitmap.width,
     };
-    const header = new Uint8Array(
-      await file.slice(0, IMAGE_HEADER_BYTES).arrayBuffer()
-    );
     if (
-      !isAnimatedImage(header, file.type) &&
+      !(await isAnimated(file)) &&
       (tooBig || file.size > SHRINK_ABOVE_BYTES)
     ) {
       const size = fitWithin(bitmap.width, bitmap.height, MAX_EDGE);

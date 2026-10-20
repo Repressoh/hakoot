@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { preloadStepImage } from "@/components/game/preload-step-image";
 import { StepImage } from "@/components/game/step-image";
 import { usePreloadStepRenderers } from "@/components/game/use-preload-step-renderers";
 import { CircularTimer } from "@/components/session/circular-timer";
@@ -620,6 +621,7 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
     view?.session.status === "waiting"
   );
   usePreloadStepRenderers(view?.codeLanguages);
+  preloadStepImage(view?.nextImageUrl);
 
   // Wait for both: the join toasts compare against the first participant list.
   if (view === undefined || participants === undefined) {

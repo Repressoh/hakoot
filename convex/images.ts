@@ -11,8 +11,8 @@ export const MAX_IMAGE_DIMENSION = 10_000;
 export const MAX_IMAGE_ALT_LENGTH = 500;
 
 /**
- * Bytes from the start of a file that `isAnimatedImage` reads: enough to reach a PNG's image
- * data past the metadata chunks before it.
+ * Bytes of a file that `isAnimatedImage` reads from its start, and `scanPngChunks` at a time:
+ * enough to hold a PNG's usual metadata chunks.
  */
 export const IMAGE_HEADER_BYTES = 64 * 1024;
 
@@ -215,34 +215,49 @@ export function readImageSize(
   }
 }
 
-/** Whether a PNG has an animation control chunk (APNG), which comes before its image data. */
-function isAnimatedPng(bytes: Uint8Array): boolean {
-  const data = view(bytes);
-  for (let offset = 8; offset + 8 <= bytes.length; ) {
-    const chunk = ascii(bytes, offset + 4, offset + 8);
+/**
+ * Follow a PNG's chunks through `window`, the file's bytes from `start`, where a chunk begins,
+ * looking for the animation control chunk that makes it an APNG, which comes before its image
+ * data. Gives whether it is animated once it finds either, or else the offset in the file of the
+ * first chunk whose header is past the window, to read on from.
+ */
+export function scanPngChunks(
+  window: Uint8Array,
+  start: number
+): { animated: boolean } | { next: number } {
+  const data = view(window);
+  let offset = 0;
+  while (offset + 8 <= window.length) {
+    const chunk = ascii(window, offset + 4, offset + 8);
     if (chunk === "acTL") {
-      return true;
+      return { animated: true };
     }
     if (chunk === "IDAT") {
-      return false;
+      return { animated: false };
     }
     // Length, type, data and checksum.
     offset += 12 + data.getUint32(offset);
   }
-  return false;
+  return { next: start + offset };
+}
+
+function animatedPngPrefix(bytes: Uint8Array): boolean {
+  const scan = scanPngChunks(bytes.subarray(8), 8);
+  return "animated" in scan && scan.animated;
 }
 
 /**
  * Whether the image of `type` whose first bytes are `bytes` is animated: a GIF, an APNG, a WebP
  * with its animation flag set, or an AVIF image sequence. Re-encoding one through a canvas would
- * keep only its first frame. `bytes` should hold the start of the file, up to a PNG's image data.
+ * keep only its first frame. `bytes` should hold the start of the file, up to a PNG's image data:
+ * a PNG whose chunks run past them counts as still (`scanPngChunks` reads on).
  */
 export function isAnimatedImage(bytes: Uint8Array, type: string): boolean {
   switch (type) {
     case "image/gif":
       return true;
     case "image/png":
-      return isAnimatedPng(bytes);
+      return animatedPngPrefix(bytes);
     case "image/webp":
       // VP8X's flags byte: bit 1 is "animation".
       return (
@@ -274,6 +289,24 @@ export async function releaseImage(
   if (!stillShown && (await ctx.db.system.get("_storage", storageId))) {
     await ctx.storage.delete(storageId);
   }
+}
+
+/**
+ * The URL of the image on the step after the current one of `session`, so clients can download
+ * it before that step shows: a quiz's answer clock starts 10 seconds after its step does, whether
+ * or not the image has arrived by then. Null once the session is finished, or if the next step
+ * has no image.
+ */
+export async function getNextImageUrl(
+  ctx: QueryCtx,
+  session: Doc<"gameSessions">,
+  steps: Doc<"gameSteps">[]
+): Promise<string | null> {
+  const image =
+    session.status === "finished"
+      ? undefined
+      : steps[session.currentStepIndex + 1]?.image;
+  return image ? await ctx.storage.getUrl(image.storageId) : null;
 }
 
 /** A step's image as clients show it, with the URL to load it from; null without one. */
