@@ -18,12 +18,12 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-/** Mount `<StepImage>` for the encrypted file at `url`, and let it settle for `ms`. */
-async function mount(url: string, key: string, ms: number) {
+/** Mount `<StepImage>` for the encrypted file at `url`. */
+async function mount(url: string, key: string) {
   const container = document.createElement("div");
   document.body.append(container);
   const root = createRoot(container);
-  await act(async () => {
+  await act(() => {
     root.render(
       <StepImage
         image={{
@@ -36,9 +36,21 @@ async function mount(url: string, key: string, ms: number) {
         }}
       />
     );
-    await new Promise((resolve) => setTimeout(resolve, ms));
   });
   return { container, root };
+}
+
+/** Let React work until `check` passes: on a busy runner, a download and its decryption take a while. */
+async function until(check: () => void) {
+  await vi.waitFor(
+    async () => {
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      });
+      check();
+    },
+    { timeout: 5000 }
+  );
 }
 
 describe("StepImage", () => {
@@ -49,7 +61,8 @@ describe("StepImage", () => {
       vi.fn(async () => new Response(file))
     );
 
-    const { container, root } = await mount("https://x.test/shown", key, 50);
+    const { container, root } = await mount("https://x.test/shown", key);
+    await until(() => expect(container.querySelector("img")).not.toBe(null));
     const img = container.querySelector("img");
     expect(img?.getAttribute("alt")).toBe("A cat");
     expect(img?.getAttribute("src")).toBe(
@@ -62,11 +75,14 @@ describe("StepImage", () => {
     const fetch = vi.fn(async () => new Response(null, { status: 500 }));
     vi.stubGlobal("fetch", fetch);
 
-    const { container, root } = await mount(
-      "https://x.test/broken",
-      "AAAA",
-      500
+    const { container, root } = await mount("https://x.test/broken", "AAAA");
+    await until(() =>
+      expect(container.querySelector("[role=img]")).not.toBe(null)
     );
+    // Well short of the next try, ten seconds on.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    });
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(container.querySelector("img")).toBe(null);
     expect(
