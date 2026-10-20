@@ -8,9 +8,10 @@ import { auth } from "./auth";
 import {
   encryptImage,
   type ImageSize,
+  isTooLarge,
   MAX_IMAGE_BYTES,
   MAX_IMAGE_DIMENSION,
-  MAX_IMAGE_PIXELS,
+  readImageExtents,
   readImageSize,
   sniffImageType,
 } from "./images";
@@ -321,7 +322,7 @@ http.route({
     if (width === null || height === null) {
       return error("Invalid image size", 400);
     }
-    if (width * height > MAX_IMAGE_PIXELS) {
+    if (isTooLarge({ height, width })) {
       return error("Image too large", 413);
     }
     if (Number(req.headers.get("content-length")) > MAX_IMAGE_BYTES) {
@@ -353,10 +354,9 @@ http.route({
     if (!(type && stored && stored.width > 0 && stored.height > 0)) {
       return error("Unsupported image type", 415);
     }
-    if (
-      Math.max(stored.width, stored.height) > MAX_IMAGE_DIMENSION ||
-      stored.width * stored.height > MAX_IMAGE_PIXELS
-    ) {
+    // Each image an AVIF holds, not just the largest: a wide track behind a
+    // larger still image is no smaller to decode.
+    if (readImageExtents(bytes, type).some(isTooLarge)) {
       return error("Image too large", 413);
     }
     if (!matchesStoredSize({ height, width }, stored)) {

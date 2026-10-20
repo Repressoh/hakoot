@@ -271,20 +271,26 @@ function avifTrackSizes(bytes: Uint8Array, file: Box): ImageSize[] {
 }
 
 /**
- * An AVIF's size: the widest and tallest its boxes give, so a grid image counts at its full size
- * rather than a tile's, an image sequence at its frames' size rather than its still image's, and
- * no image or track in it is wider, taller, or larger than the size checked. Read from the box
- * structure, not by looking for "ispe" anywhere: the image data could hold those bytes too.
+ * The sizes of an AVIF's images and of its image sequence's tracks. Read from the box structure,
+ * not by looking for "ispe" anywhere: the image data could hold those bytes too.
+ */
+function avifSizes(bytes: Uint8Array): ImageSize[] {
+  const file: Box = { end: bytes.length, start: 0, type: "" };
+  return [...avifItemSizes(bytes, file), ...avifTrackSizes(bytes, file)];
+}
+
+/**
+ * An AVIF's size: the largest of its images and tracks, so a grid image counts at its full size
+ * rather than a tile's, and an image sequence at its frames' size rather than its still image's.
  */
 function avifSize(bytes: Uint8Array): ImageSize | null {
-  const file: Box = { end: bytes.length, start: 0, type: "" };
-  const sizes = [...avifItemSizes(bytes, file), ...avifTrackSizes(bytes, file)];
-  return sizes.length > 0
-    ? {
-        height: Math.max(...sizes.map((size) => size.height)),
-        width: Math.max(...sizes.map((size) => size.width)),
-      }
-    : null;
+  let largest: ImageSize | null = null;
+  for (const size of avifSizes(bytes)) {
+    if (!largest || size.width * size.height > largest.width * largest.height) {
+      largest = size;
+    }
+  }
+  return largest;
 }
 
 /** The bytes of the color table a GIF's `flags` byte (of its screen, or of a frame) says follows. */
@@ -369,6 +375,27 @@ export function readImageSize(
     default:
       return null;
   }
+}
+
+/**
+ * Every size, in pixels, a browser may decode the image of `type` in `bytes` at: each of an AVIF's
+ * images and tracks, which can differ in shape, or else `readImageSize`'s. Each must be within the
+ * limits (`isTooLarge`).
+ */
+export function readImageExtents(bytes: Uint8Array, type: string): ImageSize[] {
+  if (type === "image/avif") {
+    return avifSizes(bytes);
+  }
+  const size = readImageSize(bytes, type);
+  return size ? [size] : [];
+}
+
+/** Whether an image of `size` is too large to be a step image: too wide, too tall, or too many pixels in all. */
+export function isTooLarge(size: ImageSize): boolean {
+  return (
+    Math.max(size.width, size.height) > MAX_IMAGE_DIMENSION ||
+    size.width * size.height > MAX_IMAGE_PIXELS
+  );
 }
 
 /**

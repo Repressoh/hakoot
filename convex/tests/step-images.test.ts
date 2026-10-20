@@ -8,6 +8,7 @@ import {
   encryptImage,
   isAnimatedImage,
   MAX_IMAGE_BYTES,
+  readImageExtents,
   readImageSize,
   scanPngChunks,
   sniffImageType,
@@ -415,11 +416,21 @@ describe("readImageSize", () => {
       height: 4000,
       width: 5000,
     });
-    // Each image and track counts, even one smaller in area than another.
-    expect(size([4096, 4096], [20_000, 800], [64, 64])).toEqual({
+    // Each image and track is an extent the limits apply to, even one
+    // smaller in area than another.
+    const wide = avifSequence([4096, 4096], [20_000, 800], [64, 64]);
+    expect(readImageSize(wide, "image/avif")).toEqual({
       height: 4096,
-      width: 20_000,
+      width: 4096,
     });
+    expect(readImageExtents(wide, "image/avif")).toEqual([
+      { height: 4096, width: 4096 },
+      { height: 800, width: 20_000 },
+      { height: 64, width: 64 },
+    ]);
+    expect(readImageExtents(png(), "image/png")).toEqual([
+      { height: 300, width: 400 },
+    ]);
   });
 
   test("reads an AVIF's size as its largest image extents, as a grid's, from its boxes", () => {
@@ -660,6 +671,17 @@ describe("uploading a step image", () => {
       square(4096)
     );
     expect(largest.status).toBe(200);
+    // An AVIF whose still image and track differ in shape, each within the
+    // limits.
+    const turned = avifSequence([4000, 3000], [3000, 4000], [3000, 4000]);
+    expect(
+      (
+        await upload(owner.as, theoryId, turned, {
+          height: 3000,
+          width: 4000,
+        })
+      ).status
+    ).toBe(200);
   });
 
   test("refuses an upload without a size", async () => {
