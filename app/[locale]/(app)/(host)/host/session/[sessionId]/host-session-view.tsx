@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { usePreloadStepImage } from "@/components/game/preload-step-image";
+import { StepImage } from "@/components/game/step-image";
 import { usePreloadStepRenderers } from "@/components/game/use-preload-step-renderers";
 import { CircularTimer } from "@/components/session/circular-timer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
@@ -79,7 +81,8 @@ interface StepContentProps {
 }
 
 /**
- * The current step as the host sees it: theory content, or the quiz question with answer progress.
+ * The current step as the host sees it: its image and theory content, or the quiz question, its
+ * image and the choices.
  */
 function StepContent({
   step,
@@ -90,6 +93,7 @@ function StepContent({
   if (step.type === "theory") {
     return (
       <>
+        {step.image ? <StepImage image={step.image} /> : null}
         {step.markdownContent ? (
           <MarkdownViewer content={step.markdownContent} />
         ) : null}
@@ -109,6 +113,7 @@ function StepContent({
       <p className="font-bold font-display text-foreground text-xl">
         {step.question}
       </p>
+      {step.image ? <StepImage image={step.image} maxHeight="45vh" /> : null}
       <div className="grid grid-cols-2 gap-3">
         {(step.choices ?? []).map((choice, i) => (
           <div
@@ -616,6 +621,7 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
     view?.session.status === "waiting"
   );
   usePreloadStepRenderers(view?.codeLanguages);
+  usePreloadStepImage(view?.nextImageUrl);
 
   // Wait for both: the join toasts compare against the first participant list.
   if (view === undefined || participants === undefined) {

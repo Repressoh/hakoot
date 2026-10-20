@@ -1,9 +1,11 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { getImageView, MAX_IMAGE_ALT_LENGTH, releaseImage } from "./images";
+import { checkRateLimit } from "./sessions";
 
 /** Sanitize user input */
 function sanitizeInput(input: string, maxLength = 5000): string {
@@ -39,6 +41,19 @@ async function requireGameOwner(
   return { game, userId };
 }
 
+/** Throws unless the current user owns the game of `stepId`; returns the step and the user id. */
+async function requireStepOwner(
+  ctx: QueryCtx | MutationCtx,
+  stepId: Id<"gameSteps">
+) {
+  const step = await ctx.db.get(stepId);
+  if (!step) {
+    throw new ConvexError("Not found");
+  }
+  const { userId } = await requireGameOwner(ctx, step.gameId);
+  return { step, userId };
+}
+
 export const get = query({
   args: { stepId: v.id("gameSteps") },
   handler: async (ctx, args) => {
@@ -57,7 +72,15 @@ export const get = query({
       return null;
     }
 
-    return step;
+    const image = await getImageView(ctx, step.image);
+    return {
+      ...step,
+      // With the file's id, so alt text edits name the image they describe.
+      image:
+        image && step.image
+          ? { ...image, storageId: step.image.storageId }
+          : null,
+    };
   },
 });
 
@@ -145,13 +168,9 @@ export const updateTheory = mutation({
     stepId: v.id("gameSteps"),
   },
   handler: async (ctx, args) => {
-    const step = await ctx.db.get(args.stepId);
-    if (!step) {
-      throw new ConvexError("Not found");
-    }
-    await requireGameOwner(ctx, step.gameId);
+    const { step } = await requireStepOwner(ctx, args.stepId);
 
-    const updates: Record<string, unknown> = {};
+    const updates: Partial<Doc<"gameSteps">> = {};
     if (args.markdownContent !== undefined) {
       updates.markdownContent = sanitizeInput(args.markdownContent, 10_000);
     }
@@ -179,13 +198,9 @@ export const updateQuiz = mutation({
     timeLimitSeconds: v.optional(v.union(v.number(), v.null())),
   },
   handler: async (ctx, args) => {
-    const step = await ctx.db.get(args.stepId);
-    if (!step) {
-      throw new ConvexError("Not found");
-    }
-    await requireGameOwner(ctx, step.gameId);
+    const { step } = await requireStepOwner(ctx, args.stepId);
 
-    const updates: Record<string, unknown> = {};
+    const updates: Partial<Doc<"gameSteps">> = {};
     if (args.question !== undefined) {
       updates.question = sanitizeInput(args.question, 1000);
     }
@@ -221,6 +236,9 @@ export const remove = mutation({
     await ctx.scheduler.runAfter(0, internal.steps.deleteStepAnswers, {
       stepId: args.stepId,
     });
+    if (step.image) {
+      await releaseImage(ctx, step.image.storageId);
+    }
 
     // Re-number remaining steps
     const remaining = await ctx.db
@@ -296,6 +314,115 @@ export const move = mutation({
     await ctx.db.patch(other._id, { order: step.order });
     await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
 
+    return null;
+  },
+});
+
+/**
+ * Check that the current user can upload an image for the step `stepId`, and count the upload
+ * against their rate limit. Called by the upload route before it reads the file. Gives the step's
+ * id, and the upload's number among the step's uploads, for `attachImage`.
+ */
+export const prepareImageUpload = internalMutation({
+  // A string from the upload URL, so a malformed id is "Not found" too.
+  args: { stepId: v.string() },
+  handler: async (ctx, args) => {
+    const stepId = ctx.db.normalizeId("gameSteps", args.stepId);
+    if (!stepId) {
+      throw new ConvexError("Not found");
+    }
+    const { step, userId } = await requireStepOwner(ctx, stepId);
+    await checkRateLimit(ctx, `user:${userId}`, "uploadImage");
+    const upload = (step.imageUploads ?? 0) + 1;
+    await ctx.db.patch(stepId, { imageUploads: upload });
+    return { stepId, upload };
+  },
+});
+
+/**
+ * Show the stored file `storageId`, from the step's upload number `upload`, as the step's image, in
+ * place of any image it had, which is deleted unless another step shows it. The new image starts
+ * without alt text. If a later upload has begun since, say from another tab, the file is deleted
+ * instead: that upload's image is the one to show, and this one would replace it if it finished
+ * first.
+ */
+export const attachImage = internalMutation({
+  args: {
+    height: v.number(),
+    key: v.string(),
+    stepId: v.id("gameSteps"),
+    storageId: v.id("_storage"),
+    type: v.string(),
+    upload: v.number(),
+    width: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { step } = await requireStepOwner(ctx, args.stepId);
+    if (step.imageUploads !== args.upload) {
+      await ctx.storage.delete(args.storageId);
+      return null;
+    }
+
+    await ctx.db.patch(args.stepId, {
+      image: {
+        height: args.height,
+        key: args.key,
+        storageId: args.storageId,
+        type: args.type,
+        width: args.width,
+      },
+    });
+    await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
+    if (step.image && step.image.storageId !== args.storageId) {
+      await releaseImage(ctx, step.image.storageId);
+    }
+    return null;
+  },
+});
+
+/**
+ * Set the alt text of the step's image, if it still shows the file `storageId`: a save made for
+ * an image since replaced, say from another tab, is dropped instead of describing the new one.
+ */
+export const setImageAlt = mutation({
+  args: {
+    alt: v.string(),
+    stepId: v.id("gameSteps"),
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const { step } = await requireStepOwner(ctx, args.stepId);
+    if (step.image?.storageId !== args.storageId) {
+      return null;
+    }
+
+    await ctx.db.patch(args.stepId, {
+      image: {
+        ...step.image,
+        alt: sanitizeInput(args.alt, MAX_IMAGE_ALT_LENGTH) || undefined,
+      },
+    });
+    await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
+    return null;
+  },
+});
+
+/**
+ * Remove a step's image, if it still shows the file `storageId`: a removal made for an image since
+ * replaced, say from another tab, leaves the new one alone. Its file is deleted unless another
+ * step shows it.
+ */
+export const removeImage = mutation({
+  args: { stepId: v.id("gameSteps"), storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    const { step } = await requireStepOwner(ctx, args.stepId);
+    if (step.image?.storageId !== args.storageId) {
+      return null;
+    }
+
+    await ctx.db.patch(args.stepId, { image: undefined });
+    await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
+    await releaseImage(ctx, step.image.storageId);
     return null;
   },
 });

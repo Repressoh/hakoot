@@ -93,6 +93,7 @@ Set the corresponding environment variables in the Convex dashboard:
 | Convex Dashboard Variable | Value |
 | --- | --- |
 | `CONVEX_SITE_URL` | Your Convex site URL (e.g. `https://your-project.convex.site`) |
+| `SITE_URL` | Your app's URL (e.g. `https://your-domain.com`). Convex Auth needs it, and the Convex HTTP routes (step image uploads, Turnstile checks) accept requests from it |
 | `JWKS` | Your JWKS public key |
 | `AUTH_GOOGLE_ID` | Same as above |
 | `AUTH_GOOGLE_SECRET` | Same as above |

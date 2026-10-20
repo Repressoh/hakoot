@@ -1,11 +1,14 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  // The app's "@/" imports, as tsconfig.json maps them.
+  resolve: { tsconfigPaths: true },
   test: {
     // convex-test runs Convex functions in the same runtime as production.
     // Tests outside convex/ opt into Node with a @vitest-environment docblock.
     environment: "edge-runtime",
     include: [
+      "components/**/*.test.{ts,tsx}",
       "convex/**/*.test.ts",
       "i18n/**/*.test.ts",
       "lib/**/*.test.ts",

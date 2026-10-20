@@ -20,6 +20,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { getUnsavedDraft, useAutosave } from "@/lib/use-autosave";
 import { formatLineNumbers, parseLineRange } from "@/lib/utils";
 import { SaveStatus } from "./save-status";
+import { type EditorStepImage, StepImageField } from "./step-image-field";
 
 const ClientCodeBlock = dynamic(
   () =>
@@ -71,6 +72,7 @@ interface CodeBlock {
 interface Step {
   _id: Id<"gameSteps">;
   codeBlock?: CodeBlock;
+  image: EditorStepImage | null;
   markdownContent?: string;
   type: "theory" | "quiz";
 }
@@ -227,8 +229,8 @@ function initTheoryForm(step: Step): TheoryFormState {
 }
 
 /**
- * Editor for a theory step's markdown content and optional annotated code block; changes save
- * automatically.
+ * Editor for a theory step's markdown content, optional image and optional annotated code block;
+ * changes save automatically.
  */
 export function TheoryStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
@@ -275,6 +277,10 @@ export function TheoryStepEditor({ step }: Props) {
         <h1 className="font-semibold text-xl">{t("theoryTitle")}</h1>
         <SaveStatus status={saveStatus} />
       </div>
+
+      <StepImageField image={step.image} stepId={step._id} />
+
+      <Separator />
 
       {/* Markdown editor */}
       <div className="space-y-2">

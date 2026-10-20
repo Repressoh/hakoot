@@ -8,6 +8,7 @@ import {
   mutation,
   query,
 } from "./_generated/server";
+import { releaseImage } from "./images";
 import { deleteSession } from "./sessions";
 
 /** Sanitize user input */
@@ -48,6 +49,7 @@ async function deleteGameBatch(
     .query("gameSteps")
     .withIndex("by_game", (q) => q.eq("gameId", gameId))
     .take(STEP_BATCH_SIZE);
+  const deletedImages = new Set<Id<"_storage">>();
   await Promise.all(
     steps.map(async (step) => {
       const answers = await ctx.db
@@ -57,8 +59,16 @@ async function deleteGameBatch(
       await Promise.all(answers.map((answer) => ctx.db.delete(answer._id)));
       if (answers.length < STEP_ANSWER_BUDGET) {
         await ctx.db.delete(step._id);
+        if (step.image) {
+          deletedImages.add(step.image.storageId);
+        }
       }
     })
+  );
+  // Once every deleted step is gone, so a file two of them showed is seen
+  // as unused.
+  await Promise.all(
+    [...deletedImages].map((storageId) => releaseImage(ctx, storageId))
   );
   return steps.length === 0;
 }

@@ -4,6 +4,7 @@ import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { getImageView, getNextImageUrl } from "./images";
 
 /** Generate a random alphanumeric invite code */
 export function generateInviteCode(length = 6): string {
@@ -60,6 +61,7 @@ const RATE_LIMIT_CONFIG = {
   hostFromLink: { maxAttempts: 30, windowMs: 60_000 },
   join: { maxAttempts: 10, windowMs: 60_000 },
   joinByCode: { maxAttempts: 10, windowMs: 60_000 },
+  uploadImage: { maxAttempts: 20, windowMs: 60_000 },
 } as const;
 
 /** Check and enforce rate limiting */
@@ -277,7 +279,12 @@ export const getHostView = query({
       ctx.db.get(session.gameId),
       getOrderedSteps(ctx, session.gameId),
     ]);
-    const step = steps[session.currentStepIndex];
+    // None once finished: the index still points at the last step, whose
+    // content (an image replaced since, say) may be for a later session.
+    const step =
+      session.status === "finished"
+        ? undefined
+        : steps[session.currentStepIndex];
 
     return {
       codeLanguages: getCodeLanguages(steps),
@@ -288,6 +295,7 @@ export const getHostView = query({
             codeBlock: step.codeBlock
               ? { code: step.codeBlock.code, language: step.codeBlock.language }
               : undefined,
+            image: await getImageView(ctx, step.image),
             markdownContent: step.markdownContent,
             question: step.question,
             timeLimitSeconds: step.timeLimitSeconds,
@@ -295,6 +303,7 @@ export const getHostView = query({
           }
         : null,
       gameTitle: game?.title ?? "",
+      nextImageUrl: await getNextImageUrl(ctx, session, steps),
       session: {
         _id: session._id,
         answerRevealed: session.answerRevealed,
@@ -450,8 +459,12 @@ export const getPlayerState = query({
       return null;
     }
 
+    // None once finished: the index still points at the last step, whose
+    // content (an image replaced since, say) may be for a later session.
     const currentStep =
-      session.currentStepIndex >= 0 && session.currentStepIndex < steps.length
+      session.status !== "finished" &&
+      session.currentStepIndex >= 0 &&
+      session.currentStepIndex < steps.length
         ? steps[session.currentStepIndex]
         : null;
 
@@ -485,6 +498,7 @@ export const getPlayerState = query({
             choices: currentStep.choices ?? null,
             codeBlock: currentStep.codeBlock ?? null,
             id: currentStep._id,
+            image: await getImageView(ctx, currentStep.image),
             markdownContent: currentStep.markdownContent ?? null,
             order: currentStep.order,
             question: currentStep.question ?? null,
@@ -492,6 +506,7 @@ export const getPlayerState = query({
             type: currentStep.type,
           }
         : null,
+      nextImageUrl: await getNextImageUrl(ctx, session, steps),
       participant: {
         id: participant._id,
         name: participant.name,
