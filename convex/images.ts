@@ -213,38 +213,137 @@ function childBox(
     : undefined;
 }
 
-/**
- * An AVIF's size: the largest of the image spatial extents (`ispe`) properties in its
- * `meta` → `iprp` → `ipco` boxes, so a grid image counts at its full size rather than a tile's.
- * Read from the box structure, not by looking for "ispe" anywhere: the image data could hold
- * those bytes too.
- */
-function avifSize(bytes: Uint8Array): ImageSize | null {
+/** The sizes of the image spatial extents (`ispe`) properties in an AVIF's `meta` → `iprp` → `ipco` boxes. */
+function avifItemSizes(bytes: Uint8Array, file: Box): ImageSize[] {
   const data = view(bytes);
-  const file: Box = { end: bytes.length, start: 0, type: "" };
   // `meta` is a full box: its children start after a version and flags.
   const meta = childBox(bytes, file, "meta");
   const ipco = childBox(bytes, childBox(bytes, meta, "iprp", 4), "ipco");
-  if (!ipco) {
-    return null;
-  }
-  let largest: ImageSize | null = null;
-  for (const box of readBoxes(bytes, ipco.start, ipco.end)) {
-    // Version and flags, then the width and height.
-    if (box.type === "ispe" && box.start + 12 <= box.end) {
-      const size = {
-        height: data.getUint32(box.start + 8),
-        width: data.getUint32(box.start + 4),
-      };
-      if (
-        !largest ||
-        size.width * size.height > largest.width * largest.height
-      ) {
-        largest = size;
+  return (ipco ? readBoxes(bytes, ipco.start, ipco.end) : [])
+    .filter((box) => box.type === "ispe" && box.start + 12 <= box.end)
+    .map((box) => ({
+      // Version and flags, then the width and height.
+      height: data.getUint32(box.start + 8),
+      width: data.getUint32(box.start + 4),
+    }));
+}
+
+/**
+ * The frame sizes an AVIF image sequence's tracks give: in each track's header (`tkhd`), and in
+ * its AV1 sample descriptions (`stsd`), either of which a browser may decode its frames at.
+ */
+function avifTrackSizes(bytes: Uint8Array, file: Box): ImageSize[] {
+  const data = view(bytes);
+  const sizes: ImageSize[] = [];
+  const moov = childBox(bytes, file, "moov");
+  const tracks = moov ? readBoxes(bytes, moov.start, moov.end) : [];
+  for (const trak of tracks.filter((box) => box.type === "trak")) {
+    const tkhd = childBox(bytes, trak, "tkhd");
+    // Past its version and flags, times and IDs (64-bit ones in version 1),
+    // layer, volume and matrix: the width and height, in 16.16 fixed point.
+    const at = tkhd && tkhd.start + (bytes[tkhd.start] === 1 ? 88 : 76);
+    if (tkhd && at !== undefined && at + 8 <= tkhd.end) {
+      sizes.push({
+        height: Math.ceil(data.getUint32(at + 4) / 2 ** 16),
+        width: Math.ceil(data.getUint32(at) / 2 ** 16),
+      });
+    }
+    const stbl = childBox(
+      bytes,
+      childBox(bytes, childBox(bytes, trak, "mdia"), "minf"),
+      "stbl"
+    );
+    // A full box with an entry count, then the entries.
+    const stsd = childBox(bytes, stbl, "stsd");
+    const entries = stsd ? readBoxes(bytes, stsd.start + 8, stsd.end) : [];
+    for (const entry of entries) {
+      // A visual sample entry: the width and height come after 24 bytes of
+      // reserved fields and its data reference.
+      if (entry.type === "av01" && entry.start + 28 <= entry.end) {
+        sizes.push({
+          height: data.getUint16(entry.start + 26),
+          width: data.getUint16(entry.start + 24),
+        });
       }
     }
   }
+  return sizes;
+}
+
+/**
+ * An AVIF's size: the largest its boxes give, so a grid image counts at its full size rather
+ * than a tile's, and an image sequence at its frames' size rather than its still image's. Read
+ * from the box structure, not by looking for "ispe" anywhere: the image data could hold those
+ * bytes too.
+ */
+function avifSize(bytes: Uint8Array): ImageSize | null {
+  const file: Box = { end: bytes.length, start: 0, type: "" };
+  let largest: ImageSize | null = null;
+  for (const size of [
+    ...avifItemSizes(bytes, file),
+    ...avifTrackSizes(bytes, file),
+  ]) {
+    if (!largest || size.width * size.height > largest.width * largest.height) {
+      largest = size;
+    }
+  }
   return largest;
+}
+
+/** The bytes of the color table a GIF's `flags` byte (of its screen, or of a frame) says follows. */
+function gifColorTableBytes(flags: number): number {
+  return bitField(flags, 7, 1) === 1 ? 3 * 2 ** (bitField(flags, 0, 3) + 1) : 0;
+}
+
+/** The offset in a GIF just past the sub-blocks that start at `offset`, each a length then data. */
+function skipGifSubBlocks(bytes: Uint8Array, offset: number): number {
+  let at = offset;
+  while (at < bytes.length && bytes[at] !== 0) {
+    at += bytes[at] + 1;
+  }
+  return at + 1;
+}
+
+/**
+ * A GIF's size: its logical screen, grown to hold each of its frames. A browser grows the screen
+ * to fit a first frame larger than it, so a tiny screen could otherwise hide a huge frame.
+ */
+function gifSize(bytes: Uint8Array): ImageSize | null {
+  if (bytes.length < 13) {
+    return null;
+  }
+  const data = view(bytes);
+  let width = data.getUint16(6, true);
+  let height = data.getUint16(8, true);
+  let offset = 13 + gifColorTableBytes(bytes[10]);
+  while (offset < bytes.length) {
+    if (bytes[offset] === 0x2c) {
+      // A frame: its left and top offsets, width and height, and flags.
+      if (offset + 10 > bytes.length) {
+        break;
+      }
+      width = Math.max(
+        width,
+        data.getUint16(offset + 1, true) + data.getUint16(offset + 5, true)
+      );
+      height = Math.max(
+        height,
+        data.getUint16(offset + 3, true) + data.getUint16(offset + 7, true)
+      );
+      // Its color table, its LZW code size, then its data.
+      offset = skipGifSubBlocks(
+        bytes,
+        offset + 10 + gifColorTableBytes(bytes[offset + 9]) + 1
+      );
+    } else if (bytes[offset] === 0x21) {
+      // An extension: its label, then its data.
+      offset = skipGifSubBlocks(bytes, offset + 2);
+    } else {
+      // The trailer, or something no decoder reads past.
+      break;
+    }
+  }
+  return { height, width };
 }
 
 /**
@@ -263,9 +362,7 @@ export function readImageSize(
         ? { height: data.getUint32(20), width: data.getUint32(16) }
         : null;
     case "image/gif":
-      return bytes.length >= 10
-        ? { height: data.getUint16(8, true), width: data.getUint16(6, true) }
-        : null;
+      return gifSize(bytes);
     case "image/jpeg":
       return jpegSize(bytes);
     case "image/webp":

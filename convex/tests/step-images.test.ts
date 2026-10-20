@@ -55,12 +55,81 @@ const u32 = (value: number) => encoded(4, (data) => data.setUint32(0, value));
 /** 32 bits, little-endian. */
 const u32le = (value: number) =>
   encoded(4, (data) => data.setUint32(0, value, true));
+/** 16 bits, big-endian. */
+const u16 = (value: number) => encoded(2, (data) => data.setUint16(0, value));
 /** 16 bits, little-endian. */
 const u16le = (value: number) =>
   encoded(2, (data) => data.setUint16(0, value, true));
 /** 24 bits, little-endian. */
 const u24le = (value: number) => u32le(value).slice(0, 3);
 const chars = (text: string) => [...text].map((char) => char.charCodeAt(0));
+
+/** An ISO base media file box of `type` with `contents`. */
+const box = (type: string, contents: number[]) => [
+  ...u32(8 + contents.length),
+  ...chars(type),
+  ...contents,
+];
+/** A full box: a version and flags, then its contents. */
+const fullBox = (type: string, contents: number[]) =>
+  box(type, [0, 0, 0, 0, ...contents]);
+const ispe = (width: number, height: number) =>
+  fullBox("ispe", [...u32(width), ...u32(height)]);
+
+/** An AVIF image sequence whose still image is `still`, and whose one track gives `track` in its header and `sample` in its AV1 sample description. */
+function avifSequence(
+  still: [number, number],
+  track: [number, number],
+  sample: [number, number]
+) {
+  // Times and IDs, then the layer, volume and matrix: 72 bytes in all.
+  const tkhd = fullBox("tkhd", [
+    ...new Array(72).fill(0),
+    ...u32(track[0] * 2 ** 16),
+    ...u32(track[1] * 2 ** 16),
+  ]);
+  // Reserved fields and the data reference, then the size.
+  const av01 = box("av01", [
+    ...new Array(24).fill(0),
+    ...u16(sample[0]),
+    ...u16(sample[1]),
+  ]);
+  const stbl = box("stbl", fullBox("stsd", [...u32(1), ...av01]));
+  return new Uint8Array([
+    ...box("ftyp", chars("avis\0\0\0\0avismsf1miaf")),
+    ...fullBox("meta", box("iprp", box("ipco", ispe(...still)))),
+    ...box("moov", box("trak", [...tkhd, ...box("mdia", box("minf", stbl))])),
+  ]);
+}
+
+/** A GIF with a `screen` and two-color palette, then `frames`, each after a graphic control extension. */
+function gif(
+  screen: [number, number],
+  frames: { height: number; left: number; top: number; width: number }[]
+) {
+  return new Uint8Array([
+    ...chars("GIF89a"),
+    ...u16le(screen[0]),
+    ...u16le(screen[1]),
+    // A global color table of two colors.
+    0x80,
+    0,
+    0,
+    ...[0, 0, 0, 255, 255, 255],
+    ...frames.flatMap((frame) => [
+      ...[0x21, 0xf9, 4, 0, 0, 0, 0, 0],
+      0x2c,
+      ...u16le(frame.left),
+      ...u16le(frame.top),
+      ...u16le(frame.width),
+      ...u16le(frame.height),
+      0,
+      // The LZW code size, one sub-block of data, then the end of the data.
+      ...[2, 2, 0x4c, 0x01, 0],
+    ]),
+    0x3b,
+  ]);
+}
 
 /** A PNG chunk of `type` with `data`, and a checksum left blank. */
 const pngChunk = (type: string, data: number[]) => [
@@ -306,17 +375,49 @@ describe("readImageSize", () => {
     ).toBe(null);
   });
 
+  test("reads a GIF's size as its screen, grown to hold its frames", () => {
+    const frame = { height: 10, left: 0, top: 0, width: 10 };
+    expect(readImageSize(gif([640, 480], [frame]), "image/gif")).toEqual({
+      height: 480,
+      width: 640,
+    });
+    // A browser shows a first frame larger than the screen at its own size.
+    expect(
+      readImageSize(
+        gif([1, 1], [{ ...frame, height: 5000, width: 5000 }]),
+        "image/gif"
+      )
+    ).toEqual({ height: 5000, width: 5000 });
+    // A later frame, and where it is placed, count too.
+    expect(
+      readImageSize(
+        gif([100, 100], [frame, { ...frame, left: 90, top: 300 }]),
+        "image/gif"
+      )
+    ).toEqual({ height: 310, width: 100 });
+  });
+
+  test("reads an AVIF image sequence's size from its track as well as its still image", () => {
+    const size = (
+      still: [number, number],
+      track: [number, number],
+      sample: [number, number]
+    ) => readImageSize(avifSequence(still, track, sample), "image/avif");
+    expect(size([640, 480], [640, 480], [640, 480])).toEqual({
+      height: 480,
+      width: 640,
+    });
+    expect(size([64, 64], [5000, 5000], [64, 64])).toEqual({
+      height: 5000,
+      width: 5000,
+    });
+    expect(size([64, 64], [64, 64], [5000, 4000])).toEqual({
+      height: 4000,
+      width: 5000,
+    });
+  });
+
   test("reads an AVIF's size as its largest image extents, as a grid's, from its boxes", () => {
-    const box = (type: string, contents: number[]) => [
-      ...u32(8 + contents.length),
-      ...chars(type),
-      ...contents,
-    ];
-    // A full box: a version and flags, then its contents.
-    const fullBox = (type: string, contents: number[]) =>
-      box(type, [0, 0, 0, 0, ...contents]);
-    const ispe = (width: number, height: number) =>
-      fullBox("ispe", [...u32(width), ...u32(height)]);
     const ftypBox = box("ftyp", chars("avif\0\0\0\0mif1avif"));
     // "ispe" and huge sizes in the image data, which aren't a box there.
     const mdat = box("mdat", [
@@ -525,6 +626,19 @@ describe("uploading a step image", () => {
     );
     // Said to be that large: refused before the file is read.
     expect((await upload(owner.as, theoryId, png(), square(5000))).status).toBe(
+      413
+    );
+    expect(await storedFiles(t)).toEqual([]);
+
+    // A tiny screen hiding a huge frame, or a small still image a huge
+    // animation.
+    const hidden = { height: 1, width: 1 };
+    const gifFrame = { height: 5000, left: 0, top: 0, width: 5000 };
+    expect(
+      (await upload(owner.as, theoryId, gif([1, 1], [gifFrame]), hidden)).status
+    ).toBe(413);
+    const sequence = avifSequence([1, 1], [5000, 5000], [5000, 5000]);
+    expect((await upload(owner.as, theoryId, sequence, hidden)).status).toBe(
       413
     );
     expect(await storedFiles(t)).toEqual([]);
