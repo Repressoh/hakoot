@@ -900,6 +900,41 @@ describe("preloading the next step's image", () => {
   });
 });
 
+describe("finished sessions", () => {
+  test("show no step, so a replaced image's key doesn't reach their players", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { gameId, quizId } = await seedGame(t, owner.userId);
+    await upload(owner.as, quizId, png());
+
+    const sessionId = await owner.as.mutation(api.sessions.create, { gameId });
+    const session = await t.run(async (ctx) => await ctx.db.get(sessionId));
+    const player = await t.mutation(api.sessions.joinByCode, {
+      inviteCode: session?.inviteCode ?? "",
+      name: "Ada",
+    });
+    await repeat(3, () =>
+      owner.as.mutation(api.sessions.advance, { sessionId })
+    );
+
+    // Readied for another session, after this one ended on the quiz.
+    await upload(owner.as, quizId, png());
+    const newKey = (await getStep(t, quizId))?.image?.key ?? "";
+    const playerState = await t.query(api.sessions.getPlayerState, {
+      participantToken: player.participantToken,
+      sessionId,
+    });
+    expect(playerState?.session.status).toBe("finished");
+    expect(playerState?.currentStep).toBe(null);
+    expect(newKey).not.toBe("");
+    expect(JSON.stringify(playerState)).not.toContain(newKey);
+    const hostView = await owner.as.query(api.sessions.getHostView, {
+      sessionId,
+    });
+    expect(hostView?.currentStep).toBe(null);
+  });
+});
+
 describe("images of copied games", () => {
   /** An owner's game with images on both steps, shared and copied by another user. */
   async function seedCopiedGame(t: TestConvex) {

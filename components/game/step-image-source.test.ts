@@ -1,12 +1,17 @@
 // @vitest-environment node
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { encryptImage } from "@/convex/images";
-import { preloadStepImageFile, stepImageSource } from "./step-image-source";
+import {
+  preloadStepImageFile,
+  releaseStepImageFile,
+  stepImageSource,
+} from "./step-image-source";
 
 const IMAGE = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 1, 2, 3, 4]);
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
 
 /** A stand-in for `fetch` that serves `files` by URL, counting the requests. */
@@ -46,7 +51,8 @@ describe("stepImageSource", () => {
     expect(stepImageSource(image)).toBe(decrypted);
   });
 
-  test("gives null for a file it can't download or decrypt, and tries again later", async () => {
+  test("gives null for a file it can't download or decrypt, and tries again only after a while", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
     const { file } = await encryptImage(IMAGE);
     const other = await encryptImage(IMAGE);
     const fetch = serve({ "https://x.test/b": file });
@@ -56,13 +62,51 @@ describe("stepImageSource", () => {
       url: "https://x.test/b",
     };
 
-    expect(await stepImageSource(image)).toBe(null);
-    expect(await stepImageSource(image)).toBe(null);
+    const failed = stepImageSource(image);
+    expect(await failed).toBe(null);
+    // The same settled promise, so a component showing it doesn't suspend
+    // and fetch again on every render.
+    expect(stepImageSource(image)).toBe(failed);
+    vi.advanceTimersByTime(9000);
+    expect(stepImageSource(image)).toBe(failed);
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(1001);
+    const retried = stepImageSource(image);
+    expect(retried).not.toBe(failed);
+    expect(await retried).toBe(null);
     expect(fetch).toHaveBeenCalledTimes(2);
 
     expect(
       await stepImageSource({ ...image, url: "https://x.test/missing" })
     ).toBe(null);
+  });
+
+  test("keeps only the two newest preloads, and lets go of released ones", async () => {
+    const files: Record<string, Blob> = {};
+    const images = await Promise.all(
+      [1, 2, 3].map(async (n) => {
+        const url = `https://x.test/preload-${n}`;
+        const { file, key } = await encryptImage(IMAGE);
+        files[url] = file;
+        return { key, type: "image/png", url };
+      })
+    );
+    const fetch = serve(files);
+    const [first, second, third] = images;
+
+    for (const { url } of images) {
+      preloadStepImageFile(url);
+    }
+    releaseStepImageFile(second.url);
+    expect(fetch).toHaveBeenCalledTimes(3);
+
+    // Only the newest is still held: the first was let go, the second released.
+    await stepImageSource(third);
+    expect(fetch).toHaveBeenCalledTimes(3);
+    await stepImageSource(first);
+    await stepImageSource(second);
+    expect(fetch).toHaveBeenCalledTimes(5);
   });
 
   test("keeps only the four newest images", async () => {

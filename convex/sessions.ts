@@ -279,7 +279,12 @@ export const getHostView = query({
       ctx.db.get(session.gameId),
       getOrderedSteps(ctx, session.gameId),
     ]);
-    const step = steps[session.currentStepIndex];
+    // None once finished: the index still points at the last step, whose
+    // content (an image replaced since, say) may be for a later session.
+    const step =
+      session.status === "finished"
+        ? undefined
+        : steps[session.currentStepIndex];
 
     return {
       codeLanguages: getCodeLanguages(steps),
@@ -454,8 +459,12 @@ export const getPlayerState = query({
       return null;
     }
 
+    // None once finished: the index still points at the last step, whose
+    // content (an image replaced since, say) may be for a later session.
     const currentStep =
-      session.currentStepIndex >= 0 && session.currentStepIndex < steps.length
+      session.status !== "finished" &&
+      session.currentStepIndex >= 0 &&
+      session.currentStepIndex < steps.length
         ? steps[session.currentStepIndex]
         : null;
 

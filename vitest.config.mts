@@ -8,7 +8,7 @@ export default defineConfig({
     // Tests outside convex/ opt into Node with a @vitest-environment docblock.
     environment: "edge-runtime",
     include: [
-      "components/**/*.test.ts",
+      "components/**/*.test.{ts,tsx}",
       "convex/**/*.test.ts",
       "i18n/**/*.test.ts",
       "lib/**/*.test.ts",
