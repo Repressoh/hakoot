@@ -210,6 +210,8 @@ export const copySharedGame = mutation({
           choices: step.choices,
           codeBlock: step.codeBlock,
           gameId,
+          // Shares the original's file: it is deleted once neither shows it.
+          image: step.image,
           markdownContent: step.markdownContent,
           order,
           question: step.question,

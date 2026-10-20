@@ -98,6 +98,17 @@ export default defineSchema({
       })
     ),
     gameId: v.id("games"),
+    // Shown above the step's content. A copied game's steps share their
+    // originals' files, so a file is deleted once no step uses it.
+    image: v.optional(
+      v.object({
+        alt: v.optional(v.string()),
+        // Pixel size, so the space is reserved before the image loads.
+        height: v.number(),
+        storageId: v.id("_storage"),
+        width: v.number(),
+      })
+    ),
     // Theory fields
     markdownContent: v.optional(v.string()),
     order: v.number(),
@@ -107,7 +118,8 @@ export default defineSchema({
     type: v.union(v.literal("theory"), v.literal("quiz")),
   })
     .index("by_game", ["gameId"])
-    .index("by_game_and_order", ["gameId", "order"]),
+    .index("by_game_and_order", ["gameId", "order"])
+    .index("by_image_storage_id", ["image.storageId"]),
 
   // ─── Game template ───────────────────────────────────────────────────
   games: defineTable({

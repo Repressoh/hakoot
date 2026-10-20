@@ -11,6 +11,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { getUnsavedDraft, useAutosave } from "@/lib/use-autosave";
 import { cn } from "@/lib/utils";
 import { SaveStatus } from "./save-status";
+import { type EditorStepImage, StepImageField } from "./step-image-field";
 
 const TIMER_OPTIONS: (number | null)[] = [null, 10, 20, 30, 60, 90, 120];
 
@@ -22,6 +23,7 @@ interface QuizChoice {
 interface Step {
   _id: Id<"gameSteps">;
   choices?: QuizChoice[];
+  image: EditorStepImage | null;
   question?: string;
   timeLimitSeconds?: number;
   type: "theory" | "quiz";
@@ -38,7 +40,10 @@ interface QuizDraft {
   timeLimitSeconds: number | null;
 }
 
-/** Editor for a quiz step's question, answer choices and time limit; changes save automatically. */
+/**
+ * Editor for a quiz step's question, optional image, answer choices and time limit; changes save
+ * automatically.
+ */
 export function QuizStepEditor({ step }: Props) {
   const t = useTranslations("stepEditor");
   const updateQuiz = useMutation(api.steps.updateQuiz);
@@ -109,6 +114,8 @@ export function QuizStepEditor({ step }: Props) {
           value={question}
         />
       </div>
+
+      <StepImageField image={step.image} stepId={step._id} />
 
       {/* Choices */}
       <div className="space-y-3">

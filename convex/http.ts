@@ -1,6 +1,16 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { httpRouter } from "convex/server";
-import { httpAction } from "./_generated/server";
+import { ConvexError } from "convex/values";
+import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
+import { type ActionCtx, httpAction } from "./_generated/server";
 import { auth } from "./auth";
+import {
+  IMAGE_SIGNATURE_BYTES,
+  MAX_IMAGE_BYTES,
+  MAX_IMAGE_DIMENSION,
+  sniffImageType,
+} from "./images";
 
 const http = httpRouter();
 
@@ -14,11 +24,18 @@ const ALLOWED_ORIGINS = new Set([
   "https://hakoot.albertocaserta.it",
 ]);
 
-/** CORS headers for /verify-turnstile. Shared by the preflight and the POST so
- * the browser gets the same answer to both. */
-function corsHeaders(origin: string | null): Record<string, string> {
+/** Request headers the routes below accept: the upload route also takes the
+ * user's auth token. */
+type AllowedHeaders = "Content-Type" | "Authorization, Content-Type";
+
+/** CORS headers for the routes below. Shared by the preflights and the POSTs
+ * so the browser gets the same answer to both. */
+function corsHeaders(
+  origin: string | null,
+  allowedHeaders: AllowedHeaders = "Content-Type"
+): Record<string, string> {
   const headers: Record<string, string> = {
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": allowedHeaders,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     Vary: "Origin",
   };
@@ -32,10 +49,14 @@ function corsHeaders(origin: string | null): Record<string, string> {
 function jsonResponse(
   origin: string | null,
   body: unknown,
-  status: number
+  status: number,
+  allowedHeaders?: AllowedHeaders
 ): Response {
   return new Response(JSON.stringify(body), {
-    headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
+    headers: {
+      ...corsHeaders(origin, allowedHeaders),
+      "Content-Type": "application/json",
+    },
     status,
   });
 }
@@ -114,19 +135,164 @@ http.route({
   path: "/verify-turnstile",
 });
 
-http.route({
-  handler: httpAction(
+/** Answers a CORS preflight for a route that accepts `allowedHeaders`. */
+function preflight(allowedHeaders?: AllowedHeaders) {
+  return httpAction(
     async (_ctx, req) =>
       new Response(null, {
         headers: {
-          ...corsHeaders(req.headers.get("origin")),
+          ...corsHeaders(req.headers.get("origin"), allowedHeaders),
           "Access-Control-Max-Age": "86400",
         },
         status: 204,
       })
-  ),
+  );
+}
+
+http.route({
+  handler: preflight(),
   method: "OPTIONS",
   path: "/verify-turnstile",
+});
+
+const UPLOAD_HEADERS: AllowedHeaders = "Authorization, Content-Type";
+
+/** HTTP status for an error thrown by the step image mutations. */
+function imageErrorStatus(error: unknown): number {
+  if (!(error instanceof ConvexError)) {
+    console.error("Step image upload failed", error);
+    return 500;
+  }
+  if (error.data === "Unauthorized") {
+    return 401;
+  }
+  if (error.data === "Not found") {
+    return 404;
+  }
+  // The only other one: the rate limit.
+  return 429;
+}
+
+/** A whole number of pixels from the upload URL, or null if it isn't a usable image size. */
+function parseDimension(value: string | null): number | null {
+  const pixels = Number(value);
+  return Number.isInteger(pixels) && pixels > 0 && pixels <= MAX_IMAGE_DIMENSION
+    ? pixels
+    : null;
+}
+
+/**
+ * The rest of `reader`'s bytes, after `chunks`, as one blob; null as soon as they add
+ * up to more than `limit` bytes, so an oversized body is never held in memory whole.
+ */
+async function readUpTo(
+  reader: ReadableStreamDefaultReader<Uint8Array<ArrayBuffer>>,
+  limit: number,
+  chunks: Uint8Array<ArrayBuffer>[] = [],
+  size = 0
+): Promise<Blob | null> {
+  const { done, value } = await reader.read();
+  if (done) {
+    return new Blob(chunks);
+  }
+  const total = size + value.byteLength;
+  if (total > limit) {
+    await reader.cancel();
+    return null;
+  }
+  chunks.push(value);
+  return await readUpTo(reader, limit, chunks, total);
+}
+
+/**
+ * Store `file` and show it as the step's image. The file is deleted again if the step can't take
+ * it, so a failed upload leaves nothing behind.
+ */
+async function storeStepImage(
+  ctx: ActionCtx,
+  file: Blob,
+  image: { height: number; stepId: Id<"gameSteps">; width: number }
+) {
+  const storageId = await ctx.storage.store(file);
+  try {
+    await ctx.runMutation(internal.steps.attachImage, { ...image, storageId });
+  } catch (error) {
+    await ctx.storage.delete(storageId);
+    throw error;
+  }
+}
+
+/**
+ * Upload a step's image: the file is the request body, sent with the user's Convex Auth token,
+ * and `stepId`, `width` and `height` are query parameters. The file is stored here, rather than
+ * through an upload URL, so it is checked (size, and a PNG, JPEG, GIF, WebP or AVIF signature)
+ * before it is kept, and no file is ever stored that no step shows.
+ */
+http.route({
+  handler: httpAction(async (ctx, req) => {
+    const origin = req.headers.get("origin");
+    const respond = (payload: unknown, status: number) =>
+      jsonResponse(origin, payload, status, UPLOAD_HEADERS);
+    const error = (message: string, status: number) =>
+      respond({ error: message }, status);
+
+    if (!(await getAuthUserId(ctx))) {
+      return error("Unauthorized", 401);
+    }
+    const params = new URL(req.url).searchParams;
+    const width = parseDimension(params.get("width"));
+    const height = parseDimension(params.get("height"));
+    if (width === null || height === null) {
+      return error("Invalid image size", 400);
+    }
+    if (Number(req.headers.get("content-length")) > MAX_IMAGE_BYTES) {
+      return error("Image too large", 413);
+    }
+
+    let stepId: Id<"gameSteps">;
+    try {
+      stepId = await ctx.runMutation(internal.steps.prepareImageUpload, {
+        stepId: params.get("stepId") ?? "",
+      });
+    } catch (prepareError) {
+      return error("Upload refused", imageErrorStatus(prepareError));
+    }
+
+    // Counted as it arrives: a body sent without a Content-Length, or with
+    // a false one, is cut off at the limit too.
+    const body = req.body
+      ? await readUpTo(req.body.getReader(), MAX_IMAGE_BYTES)
+      : new Blob([]);
+    if (!body) {
+      return error("Image too large", 413);
+    }
+    const type = sniffImageType(
+      new Uint8Array(await body.slice(0, IMAGE_SIGNATURE_BYTES).arrayBuffer())
+    );
+    if (!type) {
+      return error("Unsupported image type", 415);
+    }
+
+    try {
+      // Stored with the type its bytes show, not the one it was sent with.
+      await storeStepImage(ctx, body.slice(0, body.size, type), {
+        height,
+        stepId,
+        width,
+      });
+    } catch (storeError) {
+      return error("Upload refused", imageErrorStatus(storeError));
+    }
+    return respond({ ok: true }, 200);
+  }),
+  method: "POST",
+  path: "/step-image",
+});
+
+http.route({
+  handler: preflight(UPLOAD_HEADERS),
+  method: "OPTIONS",
+  path: "/step-image",
 });
 
 export default http;

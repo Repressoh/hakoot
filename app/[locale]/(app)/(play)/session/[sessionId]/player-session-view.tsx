@@ -22,6 +22,7 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
+import { StepImage, type StepImageView } from "@/components/game/step-image";
 import { usePreloadStepRenderers } from "@/components/game/use-preload-step-renderers";
 import { CHOICE_SHAPES } from "@/components/session/choice-shapes";
 import { CircularTimer } from "@/components/session/circular-timer";
@@ -348,6 +349,7 @@ interface QuizStepProps {
   choices: Choice[];
   correctIndex: number | null | undefined;
   currentAnswer?: CurrentAnswer | null;
+  image: StepImageView | null;
   isReading: boolean;
   onSubmit: (index: number) => void;
   question: string;
@@ -433,10 +435,11 @@ function AnswerResult({ currentAnswer }: { currentAnswer: CurrentAnswer }) {
 }
 
 /**
- * A quiz step for the player: question, reading countdown or timer, answer choices and the result
- * once revealed.
+ * A quiz step for the player: question and its image, reading countdown or timer, answer choices
+ * and the result once revealed.
  */
 function QuizStep({
+  image,
   question,
   choices,
   answerRevealed,
@@ -475,6 +478,7 @@ function QuizStep({
       <h2 className="font-display font-semibold text-foreground text-xl leading-snug">
         {question}
       </h2>
+      {image ? <StepImage image={image} maxHeight="35vh" /> : null}
       {currentAnswer && !answerRevealed && (
         <div className="flex flex-1 items-center justify-center py-8">
           <p className="text-center text-muted-foreground text-sm">
@@ -641,6 +645,7 @@ interface SessionContentProps {
     choices?: Choice[] | null;
     question?: string | null;
     markdownContent?: string | null;
+    image: StepImageView | null;
     codeBlock?: {
       code: string;
       language: string;
@@ -720,6 +725,9 @@ function SessionContent({
                 <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
                   {t("play.theoryLabel")}
                 </p>
+                {currentStep.image ? (
+                  <StepImage image={currentStep.image} />
+                ) : null}
                 {currentStep.markdownContent ? (
                   <MarkdownViewer content={currentStep.markdownContent} />
                 ) : null}
@@ -739,6 +747,7 @@ function SessionContent({
                 choices={currentStep.choices ?? []}
                 correctIndex={correctIndex}
                 currentAnswer={currentAnswer}
+                image={currentStep.image}
                 isReading={isReading}
                 onSubmit={submitAnswer}
                 question={currentStep.question ?? ""}
