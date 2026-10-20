@@ -11,11 +11,13 @@ import { usePreloadStepRenderers } from "@/components/game/use-preload-step-rend
 import { CircularTimer } from "@/components/session/circular-timer";
 import { InviteCodeDisplay } from "@/components/session/invite-code-display";
 import { Leaderboard } from "@/components/session/leaderboard";
+import { LinkUnavailable } from "@/components/session/link-unavailable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useHostToken } from "@/lib/host-token";
 import { cn } from "@/lib/utils";
 
 const MarkdownViewer = dynamic(
@@ -44,6 +46,8 @@ type ParticipantDoc = FunctionReturnType<
 >[number];
 
 interface Props {
+  /** Set when the session was started from the game's share link. */
+  hostToken: string | undefined;
   participants: ParticipantDoc[];
   view: HostView;
 }
@@ -384,7 +388,7 @@ function HostControls({
  * Host screen for a live session: lobby, then the current step, leaderboard and controls; redirects
  * to the results when finished.
  */
-function HostSessionView({ participants, view }: Props) {
+function HostSessionView({ hostToken, participants, view }: Props) {
   const t = useTranslations();
 
   const { currentStep, gameTitle, session, stepCount } = view;
@@ -398,6 +402,7 @@ function HostSessionView({ participants, view }: Props) {
 
   // Reactive answer count
   const answerCount = useQuery(api.sessions.getAnswerCount, {
+    hostToken,
     sessionId: session._id,
   });
 
@@ -430,7 +435,7 @@ function HostSessionView({ participants, view }: Props) {
   async function handleAdvance() {
     setAdvancing(true);
     try {
-      await advanceMut({ sessionId: session._id });
+      await advanceMut({ hostToken, sessionId: session._id });
       setAdvancing(false);
     } catch {
       toast.error("Failed to advance");
@@ -441,7 +446,7 @@ function HostSessionView({ participants, view }: Props) {
   async function handleReveal() {
     setRevealing(true);
     try {
-      await revealMut({ sessionId: session._id });
+      await revealMut({ hostToken, sessionId: session._id });
       setRevealing(false);
     } catch {
       toast.error("Failed to reveal");
@@ -553,12 +558,17 @@ function HostSessionView({ participants, view }: Props) {
 const LOBBY_REFRESH_MS = 5000;
 
 /**
- * The session's participants. In the lobby the query gets a `clock` that changes every
- * LOBBY_REFRESH_MS, so players who stopped sending heartbeats drop off the list (see
- * `listHostParticipants`). Each new `clock` is a new subscription with no result at first, so the
- * previous list is returned until the new one arrives.
+ * The session's participants (not loaded while `hostToken` is still being read). In the lobby the
+ * query gets a `clock` that changes every LOBBY_REFRESH_MS, so players who stopped sending
+ * heartbeats drop off the list (see `listHostParticipants`). Each new `clock` is a new
+ * subscription with no result at first, so the previous list is returned until the new one
+ * arrives.
  */
-function useHostParticipants(sessionId: Id<"gameSessions">, inLobby: boolean) {
+function useHostParticipants(
+  sessionId: Id<"gameSessions">,
+  hostToken: string | null | undefined,
+  inLobby: boolean
+) {
   const [clock, setClock] = useState(0);
   useEffect(() => {
     if (!inLobby) {
@@ -571,10 +581,12 @@ function useHostParticipants(sessionId: Id<"gameSessions">, inLobby: boolean) {
     return () => clearInterval(interval);
   }, [inLobby]);
 
-  const result = useQuery(api.sessions.listHostParticipants, {
-    clock,
-    sessionId,
-  });
+  const result = useQuery(
+    api.sessions.listHostParticipants,
+    hostToken === undefined
+      ? "skip"
+      : { clock, hostToken: hostToken ?? undefined, sessionId }
+  );
   const [latest, setLatest] = useState({ result, sessionId });
   if (
     result !== undefined &&
@@ -586,11 +598,21 @@ function useHostParticipants(sessionId: Id<"gameSessions">, inLobby: boolean) {
 }
 
 export function HostSessionPage({ sessionId }: { sessionId: string }) {
-  const view = useQuery(api.sessions.getHostView, {
-    sessionId: sessionId as Id<"gameSessions">,
-  });
+  // Only a session started from a share link has one; the queries wait
+  // until it has been read.
+  const hostToken = useHostToken(sessionId);
+  const view = useQuery(
+    api.sessions.getHostView,
+    hostToken === undefined
+      ? "skip"
+      : {
+          hostToken: hostToken ?? undefined,
+          sessionId: sessionId as Id<"gameSessions">,
+        }
+  );
   const participants = useHostParticipants(
     sessionId as Id<"gameSessions">,
+    hostToken,
     view?.session.status === "waiting"
   );
   usePreloadStepRenderers(view?.codeLanguages);
@@ -606,11 +628,22 @@ export function HostSessionPage({ sessionId }: { sessionId: string }) {
 
   if (view === null) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Session not found</p>
+      <div className="flex min-h-screen items-center justify-center p-4">
+        {/* A session started from a share link closes with the link. */}
+        {hostToken === null ? (
+          <p className="text-muted-foreground">Session not found</p>
+        ) : (
+          <LinkUnavailable />
+        )}
       </div>
     );
   }
 
-  return <HostSessionView participants={participants} view={view} />;
+  return (
+    <HostSessionView
+      hostToken={hostToken ?? undefined}
+      participants={participants}
+      view={view}
+    />
+  );
 }

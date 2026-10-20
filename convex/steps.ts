@@ -1,8 +1,9 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
+import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 /** Sanitize user input */
 function sanitizeInput(input: string, maxLength = 5000): string {
@@ -214,14 +215,12 @@ export const remove = mutation({
     }
     await requireGameOwner(ctx, step.gameId);
 
-    // Delete answers for this step
-    const answers = await ctx.db
-      .query("participantAnswers")
-      .withIndex("by_step", (q) => q.eq("stepId", args.stepId))
-      .collect();
-    await Promise.all(answers.map((a) => ctx.db.delete(a._id)));
-
+    // Its answers, from every session of the game (including those started
+    // from its share link), can be too many for one transaction.
     await ctx.db.delete(args.stepId);
+    await ctx.scheduler.runAfter(0, internal.steps.deleteStepAnswers, {
+      stepId: args.stepId,
+    });
 
     // Re-number remaining steps
     const remaining = await ctx.db
@@ -297,6 +296,27 @@ export const move = mutation({
     await ctx.db.patch(other._id, { order: step.order });
     await ctx.db.patch(step.gameId, { updatedAt: Date.now() });
 
+    return null;
+  },
+});
+
+/** Answers `deleteStepAnswers` deletes per run. */
+const ANSWER_BATCH_SIZE = 500;
+
+/** Delete a batch of a deleted step's answers, then schedule itself until none are left. */
+export const deleteStepAnswers = internalMutation({
+  args: { stepId: v.id("gameSteps") },
+  handler: async (ctx, { stepId }) => {
+    const answers = await ctx.db
+      .query("participantAnswers")
+      .withIndex("by_step", (q) => q.eq("stepId", stepId))
+      .take(ANSWER_BATCH_SIZE);
+    await Promise.all(answers.map((answer) => ctx.db.delete(answer._id)));
+    if (answers.length === ANSWER_BATCH_SIZE) {
+      await ctx.scheduler.runAfter(0, internal.steps.deleteStepAnswers, {
+        stepId,
+      });
+    }
     return null;
   },
 });

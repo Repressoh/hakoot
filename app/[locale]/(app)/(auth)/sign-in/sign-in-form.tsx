@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Link, useRouter } from "@/i18n/routing";
+import { getAuthRedirect } from "@/lib/auth-redirect";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 
 /** Host sign-in with email and password or a magic link, guarded by Turnstile. */
@@ -50,7 +51,7 @@ export function SignInForm() {
 
       await signIn("password", { email, flow: "signIn", password });
       await new Promise((resolve) => setTimeout(resolve, 500));
-      push("/dashboard");
+      push(getAuthRedirect(window.location.search));
     } catch {
       setLoading(false);
       toast.error(t("invalidCredentials"));
@@ -69,7 +70,10 @@ export function SignInForm() {
 
     setMagicLinkLoading(true);
     try {
-      await signIn("email", { email, redirectTo: "/dashboard" });
+      await signIn("email", {
+        email,
+        redirectTo: getAuthRedirect(window.location.search),
+      });
       setMagicLinkLoading(false);
       toast.success("Check your email for a sign-in link.");
     } catch {
