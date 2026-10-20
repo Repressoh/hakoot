@@ -75,6 +75,7 @@ describe("stepImageSource", () => {
     const { file, key } = await encryptImage(IMAGE);
     const fetch = serve({ "https://x.test/a": file });
 
+    const release = holdStepImageFile("https://x.test/a");
     preloadStepImageFile("https://x.test/a");
     preloadStepImageFile("https://x.test/a");
     const image = { key, type: "image/png", url: "https://x.test/a" };
@@ -86,6 +87,7 @@ describe("stepImageSource", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
     // The same promise every render, so `use` doesn't suspend again.
     expect(stepImageSource(image)).toBe(decrypted);
+    release();
   });
 
   test("gives when to try again for a file it can't download or decrypt, and only tries then", async () => {
@@ -99,6 +101,9 @@ describe("stepImageSource", () => {
       url: "https://x.test/b",
     };
 
+    // Shown, as `StepImage` holds what it shows.
+    holdStepImageFile(image.url);
+    holdStepImageFile("https://x.test/missing");
     const failed = stepImageSource(image);
     const failure = await failed;
     expect(failure).toEqual({ retryAt: performance.now() + 10_000 });
@@ -132,10 +137,30 @@ describe("stepImageSource", () => {
     ).toMatchObject({ retryAt: expect.any(Number) });
   });
 
+  test("a render nothing holds downloads nothing", async () => {
+    const calls = deferFetch();
+    const { file, key } = await encryptImage(IMAGE);
+    const image = { key, type: "image/png", url: "https://x.test/unshown" };
+
+    // A render React may throw away.
+    const source = stepImageSource(image);
+    await settle();
+    expect(calls).toHaveLength(0);
+
+    // Shown after all: its hold sends the request.
+    const shown = holdStepImageFile(image.url);
+    await settle();
+    expect(calls).toHaveLength(1);
+    calls[0].respond(file);
+    expect(contents(await source)).toMatchObject({ bytes: IMAGE });
+    shown();
+  });
+
   test("stops a preload nothing needs any more", async () => {
     const calls = deferFetch();
     const release = holdStepImageFile("https://x.test/skipped");
     preloadStepImageFile("https://x.test/skipped");
+    await settle();
     expect(calls).toHaveLength(1);
 
     release();
@@ -179,6 +204,7 @@ describe("stepImageSource", () => {
     const again = holdStepImageFile(image.url);
     const source = stepImageSource(image);
     expect(source).not.toBe(abandoned);
+    await settle();
     expect(calls).toHaveLength(2);
     calls[1].respond(file);
     expect(contents(await source)).toMatchObject({ bytes: IMAGE });
@@ -197,6 +223,9 @@ describe("stepImageSource", () => {
     );
     const fetch = serve(files);
 
+    for (const { url } of images) {
+      holdStepImageFile(url);
+    }
     const [first, ...rest] = images;
     const firstFile = stepImageSource(first);
     await firstFile;

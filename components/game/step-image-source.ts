@@ -1,7 +1,9 @@
 import { decryptImage, toBase64 } from "@/convex/images";
 
-/** A download of an encrypted step image, and how to stop it. */
+/** A download of an encrypted step image, how to start it, and how to stop it. */
 interface Download {
+  /** Starts the request; it waits until something holds the image. */
+  begin: () => void;
   controller: AbortController;
   file: Promise<ArrayBuffer>;
 }
@@ -51,24 +53,44 @@ function trim(cache: Map<string, unknown>, max: number) {
   }
 }
 
-/** The download of the encrypted file at `url`, started once however many times it is asked for. */
+/**
+ * The download of the encrypted file at `url`, made once however many times it is asked for. Its
+ * request only goes out once something holds the image (`holdStepImageFile`): a render can ask for
+ * it, and React can throw that render away, leaving nothing to stop the request.
+ */
 function download(url: string): Download {
   const known = downloads.get(url);
   if (known) {
     return known;
   }
   const controller = new AbortController();
-  const file = fetch(url, { signal: controller.signal }).then((response) => {
-    if (!response.ok) {
-      throw new Error(`Step image download failed: ${response.status}`);
-    }
-    return response.arrayBuffer();
+  let begin = () => {
+    // Replaced below, before anything can call it.
+  };
+  const held = new Promise<void>((resolve, reject) => {
+    begin = resolve;
+    controller.signal.addEventListener(
+      "abort",
+      () => reject(controller.signal.reason),
+      { once: true }
+    );
   });
-  const started = { controller, file };
-  downloads.set(url, started);
+  const file = held
+    .then(() => fetch(url, { signal: controller.signal }))
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Step image download failed: ${response.status}`);
+      }
+      return response.arrayBuffer();
+    });
+  const pending = { begin, controller, file };
+  downloads.set(url, pending);
   // Asked for again later, it is downloaded again.
-  file.catch(() => forgetDownload(url, started));
-  return started;
+  file.catch(() => forgetDownload(url, pending));
+  if (holds.has(url)) {
+    begin();
+  }
+  return pending;
 }
 
 /** Forget `pending`, the download of `url`, unless a newer one has taken its place. */
@@ -99,6 +121,8 @@ function abandon(url: string) {
  */
 export function holdStepImageFile(url: string): () => void {
   holds.set(url, (holds.get(url) ?? 0) + 1);
+  // Asked for by a render before anything held it: its request goes out now.
+  downloads.get(url)?.begin();
   let released = false;
   return () => {
     if (released) {

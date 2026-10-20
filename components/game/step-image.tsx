@@ -100,6 +100,10 @@ export function StepImage({ image, maxHeight = "60vh" }: Props) {
     width: `min(100%, ${image.width}px, calc(${maxHeight} * ${aspectRatio}))`,
   };
   return (
+    // A boundary of its own for each image, so a new one always shows its
+    // placeholder, even during a transition, rather than its render waiting
+    // unshown: the image is only held, and its download only starts, once
+    // that placeholder is shown.
     <Suspense
       fallback={
         <div
@@ -108,6 +112,7 @@ export function StepImage({ image, maxHeight = "60vh" }: Props) {
           style={style}
         />
       }
+      key={image.url}
     >
       <DecryptedImage image={image} style={style} />
     </Suspense>
