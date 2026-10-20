@@ -130,7 +130,11 @@ describe("StepImage", () => {
       await vi.advanceTimersByTimeAsync(5100);
     });
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(container.querySelector("img")?.getAttribute("alt")).toBe("A dog");
+    // Decrypted by Web Crypto, on no fake clock.
+    vi.useRealTimers();
+    await until(() =>
+      expect(container.querySelector("img")?.getAttribute("alt")).toBe("A dog")
+    );
     act(() => root.unmount());
   });
 
@@ -180,8 +184,11 @@ describe("StepImage", () => {
     expect(second.container.querySelector("img")).toBe(null);
     await wait(10_000);
     expect(fetch).toHaveBeenCalledTimes(3);
-    expect(second.container.querySelector("img")?.getAttribute("alt")).toBe(
-      "A fox"
+    vi.useRealTimers();
+    await until(() =>
+      expect(second.container.querySelector("img")?.getAttribute("alt")).toBe(
+        "A fox"
+      )
     );
     act(() => second.root.unmount());
   });
