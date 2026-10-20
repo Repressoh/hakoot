@@ -158,7 +158,7 @@
     "imageAltLabel": "Irudiaren deskribapena",
     "imageAltPlaceholder": "Deskribatu irudia ikusi ezin duten pertsonentzat",
     "imageUnsupportedType": "Aukeratu PNG, JPEG, GIF, WebP edo AVIF irudi bat.",
-    "imageTooLarge": "Irudi hori handiegia da. Muga 5 MB-koa da.",
+    "imageTooLarge": "Irudi hori handiegia da. Mugak 5 MB eta 16 megapixelekoak dira.",
     "imageUnreadable": "Irudi hori ezin izan da irakurri. Saiatu beste fitxategi batekin.",
     "imageRateLimited": "Igoerak gehiegi dira. Saiatu berriro minutu batean.",
     "imageUploadFailed": "Irudia ezin izan da igo. Saiatu berriro.",

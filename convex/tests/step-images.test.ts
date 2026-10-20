@@ -511,6 +511,33 @@ describe("uploading a step image", () => {
     });
   });
 
+  test("refuses an image with too many pixels, however small its file", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { theoryId } = await seedGame(t, owner.userId);
+    const square = (side: number) => ({ height: side, width: side });
+
+    // A few bytes, each side under the limit, 25 million pixels in all.
+    const dense = png(64, square(5000));
+    expect((await upload(owner.as, theoryId, dense)).status).toBe(413);
+    expect((await upload(owner.as, theoryId, dense, square(5000))).status).toBe(
+      413
+    );
+    // Said to be that large: refused before the file is read.
+    expect((await upload(owner.as, theoryId, png(), square(5000))).status).toBe(
+      413
+    );
+    expect(await storedFiles(t)).toEqual([]);
+
+    const largest = await upload(
+      owner.as,
+      theoryId,
+      png(64, square(4096)),
+      square(4096)
+    );
+    expect(largest.status).toBe(200);
+  });
+
   test("refuses an upload without a size", async () => {
     const t = newTest();
     const owner = await signUp(t, "owner@x.test");

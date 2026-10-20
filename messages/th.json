@@ -158,7 +158,7 @@
     "imageAltLabel": "คำอธิบายภาพ",
     "imageAltPlaceholder": "อธิบายภาพสำหรับผู้ที่มองไม่เห็นภาพ",
     "imageUnsupportedType": "เลือกภาพในรูปแบบ PNG, JPEG, GIF, WebP หรือ AVIF",
-    "imageTooLarge": "ภาพนั้นใหญ่เกินไป จำกัดขนาดสูงสุด 5 MB",
+    "imageTooLarge": "ภาพนั้นใหญ่เกินไป จำกัดอยู่ที่ 5 MB และ 16 เมกะพิกเซล",
     "imageUnreadable": "ไม่สามารถอ่านภาพนั้นได้ โปรดลองใช้ไฟล์อื่น",
     "imageRateLimited": "มีการอัปโหลดมากเกินไป โปรดลองอีกครั้งใน 1 นาที",
     "imageUploadFailed": "ไม่สามารถอัปโหลดภาพได้ โปรดลองอีกครั้ง",

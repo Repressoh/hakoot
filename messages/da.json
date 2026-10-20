@@ -158,7 +158,7 @@
     "imageAltLabel": "Billedbeskrivelse",
     "imageAltPlaceholder": "Beskriv billedet for personer, der ikke kan se det",
     "imageUnsupportedType": "Vælg et billede i formatet PNG, JPEG, GIF, WebP eller AVIF.",
-    "imageTooLarge": "Det billede er for stort. Grænsen er 5 MB.",
+    "imageTooLarge": "Det billede er for stort. Grænsen er 5 MB og 16 megapixel.",
     "imageUnreadable": "Det var ikke muligt at læse billedet. Prøv en anden fil.",
     "imageRateLimited": "Der er uploadet for mange filer. Prøv igen om et minut.",
     "imageUploadFailed": "Det var ikke muligt at uploade billedet. Prøv igen.",

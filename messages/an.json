@@ -158,7 +158,7 @@
     "imageAltLabel": "Descripción d'a imachen",
     "imageAltPlaceholder": "Describe a imachen pa la chent que no la puede veyer",
     "imageUnsupportedType": "Tría una imachen PNG, JPEG, GIF, WebP u AVIF.",
-    "imageTooLarge": "Ixa imachen ye masiau gran. O limite ye de 5 MB.",
+    "imageTooLarge": "Ixa imachen ye masiau gran. O limite ye de 5 MB y 16 megapíxels.",
     "imageUnreadable": "Ixa imachen no s'ha puesto leyer. Preba con un atro fichero.",
     "imageRateLimited": "Masa de subidas. Torna a prebar en un minuto.",
     "imageUploadFailed": "No s'ha puesto puyar a imachen. Preba unatra vegada.",

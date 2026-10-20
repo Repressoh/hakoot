@@ -158,7 +158,7 @@
     "imageAltLabel": "Famaritana ny sary",
     "imageAltPlaceholder": "Hazavao ny sary ho an'ireo olona tsy mahita azy",
     "imageUnsupportedType": "Safidio sary PNG, JPEG, GIF, WebP na AVIF.",
-    "imageTooLarge": "Lehibe loatra io sary io. Ny fetra dia 5 MB.",
+    "imageTooLarge": "Lehibe loatra io sary io. Ny fetra dia 5 MB sy 16 megapixels.",
     "imageUnreadable": "Tsy azo vakiana io sary io. Andramo rakitra hafa.",
     "imageRateLimited": "Fampidirana rakitra be loatra. Andramo indray afaka iray minitra.",
     "imageUploadFailed": "Tsy afaka nampakatra ny sary. Andramo indray.",

@@ -158,7 +158,7 @@
     "imageAltLabel": "وصف الصورة",
     "imageAltPlaceholder": "وصف الصورة للأشخاص الذين لا يمكنهم رؤيتها",
     "imageUnsupportedType": "اختر صورة بتنسيق PNG أو JPEG أو GIF أو WebP أو AVIF.",
-    "imageTooLarge": "هذه الصورة كبيرة جدًّا. الحد الأقصى هو 5 ميغابايت.",
+    "imageTooLarge": "هذه الصورة كبيرة جدًّا. الحد الأقصى هو 5 ميغابايت و16 ميغابكسل.",
     "imageUnreadable": "تعذر قراءة تلك الصورة. جرب ملفًا آخر.",
     "imageRateLimited": "عدد عمليات التحميل زائد. حاول مرة أخرى بعد دقيقة.",
     "imageUploadFailed": "تعذر تحميل الصورة. حاول مرة أخرى.",

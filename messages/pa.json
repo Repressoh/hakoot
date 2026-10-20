@@ -158,7 +158,7 @@
     "imageAltLabel": "ਚਿੱਤਰ ਦਾ ਵੇਰਵਾ",
     "imageAltPlaceholder": "ਜਿਹੜੇ ਲੋਕ ਇਸਨੂੰ ਨਹੀਂ ਦੇਖ ਸਕਦੇ, ਉਹਨਾਂ ਲਈ ਤਸਵੀਰ ਦਾ ਵਰਣਨ ਕਰੋ",
     "imageUnsupportedType": "ਇੱਕ PNG, JPEG, GIF, WebP ਜਾਂ AVIF ਚਿੱਤਰ ਚੁਣੋ।",
-    "imageTooLarge": "ਉਹ ਤਸਵੀਰ ਬਹੁਤ ਵੱਡੀ ਹੈ। ਸੀਮਾ 5 MB ਹੈ।",
+    "imageTooLarge": "ਉਹ ਤਸਵੀਰ ਬਹੁਤ ਵੱਡੀ ਹੈ। ਸੀਮਾ 5 MB ਅਤੇ 16 ਮੈਗਾਪਿਕਸਲ ਹੈ।",
     "imageUnreadable": "ਉਹ ਚਿੱਤਰ ਪੜ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਸੇ ਹੋਰ ਫਾਈਲ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     "imageRateLimited": "ਬਹੁਤ ਜ਼ਿਆਦਾ ਅੱਪਲੋਡ। ਇੱਕ ਮਿੰਟ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     "imageUploadFailed": "ਤਸਵੀਰ ਅੱਪਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",

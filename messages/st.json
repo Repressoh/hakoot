@@ -158,7 +158,7 @@
     "imageAltLabel": "Tlhaloso ea setšoantšo",
     "imageAltPlaceholder": "Hlalosa setšoantšo bakeng sa batho ba sa se boneng",
     "imageUnsupportedType": "Kgetha setshwantsho sa PNG, JPEG, GIF, WebP kapa AVIF.",
-    "imageTooLarge": "Setšoantšo seo se seholo haholo. Moeli ke 5 MB.",
+    "imageTooLarge": "Setšoantšo seo se seholo haholo. Moeli ke 5 MB le li-megapixel tse 16.",
     "imageUnreadable": "Setšoantšo seo ha se a ka sa baloa. Leka faele e 'ngoe.",
     "imageRateLimited": "Ho kentsoe lifaele tse ngata haholo. Leka hape kamora motsotso.",
     "imageUploadFailed": "Setšoantšo ha se a kenngoa. Leka hape.",

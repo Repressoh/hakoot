@@ -158,7 +158,7 @@
     "imageAltLabel": "Beeldbeskrywing",
     "imageAltPlaceholder": "Beskryf die beeld vir mense wat dit nie kan sien nie",
     "imageUnsupportedType": "Kies 'n PNG-, JPEG-, GIF-, WebP- of AVIF-beeld.",
-    "imageTooLarge": "Daardie beeld is te groot. Die limiet is 5 MB.",
+    "imageTooLarge": "Daardie beeld is te groot. Die limiet is 5 MB en 16 megapixels.",
     "imageUnreadable": "Daardie beeld kon nie gelees word nie. Probeer 'n ander lêer.",
     "imageRateLimited": "Te veel opgelaai. Probeer oor 'n minuut weer.",
     "imageUploadFailed": "Kon nie die beeld oplaai nie. Probeer weer.",

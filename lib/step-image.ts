@@ -20,6 +20,9 @@ export const MAX_STEP_IMAGE_BYTES = 5 * 1024 * 1024;
 /** Largest width or height the upload route accepts (`MAX_IMAGE_DIMENSION` in `convex/images.ts`). */
 const MAX_STEP_IMAGE_DIMENSION = 10_000;
 
+/** Most pixels the upload route accepts (`MAX_IMAGE_PIXELS` in `convex/images.ts`). */
+const MAX_STEP_IMAGE_PIXELS = 4096 * 4096;
+
 /** Longest side, in pixels, of an image shrunk before upload. Plenty for a projector. */
 const MAX_EDGE = 1920;
 
@@ -174,7 +177,8 @@ export async function prepareStepImage(file: File): Promise<PreparedStepImage> {
     }
     if (
       prepared.file.size > MAX_STEP_IMAGE_BYTES ||
-      Math.max(prepared.width, prepared.height) > MAX_STEP_IMAGE_DIMENSION
+      Math.max(prepared.width, prepared.height) > MAX_STEP_IMAGE_DIMENSION ||
+      prepared.width * prepared.height > MAX_STEP_IMAGE_PIXELS
     ) {
       throw new StepImageError("tooLarge");
     }

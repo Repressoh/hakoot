@@ -158,7 +158,7 @@
     "imageAltLabel": "Kuvaus",
     "imageAltPlaceholder": "Kuvaile kuvaa niille, jotka eivät näe sitä",
     "imageUnsupportedType": "Valitse PNG-, JPEG-, GIF-, WebP- tai AVIF-kuva.",
-    "imageTooLarge": "Kuva on liian suuri. Rajana on 5 Mt.",
+    "imageTooLarge": "Kuva on liian suuri. Raja-arvot ovat 5 Mt ja 16 megapikseliä.",
     "imageUnreadable": "Kuvia ei voitu lukea. Kokeile toista tiedostoa.",
     "imageRateLimited": "Liian monta lähetystä. Yritä uudelleen minuutin kuluttua.",
     "imageUploadFailed": "Kuvaa ei voitu ladata. Yritä uudelleen.",

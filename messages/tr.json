@@ -158,7 +158,7 @@
     "imageAltLabel": "Görsel açıklaması",
     "imageAltPlaceholder": "Görüntüyü göremeyen kişiler için görüntüyü açıklayın",
     "imageUnsupportedType": "PNG, JPEG, GIF, WebP veya AVIF formatında bir resim seçin.",
-    "imageTooLarge": "Bu resim çok büyük. Sınır 5 MB'dir.",
+    "imageTooLarge": "Bu resim çok büyük. Sınır 5 MB ve 16 megapikseldir.",
     "imageUnreadable": "Bu resim okunamadı. Başka bir dosya deneyin.",
     "imageRateLimited": "Çok fazla yükleme yapıldı. Bir dakika sonra tekrar deneyin.",
     "imageUploadFailed": "Resim yüklenemedi. Lütfen tekrar deneyin.",

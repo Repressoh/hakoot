@@ -158,7 +158,7 @@
     "imageAltLabel": "画像の説明",
     "imageAltPlaceholder": "画像を見ることができない人のために、その画像を説明してください",
     "imageUnsupportedType": "PNG、JPEG、GIF、WebP、またはAVIF形式の画像を選択してください。",
-    "imageTooLarge": "その画像は大きすぎます。上限は5 MBです。",
+    "imageTooLarge": "その画像は大きすぎます。制限は5 MB、16メガピクセルです。",
     "imageUnreadable": "その画像を読み取ることができませんでした。別のファイルをお試しください。",
     "imageRateLimited": "アップロード回数が多すぎます。1分後に再試行してください。",
     "imageUploadFailed": "画像をアップロードできませんでした。もう一度お試しください。",

@@ -158,7 +158,7 @@
     "imageAltLabel": "د انځور تشریح",
     "imageAltPlaceholder": "د هغو خلکو لپاره انځور تشریح کړئ چې نشي یې لیدلی",
     "imageUnsupportedType": "یو PNG، JPEG، GIF، WebP یا AVIF انځور وټاکئ.",
-    "imageTooLarge": "هغه انځور ډېر لوی دی. حد یې ۵ مېګابایټه دی.",
+    "imageTooLarge": "هغه انځور ډېر لوی دی. حد یې ۵ مېګابایټه او ۱۶ مېګاپکسله دی.",
     "imageUnreadable": "هغه انځور ولوستل کېدای نه شو. بل فایل وازمایئ.",
     "imageRateLimited": "ډېر زیات اپلوډونه. په یوه دقیقه کې بیا هڅه وکړئ.",
     "imageUploadFailed": "انځور پورته نشو کیدلی. بیا هڅه وکړئ.",

@@ -158,7 +158,7 @@
     "imageAltLabel": "Incazelo yesithombe",
     "imageAltPlaceholder": "Chaza isithombe kubantu abangakwazi ukusibona",
     "imageUnsupportedType": "Khetha isithombe se-PNG, JPEG, GIF, WebP noma AVIF.",
-    "imageTooLarge": "Lelo sithombe likhulu kakhulu. Umkhawulo uwu-5 MB.",
+    "imageTooLarge": "Lelo sithombe likhulu kakhulu. Umkhawulo uwu-5 MB namamegapixeli angu-16.",
     "imageUnreadable": "Lelo sithombe alifundeki. Zama enye ifayela.",
     "imageRateLimited": "Ukufaka okuningi kakhulu. Zama futhi ngemva komzuzu.",
     "imageUploadFailed": "Akwenzekanga ukulayisha isithombe. Zama futhi.",

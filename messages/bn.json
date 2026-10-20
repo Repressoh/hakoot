@@ -158,7 +158,7 @@
     "imageAltLabel": "ছবির বর্ণনা",
     "imageAltPlaceholder": "যারা ছবিটি দেখতে পারেন না তাদের জন্য ছবিটি বর্ণনা করুন",
     "imageUnsupportedType": "একটি PNG, JPEG, GIF, WebP বা AVIF ইমেজ নির্বাচন করুন।",
-    "imageTooLarge": "সেই ছবিটি খুব বড়। সীমা ৫ এমবি।",
+    "imageTooLarge": "সেই ছবিটি খুব বড়। সীমা ৫ এমবি এবং ১৬ মেগাপিক্সেল।",
     "imageUnreadable": "সেই ছবিটি পড়া যায়নি। অন্য একটি ফাইল চেষ্টা করুন।",
     "imageRateLimited": "অনেক বেশি আপলোড হয়েছে। এক মিনিটে আবার চেষ্টা করুন।",
     "imageUploadFailed": "ছবি আপলোড করা যায়নি। আবার চেষ্টা করুন।",

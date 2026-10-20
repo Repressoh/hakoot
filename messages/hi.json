@@ -158,7 +158,7 @@
     "imageAltLabel": "छवि विवरण",
     "imageAltPlaceholder": "जो लोग इसे नहीं देख सकते उनके लिए छवि का वर्णन करें",
     "imageUnsupportedType": "एक PNG, JPEG, GIF, WebP या AVIF छवि चुनें।",
-    "imageTooLarge": "वह छवि बहुत बड़ी है। सीमा 5 एमबी है।",
+    "imageTooLarge": "वह छवि बहुत बड़ी है। सीमा 5 एमबी और 16 मेगापिक्सल है।",
     "imageUnreadable": "उस छवि को पढ़ा नहीं जा सका। दूसरी फ़ाइल आज़माएँ।",
     "imageRateLimited": "बहुत अधिक अपलोड। एक मिनट में फिर से प्रयास करें।",
     "imageUploadFailed": "छवि अपलोड नहीं हो सकी। फिर से प्रयास करें।",

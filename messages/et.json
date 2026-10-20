@@ -158,7 +158,7 @@
     "imageAltLabel": "Pildi kirjeldus",
     "imageAltPlaceholder": "Kirjeldage pilti inimestele, kes seda näha ei saa",
     "imageUnsupportedType": "Vali PNG-, JPEG-, GIF-, WebP- või AVIF-pilt.",
-    "imageTooLarge": "See pilt on liiga suur. Piirang on 5 MB.",
+    "imageTooLarge": "See pilt on liiga suur. Piirang on 5 MB ja 16 megapikslit.",
     "imageUnreadable": "Seda pilti ei õnnestunud lugeda. Proovi teist faili.",
     "imageRateLimited": "Liiga palju üleslaadimisi. Proovi uuesti minuti pärast.",
     "imageUploadFailed": "Pilti ei õnnestunud üles laadida. Proovi uuesti.",

@@ -85,6 +85,17 @@ describe("prepareStepImage", () => {
     });
   });
 
+  test("refuses a GIF with too many pixels, however small its file", async () => {
+    vi.stubGlobal(
+      "createImageBitmap",
+      vi.fn().mockResolvedValue({ close: vi.fn(), height: 5000, width: 5000 })
+    );
+    const gif = new File(["GIF89a"], "a.gif", { type: "image/gif" });
+    await expect(prepareStepImage(gif)).rejects.toMatchObject({
+      reason: "tooLarge",
+    });
+  });
+
   test("refuses a GIF over the size limit", async () => {
     vi.stubGlobal(
       "createImageBitmap",

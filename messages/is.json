@@ -158,7 +158,7 @@
     "imageAltLabel": "Lýsing á mynd",
     "imageAltPlaceholder": "Lýstu myndinni fyrir þá sem sjá hana ekki",
     "imageUnsupportedType": "Veldu PNG-, JPEG-, GIF-, WebP- eða AVIF-mynd.",
-    "imageTooLarge": "Þessi mynd er of stór. Hámarkið er 5 MB.",
+    "imageTooLarge": "Þessi mynd er of stór. Hámarkið er 5 MB og 16 megapíxlar.",
     "imageUnreadable": "Þetta myndband var ólesanlegt. Reyndu aðra skrá.",
     "imageRateLimited": "Of margar upphleðslur. Reyndu aftur eftir eina mínútu.",
     "imageUploadFailed": "Ekki tókst að hlaða myndinni upp. Reyndu aftur.",

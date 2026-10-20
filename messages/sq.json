@@ -158,7 +158,7 @@
     "imageAltLabel": "Përshkrimi i imazhit",
     "imageAltPlaceholder": "Përshkruani imazhin për njerëzit që nuk mund ta shohin",
     "imageUnsupportedType": "Zgjidhni një imazh PNG, JPEG, GIF, WebP ose AVIF.",
-    "imageTooLarge": "Ai imazh është shumë i madh. Kufiri është 5 MB.",
+    "imageTooLarge": "Ai imazh është shumë i madh. Kufiri është 5 MB dhe 16 megapikselë.",
     "imageUnreadable": "Ai imazh nuk mund të lexohej. Provoj një skedar tjetër.",
     "imageRateLimited": "Shumë ngarkime. Provojeni përsëri pas një minute.",
     "imageUploadFailed": "Nuk u ngarkua imazhi. Provo përsëri.",

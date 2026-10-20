@@ -158,7 +158,7 @@
     "imageAltLabel": "תיאור התמונה",
     "imageAltPlaceholder": "תאר את התמונה לאנשים שאינם יכולים לראות אותה",
     "imageUnsupportedType": "בחר תמונה בפורמט PNG, JPEG, GIF, WebP או AVIF.",
-    "imageTooLarge": "התמונה גדולה מדי. המגבלה היא 5 MB.",
+    "imageTooLarge": "התמונה גדולה מדי. המגבלה היא 5 מגה-בייט ו-16 מגה-פיקסל.",
     "imageUnreadable": "לא ניתן היה לקרוא את התמונה הזו. נסה קובץ אחר.",
     "imageRateLimited": "יותר מדי העלאות. נסה שוב בעוד דקה.",
     "imageUploadFailed": "לא ניתן היה להעלות את התמונה. נסה שוב.",

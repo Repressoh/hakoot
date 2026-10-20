@@ -158,7 +158,7 @@
     "imageAltLabel": "Opis slike",
     "imageAltPlaceholder": "Opišite sliko za ljudi, ki je ne morejo videti",
     "imageUnsupportedType": "Izberite sliko v formatu PNG, JPEG, GIF, WebP ali AVIF.",
-    "imageTooLarge": "Ta slika je prevelika. Omejitev je 5 MB.",
+    "imageTooLarge": "Ta slika je prevelika. Omejitev je 5 MB in 16 megapikslov.",
     "imageUnreadable": "Te slike ni bilo mogoče prebrati. Poskusite z drugo datoteko.",
     "imageRateLimited": "Preveč naloženih datotek. Poskusite znova čez minuto.",
     "imageUploadFailed": "Slike ni bilo mogoče naložiti. Poskusite znova.",

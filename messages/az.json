@@ -158,7 +158,7 @@
     "imageAltLabel": "Şəklin təsviri",
     "imageAltPlaceholder": "Şəkli görə bilməyən insanlar üçün təsvir edin",
     "imageUnsupportedType": "PNG, JPEG, GIF, WebP və ya AVIF formatlı şəkil seçin.",
-    "imageTooLarge": "Bu şəkil çox böyükdür. Hədd 5 MB-dır.",
+    "imageTooLarge": "Bu şəkil çox böyükdür. Hədd 5 MB və 16 megapikseldir.",
     "imageUnreadable": "Bu şəkil oxunmadı. Başqa fayl sınayın.",
     "imageRateLimited": "Çoxlu yükləmə var. Bir dəqiqə sonra yenidən cəhd edin.",
     "imageUploadFailed": "Şəkili yükləmək mümkün olmadı. Yenidən cəhd edin.",

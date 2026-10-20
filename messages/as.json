@@ -158,7 +158,7 @@
     "imageAltLabel": "ছবিৰ বিৱৰণ",
     "imageAltPlaceholder": "যিসকলে ছবিখন চাব নোৱাৰে, তেওঁলোকৰ বাবে ছবিখন বৰ্ণনা কৰক",
     "imageUnsupportedType": "এখন PNG, JPEG, GIF, WebP বা AVIF ছবি বাছনি কৰক।",
-    "imageTooLarge": "সেই ছবিখন অতি ডাঙৰ। সীমা হৈছে ৫ এমবি।",
+    "imageTooLarge": "সেই ছবিখন অতি ডাঙৰ। সীমা হৈছে ৫ এমবি আৰু ১৬ মেগাপিক্সেল।",
     "imageUnreadable": "সেই ছবিখন পঢ়িব পৰা নগ'ল। আন এটা ফাইল চেষ্টা কৰক।",
     "imageRateLimited": "অতি বেছি আপলোড। এক মিনিটৰ পিছত পুনৰ চেষ্টা কৰক।",
     "imageUploadFailed": "ছবিখন আপলোড কৰিব পৰা নগ'ল। আকৌ চেষ্টা কৰক।",

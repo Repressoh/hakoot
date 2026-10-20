@@ -7,6 +7,13 @@ export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 /** Largest width or height a step image can have, in pixels. */
 export const MAX_IMAGE_DIMENSION = 10_000;
 
+/**
+ * Most pixels a step image can have. Shown, an image takes 4 bytes a pixel, whatever its file
+ * size: a small, highly compressible file of 10,000 × 10,000 would take 400 MB on every phone
+ * showing it. This is 64 MB.
+ */
+export const MAX_IMAGE_PIXELS = 4096 * 4096;
+
 /** Longest alt text kept for a step image. */
 export const MAX_IMAGE_ALT_LENGTH = 500;
 

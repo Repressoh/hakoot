@@ -158,7 +158,7 @@
     "imageAltLabel": "Paveikslėlio aprašymas",
     "imageAltPlaceholder": "Aprašykite paveikslėlį tiems, kurie jo nemato",
     "imageUnsupportedType": "Pasirinkite PNG, JPEG, GIF, WebP arba AVIF formato paveikslėlį.",
-    "imageTooLarge": "Šis vaizdas per didelis. Ribinis dydis – 5 MB.",
+    "imageTooLarge": "Šis vaizdas per didelis. Ribinis dydis – 5 MB ir 16 megapikselių.",
     "imageUnreadable": "To paveikslėlio nepavyko perskaityti. Pabandykite kitą failą.",
     "imageRateLimited": "Per daug įkeltų failų. Bandykite dar kartą po minutės.",
     "imageUploadFailed": "Nepavyko įkelti paveikslėlio. Bandykite dar kartą.",

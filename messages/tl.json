@@ -158,7 +158,7 @@
     "imageAltLabel": "Paglalarawan ng larawan",
     "imageAltPlaceholder": "Ilarawan ang larawan para sa mga taong hindi makakita nito",
     "imageUnsupportedType": "Pumili ng larawan na PNG, JPEG, GIF, WebP o AVIF.",
-    "imageTooLarge": "Masyadong malaki ang larawang iyon. Ang limitasyon ay 5 MB.",
+    "imageTooLarge": "Masyadong malaki ang larawang iyon. Ang limitasyon ay 5 MB at 16 megapiksel.",
     "imageUnreadable": "Hindi nabasa ang larawang iyon. Subukan ang ibang file.",
     "imageRateLimited": "Masyadong maraming pag-upload. Subukan muli pagkalipas ng isang minuto.",
     "imageUploadFailed": "Hindi na-upload ang imahe. Subukan muli.",

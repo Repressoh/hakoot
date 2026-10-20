@@ -158,7 +158,7 @@
     "imageAltLabel": "Tlhaloso ya setshwantsho",
     "imageAltPlaceholder": "Tlhalosa setshwantsho mo bathong ba ba sa kgoneng go se bona",
     "imageUnsupportedType": "Tlhopha setshwantsho sa PNG, JPEG, GIF, WebP kgotsa AVIF.",
-    "imageTooLarge": "Setshwantsho seo se segolo thata. Selekanyo ke 5 MB.",
+    "imageTooLarge": "Setshwantsho seo se segolo thata. Selekanyo ke 5 MB le 16 megapixels.",
     "imageUnreadable": "Setshwantsho seo ga se a ka sa balega. Leka faele e nngwe.",
     "imageRateLimited": "Go tsenngwa ga difaele go le gontsi thata. Leka gape morago ga motsotso.",
     "imageUploadFailed": "Go paletswe go tsenya setshwantsho. Leka gape.",

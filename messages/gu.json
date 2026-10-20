@@ -158,7 +158,7 @@
     "imageAltLabel": "છબીનું વર્ણન",
     "imageAltPlaceholder": "જે લોકો છબી જોઈ શકતા નથી, તેમના માટે છબીનું વર્ણન કરો",
     "imageUnsupportedType": "PNG, JPEG, GIF, WebP અથવા AVIF છબી પસંદ કરો.",
-    "imageTooLarge": "આ છબી ખૂબ મોટી છે. મર્યાદા 5 MB છે.",
+    "imageTooLarge": "આ છબી ખૂબ મોટી છે. મર્યાદા 5 MB અને 16 મેગાપિક્સેલ છે.",
     "imageUnreadable": "આ છબી વાંચી શકાઈ નહોતી. બીજી ફાઇલ અજમાવો.",
     "imageRateLimited": "ખૂબ વધારે અપલોડ્સ. એક મિનિટમાં ફરી પ્રયાસ કરો.",
     "imageUploadFailed": "છબી અપલોડ કરી શકાઈ નહોતી. ફરી પ્રયત્ન કરો.",

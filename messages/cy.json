@@ -158,7 +158,7 @@
     "imageAltLabel": "Disgrifiad o'r ddelwedd",
     "imageAltPlaceholder": "Disgrifiwch y ddelwedd ar gyfer pobl na allant ei gweld",
     "imageUnsupportedType": "Dewiswch ddelwedd PNG, JPEG, GIF, WebP neu AVIF.",
-    "imageTooLarge": "Mae'r ddelwedd honno'n rhy fawr. Y terfyn yw 5 MB.",
+    "imageTooLarge": "Mae'r ddelwedd honno'n rhy fawr. Y terfyn yw 5 MB a 16 megapixel.",
     "imageUnreadable": "Ni lwyddwyd i ddarllen y ddelwedd honno. Rhowch gynnig ar ffeil arall.",
     "imageRateLimited": "Gormod o uwchlwythiadau. Rhowch gynnig eto ymhen munud.",
     "imageUploadFailed": "Methu uwchlwytho'r ddelwedd. Rhowch gynnig arall.",

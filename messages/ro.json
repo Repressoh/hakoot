@@ -158,7 +158,7 @@
     "imageAltLabel": "Descrierea imaginii",
     "imageAltPlaceholder": "Descrieți imaginea pentru persoanele care nu o pot vedea",
     "imageUnsupportedType": "Alege o imagine în format PNG, JPEG, GIF, WebP sau AVIF.",
-    "imageTooLarge": "Imaginea respectivă este prea mare. Limita este de 5 MB.",
+    "imageTooLarge": "Imaginea respectivă este prea mare. Limita este de 5 MB și 16 megapixeli.",
     "imageUnreadable": "Imaginea respectivă nu a putut fi citită. Încercați un alt fișier.",
     "imageRateLimited": "S-au înregistrat prea multe încărcări. Încercați din nou peste un minut.",
     "imageUploadFailed": "Nu s-a putut încărca imaginea. Încercați din nou.",

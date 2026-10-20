@@ -158,7 +158,7 @@
     "imageAltLabel": "Suratyň düşündirişi",
     "imageAltPlaceholder": "Suraty göremegi mümkin bolmadyk adamlar üçin suratda näme görkezilýändigini düşündiriň",
     "imageUnsupportedType": "PNG, JPEG, GIF, WebP ýa-da AVIF formatyndaky suraty saýlaň.",
-    "imageTooLarge": "Şol surat gaty uly. Çäk 5 MB.",
+    "imageTooLarge": "Şol surat gaty uly. Çägi 5 MB we 16 megapiksel.",
     "imageUnreadable": "Şol surat okalmady. Başga bir faýly synanyşdyryň.",
     "imageRateLimited": "Gaty köp ýükläniş. Bir minutdan soň täzeden synanyşyň.",
     "imageUploadFailed": "Suraty ýükläp bolmady. Täzeden synanyşyň.",

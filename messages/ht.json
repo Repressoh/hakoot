@@ -158,7 +158,7 @@
     "imageAltLabel": "Deskripsyon imaj",
     "imageAltPlaceholder": "Deskri imaj la pou moun ki pa ka wè li",
     "imageUnsupportedType": "Chwazi yon imaj PNG, JPEG, GIF, WebP oswa AVIF.",
-    "imageTooLarge": "Imaj sa a twò gwo. Limit la se 5 MB.",
+    "imageTooLarge": "Imaj sa a twò gwo. Limit la se 5 MB ak 16 megapiksèl.",
     "imageUnreadable": "Imaj sa a pa t ka li. Eseye yon lòt fichye.",
     "imageRateLimited": "Twòp telechajman. Eseye ankò nan yon minit.",
     "imageUploadFailed": "Pa t kapab telechaje imaj la. Eseye ankò.",

@@ -158,7 +158,7 @@
     "imageAltLabel": "Rasm tavsifi",
     "imageAltPlaceholder": "Ko'rolmaydigan odamlar uchun rasmni tasvirlang",
     "imageUnsupportedType": "PNG, JPEG, GIF, WebP yoki AVIF formatidagi rasmni tanlang.",
-    "imageTooLarge": "U tasvir juda katta. Chegara 5 MB.",
+    "imageTooLarge": "Ushbu rasm juda katta. Cheklov 5 MB va 16 megapikseldan iborat.",
     "imageUnreadable": "U tasvirni o'qib bo'lmadi. Boshqa faylni sinab ko'ring.",
     "imageRateLimited": " Juda ko'p yuklamalar. Bir daqiqadan keyin yana urinib ko'ring.",
     "imageUploadFailed": "Rasmni yuklab bo'lmadi. Qayta urinib ko'ring.",

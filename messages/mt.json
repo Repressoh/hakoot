@@ -158,7 +158,7 @@
     "imageAltLabel": "Deskrizzjoni tal-immaġni",
     "imageAltPlaceholder": "Iddeskrivi l-immaġni għal dawk li ma jistgħux jarawha",
     "imageUnsupportedType": "Agħżel immaġni PNG, JPEG, GIF, WebP jew AVIF.",
-    "imageTooLarge": "Dak l-immaġni hija wisq kbira. Il-limitu huwa 5 MB.",
+    "imageTooLarge": "Dak l-immaġni hija wisq kbira. Il-limitu huwa 5 MB u 16-il megapixel.",
     "imageUnreadable": "Dak l-immaġni ma setgħetx tinqara. Ippruva fajl ieħor.",
     "imageRateLimited": "Tropp ta' ttellgħiet. Ippruvax mill-ġdid fi minuta.",
     "imageUploadFailed": "Ma setax ittella' l-immaġni. Ipprova mill-ġdid.",

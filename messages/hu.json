@@ -158,7 +158,7 @@
     "imageAltLabel": "Kép leírása",
     "imageAltPlaceholder": "Írja le a képet azok számára, akik nem láthatják!",
     "imageUnsupportedType": "Válasszon PNG, JPEG, GIF, WebP vagy AVIF képet.",
-    "imageTooLarge": "Ez a kép túl nagy. A méretkorlát 5 MB.",
+    "imageTooLarge": "Ez a kép túl nagy. A korlát 5 MB és 16 megapixel.",
     "imageUnreadable": "A kép nem olvasható. Próbálkozzon egy másik fájllal.",
     "imageRateLimited": "Túl sok feltöltés történt. Kérjük, próbálja meg újra egy perc múlva.",
     "imageUploadFailed": "Nem sikerült feltölteni a képet. Próbáld meg újra.",

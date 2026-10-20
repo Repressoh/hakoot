@@ -158,7 +158,7 @@
     "imageAltLabel": "Pedaran gambar",
     "imageAltPlaceholder": "Jelaskeun gambar pikeun jalma anu teu tiasa ningali éta",
     "imageUnsupportedType": "Pilih gambar PNG, JPEG, GIF, WebP atawa AVIF.",
-    "imageTooLarge": "Gambar éta teuing gedé. Watesna 5 MB.",
+    "imageTooLarge": "Gambar éta teuing gedé. Watesna 5 MB jeung 16 megapiksel.",
     "imageUnreadable": "Gambar éta teu bisa dibaca. Coba file séjén.",
     "imageRateLimited": "Teuing loba unggahan. Coba deui sanggeus hiji menit.",
     "imageUploadFailed": "Teu tiasa unggah gambar. Coba deui.",

@@ -158,7 +158,7 @@
     "imageAltLabel": "图片描述",
     "imageAltPlaceholder": "为无法看到该图片的用户描述图片内容",
     "imageUnsupportedType": "请选择 PNG、JPEG、GIF、WebP 或 AVIF 格式的图片。",
-    "imageTooLarge": "该图片过大。大小上限为 5 MB。",
+    "imageTooLarge": "该图片过大。大小上限为 5 MB，分辨率上限为 16 百万像素。",
     "imageUnreadable": "无法读取该图片。请尝试另一个文件。",
     "imageRateLimited": "上传次数过多。请一分钟后再试。",
     "imageUploadFailed": "无法上传图片。请重试。",

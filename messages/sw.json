@@ -158,7 +158,7 @@
     "imageAltLabel": "Maelezo ya picha",
     "imageAltPlaceholder": "Elezea picha kwa watu wasioweza kuiona",
     "imageUnsupportedType": "Chagua picha ya PNG, JPEG, GIF, WebP au AVIF.",
-    "imageTooLarge": "Picha hiyo ni kubwa mno. Kikomo ni MB 5.",
+    "imageTooLarge": "Picha hiyo ni kubwa mno. Kikomo ni MB 5 na megapikseli 16.",
     "imageUnreadable": "Picha hiyo haikuweza kusomeka. Jaribu faili nyingine.",
     "imageRateLimited": "Upakiaji mwingi sana. Jaribu tena baada ya dakika moja.",
     "imageUploadFailed": "Haikuwezekana kupakia picha. Jaribu tena.",

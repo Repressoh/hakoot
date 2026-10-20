@@ -158,7 +158,7 @@
     "imageAltLabel": "Bildopriskribo",
     "imageAltPlaceholder": "Priskribu la bildon por homoj, kiuj ne povas vidi ĝin",
     "imageUnsupportedType": "Elektu PNG-, JPEG-, GIF-, WebP- aŭ AVIF-bildon.",
-    "imageTooLarge": "Tiu bildo estas tro granda. La limo estas 5 MB.",
+    "imageTooLarge": "Tiu bildo estas tro granda. La limo estas 5 MB kaj 16 megapikseloj.",
     "imageUnreadable": "Tiu bildo ne estis legebla. Provu alian dosieron.",
     "imageRateLimited": "Tro multaj alŝutoj. Provu denove post minuto.",
     "imageUploadFailed": "Ne eblis alŝuti la bildon. Provu denove.",

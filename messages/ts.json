@@ -158,7 +158,7 @@
     "imageAltLabel": "Nhlamuselo ya xifaniso",
     "imageAltPlaceholder": "Hlamusela xifaniso eka vanhu lava nga kotiki ku xi vona",
     "imageUnsupportedType": "Hlawula xifaniso xa PNG, JPEG, GIF, WebP kumbe AVIF.",
-    "imageTooLarge": "Xifaniso xexo i xikulu ngopfu. Ntsengo wa le henhla i 5 MB.",
+    "imageTooLarge": "Xifaniso lexi i xikulu ngopfu. Ntsengo lowu vekiweke i 5 MB na 16 wa ti-megapixels.",
     "imageUnreadable": "Xifaniso xexo a xi hlayekanga. Ringeta fayili yin'wana.",
     "imageRateLimited": "Ku layicheriwa ko tala ngopfu. Ringeta nakambe endzhaku ka minete yin'we.",
     "imageUploadFailed": "A swi kotekanga ku layicha xifaniso. Ringeta nakambe.",

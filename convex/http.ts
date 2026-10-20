@@ -10,6 +10,7 @@ import {
   type ImageSize,
   MAX_IMAGE_BYTES,
   MAX_IMAGE_DIMENSION,
+  MAX_IMAGE_PIXELS,
   readImageSize,
   sniffImageType,
 } from "./images";
@@ -319,6 +320,9 @@ http.route({
     if (width === null || height === null) {
       return error("Invalid image size", 400);
     }
+    if (width * height > MAX_IMAGE_PIXELS) {
+      return error("Image too large", 413);
+    }
     if (Number(req.headers.get("content-length")) > MAX_IMAGE_BYTES) {
       return error("Image too large", 413);
     }
@@ -348,7 +352,10 @@ http.route({
     if (!(type && stored && stored.width > 0 && stored.height > 0)) {
       return error("Unsupported image type", 415);
     }
-    if (Math.max(stored.width, stored.height) > MAX_IMAGE_DIMENSION) {
+    if (
+      Math.max(stored.width, stored.height) > MAX_IMAGE_DIMENSION ||
+      stored.width * stored.height > MAX_IMAGE_PIXELS
+    ) {
       return error("Image too large", 413);
     }
     if (!matchesStoredSize({ height, width }, stored)) {

@@ -158,7 +158,7 @@
     "imageAltLabel": "Descripció de la imatge",
     "imageAltPlaceholder": "Descriviu la imatge per a les persones que no la poden veure",
     "imageUnsupportedType": "Tria una imatge PNG, JPEG, GIF, WebP o AVIF.",
-    "imageTooLarge": "Aquesta imatge és massa gran. El límit és de 5 MB.",
+    "imageTooLarge": "Aquesta imatge és massa gran. El límit és de 5 MB i 16 megapíxels.",
     "imageUnreadable": "Aquesta imatge no s'ha pogut llegir. Prova un altre fitxer.",
     "imageRateLimited": "Massa pujades. Torna a provar d'aquí a un minut.",
     "imageUploadFailed": "No s'ha pogut pujar la imatge. Torna-ho a provar.",

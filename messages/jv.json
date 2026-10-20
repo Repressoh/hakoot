@@ -158,7 +158,7 @@
     "imageAltLabel": "Katrangan gambar",
     "imageAltPlaceholder": "Jelasna gambar kanggo wong sing ora bisa ndeleng",
     "imageUnsupportedType": "Pilih gambar PNG, JPEG, GIF, WebP utawa AVIF.",
-    "imageTooLarge": "Gambar kuwi gedhé banget. Watesané 5 MB.",
+    "imageTooLarge": "Gambar kuwi gedhé banget. Watesané 5 MB lan 16 megapiksel.",
     "imageUnreadable": "Gambar kuwi ora bisa diwaca. Coba file liyane.",
     "imageRateLimited": "Kakehan unggahan. Coba maneh sajrone siji menit.",
     "imageUploadFailed": "Ora bisa ngunggah gambar. Coba maneh.",

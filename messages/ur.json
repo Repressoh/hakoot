@@ -158,7 +158,7 @@
     "imageAltLabel": "تصویر کی وضاحت",
     "imageAltPlaceholder": "جو لوگ تصویر نہیں دیکھ سکتے ان کے لیے تصویر کی وضاحت کریں",
     "imageUnsupportedType": "PNG، JPEG، GIF، WebP یا AVIF میں سے کوئی تصویر منتخب کریں۔",
-    "imageTooLarge": "وہ تصویر بہت بڑی ہے۔ حد 5MB ہے۔",
+    "imageTooLarge": "وہ تصویر بہت بڑی ہے۔ حد 5 ایم بی اور 16 میگا پکسل ہے۔",
     "imageUnreadable": "وہ تصویر پڑھی نہیں جا سکی۔ کوئی دوسری فائل آزمائیں۔",
     "imageRateLimited": "بہت زیادہ اپ لوڈز۔ ایک منٹ میں دوبارہ کوشش کریں۔",
     "imageUploadFailed": "تصویر اپ لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",

@@ -158,7 +158,7 @@
     "imageAltLabel": "Bildbeschreibung",
     "imageAltPlaceholder": "Beschreibe das Bild für Personen, die es nicht sehen können",
     "imageUnsupportedType": "Wählen Sie ein Bild im Format PNG, JPEG, GIF, WebP oder AVIF aus.",
-    "imageTooLarge": "Dieses Bild ist zu groß. Die Obergrenze liegt bei 5 MB.",
+    "imageTooLarge": "Das Bild ist zu groß. Die Obergrenze liegt bei 5 MB und 16 Megapixeln.",
     "imageUnreadable": "Dieses Bild konnte nicht gelesen werden. Versuche es mit einer anderen Datei.",
     "imageRateLimited": "Zu viele Uploads. Bitte versuche es in einer Minute erneut.",
     "imageUploadFailed": "Das Bild konnte nicht hochgeladen werden. Bitte versuche es erneut.",

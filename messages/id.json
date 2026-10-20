@@ -158,7 +158,7 @@
     "imageAltLabel": "Deskripsi gambar",
     "imageAltPlaceholder": "Jelaskan gambar tersebut bagi orang-orang yang tidak dapat melihatnya",
     "imageUnsupportedType": "Pilih gambar berformat PNG, JPEG, GIF, WebP, atau AVIF.",
-    "imageTooLarge": "Gambar tersebut terlalu besar. Batas ukurannya adalah 5 MB.",
+    "imageTooLarge": "Gambar tersebut terlalu besar. Batasnya adalah 5 MB dan 16 megapiksel.",
     "imageUnreadable": "Gambar tersebut tidak dapat dibaca. Coba gunakan berkas lain.",
     "imageRateLimited": "Terlalu banyak unggahan. Silakan coba lagi dalam satu menit.",
     "imageUploadFailed": "Gagal mengunggah gambar. Silakan coba lagi.",

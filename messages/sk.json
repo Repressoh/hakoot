@@ -158,7 +158,7 @@
     "imageAltLabel": "Popis obrázku",
     "imageAltPlaceholder": "Popíšte obrázok pre ľudí, ktorí ho nemôžu vidieť",
     "imageUnsupportedType": "Vyberte obrázok vo formáte PNG, JPEG, GIF, WebP alebo AVIF.",
-    "imageTooLarge": "Tento obrázok je príliš veľký. Limit je 5 MB.",
+    "imageTooLarge": "Tento obrázok je príliš veľký. Limit je 5 MB a 16 megapixelov.",
     "imageUnreadable": "Tento obrázok sa nepodarilo načítať. Skúste iný súbor.",
     "imageRateLimited": "Príliš veľa odoslaných súborov. Skúste to znovu o minútu.",
     "imageUploadFailed": "Nepodarilo sa nahrať obrázok. Skúste to znovu.",

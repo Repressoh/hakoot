@@ -158,7 +158,7 @@
     "imageAltLabel": "Attēla apraksts",
     "imageAltPlaceholder": "Aprakstiet attēlu cilvēkiem, kuri to nevar redzēt",
     "imageUnsupportedType": "Izvēlieties PNG, JPEG, GIF, WebP vai AVIF attēlu.",
-    "imageTooLarge": "Šis attēls ir pārāk liels. Ierobežojums ir 5 MB.",
+    "imageTooLarge": "Šis attēls ir pārāk liels. Ierobežojums ir 5 MB un 16 megapikseļi.",
     "imageUnreadable": "Šo attēlu nevarēja nolasīt. Izmēģiniet citu failu.",
     "imageRateLimited": "Pārāk daudz augšupielāžu. Mēģiniet vēlreiz pēc minūtes.",
     "imageUploadFailed": "Neizdevās augšupielādēt attēlu. Mēģiniet vēlreiz.",

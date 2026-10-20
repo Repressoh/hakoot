@@ -158,7 +158,7 @@
     "imageAltLabel": "Deskrivadur ar skeudenn",
     "imageAltPlaceholder": "Deskrivañ ar skeudenn evit an dud na c'hallont ket he gwelet",
     "imageUnsupportedType": "Diuzit ur skeudenn PNG, JPEG, GIF, WebP pe AVIF.",
-    "imageTooLarge": "Re vras eo ar skeudenn-se. 5 Mo eo ar vevenn.",
+    "imageTooLarge": "Re vras eo ar skeudenn-se. Ar vevenn a zo 5 Mo ha 16 megapiksel.",
     "imageUnreadable": "N'haller ket lenn ar skeudenn-se. Klaskit gant ur restr all.",
     "imageRateLimited": "Re a bostadennoù. Adkredit a-benn ur vunutenn.",
     "imageUploadFailed": "N'eo ket deuet a-benn kargañ ar skeudenn. Adklasit.",

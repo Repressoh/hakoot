@@ -158,7 +158,7 @@
     "imageAltLabel": "Bildbeschreiwung",
     "imageAltPlaceholder": "Beschreif d'Bild fir Leit, déi et net gesinn kënnen",
     "imageUnsupportedType": "Wielt e PNG-, JPEG-, GIF-, WebP- oder AVIF-Bild.",
-    "imageTooLarge": "Dat Bild ass ze grouss. D'Limit ass 5 MB.",
+    "imageTooLarge": "Dat Bild ass ze grouss. D'Limit ass 5 MB an 16 Megapixel.",
     "imageUnreadable": "Dat Bild konnt net gelies ginn. Probéiert eng aner Datei.",
     "imageRateLimited": "Ze vill Uploads. Probéiert et an enger Minutt nach eng Kéier.",
     "imageUploadFailed": "Et war net méiglech, d'Bild eropzelueden. Probéiert et nach eng Kéier.",

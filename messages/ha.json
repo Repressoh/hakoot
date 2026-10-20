@@ -158,7 +158,7 @@
     "imageAltLabel": "Bayani game da hoto",
     "imageAltPlaceholder": "Bayyana hoton ga mutanen da ba za su iya ganinsa ba",
     "imageUnsupportedType": "Zaɓi hoton PNG, JPEG, GIF, WebP ko AVIF.",
-    "imageTooLarge": "Wannan hoto ya yi girma sosai. Iyakarsa ita ce 5 MB.",
+    "imageTooLarge": "Wannan hoto ya yi girma sosai. Iyakarsa ita ce 5 MB da megapiksels 16.",
     "imageUnreadable": "Ba a iya karanta wannan hoto ba. Gwada wani fayil daban.",
     "imageRateLimited": "An ɗora fayiloli da yawa. Ku sake gwadawa cikin minti ɗaya.",
     "imageUploadFailed": "Ba a iya loda hoton. Ku sake gwadawa.",

@@ -158,7 +158,7 @@
     "imageAltLabel": "Descriptio imaginis",
     "imageAltPlaceholder": "Describe imaginem pro iis qui eam videre non possunt",
     "imageUnsupportedType": "Elige imaginem PNG, JPEG, GIF, WebP aut AVIF.",
-    "imageTooLarge": "Illa imago nimis magna est. Limes est 5 MB.",
+    "imageTooLarge": "Illa imago nimis magna est. Limes est 5 MB et 16 megapixella.",
     "imageUnreadable": "Illa imago legi non potuit. Aliam fasciculum conare.",
     "imageRateLimited": "Nimis multa onerata. Conare iterum post minutum.",
     "imageUploadFailed": "Imaginem imponere non potuit. Iterum conare.",

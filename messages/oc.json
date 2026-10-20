@@ -158,7 +158,7 @@
     "imageAltLabel": "Descripcion de l'imatge",
     "imageAltPlaceholder": "Descrivètz l'imatge per las personas que lo pòdon pas veire",
     "imageUnsupportedType": "Causissètz una imatge PNG, JPEG, GIF, WebP o AVIF.",
-    "imageTooLarge": "Aquela imatge es tròp granda. La limita es de 5 Mo.",
+    "imageTooLarge": "Aquela imatge es tròp granda. La limita es de 5 Mo e 16 megapixels.",
     "imageUnreadable": "Aquela imatge es pas legibla. Ensajatz amb un autre fichièr.",
     "imageRateLimited": "Trop de telecargaments. Tornatz ensajar d'aquí una minuta.",
     "imageUploadFailed": "Se pòt pas telecargar l'imatge. Tornatz ensajar.",

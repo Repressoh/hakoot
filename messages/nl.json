@@ -158,7 +158,7 @@
     "imageAltLabel": "Afbeeldingsbeschrijving",
     "imageAltPlaceholder": "Beschrijf de afbeelding voor mensen die deze niet kunnen zien",
     "imageUnsupportedType": "Kies een PNG-, JPEG-, GIF-, WebP- of AVIF-afbeelding.",
-    "imageTooLarge": "Die afbeelding is te groot. De limiet is 5 MB.",
+    "imageTooLarge": "Die afbeelding is te groot. De limiet is 5 MB en 16 megapixels.",
     "imageUnreadable": "Die afbeelding kon niet worden gelezen. Probeer een ander bestand.",
     "imageRateLimited": "Te veel uploads. Probeer het over een minuut opnieuw.",
     "imageUploadFailed": "De afbeelding kon niet worden geüpload. Probeer het opnieuw.",

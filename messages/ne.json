@@ -158,7 +158,7 @@
     "imageAltLabel": "छवि विवरण",
     "imageAltPlaceholder": "देख्न नसक्ने मानिसहरूका लागि छवि वर्णन गर्नुहोस्",
     "imageUnsupportedType": "PNG, JPEG, GIF, WebP वा AVIF छवि छान्नुहोस्।",
-    "imageTooLarge": "त्यो छवि धेरै ठूलो छ। सीमा ५ एमबी हो।",
+    "imageTooLarge": "त्यो छवि धेरै ठूलो छ। सीमा ५ एमबी र १६ मेगापिक्सेल हो।",
     "imageUnreadable": "त्यो छवि पढ्न सकिएन। अर्को फाइल प्रयास गर्नुहोस्।",
     "imageRateLimited": "धेरै अपलोडहरू। एक मिनेटमा फेरि प्रयास गर्नुहोस्।",
     "imageUploadFailed": "छवि अपलोड गर्न सकिएन। फेरि प्रयास गर्नुहोस्।",

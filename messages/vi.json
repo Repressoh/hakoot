@@ -158,7 +158,7 @@
     "imageAltLabel": "Mô tả hình ảnh",
     "imageAltPlaceholder": "Mô tả hình ảnh cho những người không thể nhìn thấy nó",
     "imageUnsupportedType": "Chọn hình ảnh định dạng PNG, JPEG, GIF, WebP hoặc AVIF.",
-    "imageTooLarge": "Hình ảnh đó quá lớn. Giới hạn là 5 MB.",
+    "imageTooLarge": "Hình ảnh đó quá lớn. Giới hạn là 5 MB và 16 megapixel.",
     "imageUnreadable": "Không thể đọc được hình ảnh đó. Hãy thử một tệp khác.",
     "imageRateLimited": "Đã có quá nhiều lần tải lên. Vui lòng thử lại sau một phút.",
     "imageUploadFailed": "Không thể tải lên hình ảnh. Vui lòng thử lại.",
