@@ -155,24 +155,79 @@ function webpSize(bytes: Uint8Array): ImageSize | null {
   return null;
 }
 
+/** An ISO base media file box: its type, and where its contents start and end. */
+interface Box {
+  end: number;
+  start: number;
+  type: string;
+}
+
+/** The boxes one after another in `bytes` from `start` to `end`, up to the first malformed one. */
+function readBoxes(bytes: Uint8Array, start: number, end: number): Box[] {
+  const data = view(bytes);
+  const boxes: Box[] = [];
+  let offset = start;
+  while (offset + 8 <= end) {
+    const size = data.getUint32(offset);
+    const type = ascii(bytes, offset + 4, offset + 8);
+    let header = 8;
+    let boxEnd = offset + size;
+    if (size === 1) {
+      // A 64-bit size follows the type.
+      if (offset + 16 > end) {
+        break;
+      }
+      header = 16;
+      boxEnd = offset + Number(data.getBigUint64(offset + 8));
+    } else if (size === 0) {
+      // Runs to the end of what holds it.
+      boxEnd = end;
+    }
+    if (boxEnd < offset + header || boxEnd > end) {
+      break;
+    }
+    boxes.push({ end: boxEnd, start: offset + header, type });
+    offset = boxEnd;
+  }
+  return boxes;
+}
+
+/** The first box of `type` among `parent`'s children, which start `skip` bytes into it (past a full box's version and flags). */
+function childBox(
+  bytes: Uint8Array,
+  parent: Box | undefined,
+  type: string,
+  skip = 0
+): Box | undefined {
+  return parent
+    ? readBoxes(bytes, parent.start + skip, parent.end).find(
+        (box) => box.type === type
+      )
+    : undefined;
+}
+
 /**
- * An AVIF's size: the largest of its `ispe` (image spatial extents) properties, so a grid image
- * counts at its full size rather than a tile's.
+ * An AVIF's size: the largest of the image spatial extents (`ispe`) properties in its
+ * `meta` → `iprp` → `ipco` boxes, so a grid image counts at its full size rather than a tile's.
+ * Read from the box structure, not by looking for "ispe" anywhere: the image data could hold
+ * those bytes too.
  */
 function avifSize(bytes: Uint8Array): ImageSize | null {
   const data = view(bytes);
+  const file: Box = { end: bytes.length, start: 0, type: "" };
+  // `meta` is a full box: its children start after a version and flags.
+  const meta = childBox(bytes, file, "meta");
+  const ipco = childBox(bytes, childBox(bytes, meta, "iprp", 4), "ipco");
+  if (!ipco) {
+    return null;
+  }
   let largest: ImageSize | null = null;
-  // "ispe", then the version and flags, then the width and height.
-  for (let i = 4; i + 16 <= bytes.length; i += 1) {
-    if (
-      bytes[i] === 0x69 &&
-      bytes[i + 1] === 0x73 &&
-      bytes[i + 2] === 0x70 &&
-      bytes[i + 3] === 0x65
-    ) {
+  for (const box of readBoxes(bytes, ipco.start, ipco.end)) {
+    // Version and flags, then the width and height.
+    if (box.type === "ispe" && box.start + 12 <= box.end) {
       const size = {
-        height: data.getUint32(i + 12),
-        width: data.getUint32(i + 8),
+        height: data.getUint32(box.start + 8),
+        width: data.getUint32(box.start + 4),
       };
       if (
         !largest ||

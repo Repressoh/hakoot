@@ -3,8 +3,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { encryptImage } from "@/convex/images";
 import {
   type FailedStepImage,
+  holdStepImageFile,
   preloadStepImageFile,
-  releaseStepImageFile,
   stepImageSource,
 } from "./step-image-source";
 
@@ -22,6 +22,41 @@ function serve(files: Record<string, Blob>) {
   );
   vi.stubGlobal("fetch", fetch);
   return fetch;
+}
+
+/**
+ * A stand-in for `fetch` whose responses wait for `respond`, and which rejects once aborted. Returns
+ * its calls.
+ */
+function deferFetch() {
+  const calls: {
+    respond: (file: Blob) => void;
+    signal: AbortSignal;
+    url: string;
+  }[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      (url: string, init: RequestInit) =>
+        new Promise<Response>((resolve, reject) => {
+          const signal = init.signal as AbortSignal;
+          signal.addEventListener("abort", () =>
+            reject(new DOMException("Aborted", "AbortError"))
+          );
+          calls.push({
+            respond: (file) => resolve(new Response(file)),
+            signal,
+            url,
+          });
+        })
+    )
+  );
+  return calls;
+}
+
+/** Let queued microtasks run, as they do once a commit's effects have. */
+function settle() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 const DATA_URL = /^data:([^;]+);base64,(.*)$/;
@@ -97,31 +132,57 @@ describe("stepImageSource", () => {
     ).toMatchObject({ retryAt: expect.any(Number) });
   });
 
-  test("keeps only the two newest preloads, and lets go of released ones", async () => {
-    const files: Record<string, Blob> = {};
-    const images = await Promise.all(
-      [1, 2, 3].map(async (n) => {
-        const url = `https://x.test/preload-${n}`;
-        const { file, key } = await encryptImage(IMAGE);
-        files[url] = file;
-        return { key, type: "image/png", url };
-      })
-    );
-    const fetch = serve(files);
-    const [first, second, third] = images;
+  test("stops a preload nothing needs any more", async () => {
+    const calls = deferFetch();
+    const release = holdStepImageFile("https://x.test/skipped");
+    preloadStepImageFile("https://x.test/skipped");
+    expect(calls).toHaveLength(1);
 
-    for (const { url } of images) {
-      preloadStepImageFile(url);
-    }
-    releaseStepImageFile(second.url);
-    expect(fetch).toHaveBeenCalledTimes(3);
+    release();
+    await settle();
+    expect(calls[0].signal.aborted).toBe(true);
+  });
 
-    // Only the newest is still held: the first was let go, the second released.
-    await stepImageSource(third);
-    expect(fetch).toHaveBeenCalledTimes(3);
-    await stepImageSource(first);
-    await stepImageSource(second);
-    expect(fetch).toHaveBeenCalledTimes(5);
+  test("hands a preload over to its image, which keeps it downloading", async () => {
+    const calls = deferFetch();
+    const { file, key } = await encryptImage(IMAGE);
+    const image = { key, type: "image/png", url: "https://x.test/next" };
+
+    const preloader = holdStepImageFile(image.url);
+    preloadStepImageFile(image.url);
+    // The step starts: its image renders, then the commit's effects run,
+    // the preloader's cleanup just before the image's own hold.
+    const source = stepImageSource(image);
+    preloader();
+    const shown = holdStepImageFile(image.url);
+    await settle();
+    expect(calls[0].signal.aborted).toBe(false);
+
+    calls[0].respond(file);
+    expect(contents(await source)).toMatchObject({ bytes: IMAGE });
+    expect(calls).toHaveLength(1);
+    shown();
+  });
+
+  test("an image let go before it arrived starts over when shown again", async () => {
+    const calls = deferFetch();
+    const { file, key } = await encryptImage(IMAGE);
+    const image = { key, type: "image/png", url: "https://x.test/passed" };
+
+    const first = holdStepImageFile(image.url);
+    const abandoned = stepImageSource(image);
+    first();
+    await settle();
+    expect(calls[0].signal.aborted).toBe(true);
+
+    // Not a failure to wait out: a new download.
+    const again = holdStepImageFile(image.url);
+    const source = stepImageSource(image);
+    expect(source).not.toBe(abandoned);
+    expect(calls).toHaveLength(2);
+    calls[1].respond(file);
+    expect(contents(await source)).toMatchObject({ bytes: IMAGE });
+    again();
   });
 
   test("keeps only the four newest images", async () => {

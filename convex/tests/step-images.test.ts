@@ -200,6 +200,15 @@ async function setAlt(
   });
 }
 
+/** Remove the image `stepId` shows now, as `as`. */
+async function removeImage(as: AsUser, t: TestConvex, stepId: Id<"gameSteps">) {
+  const storageId = (await getStep(t, stepId))?.image?.storageId;
+  if (!storageId) {
+    throw new Error("the step has no image");
+  }
+  await as.mutation(api.steps.removeImage, { stepId, storageId });
+}
+
 async function getStep(t: TestConvex, stepId: Id<"gameSteps">) {
   return await t.run(async (ctx) => await ctx.db.get(stepId));
 }
@@ -297,25 +306,47 @@ describe("readImageSize", () => {
     ).toBe(null);
   });
 
-  test("reads an AVIF's size as its largest image extents, as a grid's", () => {
-    const ispe = (width: number, height: number) => [
-      ...u32(20),
+  test("reads an AVIF's size as its largest image extents, as a grid's, from its boxes", () => {
+    const box = (type: string, contents: number[]) => [
+      ...u32(8 + contents.length),
+      ...chars(type),
+      ...contents,
+    ];
+    // A full box: a version and flags, then its contents.
+    const fullBox = (type: string, contents: number[]) =>
+      box(type, [0, 0, 0, 0, ...contents]);
+    const ispe = (width: number, height: number) =>
+      fullBox("ispe", [...u32(width), ...u32(height)]);
+    const ftypBox = box("ftyp", chars("avif\0\0\0\0mif1avif"));
+    // "ispe" and huge sizes in the image data, which aren't a box there.
+    const mdat = box("mdat", [
       ...chars("ispe"),
       0,
       0,
       0,
       0,
-      ...u32(width),
-      ...u32(height),
-    ];
-    const avif = bytes(
-      [...ftyp("avif"), ...ispe(512, 512), ...ispe(4096, 2048)],
-      256
-    );
+      ...u32(90_000),
+      ...u32(90_000),
+    ]);
+    const avif = new Uint8Array([
+      ...ftypBox,
+      ...fullBox("meta", [
+        ...fullBox("hdlr", [0, 0, 0, 0, ...chars("pict")]),
+        ...box("iprp", [
+          ...box("ipco", [...ispe(512, 512), ...ispe(4096, 2048)]),
+        ]),
+      ]),
+      ...mdat,
+    ]);
+    expect(sniffImageType(avif)).toBe("image/avif");
     expect(readImageSize(avif, "image/avif")).toEqual({
       height: 2048,
       width: 4096,
     });
+    // Without the boxes, the bytes in the image data aren't taken for a size.
+    expect(
+      readImageSize(new Uint8Array([...ftypBox, ...mdat]), "image/avif")
+    ).toBe(null);
     expect(readImageSize(ftyp("avif"), "image/avif")).toBe(null);
   });
 
@@ -725,16 +756,39 @@ describe("replacing and removing a step image", () => {
     const { quizId } = await seedGame(t, owner.userId);
     await upload(owner.as, quizId, png());
 
-    await expect(
-      other.as.mutation(api.steps.removeImage, { stepId: quizId })
-    ).rejects.toThrow("Not found");
+    const [file] = await storedFiles(t);
+    await expect(removeImage(other.as, t, quizId)).rejects.toThrow("Not found");
     expect(await storedFiles(t)).toHaveLength(1);
 
-    await owner.as.mutation(api.steps.removeImage, { stepId: quizId });
+    await removeImage(owner.as, t, quizId);
     expect(await storedFiles(t)).toEqual([]);
     expect((await getStep(t, quizId))?.image).toBeUndefined();
     // Nothing left to remove.
-    await owner.as.mutation(api.steps.removeImage, { stepId: quizId });
+    await owner.as.mutation(api.steps.removeImage, {
+      stepId: quizId,
+      storageId: file._id,
+    });
+  });
+
+  test("a removal made for a replaced image leaves the new one", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { theoryId } = await seedGame(t, owner.userId);
+    await upload(owner.as, theoryId, png());
+    const old = (await getStep(t, theoryId))?.image?.storageId;
+    if (!old) {
+      throw new Error("no image");
+    }
+
+    // Another tab replaces the image, then this one's Remove lands.
+    await upload(owner.as, theoryId, png());
+    const replaced = (await getStep(t, theoryId))?.image?.storageId;
+    await owner.as.mutation(api.steps.removeImage, {
+      stepId: theoryId,
+      storageId: old,
+    });
+    expect((await getStep(t, theoryId))?.image?.storageId).toBe(replaced);
+    expect(await storedFiles(t)).toHaveLength(1);
   });
 
   test("deleting a step deletes its image's file", async () => {
@@ -789,7 +843,7 @@ describe("alt text", () => {
     });
     expect((await getStep(t, theoryId))?.image?.alt).toBeUndefined();
 
-    await owner.as.mutation(api.steps.removeImage, { stepId: theoryId });
+    await removeImage(owner.as, t, theoryId);
     await owner.as.mutation(api.steps.setImageAlt, {
       alt: "Nothing to describe",
       stepId: theoryId,
@@ -971,9 +1025,7 @@ describe("images of copied games", () => {
     expect(copySteps[0].image).toEqual(originalTheory?.image);
 
     // Removed from the original: the copy still shows it.
-    await owner.as.mutation(api.steps.removeImage, {
-      stepId: original.theoryId,
-    });
+    await removeImage(owner.as, t, original.theoryId);
     expect(await storedFiles(t)).toHaveLength(2);
     const copyView = await copier.as.query(api.steps.get, {
       stepId: copySteps[0]._id,

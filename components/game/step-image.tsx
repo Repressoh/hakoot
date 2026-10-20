@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import { type CSSProperties, Suspense, use, useEffect, useState } from "react";
-import { type FailedStepImage, stepImageSource } from "./step-image-source";
+import {
+  type FailedStepImage,
+  holdStepImageFile,
+  stepImageSource,
+} from "./step-image-source";
 
 /** A step's image as the Convex queries return it. */
 export interface StepImageView {
@@ -87,6 +91,9 @@ function DecryptedImage({ image, style }: DecryptedImageProps) {
  * image downloads and is decrypted.
  */
 export function StepImage({ image, maxHeight = "60vh" }: Props) {
+  // Held while shown, loading or not: once no view needs it, its download
+  // stops.
+  useEffect(() => holdStepImageFile(image.url), [image.url]);
   const aspectRatio = image.width / image.height;
   const style = {
     aspectRatio,

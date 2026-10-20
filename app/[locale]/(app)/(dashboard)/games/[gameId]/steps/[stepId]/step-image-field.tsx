@@ -129,8 +129,15 @@ export function StepImageField({ image, stepId }: Props) {
   }
 
   async function remove() {
+    if (!image) {
+      return;
+    }
     setPending("remove");
-    const removed = await removeImage({ stepId }).then(
+    // Names the image shown here, so a stale tab can't remove a newer one.
+    const removed = await removeImage({
+      stepId,
+      storageId: image.storageId,
+    }).then(
       () => true,
       () => false
     );

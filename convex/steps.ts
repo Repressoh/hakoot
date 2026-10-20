@@ -396,12 +396,16 @@ export const setImageAlt = mutation({
   },
 });
 
-/** Remove a step's image; its file is deleted unless another step shows it. */
+/**
+ * Remove a step's image, if it still shows the file `storageId`: a removal made for an image since
+ * replaced, say from another tab, leaves the new one alone. Its file is deleted unless another
+ * step shows it.
+ */
 export const removeImage = mutation({
-  args: { stepId: v.id("gameSteps") },
+  args: { stepId: v.id("gameSteps"), storageId: v.id("_storage") },
   handler: async (ctx, args) => {
     const { step } = await requireStepOwner(ctx, args.stepId);
-    if (!step.image) {
+    if (step.image?.storageId !== args.storageId) {
       return null;
     }
 

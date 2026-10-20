@@ -1,13 +1,20 @@
 import { decryptImage, toBase64 } from "@/convex/images";
 
+/** A download of an encrypted step image, and how to stop it. */
+interface Download {
+  controller: AbortController;
+  file: Promise<ArrayBuffer>;
+}
+
 /** The encrypted step images being or already downloaded, by URL. */
-const downloads = new Map<string, Promise<ArrayBuffer>>();
+const downloads = new Map<string, Download>();
 
 /**
- * Downloads kept until their image is shown. A session preloads one at a time, so older ones,
- * replaced or never shown, are let go rather than held in memory.
+ * How many preloaders and shown images need each image, by URL. A download nothing needs any more
+ * is stopped, so skipping ahead through image steps on a slow connection doesn't leave each one
+ * downloading.
  */
-const MAX_DOWNLOADS = 2;
+const holds = new Map<string, number>();
 
 /**
  * An image that failed to download or decrypt, and when to try it again, on the `performance.now()`
@@ -19,6 +26,8 @@ export interface FailedStepImage {
 
 interface Decrypted {
   failed?: FailedStepImage;
+  /** Whether it is decrypted or failed, rather than still on its way. */
+  settled: boolean;
   source: Promise<string | FailedStepImage>;
 }
 
@@ -42,41 +51,85 @@ function trim(cache: Map<string, unknown>, max: number) {
   }
 }
 
-/** The encrypted file at `url`, downloaded once however many times it is asked for. */
-function download(url: string): Promise<ArrayBuffer> {
+/** The download of the encrypted file at `url`, started once however many times it is asked for. */
+function download(url: string): Download {
   const known = downloads.get(url);
   if (known) {
     return known;
   }
-  const started = fetch(url).then((response) => {
+  const controller = new AbortController();
+  const file = fetch(url, { signal: controller.signal }).then((response) => {
     if (!response.ok) {
       throw new Error(`Step image download failed: ${response.status}`);
     }
     return response.arrayBuffer();
   });
+  const started = { controller, file };
   downloads.set(url, started);
-  trim(downloads, MAX_DOWNLOADS);
   // Asked for again later, it is downloaded again.
-  started.catch(() => downloads.delete(url));
+  file.catch(() => forgetDownload(url, started));
   return started;
+}
+
+/** Forget `pending`, the download of `url`, unless a newer one has taken its place. */
+function forgetDownload(url: string, pending: Download) {
+  if (downloads.get(url) === pending) {
+    downloads.delete(url);
+  }
+}
+
+/**
+ * Stop downloading the image at `url`, and forget its decryption if that hasn't finished, so it
+ * starts over if it is needed again.
+ */
+function abandon(url: string) {
+  const pending = downloads.get(url);
+  if (pending) {
+    downloads.delete(url);
+    pending.controller.abort();
+  }
+  if (decrypted.get(url)?.settled === false) {
+    decrypted.delete(url);
+  }
+}
+
+/**
+ * Note that a preloader or a shown image needs the image at `url`, until the returned function is
+ * called. Once nothing needs it, its download stops.
+ */
+export function holdStepImageFile(url: string): () => void {
+  holds.set(url, (holds.get(url) ?? 0) + 1);
+  let released = false;
+  return () => {
+    if (released) {
+      return;
+    }
+    released = true;
+    const left = (holds.get(url) ?? 1) - 1;
+    if (left > 0) {
+      holds.set(url, left);
+      return;
+    }
+    holds.delete(url);
+    // Checked once the rest of the commit's effects have run: when the next
+    // step's image becomes the current one, its preloader lets go of it just
+    // before its image holds it.
+    queueMicrotask(() => {
+      if (!holds.has(url)) {
+        abandon(url);
+      }
+    });
+  };
 }
 
 /**
  * Start downloading the encrypted step image at `url`, so it shows as soon as its step does and
- * its key arrives.
+ * its key arrives. Hold it (`holdStepImageFile`) for as long as it may be shown.
  */
 export function preloadStepImageFile(url: string): void {
-  download(url).catch(() => {
+  download(url).file.catch(() => {
     // Downloaded again when its step shows.
   });
-}
-
-/**
- * Let go of the preloaded file at `url`, if its image isn't being shown: it was replaced, or the
- * session left. The browser's HTTP cache may still hold it.
- */
-export function releaseStepImageFile(url: string): void {
-  downloads.delete(url);
 }
 
 /**
@@ -86,7 +139,8 @@ export function releaseStepImageFile(url: string): void {
  * until it is asked for again with `retryOf`, the failure it gave, once that failure's `retryAt`
  * has passed (`StepImage` asks then). Naming the failure lets every view of the image ask for the
  * same retry, and makes a memoized call (the React Compiler's) run again. A data URL rather than
- * an object URL, which would have to be revoked once no image shows it.
+ * an object URL, which would have to be revoked once no image shows it. Hold the image
+ * (`holdStepImageFile`) while it is shown.
  */
 export function stepImageSource(
   image: {
@@ -107,8 +161,10 @@ export function stepImageSource(
   ) {
     return known.source;
   }
+  const pending = download(image.url);
   const entry: Decrypted = {
-    source: download(image.url)
+    settled: false,
+    source: pending.file
       .then((encrypted) => decryptImage(encrypted, image.key))
       .then(
         (bytes) =>
@@ -120,9 +176,10 @@ export function stepImageSource(
         return entry.failed;
       })
       .finally(() => {
+        entry.settled = true;
         // Decrypted, or to be downloaded again: the encrypted file isn't
         // needed now.
-        downloads.delete(image.url);
+        forgetDownload(image.url, pending);
       }),
   };
   // Replaced, it becomes the newest.
