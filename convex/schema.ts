@@ -105,7 +105,13 @@ export default defineSchema({
         alt: v.optional(v.string()),
         // Pixel size, so the space is reserved before the image loads.
         height: v.number(),
+        // The AES-GCM key the stored file is encrypted with, base64-encoded.
+        // Players get it with the step, so they can download the next step's
+        // file ahead without seeing it early.
+        key: v.string(),
         storageId: v.id("_storage"),
+        // The image's MIME type, as its bytes showed when uploaded.
+        type: v.string(),
         width: v.number(),
       })
     ),

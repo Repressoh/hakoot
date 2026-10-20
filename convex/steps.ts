@@ -343,8 +343,10 @@ export const prepareImageUpload = internalMutation({
 export const attachImage = internalMutation({
   args: {
     height: v.number(),
+    key: v.string(),
     stepId: v.id("gameSteps"),
     storageId: v.id("_storage"),
+    type: v.string(),
     width: v.number(),
   },
   handler: async (ctx, args) => {
@@ -353,7 +355,9 @@ export const attachImage = internalMutation({
     await ctx.db.patch(args.stepId, {
       image: {
         height: args.height,
+        key: args.key,
         storageId: args.storageId,
+        type: args.type,
         width: args.width,
       },
     });

@@ -6,6 +6,7 @@ import type { Id } from "./_generated/dataModel";
 import { type ActionCtx, httpAction } from "./_generated/server";
 import { auth } from "./auth";
 import {
+  encryptImage,
   type ImageSize,
   MAX_IMAGE_BYTES,
   MAX_IMAGE_DIMENSION,
@@ -268,17 +269,27 @@ async function readBody(
 }
 
 /**
- * Store `file` and show it as the step's image. The file is deleted again if the step can't take
- * it, so a failed upload leaves nothing behind.
+ * Store `image`, encrypted, and show it as the step's image. The file is deleted again if the step
+ * can't take it, so a failed upload leaves nothing behind.
  */
 async function storeStepImage(
   ctx: ActionCtx,
-  file: Blob,
-  image: { height: number; stepId: Id<"gameSteps">; width: number }
+  bytes: Uint8Array<ArrayBuffer>,
+  image: {
+    height: number;
+    stepId: Id<"gameSteps">;
+    type: string;
+    width: number;
+  }
 ) {
+  const { file, key } = await encryptImage(bytes);
   const storageId = await ctx.storage.store(file);
   try {
-    await ctx.runMutation(internal.steps.attachImage, { ...image, storageId });
+    await ctx.runMutation(internal.steps.attachImage, {
+      ...image,
+      key,
+      storageId,
+    });
   } catch (error) {
     await ctx.storage.delete(storageId);
     throw error;
@@ -345,12 +356,8 @@ http.route({
     }
 
     try {
-      // Stored with the type its bytes show, not the one it was sent with.
-      await storeStepImage(ctx, new Blob([bytes], { type }), {
-        height,
-        stepId,
-        width,
-      });
+      // Kept with the type its bytes show, not the one it was sent with.
+      await storeStepImage(ctx, bytes, { height, stepId, type, width });
     } catch (storeError) {
       return error("Upload refused", imageErrorStatus(storeError));
     }

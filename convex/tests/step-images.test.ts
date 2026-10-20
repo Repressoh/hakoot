@@ -4,11 +4,14 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { api } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 import {
+  decryptImage,
+  encryptImage,
   isAnimatedImage,
   MAX_IMAGE_BYTES,
   readImageSize,
   scanPngChunks,
   sniffImageType,
+  toBase64,
 } from "../images";
 import schema from "../schema";
 
@@ -150,6 +153,27 @@ async function upload(
     headers: { "Content-Type": type },
     method: "POST",
   });
+}
+
+/** The image the step `stepId` shows, decrypted from its stored file. */
+async function storedImage(t: TestConvex, stepId: Id<"gameSteps">) {
+  const image = (await getStep(t, stepId))?.image;
+  if (!image) {
+    throw new Error("the step has no image");
+  }
+  const file = await t.run(
+    async (ctx) =>
+      (await (await ctx.storage.get(image.storageId))?.arrayBuffer()) ?? null
+  );
+  if (!file) {
+    throw new Error("the image's file is gone");
+  }
+  const encrypted = new Uint8Array(file);
+  return {
+    bytes: new Uint8Array(await decryptImage(encrypted.buffer, image.key)),
+    encrypted,
+    type: image.type,
+  };
 }
 
 async function storedFiles(t: TestConvex) {
@@ -339,30 +363,62 @@ describe("isAnimatedImage", () => {
 });
 
 describe("uploading a step image", () => {
-  test("stores the image with the type its bytes show and shows it on the step", async () => {
+  test("stores the image encrypted, with the type its bytes show, and shows it on the step", async () => {
     const t = newTest();
     const owner = await signUp(t, "owner@x.test");
     const { theoryId } = await seedGame(t, owner.userId);
 
     // Sent as a JPEG, but its bytes are a PNG's.
-    const response = await upload(owner.as, theoryId, png(), {
+    const image = png(1000);
+    const response = await upload(owner.as, theoryId, image, {
       type: "image/jpeg",
     });
     expect(response.status).toBe(200);
 
-    const [file] = await storedFiles(t);
-    const type = await t.run(
-      async (ctx) => (await ctx.storage.get(file._id))?.type ?? null
+    const stored = await storedImage(t, theoryId);
+    expect(stored.type).toBe("image/png");
+    expect(stored.bytes).toEqual(image);
+    // The file itself is no image: the PNG's bytes appear nowhere in it.
+    expect(sniffImageType(stored.encrypted)).toBe(null);
+    expect(Buffer.from(stored.encrypted).includes(Buffer.from("IHDR"))).toBe(
+      false
     );
-    expect(type).toBe("image/png");
+
+    const [file] = await storedFiles(t);
     const step = await owner.as.query(api.steps.get, { stepId: theoryId });
     expect(step?.image).toEqual({
       alt: "",
       height: 300,
+      key: expect.any(String),
       storageId: file._id,
+      type: "image/png",
       url: expect.stringContaining("/api/storage/"),
       width: 400,
     });
+  });
+
+  test("base64-encodes images too large to turn into characters at once", () => {
+    const large = crypto.getRandomValues(new Uint8Array(65_536));
+    const image = new Uint8Array(300_001);
+    image.set(large);
+    expect(toBase64(image)).toBe(Buffer.from(image).toString("base64"));
+    expect(toBase64(new Uint8Array())).toBe("");
+  });
+
+  test("encrypts each image with its own key", async () => {
+    const image = png();
+    const first = await encryptImage(image);
+    const second = await encryptImage(image);
+    expect(first.key).not.toBe(second.key);
+    const firstFile = await first.file.arrayBuffer();
+    expect(new Uint8Array(await decryptImage(firstFile, first.key))).toEqual(
+      image
+    );
+    await expect(decryptImage(firstFile, second.key)).rejects.toThrow();
+    // Altered, it doesn't decrypt.
+    const altered = new Uint8Array(firstFile.slice(0));
+    altered[20] = 255 - altered[20];
+    await expect(decryptImage(altered.buffer, first.key)).rejects.toThrow();
   });
 
   test("refuses signed-out users, other users' steps and unknown steps, storing nothing", async () => {
@@ -538,8 +594,7 @@ describe("uploading a step image", () => {
       method: "POST",
     });
     expect(accepted.status).toBe(200);
-    const [file] = await storedFiles(t);
-    expect(file.size).toBe(100_000);
+    expect((await storedImage(t, theoryId)).bytes).toEqual(image);
   });
 
   test("deletes the stored file if the step goes away during the upload", async () => {
@@ -656,7 +711,9 @@ describe("replacing and removing a step image", () => {
     expect(files[0]._id).not.toBe(first._id);
     expect((await getStep(t, theoryId))?.image).toEqual({
       height: 50,
+      key: expect.any(String),
       storageId: files[0]._id,
+      type: "image/png",
       width: 80,
     });
   });
@@ -779,6 +836,8 @@ describe("images in sessions", () => {
     const expected = {
       alt: "A cat",
       height: 300,
+      key: (await getStep(t, theoryId))?.image?.key,
+      type: "image/png",
       url: expect.stringContaining("/api/storage/"),
       width: 400,
     };
@@ -825,6 +884,14 @@ describe("preloading the next step's image", () => {
     // On the theory step, the quiz's image is next.
     await owner.as.mutation(api.sessions.advance, { sessionId });
     expect(await nextImageUrls()).toEqual([quizUrl, quizUrl]);
+    // Players can download its file, but not decrypt it before the quiz.
+    const quizKey = (await getStep(t, quizId))?.image?.key ?? "";
+    const playerState = await t.query(api.sessions.getPlayerState, {
+      participantToken: player.participantToken,
+      sessionId,
+    });
+    expect(quizKey).not.toBe("");
+    expect(JSON.stringify(playerState)).not.toContain(quizKey);
     // On the quiz, the last step, nothing is.
     await owner.as.mutation(api.sessions.advance, { sessionId });
     expect(await nextImageUrls()).toEqual([null, null]);

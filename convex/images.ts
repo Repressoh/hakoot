@@ -272,6 +272,74 @@ export function isAnimatedImage(bytes: Uint8Array, type: string): boolean {
   }
 }
 
+/** Bytes of the random IV an encrypted image starts with. */
+const IV_BYTES = 12;
+
+/** Bytes turned into characters at a time by `toBase64`, few enough to pass as arguments. */
+const BASE64_CHUNK = 0x80_00;
+
+/** `bytes` in base64. */
+export function toBase64(bytes: Uint8Array): string {
+  const chunks: string[] = [];
+  for (let start = 0; start < bytes.length; start += BASE64_CHUNK) {
+    chunks.push(
+      String.fromCharCode(...bytes.subarray(start, start + BASE64_CHUNK))
+    );
+  }
+  return btoa(chunks.join(""));
+}
+
+/**
+ * `image` encrypted with a new random AES-GCM key: the file to store, the IV followed by the
+ * ciphertext, and the key, base64-encoded. Step images are stored this way so players can
+ * download the next step's image before it shows without being able to see it: its key only comes
+ * with the step.
+ */
+export async function encryptImage(
+  image: Uint8Array<ArrayBuffer>
+): Promise<{ file: Blob; key: string }> {
+  const key = await crypto.subtle.generateKey(
+    { length: 256, name: "AES-GCM" },
+    true,
+    ["encrypt"]
+  );
+  const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
+  const ciphertext = await crypto.subtle.encrypt(
+    { iv, name: "AES-GCM" },
+    key,
+    image
+  );
+  const rawKey = new Uint8Array(await crypto.subtle.exportKey("raw", key));
+  return {
+    file: new Blob([iv, ciphertext], { type: "application/octet-stream" }),
+    key: toBase64(rawKey),
+  };
+}
+
+/**
+ * The image that `encryptImage` encrypted into `file` with `key`.
+ *
+ * @throws If `key` isn't the file's, or the file was altered.
+ */
+export async function decryptImage(
+  file: ArrayBuffer,
+  key: string
+): Promise<ArrayBuffer> {
+  const rawKey = Uint8Array.from(atob(key), (char) => char.charCodeAt(0));
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    rawKey,
+    "AES-GCM",
+    false,
+    ["decrypt"]
+  );
+  return await crypto.subtle.decrypt(
+    { iv: new Uint8Array(file, 0, IV_BYTES), name: "AES-GCM" },
+    cryptoKey,
+    new Uint8Array(file, IV_BYTES)
+  );
+}
+
 /**
  * Delete the file `storageId` unless a step still shows it. Call once the step that showed it no
  * longer does: a copied game's steps share their originals' files.
@@ -294,7 +362,8 @@ export async function releaseImage(
 /**
  * The URL of the image on the step after the current one of `session`, so clients can download
  * it before that step shows: a quiz's answer clock starts 10 seconds after its step does, whether
- * or not the image has arrived by then. Null once the session is finished, or if the next step
+ * or not the image has arrived by then. The file is encrypted, and its key only comes with the
+ * step, so nobody sees the image early. Null once the session is finished, or if the next step
  * has no image.
  */
 export async function getNextImageUrl(
@@ -309,7 +378,10 @@ export async function getNextImageUrl(
   return image ? await ctx.storage.getUrl(image.storageId) : null;
 }
 
-/** A step's image as clients show it, with the URL to load it from; null without one. */
+/**
+ * A step's image as clients show it, with the URL of its encrypted file and the key to decrypt it;
+ * null without one.
+ */
 export async function getImageView(
   ctx: QueryCtx,
   image: Doc<"gameSteps">["image"]
@@ -324,6 +396,8 @@ export async function getImageView(
   return {
     alt: image.alt ?? "",
     height: image.height,
+    key: image.key,
+    type: image.type,
     url,
     width: image.width,
   };

@@ -22,7 +22,7 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
-import { preloadStepImage } from "@/components/game/preload-step-image";
+import { usePreloadStepImage } from "@/components/game/preload-step-image";
 import { StepImage, type StepImageView } from "@/components/game/step-image";
 import { usePreloadStepRenderers } from "@/components/game/use-preload-step-renderers";
 import { CHOICE_SHAPES } from "@/components/session/choice-shapes";
@@ -803,7 +803,7 @@ export function PlayerSessionView({ sessionId }: Props) {
   useHeartbeat(token, state?.session.status === "waiting");
 
   usePreloadStepRenderers(state?.codeLanguages);
-  preloadStepImage(state?.nextImageUrl);
+  usePreloadStepImage(state?.nextImageUrl);
 
   // Track whether the timer has expired on the client side
   const timerExpired = useStepTimerExpiry(state);
