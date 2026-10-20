@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import { convexTest } from "convex-test";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { api } from "../_generated/api";
+import { api, internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 import {
   decryptImage,
@@ -415,6 +415,11 @@ describe("readImageSize", () => {
       height: 4000,
       width: 5000,
     });
+    // Each image and track counts, even one smaller in area than another.
+    expect(size([4096, 4096], [20_000, 800], [64, 64])).toEqual({
+      height: 4096,
+      width: 20_000,
+    });
   });
 
   test("reads an AVIF's size as its largest image extents, as a grid's, from its boxes", () => {
@@ -639,6 +644,11 @@ describe("uploading a step image", () => {
     ).toBe(413);
     const sequence = avifSequence([1, 1], [5000, 5000], [5000, 5000]);
     expect((await upload(owner.as, theoryId, sequence, hidden)).status).toBe(
+      413
+    );
+    // A wide track behind a larger still image.
+    const wide = avifSequence([4096, 4096], [20_000, 800], [20_000, 800]);
+    expect((await upload(owner.as, theoryId, wide, square(4096))).status).toBe(
       413
     );
     expect(await storedFiles(t)).toEqual([]);
@@ -929,6 +939,40 @@ describe("replacing and removing a step image", () => {
       storageId: old,
     });
     expect((await getStep(t, theoryId))?.image?.storageId).toBe(replaced);
+    expect(await storedFiles(t)).toHaveLength(1);
+  });
+
+  test("an upload that finishes after a later one began leaves the later one's image", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { theoryId } = await seedGame(t, owner.userId);
+
+    // This tab's upload begins, and its file is still on its way when
+    // another tab's upload begins and finishes.
+    const slow = await owner.as.mutation(internal.steps.prepareImageUpload, {
+      stepId: theoryId,
+    });
+    expect((await upload(owner.as, theoryId, png())).status).toBe(200);
+    const newer = (await getStep(t, theoryId))?.image?.storageId;
+    expect(newer).toBeDefined();
+
+    const late = await t.run(
+      async (ctx) => await ctx.storage.store(new Blob(["late"]))
+    );
+    await owner.as.mutation(internal.steps.attachImage, {
+      ...slow,
+      height: 300,
+      key: "",
+      storageId: late,
+      type: "image/png",
+      width: 400,
+    });
+    expect((await getStep(t, theoryId))?.image?.storageId).toBe(newer);
+    expect((await storedFiles(t)).map((file) => file._id)).toEqual([newer]);
+
+    // The next upload shows as usual.
+    expect((await upload(owner.as, theoryId, png())).status).toBe(200);
+    expect((await getStep(t, theoryId))?.image?.storageId).not.toBe(newer);
     expect(await storedFiles(t)).toHaveLength(1);
   });
 

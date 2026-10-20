@@ -320,7 +320,8 @@ export const move = mutation({
 
 /**
  * Check that the current user can upload an image for the step `stepId`, and count the upload
- * against their rate limit. Called by the upload route before it stores the file.
+ * against their rate limit. Called by the upload route before it reads the file. Gives the step's
+ * id, and the upload's number among the step's uploads, for `attachImage`.
  */
 export const prepareImageUpload = internalMutation({
   // A string from the upload URL, so a malformed id is "Not found" too.
@@ -330,15 +331,20 @@ export const prepareImageUpload = internalMutation({
     if (!stepId) {
       throw new ConvexError("Not found");
     }
-    const { userId } = await requireStepOwner(ctx, stepId);
+    const { step, userId } = await requireStepOwner(ctx, stepId);
     await checkRateLimit(ctx, `user:${userId}`, "uploadImage");
-    return stepId;
+    const upload = (step.imageUploads ?? 0) + 1;
+    await ctx.db.patch(stepId, { imageUploads: upload });
+    return { stepId, upload };
   },
 });
 
 /**
- * Show the stored file `storageId` as the step's image, in place of any image it had, which is
- * deleted unless another step shows it. The new image starts without alt text.
+ * Show the stored file `storageId`, from the step's upload number `upload`, as the step's image, in
+ * place of any image it had, which is deleted unless another step shows it. The new image starts
+ * without alt text. If a later upload has begun since, say from another tab, the file is deleted
+ * instead: that upload's image is the one to show, and this one would replace it if it finished
+ * first.
  */
 export const attachImage = internalMutation({
   args: {
@@ -347,10 +353,15 @@ export const attachImage = internalMutation({
     stepId: v.id("gameSteps"),
     storageId: v.id("_storage"),
     type: v.string(),
+    upload: v.number(),
     width: v.number(),
   },
   handler: async (ctx, args) => {
     const { step } = await requireStepOwner(ctx, args.stepId);
+    if (step.imageUploads !== args.upload) {
+      await ctx.storage.delete(args.storageId);
+      return null;
+    }
 
     await ctx.db.patch(args.stepId, {
       image: {

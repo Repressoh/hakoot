@@ -271,23 +271,20 @@ function avifTrackSizes(bytes: Uint8Array, file: Box): ImageSize[] {
 }
 
 /**
- * An AVIF's size: the largest its boxes give, so a grid image counts at its full size rather
- * than a tile's, and an image sequence at its frames' size rather than its still image's. Read
- * from the box structure, not by looking for "ispe" anywhere: the image data could hold those
- * bytes too.
+ * An AVIF's size: the widest and tallest its boxes give, so a grid image counts at its full size
+ * rather than a tile's, an image sequence at its frames' size rather than its still image's, and
+ * no image or track in it is wider, taller, or larger than the size checked. Read from the box
+ * structure, not by looking for "ispe" anywhere: the image data could hold those bytes too.
  */
 function avifSize(bytes: Uint8Array): ImageSize | null {
   const file: Box = { end: bytes.length, start: 0, type: "" };
-  let largest: ImageSize | null = null;
-  for (const size of [
-    ...avifItemSizes(bytes, file),
-    ...avifTrackSizes(bytes, file),
-  ]) {
-    if (!largest || size.width * size.height > largest.width * largest.height) {
-      largest = size;
-    }
-  }
-  return largest;
+  const sizes = [...avifItemSizes(bytes, file), ...avifTrackSizes(bytes, file)];
+  return sizes.length > 0
+    ? {
+        height: Math.max(...sizes.map((size) => size.height)),
+        width: Math.max(...sizes.map((size) => size.width)),
+      }
+    : null;
 }
 
 /** The bytes of the color table a GIF's `flags` byte (of its screen, or of a frame) says follows. */

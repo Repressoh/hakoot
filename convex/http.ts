@@ -280,6 +280,7 @@ async function storeStepImage(
     height: number;
     stepId: Id<"gameSteps">;
     type: string;
+    upload: number;
     width: number;
   }
 ) {
@@ -327,9 +328,9 @@ http.route({
       return error("Image too large", 413);
     }
 
-    let stepId: Id<"gameSteps">;
+    let prepared: { stepId: Id<"gameSteps">; upload: number };
     try {
-      stepId = await ctx.runMutation(internal.steps.prepareImageUpload, {
+      prepared = await ctx.runMutation(internal.steps.prepareImageUpload, {
         stepId: params.get("stepId") ?? "",
       });
     } catch (prepareError) {
@@ -364,7 +365,7 @@ http.route({
 
     try {
       // Kept with the type its bytes show, not the one it was sent with.
-      await storeStepImage(ctx, bytes, { height, stepId, type, width });
+      await storeStepImage(ctx, bytes, { ...prepared, height, type, width });
     } catch (storeError) {
       return error("Upload refused", imageErrorStatus(storeError));
     }

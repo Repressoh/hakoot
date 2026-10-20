@@ -115,6 +115,9 @@ export default defineSchema({
         width: v.number(),
       })
     ),
+    // How many image uploads have begun for the step, so one that finishes
+    // after a later one began, say from another tab, doesn't replace it.
+    imageUploads: v.optional(v.number()),
     // Theory fields
     markdownContent: v.optional(v.string()),
     order: v.number(),
