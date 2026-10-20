@@ -76,7 +76,9 @@ describe("StepImage", () => {
   });
 
   test("tries a failed image again on its own once the network is back", async () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({
+      toFake: ["setTimeout", "clearTimeout", "performance"],
+    });
     const { file, key } = await encryptImage(PNG);
     // Down for the first try, back for the next.
     const fetch = vi
@@ -114,5 +116,57 @@ describe("StepImage", () => {
     expect(fetch).toHaveBeenCalledTimes(2);
     expect(container.querySelector("img")?.getAttribute("alt")).toBe("A dog");
     act(() => root.unmount());
+  });
+
+  test("a view mounted after another failed still tries again", async () => {
+    vi.useFakeTimers({
+      toFake: ["setTimeout", "clearTimeout", "performance"],
+    });
+    const { file, key } = await encryptImage(PNG);
+    // Down for the first two tries, back for the next.
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 500 }))
+      .mockResolvedValueOnce(new Response(null, { status: 500 }))
+      .mockResolvedValueOnce(new Response(file));
+    vi.stubGlobal("fetch", fetch);
+    const image = {
+      alt: "A fox",
+      height: 300,
+      key,
+      type: "image/png",
+      url: "https://x.test/remounted",
+      width: 400,
+    };
+    const show = async () => {
+      const container = document.createElement("div");
+      document.body.append(container);
+      const root = createRoot(container);
+      await act(async () => {
+        root.render(<StepImage image={image} />);
+        await vi.advanceTimersByTimeAsync(100);
+      });
+      return { container, root };
+    };
+    const wait = (ms: number) =>
+      act(async () => {
+        await vi.advanceTimersByTimeAsync(ms);
+      });
+
+    // The first view fails, tries again and fails again, then goes away.
+    const first = await show();
+    await wait(10_000);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    act(() => first.root.unmount());
+
+    // A new view gets that failure, and tries again once it is due.
+    const second = await show();
+    expect(second.container.querySelector("img")).toBe(null);
+    await wait(10_000);
+    expect(fetch).toHaveBeenCalledTimes(3);
+    expect(second.container.querySelector("img")?.getAttribute("alt")).toBe(
+      "A fox"
+    );
+    act(() => second.root.unmount());
   });
 });

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { type CSSProperties, Suspense, use, useEffect, useState } from "react";
-import { stepImageSource } from "./step-image-source";
+import { type FailedStepImage, stepImageSource } from "./step-image-source";
 
 /** A step's image as the Convex queries return it. */
 export interface StepImageView {
@@ -34,8 +34,8 @@ interface DecryptedImageProps {
  * until a later try succeeds.
  */
 function DecryptedImage({ image, style }: DecryptedImageProps) {
-  const [attempt, setAttempt] = useState(0);
-  const source = use(stepImageSource(image, attempt));
+  const [retryOf, setRetryOf] = useState<FailedStepImage>();
+  const source = use(stepImageSource(image, retryOf));
 
   // A failed image is tried again once it may be, on its own: a step's view
   // can otherwise stay unchanged for as long as it shows.
@@ -43,10 +43,16 @@ function DecryptedImage({ image, style }: DecryptedImageProps) {
     if (typeof source === "string") {
       return;
     }
-    const timer = setTimeout(
-      () => setAttempt((previous) => previous + 1),
-      Math.max(0, source.retryAt - Date.now())
-    );
+    const untilDue = () => Math.max(0, source.retryAt - performance.now());
+    const retryWhenDue = () => {
+      // A timer can fire a little early: wait out the rest.
+      if (untilDue() > 0) {
+        timer = setTimeout(retryWhenDue, untilDue());
+      } else {
+        setRetryOf(source);
+      }
+    };
+    let timer = setTimeout(retryWhenDue, untilDue());
     return () => clearTimeout(timer);
   }, [source]);
 

@@ -54,7 +54,7 @@ describe("stepImageSource", () => {
   });
 
   test("gives when to try again for a file it can't download or decrypt, and only tries then", async () => {
-    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.useFakeTimers({ toFake: ["performance"] });
     const { file } = await encryptImage(IMAGE);
     const other = await encryptImage(IMAGE);
     const fetch = serve({ "https://x.test/b": file });
@@ -65,22 +65,31 @@ describe("stepImageSource", () => {
     };
 
     const failed = stepImageSource(image);
-    expect(await failed).toEqual({ retryAt: Date.now() + 10_000 });
+    const failure = await failed;
+    expect(failure).toEqual({ retryAt: performance.now() + 10_000 });
     // The same settled promise, so a component showing it doesn't suspend
-    // and fetch again on every render.
+    // and fetch again on every render; asked to retry too early, too.
     expect(stepImageSource(image)).toBe(failed);
     vi.advanceTimersByTime(9000);
-    expect(stepImageSource(image)).toBe(failed);
+    expect(stepImageSource(image, failure as FailedStepImage)).toBe(failed);
     expect(fetch).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(1001);
-    // Only a later attempt tries again: a render for anything else (or a
-    // memoized call) gets the same failure.
+    // Only a retry of this failure tries again: a render for anything else
+    // (or a memoized call) gets the same failure.
     expect(stepImageSource(image)).toBe(failed);
-    expect(stepImageSource(image, 1)).toBe(stepImageSource(image, 1));
-    const retried = stepImageSource(image, 1);
+    const retried = stepImageSource(image, failure as FailedStepImage);
     expect(retried).not.toBe(failed);
-    expect(await retried).toEqual({ retryAt: Date.now() + 10_000 });
+    // Every view asking for the same retry gets that one try.
+    expect(stepImageSource(image, failure as FailedStepImage)).toBe(retried);
+    const second = await retried;
+    expect(second).not.toBe(failure);
+    expect(second).toEqual({ retryAt: performance.now() + 10_000 });
+    expect(fetch).toHaveBeenCalledTimes(2);
+
+    // A view still holding the first failure gets the newer one.
+    vi.advanceTimersByTime(10_001);
+    expect(stepImageSource(image, failure as FailedStepImage)).toBe(retried);
     expect(fetch).toHaveBeenCalledTimes(2);
 
     expect(

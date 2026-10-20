@@ -9,14 +9,15 @@ const downloads = new Map<string, Promise<ArrayBuffer>>();
  */
 const MAX_DOWNLOADS = 2;
 
-/** An image that failed to download or decrypt, and when to try it again. */
+/**
+ * An image that failed to download or decrypt, and when to try it again, on the `performance.now()`
+ * clock: a monotonic one, which changes to the wall clock can't move.
+ */
 export interface FailedStepImage {
   retryAt: number;
 }
 
 interface Decrypted {
-  /** The caller's try this is, from `stepImageSource`'s `attempt`. */
-  attempt: number;
   failed?: FailedStepImage;
   source: Promise<string | FailedStepImage>;
 }
@@ -81,11 +82,11 @@ export function releaseStepImageFile(url: string): void {
 /**
  * A data URL of the step image whose encrypted file is at `image.url`, once it is downloaded and
  * decrypted with `image.key`; when to try again if that fails. The same promise for the same image,
- * so it can be passed to `use`: a failed one too, until it is asked for with a later `attempt` once
- * its `retryAt` has passed (`StepImage` asks then), so a broken image isn't fetched over and over.
- * The attempt is an argument, not just a later call, so a memoized call (the React Compiler's) is
- * made again for it. A data URL rather than an object URL, which would
- * have to be revoked once no image shows it.
+ * so it can be passed to `use`: a failed one too, so a broken image isn't fetched over and over,
+ * until it is asked for again with `retryOf`, the failure it gave, once that failure's `retryAt`
+ * has passed (`StepImage` asks then). Naming the failure lets every view of the image ask for the
+ * same retry, and makes a memoized call (the React Compiler's) run again. A data URL rather than
+ * an object URL, which would have to be revoked once no image shows it.
  */
 export function stepImageSource(
   image: {
@@ -93,19 +94,20 @@ export function stepImageSource(
     type: string;
     url: string;
   },
-  attempt = 0
+  retryOf?: FailedStepImage
 ): Promise<string | FailedStepImage> {
   const known = decrypted.get(image.url);
   if (
     known &&
-    (!known.failed ||
-      attempt <= known.attempt ||
-      Date.now() < known.failed.retryAt)
+    !(
+      known.failed &&
+      retryOf === known.failed &&
+      performance.now() >= known.failed.retryAt
+    )
   ) {
     return known.source;
   }
   const entry: Decrypted = {
-    attempt,
     source: download(image.url)
       .then((encrypted) => decryptImage(encrypted, image.key))
       .then(
@@ -114,7 +116,7 @@ export function stepImageSource(
       )
       .catch(() => {
         // A new object each time, so a view waiting on it knows to wait again.
-        entry.failed = { retryAt: Date.now() + RETRY_AFTER_MS };
+        entry.failed = { retryAt: performance.now() + RETRY_AFTER_MS };
         return entry.failed;
       })
       .finally(() => {
