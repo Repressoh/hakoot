@@ -185,6 +185,46 @@ describe("prepareStepImage re-encoding", () => {
       prepareStepImage(new File(["GIF89a"], "a.gif", { type: "image/gif" }))
     ).rejects.toMatchObject({ reason: "tooLarge" });
   });
+
+  test.each([
+    [
+      "an APNG",
+      "image/png",
+      // Signature, then an animation control chunk before any image data.
+      [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 8, ..."acTL"],
+    ],
+    [
+      "an animated WebP",
+      "image/webp",
+      // Extended header with its animation flag set.
+      [..."RIFF\0\0\0\0WEBPVP8X\0\0\0\0", 0x02],
+    ],
+    ["an AVIF image sequence", "image/avif", [0, 0, 0, 16, ..."ftypavis"]],
+  ])(
+    "keeps %s as it is, however large, so it stays animated",
+    async (_name, type, start) => {
+      const { requestedTypes } = stubCanvas(
+        { height: 3000, width: 4000 },
+        (t) => blobOf(1000, t)
+      );
+      const header = start.map((byte) =>
+        typeof byte === "string" ? byte.charCodeAt(0) : byte
+      );
+      const file = new File(
+        [new Uint8Array(header), new Uint8Array(2_000_000)],
+        "a",
+        {
+          type,
+        }
+      );
+      await expect(prepareStepImage(file)).resolves.toEqual({
+        file,
+        height: 3000,
+        width: 4000,
+      });
+      expect(requestedTypes).toEqual([]);
+    }
+  );
 });
 
 describe("uploadStepImage", () => {

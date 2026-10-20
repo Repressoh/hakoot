@@ -6,9 +6,10 @@ import type { Id } from "./_generated/dataModel";
 import { type ActionCtx, httpAction } from "./_generated/server";
 import { auth } from "./auth";
 import {
-  IMAGE_SIGNATURE_BYTES,
+  type ImageSize,
   MAX_IMAGE_BYTES,
   MAX_IMAGE_DIMENSION,
+  readImageSize,
   sniffImageType,
 } from "./images";
 
@@ -23,6 +24,31 @@ const ALLOWED_ORIGINS = new Set([
   "https://hakoot-dev.albertocaserta.it",
   "https://hakoot.albertocaserta.it",
 ]);
+
+/** The origin of `url`, or null if it isn't a URL. */
+function originOf(url: string | undefined): string | null {
+  if (!url) {
+    return null;
+  }
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Whether the app at `origin` may call the routes below: one of the known deployments, or the
+ * app this Convex deployment serves, wherever it is hosted. That is `SITE_URL`, which Convex Auth
+ * requires, or `NEXT_PUBLIC_APP_URL`, which invite emails link to.
+ */
+function isAllowedOrigin(origin: string): boolean {
+  return (
+    ALLOWED_ORIGINS.has(origin) ||
+    origin === originOf(process.env.SITE_URL) ||
+    origin === originOf(process.env.NEXT_PUBLIC_APP_URL)
+  );
+}
 
 /** Request headers the routes below accept: the upload route also takes the
  * user's auth token. */
@@ -39,7 +65,7 @@ function corsHeaders(
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     Vary: "Origin",
   };
-  if (origin && ALLOWED_ORIGINS.has(origin)) {
+  if (origin && isAllowedOrigin(origin)) {
     headers["Access-Control-Allow-Origin"] = origin;
   }
   return headers;
@@ -182,6 +208,17 @@ function parseDimension(value: string | null): number | null {
 }
 
 /**
+ * Whether `declared`, the size the editor sent, is the size `stored` that the file's header
+ * gives, either way round: a photo turned by its EXIF orientation shows with its sides swapped.
+ */
+function matchesStoredSize(declared: ImageSize, stored: ImageSize): boolean {
+  return (
+    (declared.width === stored.width && declared.height === stored.height) ||
+    (declared.width === stored.height && declared.height === stored.width)
+  );
+}
+
+/**
  * The rest of `reader`'s bytes, after `chunks`, as one blob; null as soon as they add
  * up to more than `limit` bytes, so an oversized body is never held in memory whole.
  */
@@ -225,8 +262,8 @@ async function storeStepImage(
 /**
  * Upload a step's image: the file is the request body, sent with the user's Convex Auth token,
  * and `stepId`, `width` and `height` are query parameters. The file is stored here, rather than
- * through an upload URL, so it is checked (size, and a PNG, JPEG, GIF, WebP or AVIF signature)
- * before it is kept, and no file is ever stored that no step shows.
+ * through an upload URL, so it is checked (size in bytes and pixels, and a PNG, JPEG, GIF, WebP
+ * or AVIF signature) before it is kept, and no file is ever stored that no step shows.
  */
 http.route({
   handler: httpAction(async (ctx, req) => {
@@ -266,11 +303,19 @@ http.route({
     if (!body) {
       return error("Image too large", 413);
     }
-    const type = sniffImageType(
-      new Uint8Array(await body.slice(0, IMAGE_SIGNATURE_BYTES).arrayBuffer())
-    );
-    if (!type) {
+    const bytes = new Uint8Array(await body.arrayBuffer());
+    const type = sniffImageType(bytes);
+    // The size comes from the file itself, so a huge image can't pass as a
+    // small one.
+    const stored = type ? readImageSize(bytes, type) : null;
+    if (!(type && stored && stored.width > 0 && stored.height > 0)) {
       return error("Unsupported image type", 415);
+    }
+    if (Math.max(stored.width, stored.height) > MAX_IMAGE_DIMENSION) {
+      return error("Image too large", 413);
+    }
+    if (!matchesStoredSize({ height, width }, stored)) {
+      return error("Invalid image size", 400);
     }
 
     try {

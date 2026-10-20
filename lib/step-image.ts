@@ -1,4 +1,5 @@
 import type { Id } from "@/convex/_generated/dataModel";
+import { IMAGE_HEADER_BYTES, isAnimatedImage } from "@/convex/images";
 
 /** The image types a step accepts: the ones `convex/images.ts` recognizes. */
 export const STEP_IMAGE_TYPES = [
@@ -99,7 +100,8 @@ async function reencode(
 
 /**
  * `file` ready to upload as a step image: photos larger than a projector needs are shrunk and
- * re-encoded, while GIFs are kept as they are so they stay animated.
+ * re-encoded, while animated images (GIFs, APNGs, animated WebPs and AVIF sequences) are kept as
+ * they are: a canvas would keep only their first frame.
  *
  * @throws {StepImageError} If it isn't an accepted image type, can't be read, or is still too
  *   large.
@@ -122,8 +124,11 @@ export async function prepareStepImage(file: File): Promise<PreparedStepImage> {
       height: bitmap.height,
       width: bitmap.width,
     };
+    const header = new Uint8Array(
+      await file.slice(0, IMAGE_HEADER_BYTES).arrayBuffer()
+    );
     if (
-      file.type !== "image/gif" &&
+      !isAnimatedImage(header, file.type) &&
       (tooBig || file.size > SHRINK_ABOVE_BYTES)
     ) {
       const size = fitWithin(bitmap.width, bitmap.height, MAX_EDGE);

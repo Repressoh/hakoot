@@ -3,7 +3,12 @@ import { convexTest } from "convex-test";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { api } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
-import { MAX_IMAGE_BYTES, sniffImageType } from "../images";
+import {
+  isAnimatedImage,
+  MAX_IMAGE_BYTES,
+  readImageSize,
+  sniffImageType,
+} from "../images";
 import schema from "../schema";
 
 const modules = import.meta.glob("../**/*.ts");
@@ -35,7 +40,53 @@ function ftyp(majorBrand: string, compatibleBrands: string[] = []) {
   return bytes([0, 0, 0, size, ...[...box].map((char) => char.charCodeAt(0))]);
 }
 
-const png = (size = 64) => bytes(PNG_SIGNATURE, size);
+/** The bytes `write` puts in a buffer of `size`. */
+function encoded(size: number, write: (data: DataView) => void): number[] {
+  const buffer = new Uint8Array(size);
+  write(new DataView(buffer.buffer));
+  return [...buffer];
+}
+/** 32 bits, big-endian. */
+const u32 = (value: number) => encoded(4, (data) => data.setUint32(0, value));
+/** 32 bits, little-endian. */
+const u32le = (value: number) =>
+  encoded(4, (data) => data.setUint32(0, value, true));
+/** 16 bits, little-endian. */
+const u16le = (value: number) =>
+  encoded(2, (data) => data.setUint16(0, value, true));
+/** 24 bits, little-endian. */
+const u24le = (value: number) => u32le(value).slice(0, 3);
+const chars = (text: string) => [...text].map((char) => char.charCodeAt(0));
+
+/** A PNG chunk of `type` with `data`, and a checksum left blank. */
+const pngChunk = (type: string, data: number[]) => [
+  ...u32(data.length),
+  ...chars(type),
+  ...data,
+  0,
+  0,
+  0,
+  0,
+];
+
+/** `size` bytes that start like a `width` × `height` PNG, with `chunks` after its header. */
+function png(
+  size = 64,
+  { chunks = [] as number[], height = 300, width = 400 } = {}
+) {
+  return bytes(
+    [
+      ...PNG_SIGNATURE,
+      ...pngChunk("IHDR", [...u32(width), ...u32(height), 8, 6, 0, 0, 0]),
+      ...chunks,
+    ],
+    size
+  );
+}
+
+/** The start of a WebP whose first chunk is `chunk`, with `data`. */
+const webp = (chunk: string, data: number[]) =>
+  bytes([...chars("RIFF\0\0\0\0WEBP"), ...chars(chunk), 0, 0, 0, 0, ...data]);
 
 /** Run `fn` `times` times, one after the other. */
 async function repeat(times: number, fn: () => Promise<unknown>) {
@@ -130,6 +181,7 @@ async function getStep(t: TestConvex, stepId: Id<"gameSteps">) {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.unstubAllEnvs();
 });
 
 describe("sniffImageType", () => {
@@ -153,6 +205,130 @@ describe("sniffImageType", () => {
     expect(sniffImageType(ftyp("heic", ["mif1", "heic"]))).toBe(null);
     expect(sniffImageType(new Uint8Array([0x89, 0x50]))).toBe(null);
     expect(sniffImageType(new Uint8Array())).toBe(null);
+  });
+});
+
+describe("readImageSize", () => {
+  test("reads the size from each format's header", () => {
+    expect(
+      readImageSize(png(64, { height: 7, width: 9000 }), "image/png")
+    ).toEqual({ height: 7, width: 9000 });
+    expect(
+      readImageSize(
+        bytes([...chars("GIF89a"), ...u16le(640), ...u16le(480)]),
+        "image/gif"
+      )
+    ).toEqual({ height: 480, width: 640 });
+    // Lossy: a frame tag, the start code, then the 14-bit sizes.
+    expect(
+      readImageSize(
+        webp("VP8 ", [
+          0,
+          0,
+          0,
+          0x9d,
+          0x01,
+          0x2a,
+          ...u16le(1024),
+          ...u16le(768),
+        ]),
+        "image/webp"
+      )
+    ).toEqual({ height: 768, width: 1024 });
+    // Lossless: a signature, then the sizes minus one in 14 bits each.
+    const bits = 300 - 1 + (200 - 1) * 2 ** 14;
+    expect(
+      readImageSize(webp("VP8L", [0x2f, ...u32le(bits)]), "image/webp")
+    ).toEqual({ height: 200, width: 300 });
+    // Extended: flags, then the canvas size minus one in 24 bits each.
+    expect(
+      readImageSize(
+        webp("VP8X", [0, 0, 0, 0, ...u24le(20_000 - 1), ...u24le(50 - 1)]),
+        "image/webp"
+      )
+    ).toEqual({ height: 50, width: 20_000 });
+  });
+
+  test("reads a JPEG's size from its frame header, past the segments before it", () => {
+    const jpeg = bytes([
+      0xff, 0xd8,
+      // APP1 (EXIF), with a few bytes of data.
+      0xff, 0xe1, 0, 6, 1, 2, 3, 4,
+      // DHT, which shares the frame headers' range.
+      0xff, 0xc4, 0, 3, 0,
+      // Progressive frame header: length, precision, height, width.
+      0xff, 0xc2, 0, 11, 8, 0x04, 0x38, 0x07, 0x80,
+    ]);
+    expect(readImageSize(jpeg, "image/jpeg")).toEqual({
+      height: 1080,
+      width: 1920,
+    });
+    // The image data starts with no frame header before it.
+    expect(
+      readImageSize(
+        bytes([0xff, 0xd8, 0xff, 0xda, 0, 2, 0, 0, 0, 0]),
+        "image/jpeg"
+      )
+    ).toBe(null);
+  });
+
+  test("reads an AVIF's size as its largest image extents, as a grid's", () => {
+    const ispe = (width: number, height: number) => [
+      ...u32(20),
+      ...chars("ispe"),
+      0,
+      0,
+      0,
+      0,
+      ...u32(width),
+      ...u32(height),
+    ];
+    const avif = bytes(
+      [...ftyp("avif"), ...ispe(512, 512), ...ispe(4096, 2048)],
+      256
+    );
+    expect(readImageSize(avif, "image/avif")).toEqual({
+      height: 2048,
+      width: 4096,
+    });
+    expect(readImageSize(ftyp("avif"), "image/avif")).toBe(null);
+  });
+
+  test("gives null for a header too short to read", () => {
+    expect(readImageSize(new Uint8Array(PNG_SIGNATURE), "image/png")).toBe(
+      null
+    );
+    expect(readImageSize(bytes("GIF89a", 8), "image/gif")).toBe(null);
+    expect(readImageSize(bytes("RIFF\0\0\0\0WEBP", 16), "image/webp")).toBe(
+      null
+    );
+  });
+});
+
+describe("isAnimatedImage", () => {
+  test("tells APNGs, animated WebPs, AVIF sequences and GIFs from still images", () => {
+    const acTL = pngChunk("acTL", [...u32(2), ...u32(0)]);
+    const idat = pngChunk("IDAT", [0]);
+    expect(isAnimatedImage(png(128, { chunks: acTL }), "image/png")).toBe(true);
+    expect(
+      isAnimatedImage(png(128, { chunks: [...idat, ...acTL] }), "image/png")
+    ).toBe(false);
+    expect(isAnimatedImage(png(), "image/png")).toBe(false);
+
+    expect(isAnimatedImage(webp("VP8X", [0x02]), "image/webp")).toBe(true);
+    expect(isAnimatedImage(webp("VP8X", [0x10]), "image/webp")).toBe(false);
+    expect(isAnimatedImage(webp("VP8 ", [0x02]), "image/webp")).toBe(false);
+
+    expect(isAnimatedImage(ftyp("avis"), "image/avif")).toBe(true);
+    expect(isAnimatedImage(ftyp("avif", ["mif1", "avis"]), "image/avif")).toBe(
+      true
+    );
+    expect(isAnimatedImage(ftyp("avif", ["mif1"]), "image/avif")).toBe(false);
+
+    expect(isAnimatedImage(bytes("GIF89a"), "image/gif")).toBe(true);
+    expect(isAnimatedImage(bytes([0xff, 0xd8, 0xff]), "image/jpeg")).toBe(
+      false
+    );
   });
 });
 
@@ -210,6 +386,37 @@ describe("uploading a step image", () => {
       expect(await storedFiles(t)).toEqual([]);
     }
   );
+
+  test("checks the size against the file's own header, either way round", async () => {
+    const t = newTest();
+    const owner = await signUp(t, "owner@x.test");
+    const { theoryId } = await seedGame(t, owner.userId);
+
+    // Claims to be 1 × 1: the editor would show a huge image as tiny.
+    const spoofed = await upload(owner.as, theoryId, png(), {
+      height: 1,
+      width: 1,
+    });
+    expect(spoofed.status).toBe(400);
+    // Larger than any step image may be, whatever the URL says.
+    const huge = png(64, { height: 300, width: 40_000 });
+    expect((await upload(owner.as, theoryId, huge)).status).toBe(413);
+    // No size to read from: a PNG signature with nothing after it.
+    const headless = bytes(PNG_SIGNATURE);
+    expect((await upload(owner.as, theoryId, headless)).status).toBe(415);
+    expect(await storedFiles(t)).toEqual([]);
+
+    // A photo turned by its EXIF orientation shows with its sides swapped.
+    const turned = await upload(owner.as, theoryId, png(), {
+      height: 400,
+      width: 300,
+    });
+    expect(turned.status).toBe(200);
+    expect((await getStep(t, theoryId))?.image).toMatchObject({
+      height: 400,
+      width: 300,
+    });
+  });
 
   test("refuses an upload without a size", async () => {
     const t = newTest();
@@ -345,9 +552,29 @@ describe("uploading a step image", () => {
       method: "OPTIONS",
     });
     expect(response.status).toBe(204);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe(
+      "http://localhost:3000"
+    );
     expect(response.headers.get("Access-Control-Allow-Headers")).toContain(
       "Authorization"
     );
+  });
+
+  test("allows the app wherever it is hosted, from SITE_URL, and no other origin", async () => {
+    vi.stubEnv("SITE_URL", "https://quiz.example.com/");
+    const t = newTest();
+    const preflight = async (origin: string) =>
+      (
+        await t.fetch("/step-image", {
+          headers: { Origin: origin },
+          method: "OPTIONS",
+        })
+      ).headers.get("Access-Control-Allow-Origin");
+
+    expect(await preflight("https://quiz.example.com")).toBe(
+      "https://quiz.example.com"
+    );
+    expect(await preflight("https://evil.example.com")).toBe(null);
   });
 });
 
@@ -361,7 +588,10 @@ describe("replacing and removing a step image", () => {
     await setAlt(owner.as, t, theoryId, "A cat");
     const [first] = await storedFiles(t);
 
-    await upload(owner.as, theoryId, png(), { height: 50, width: 80 });
+    await upload(owner.as, theoryId, png(64, { height: 50, width: 80 }), {
+      height: 50,
+      width: 80,
+    });
     const files = await storedFiles(t);
     expect(files).toHaveLength(1);
     expect(files[0]._id).not.toBe(first._id);
