@@ -1038,6 +1038,7 @@ describe("abandoned share link lobbies", () => {
 });
 
 describe("a game played many times from its link", () => {
+  // Seeds 33,000 answers, which takes a few seconds on a busy CI runner.
   test("its sessions only read their own answers", async () => {
     const t = newTest();
     const { gameId, owner, shareToken } = await seedSharedGame(t);
@@ -1115,7 +1116,7 @@ describe("a game played many times from its link", () => {
           (await ctx.db.query("participantAnswers").collect()).length
       )
     ).toBe(0);
-  });
+  }, 30_000);
 
   test("a player's email can't be longer than an email address", async () => {
     const t = newTest();
