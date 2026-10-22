@@ -13,6 +13,7 @@ import {
   type QueryCtx,
   query,
 } from "./_generated/server";
+import { getImageView } from "./images";
 import {
   checkRateLimit,
   deleteSession,
@@ -51,6 +52,17 @@ const sharedStepValidator = v.object({
       code: v.string(),
       language: v.string(),
     })
+  ),
+  image: v.union(
+    v.object({
+      alt: v.string(),
+      height: v.number(),
+      key: v.string(),
+      type: v.string(),
+      url: v.string(),
+      width: v.number(),
+    }),
+    v.null()
   ),
   markdownContent: v.optional(v.string()),
   question: v.optional(v.string()),
@@ -144,15 +156,18 @@ export const getSharedGameSteps = query({
 
     return {
       ...result,
-      page: result.page.map((step) => ({
-        _id: step._id,
-        choices: step.choices,
-        codeBlock: step.codeBlock,
-        markdownContent: step.markdownContent,
-        question: step.question,
-        timeLimitSeconds: step.timeLimitSeconds,
-        type: step.type,
-      })),
+      page: await Promise.all(
+        result.page.map(async (step) => ({
+          _id: step._id,
+          choices: step.choices,
+          codeBlock: step.codeBlock,
+          image: await getImageView(ctx, step.image),
+          markdownContent: step.markdownContent,
+          question: step.question,
+          timeLimitSeconds: step.timeLimitSeconds,
+          type: step.type,
+        }))
+      ),
     };
   },
   returns: paginationResultValidator(sharedStepValidator),

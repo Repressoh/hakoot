@@ -26,6 +26,11 @@ const ClientCodeBlock = dynamic(
   { ssr: false }
 );
 
+const StepImage = dynamic(
+  () => import("@/components/game/step-image").then((mod) => mod.StepImage),
+  { ssr: false }
+);
+
 type SharedStep = FunctionReturnType<
   typeof api.sharing.getSharedGameSteps
 >["page"][number];
@@ -39,6 +44,7 @@ function SharedStepContent({ step }: { step: SharedStep }) {
         <p className="font-semibold text-foreground">
           {step.question || t("questionLabel")}
         </p>
+        {step.image ? <StepImage image={step.image} /> : null}
         <p className="font-mono text-muted-foreground text-xs">
           {step.timeLimitSeconds
             ? t("timerSeconds", { seconds: step.timeLimitSeconds })
@@ -73,6 +79,7 @@ function SharedStepContent({ step }: { step: SharedStep }) {
 
   return (
     <div className="space-y-5">
+      {step.image ? <StepImage image={step.image} /> : null}
       {step.markdownContent ? (
         <div className="overflow-x-auto">
           <MarkdownViewer

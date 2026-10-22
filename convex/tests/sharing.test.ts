@@ -807,6 +807,7 @@ describe("previewing shared steps", () => {
     expect(first.page).toEqual([
       {
         _id: expect.any(String),
+        image: null,
         markdownContent: "# Types",
         type: "theory",
       },
@@ -819,6 +820,7 @@ describe("previewing shared steps", () => {
           code: "const n = 1;",
           language: "typescript",
         },
+        image: null,
         markdownContent: "Code",
         type: "theory",
       },
@@ -836,11 +838,70 @@ describe("previewing shared steps", () => {
           { isCorrect: false, text: "string" },
           { isCorrect: true, text: "number" },
         ],
+        image: null,
         question: "Type of 1?",
         timeLimitSeconds: 20,
         type: "quiz",
       },
     ]);
+  });
+
+  test("theory and quiz previews include viewable images without upload metadata", async () => {
+    const t = newTest();
+    const { gameId, shareToken } = await seedSharedGame(t);
+    const storageId = await t.run(async (ctx) => {
+      const id = await ctx.storage.store(new Blob(["encrypted image"]));
+      const steps = await ctx.db
+        .query("gameSteps")
+        .withIndex("by_game_and_order", (q) => q.eq("gameId", gameId))
+        .collect();
+      await Promise.all(
+        [steps[0], steps[2]].map((step) =>
+          ctx.db.patch(step._id, {
+            image: {
+              alt: "Type diagram",
+              height: 100,
+              key: "image-key",
+              storageId: id,
+              type: "image/png",
+              width: 200,
+            },
+            imageUploads: 1,
+          })
+        )
+      );
+      return id;
+    });
+    const preview = await t.query(api.sharing.getSharedGameSteps, {
+      paginationOpts: { cursor: null, numItems: 10 },
+      shareToken,
+    });
+    const expected = {
+      alt: "Type diagram",
+      height: 100,
+      key: "image-key",
+      type: "image/png",
+      url: expect.any(String),
+      width: 200,
+    };
+    expect(preview.page[0].image).toEqual(expected);
+    expect(preview.page[1].image).toBeNull();
+    expect(preview.page[2].image).toEqual(expected);
+    expect(preview.page[0]).not.toHaveProperty("imageUploads");
+    const bea = await signUp(t, "image-preview@x.test");
+    await expect(
+      bea.as.mutation(api.steps.removeImage, {
+        stepId: preview.page[0]._id,
+        storageId,
+      })
+    ).rejects.toThrow();
+    await expect(
+      bea.as.mutation(api.steps.setImageAlt, {
+        alt: "Changed",
+        stepId: preview.page[0]._id,
+        storageId,
+      })
+    ).rejects.toThrow();
   });
 
   test("a share link grants no editing rights to visitors or other accounts", async () => {
