@@ -233,7 +233,38 @@ describe("stepImageSource", () => {
     again();
   });
 
-  test("keeps only the four newest images", async () => {
+  test("keeps every visible image's pending and settled promise when more than four are open", async () => {
+    const calls = deferFetch();
+    const { file, key } = await encryptImage(IMAGE);
+    const images = Array.from({ length: 6 }, (_, n) => ({
+      key,
+      type: "image/png",
+      url: `https://x.test/concurrent-${n}`,
+    }));
+    const releases = images.map(({ url }) => holdStepImageFile(url));
+    const sources = images.map((image) => stepImageSource(image));
+    await settle();
+    expect(calls).toHaveLength(6);
+    for (const [i, image] of images.entries()) {
+      expect(stepImageSource(image)).toBe(sources[i]);
+    }
+    for (const call of calls) {
+      call.respond(file);
+    }
+    expect((await Promise.all(sources)).map(contents)).toEqual(
+      images.map(() => ({ bytes: IMAGE, type: "image/png" }))
+    );
+    for (const [i, image] of images.entries()) {
+      expect(stepImageSource(image)).toBe(sources[i]);
+    }
+    expect(calls).toHaveLength(6);
+    for (const release of releases) {
+      release();
+    }
+    await settle();
+  });
+
+  test("keeps only the four newest unused images", async () => {
     const files: Record<string, Blob> = {};
     const images = await Promise.all(
       [1, 2, 3, 4, 5].map(async (n) => {
@@ -245,24 +276,28 @@ describe("stepImageSource", () => {
     );
     const fetch = serve(files);
 
-    for (const { url } of images) {
-      holdStepImageFile(url);
-    }
+    const releases = images.map(({ url }) => holdStepImageFile(url));
     const [first, ...rest] = images;
     const firstFile = stepImageSource(first);
     await firstFile;
     const restFiles = rest.map((image) => stepImageSource(image));
     await Promise.all(restFiles);
+    for (const release of releases) {
+      release();
+    }
+    await settle();
     for (const [i, image] of rest.entries()) {
       expect(stepImageSource(image)).toBe(restFiles[i]);
     }
     expect(fetch).toHaveBeenCalledTimes(5);
 
     // The oldest was let go: shown again, it is downloaded again.
+    const release = holdStepImageFile(first.url);
     expect(stepImageSource(first)).not.toBe(firstFile);
     expect(contents(await stepImageSource(first))).toMatchObject({
       bytes: IMAGE,
     });
     expect(fetch).toHaveBeenCalledTimes(6);
+    release();
   });
 });

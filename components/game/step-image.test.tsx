@@ -91,6 +91,51 @@ describe("StepImage", () => {
     act(() => root.unmount());
   });
 
+  test("shows five simultaneously loading images without repeatedly fetching them", async () => {
+    const { file, key } = await encryptImage(PNG);
+    const responses: (() => void)[] = [];
+    const fetch = vi.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          responses.push(() => resolve(new Response(file)));
+        })
+    );
+    vi.stubGlobal("fetch", fetch);
+    const images = Array.from({ length: 5 }, (_, n) => ({
+      alt: `Preview ${n}`,
+      height: 300,
+      key,
+      type: "image/png",
+      url: `https://x.test/simultaneous-${n}`,
+      width: 400,
+    }));
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+    try {
+      await act(() => {
+        root.render(
+          images.map((image) => <StepImage image={image} key={image.url} />)
+        );
+      });
+      expect(fetch).toHaveBeenCalledTimes(5);
+      await act(() => {
+        for (const respond of responses) {
+          respond();
+        }
+      });
+      await until(() =>
+        expect(container.querySelectorAll("img")).toHaveLength(5)
+      );
+      expect(fetch).toHaveBeenCalledTimes(5);
+      expect(
+        [...container.querySelectorAll("img")].map((image) => image.alt)
+      ).toEqual(images.map((image) => image.alt));
+    } finally {
+      act(() => root.unmount());
+    }
+  });
+
   test("tries a failed image again on its own once the network is back", async () => {
     vi.useFakeTimers({
       toFake: ["setTimeout", "clearTimeout", "performance"],

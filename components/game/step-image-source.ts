@@ -37,10 +37,10 @@ interface Decrypted {
 const decrypted = new Map<string, Decrypted>();
 
 /**
- * Decrypted images kept. A session shows one at a time, so older ones are let go as new ones
- * come, rather than held in memory for the whole game.
+ * Unused decrypted images kept. Images still shown keep their promises, including pending ones,
+ * so several open previews don't repeatedly suspend and download each other's evicted images.
  */
-const MAX_DECRYPTED = 4;
+const MAX_UNUSED_DECRYPTED = 4;
 
 /** How long an image that failed to download or decrypt shows as failed before another try. */
 const RETRY_AFTER_MS = 10_000;
@@ -107,6 +107,16 @@ function abandon(url: string) {
   }
 }
 
+/** Keep active promises stable and bound the cache of images nothing currently needs. */
+function evictUnusedImages() {
+  const unused = [...decrypted.keys()].filter((url) => !holds.has(url));
+  for (const url of unused.slice(0, -MAX_UNUSED_DECRYPTED)) {
+    decrypted.delete(url);
+    // A render React threw away may still have a download waiting for a hold.
+    abandon(url);
+  }
+}
+
 /**
  * Note that a preloader or a shown image needs the image at `url`, until the returned function is
  * called. Once nothing needs it, its download stops.
@@ -133,6 +143,7 @@ export function holdStepImageFile(url: string): () => void {
     queueMicrotask(() => {
       if (!holds.has(url)) {
         abandon(url);
+        evictUnusedImages();
       }
     });
   };
@@ -201,14 +212,6 @@ export function stepImageSource(
   // Replaced, it becomes the newest.
   decrypted.delete(image.url);
   decrypted.set(image.url, entry);
-  const [oldest] = decrypted.keys();
-  if (decrypted.size > MAX_DECRYPTED && oldest !== undefined) {
-    decrypted.delete(oldest);
-    // Asked for by a render React threw away, and never shown: its download,
-    // waiting for a hold, is stopped rather than kept.
-    if (!holds.has(oldest)) {
-      abandon(oldest);
-    }
-  }
+  evictUnusedImages();
   return entry.source;
 }
