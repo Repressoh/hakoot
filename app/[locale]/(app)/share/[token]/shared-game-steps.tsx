@@ -35,6 +35,23 @@ type SharedStep = FunctionReturnType<
   typeof api.sharing.getSharedGameSteps
 >["page"][number];
 
+/** Keep rows stable when reordered, including repeated annotations with identical content. */
+function keyedAnnotations(
+  annotations: NonNullable<SharedStep["codeBlock"]>["annotations"]
+) {
+  const occurrences = new Map<string, number>();
+  return annotations.map((annotation) => {
+    const content = JSON.stringify([
+      annotation.label,
+      annotation.lines,
+      annotation.explanation,
+    ]);
+    const occurrence = occurrences.get(content) ?? 0;
+    occurrences.set(content, occurrence + 1);
+    return { annotation, key: `${content}:${occurrence}` };
+  });
+}
+
 function SharedStepContent({ step }: { step: SharedStep }) {
   const t = useTranslations("stepEditor");
 
@@ -98,21 +115,21 @@ function SharedStepContent({ step }: { step: SharedStep }) {
         <div className="space-y-2">
           <h3 className="font-semibold text-sm">{t("annotationsLabel")}</h3>
           <dl className="space-y-3 text-sm">
-            {step.codeBlock.annotations.map((annotation, index) => (
-              // Annotations have no IDs and can be identical; these read-only rows have no state.
-              // biome-ignore lint/suspicious/noArrayIndexKey: No persistent annotation identity exists.
-              <div key={`${index}-${annotation.label}`}>
-                <dt className="font-medium">
-                  {annotation.label}
-                  <span className="ms-2 font-mono text-muted-foreground text-xs">
-                    {t("annotationLinesLabel")}: {annotation.lines.join(", ")}
-                  </span>
-                </dt>
-                <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">
-                  {annotation.explanation}
-                </dd>
-              </div>
-            ))}
+            {keyedAnnotations(step.codeBlock.annotations).map(
+              ({ annotation, key }) => (
+                <div key={key}>
+                  <dt className="font-medium">
+                    {annotation.label}
+                    <span className="ms-2 font-mono text-muted-foreground text-xs">
+                      {t("annotationLinesLabel")}: {annotation.lines.join(", ")}
+                    </span>
+                  </dt>
+                  <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">
+                    {annotation.explanation}
+                  </dd>
+                </div>
+              )
+            )}
           </dl>
         </div>
       ) : null}
