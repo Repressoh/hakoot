@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
   // cacheComponents requires next-intl to support next/root-params
   // See: https://github.com/amannn/next-intl/issues/2229
   // cacheComponents: true,
+  compress : false,
   allowedDevOrigins: ["hakoot-dev.albertocaserta.it"],
   experimental: {
     // The stylesheet is inlined in the HTML. Linked, it competes for
