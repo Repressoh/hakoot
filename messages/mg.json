@@ -189,7 +189,7 @@
     "correctAnswer": "Valiny marina",
     "timerLabel": "Fetra ara-potoana (tsy voatery)",
     "timerOff": "Tsy misy fetran'ny fotoana",
-    "timerSeconds": "{seconds} {seconds}",
+    "timerSeconds": "Segondra {seconds}",
     "saving": "Fitehirizana...",
     "saved": "Voatahiry avokoa ny fanovana rehetra",
     "saveFailed": "Tsy afaka nitahiry ny fanovanao",
@@ -264,7 +264,8 @@
     "copyFailed": "Tsy afaka naka ny lalao",
     "notFoundTitle": "Tsy miasa ity rohy ity",
     "notFoundDescription": "Mety efa nafindra toerana na naverina tamin'ny laoniny ny lalao.",
-    "backToGame": "Miverina amin'ny lalao"
+    "backToGame": "Miverina amin'ny lalao",
+    "viewSteps": "Hijery dingana"
   },
   "join": {
     "title": "Midira amin'ny lalao",

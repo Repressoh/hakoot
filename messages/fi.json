@@ -264,7 +264,8 @@
     "copyFailed": "Peliä ei voitu kopioida",
     "notFoundTitle": "Tämä linkki ei toimi",
     "notFoundDescription": "Pelin omistaja on saattanut poistaa sen käytöstä tai nollata sen.",
-    "backToGame": "Takaisin peliin"
+    "backToGame": "Takaisin peliin",
+    "viewSteps": "Näytä vaiheet"
   },
   "join": {
     "title": "Liity peliin",

@@ -264,7 +264,8 @@
     "copyFailed": "Kon nie die spel kopieer nie",
     "notFoundTitle": "Hierdie skakel werk nie",
     "notFoundDescription": "Die eienaar van die spel het dit dalk afgeskakel of gereset.",
-    "backToGame": "Terug na die spel"
+    "backToGame": "Terug na die spel",
+    "viewSteps": "Beskou stappe"
   },
   "join": {
     "title": "Sluit aan by 'n spel",

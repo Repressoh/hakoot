@@ -264,7 +264,8 @@
     "copyFailed": "Det gick inte att kopiera spelet",
     "notFoundTitle": "Den här länken fungerar inte",
     "notFoundDescription": "Spelets ägare kan ha stängt av eller återställt det.",
-    "backToGame": "Tillbaka till spelet"
+    "backToGame": "Tillbaka till spelet",
+    "viewSteps": "Visa steg"
   },
   "join": {
     "title": "Gå med i ett spel",

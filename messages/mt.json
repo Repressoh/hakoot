@@ -264,7 +264,8 @@
     "copyFailed": "Ma setax jikkopja l-logħba",
     "notFoundTitle": "Din il-link ma taħdimx",
     "notFoundDescription": "Il-propjetarju tal-logħba jista' jkun li waqqafha jew irrisettjaha.",
-    "backToGame": "Lura għall-logħba"
+    "backToGame": "Lura għall-logħba",
+    "viewSteps": "Ara l-passi"
   },
   "join": {
     "title": "Ingħaqad ma' logħba",

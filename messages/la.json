@@ -264,7 +264,8 @@
     "copyFailed": "Ludum exscribere non potuit",
     "notFoundTitle": "Hoc vinculum non fungitur",
     "notFoundDescription": "Possessor ludi eum fortasse exstinxerit aut refecerit.",
-    "backToGame": "Ad ludum redi"
+    "backToGame": "Ad ludum redi",
+    "viewSteps": "Videre gradus"
   },
   "join": {
     "title": "Ludo adiunge",

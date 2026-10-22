@@ -264,7 +264,8 @@
     "copyFailed": "No s'ha puesto copiar o chuego",
     "notFoundTitle": "Iste vinclo no funciona",
     "notFoundDescription": "O propietario d'o chuego puede que l'haiga desactivau u reiniciau.",
-    "backToGame": "Tornar a lo chuego"
+    "backToGame": "Tornar a lo chuego",
+    "viewSteps": "Veyer os trangos"
   },
   "join": {
     "title": "Une-te a una partida",

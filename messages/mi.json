@@ -264,7 +264,8 @@
     "copyFailed": "Kāore i taea te kape i te kēmu",
     "notFoundTitle": "Kāore tēnei hononga e mahi",
     "notFoundDescription": "Tērā pea kua whakaweto, kua whakahōu rānei e te rangatira o te kēmu.",
-    "backToGame": "Hoki ki te kēmu"
+    "backToGame": "Hoki ki te kēmu",
+    "viewSteps": "Tirohia ngā hipanga"
   },
   "join": {
     "title": "Hono atu ki tētahi kēmu",

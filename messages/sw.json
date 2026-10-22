@@ -264,7 +264,8 @@
     "copyFailed": "Haikuwezekana kunakili mchezo",
     "notFoundTitle": "Kiungo hiki hakifanyi kazi",
     "notFoundDescription": "Mmiliki wa mchezo huenda aliuzima au kuurejesha upya.",
-    "backToGame": "Rudi kwenye mchezo"
+    "backToGame": "Rudi kwenye mchezo",
+    "viewSteps": "Tazama hatua"
   },
   "join": {
     "title": "Jiunge na mchezo",

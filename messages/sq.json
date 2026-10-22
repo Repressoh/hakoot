@@ -264,7 +264,8 @@
     "copyFailed": "Nuk mund të kopjohet loja",
     "notFoundTitle": "Ky lidhje nuk funksionon",
     "notFoundDescription": "Pronari i lojës mund ta ketë ç'aktivizuar ose rivendosur atë.",
-    "backToGame": "Kthehu te loja"
+    "backToGame": "Kthehu te loja",
+    "viewSteps": "Shiko hapat"
   },
   "join": {
     "title": "Bashkohu në një lojë",

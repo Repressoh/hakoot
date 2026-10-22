@@ -264,7 +264,8 @@
     "copyFailed": "No s'ha pogut copiar el joc",
     "notFoundTitle": "Aquest enllaç no funciona",
     "notFoundDescription": "El propietari del joc pot haver-lo desactivat o reiniciat.",
-    "backToGame": "Tornar al joc"
+    "backToGame": "Tornar al joc",
+    "viewSteps": "Veure passos"
   },
   "join": {
     "title": "Uneix-te a una partida",

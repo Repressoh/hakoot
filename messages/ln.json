@@ -189,7 +189,7 @@
     "correctAnswer": "Eyano ya solo",
     "timerLabel": "Ntango ya suka (soki olingi)",
     "timerOff": "Ntango ya suka ezali te",
-    "timerSeconds": "{seconds} {seconds}",
+    "timerSeconds": "Segɔnde {seconds}",
     "saving": "Kobomba...",
     "saved": "Mbongwana nyonso ebombami",
     "saveFailed": "Tokokaki te kobomba mbongwana na yo",
@@ -264,7 +264,8 @@
     "copyFailed": "Okokaki te kokopia lisano",
     "notFoundTitle": "Lien oyo esali te",
     "notFoundDescription": "Mokonzi ya lisano akoki kozala akangisi yango to abongoli yango na ebandeli.",
-    "backToGame": "Zonga na lisano"
+    "backToGame": "Zonga na lisano",
+    "viewSteps": "Tala matambe"
   },
   "join": {
     "title": "Kɔtɔ na lisano",

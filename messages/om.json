@@ -264,7 +264,8 @@
     "copyFailed": "Tapha garagalchuu hin dandeenye",
     "notFoundTitle": "Geessituun kun hin hojjetu",
     "notFoundDescription": "Abbaan tapha sanaa cufuu yookaan deebisee jalqabsiisuu danda'a.",
-    "backToGame": "Gara taphaatti deebi'i"
+    "backToGame": "Gara taphaatti deebi'i",
+    "viewSteps": "Tarkaanfiiwwan ilaali"
   },
   "join": {
     "title": "Tapha seeni",

@@ -264,7 +264,8 @@
     "copyFailed": "O'yin nusxasini ko'chira olmadim",
     "notFoundTitle": "Ushbu havola ishlamaydi",
     "notFoundDescription": "O'yin egasi uni o'chirib qo'ygan yoki qayta tiklagan bo'lishi mumkin.",
-    "backToGame": "O'yinga qaytish"
+    "backToGame": "O'yinga qaytish",
+    "viewSteps": "Qadamlarni ko'rish"
   },
   "join": {
     "title": "O'yinga qo'shiling",

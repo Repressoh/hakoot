@@ -264,7 +264,8 @@
     "copyFailed": "Nepavyko nukopijuoti žaidimo",
     "notFoundTitle": "Ši nuoroda neveikia",
     "notFoundDescription": "Žaidimo savininkas galėjo jį išjungti arba iš naujo nustatyti.",
-    "backToGame": "Grįžti į žaidimą"
+    "backToGame": "Grįžti į žaidimą",
+    "viewSteps": "Peržiūrėti žingsnius"
   },
   "join": {
     "title": "Prisijunkite prie žaidimo",

@@ -264,7 +264,8 @@
     "copyFailed": "Oyun kopyalanamadı",
     "notFoundTitle": "Bu bağlantı çalışmıyor",
     "notFoundDescription": "Oyunun sahibi oyunu kapatmış veya sıfırlamış olabilir.",
-    "backToGame": "Oyuna geri dön"
+    "backToGame": "Oyuna geri dön",
+    "viewSteps": "Adımları görüntüle"
   },
   "join": {
     "title": "Bir oyuna katılın",

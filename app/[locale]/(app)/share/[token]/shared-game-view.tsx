@@ -18,7 +18,7 @@ interface ShareTokenProps {
 
 function SharedGameSkeleton() {
   return (
-    <div className="surface-raised space-y-6 p-8">
+    <div className="surface-raised mx-auto w-full max-w-md space-y-6 p-8">
       <div className="flex flex-col items-center gap-3">
         <Skeleton className="h-3 w-24 rounded-sm" />
         <Skeleton className="h-7 w-56 rounded-md" />
@@ -118,7 +118,7 @@ function CopySharedGame({ shareToken }: ShareTokenProps) {
   );
 }
 
-/** The share page: the shared game, a button to host it and one to copy it. */
+/** Actions to view, host, or copy the shared game. */
 export function SharedGameView({ shareToken }: ShareTokenProps) {
   const t = useTranslations("sharing");
   const tDashboard = useTranslations("dashboard");
@@ -129,11 +129,15 @@ export function SharedGameView({ shareToken }: ShareTokenProps) {
   }
 
   if (game === null) {
-    return <LinkUnavailable />;
+    return (
+      <div className="mx-auto max-w-md">
+        <LinkUnavailable />
+      </div>
+    );
   }
 
   return (
-    <div className="surface-raised space-y-6 p-8">
+    <div className="surface-raised mx-auto max-w-md space-y-6 p-8">
       <div className="space-y-2 text-center">
         <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
           {t("pageTitle")}
@@ -158,6 +162,13 @@ export function SharedGameView({ shareToken }: ShareTokenProps) {
 
       <HostSharedGame shareToken={shareToken} />
       <Separator className="bg-border/60" />
+      <Button
+        asChild
+        className="press-down h-11 w-full rounded-xl border-border bg-transparent font-semibold text-foreground hover:bg-muted/50"
+        variant="outline"
+      >
+        <Link href={`/share/${shareToken}/steps`}>{t("viewSteps")}</Link>
+      </Button>
       <CopySharedGame shareToken={shareToken} />
     </div>
   );

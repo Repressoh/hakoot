@@ -264,7 +264,8 @@
     "copyFailed": "Spēli neizdevās kopēt",
     "notFoundTitle": "Šī saite nedarbojas",
     "notFoundDescription": "Spēles īpašnieks, iespējams, to ir atspējojis vai atjaunojis.",
-    "backToGame": "Atgriezties pie spēles"
+    "backToGame": "Atgriezties pie spēles",
+    "viewSteps": "Skatīt soļus"
   },
   "join": {
     "title": "Pievienojieties spēlei",

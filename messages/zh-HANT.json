@@ -264,7 +264,8 @@
     "copyFailed": "無法複製遊戲",
     "notFoundTitle": "此連結無法正常運作",
     "notFoundDescription": "遊戲擁有者可能已關閉或重置該遊戲。",
-    "backToGame": "返回遊戲"
+    "backToGame": "返回遊戲",
+    "viewSteps": "檢視步驟"
   },
   "join": {
     "title": "加入遊戲",

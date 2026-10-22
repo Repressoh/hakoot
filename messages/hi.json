@@ -264,7 +264,8 @@
     "copyFailed": "गेम कॉपी नहीं हो सका",
     "notFoundTitle": "यह लिंक काम नहीं करता",
     "notFoundDescription": "खेल का मालिक ने इसे बंद या रीसेट कर दिया हो सकता है।",
-    "backToGame": "गेम पर वापस"
+    "backToGame": "गेम पर वापस",
+    "viewSteps": "चरण देखें"
   },
   "join": {
     "title": "एक खेल में शामिल हों",

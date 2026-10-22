@@ -264,7 +264,8 @@
     "copyFailed": "Ga go a kgonega go kopolola motshameko",
     "notFoundTitle": "Kgolagano eno ga e bereke",
     "notFoundDescription": "Mong wa motshameko a ka tswa a o timile kgotsa a o simolotse sesha.",
-    "backToGame": "Boela kwa motshamekong"
+    "backToGame": "Boela kwa motshamekong",
+    "viewSteps": "Bona dikgato"
   },
   "join": {
     "title": "Tsenela motshameko",

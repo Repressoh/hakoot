@@ -264,7 +264,8 @@
     "copyFailed": "Oyunu kopyalamaq mümkün olmadı",
     "notFoundTitle": "Bu keçid işləmir",
     "notFoundDescription": "Oyunun sahibi onu söndürmüş və ya sıfırlamış ola bilər.",
-    "backToGame": "Oyuna qayıt"
+    "backToGame": "Oyuna qayıt",
+    "viewSteps": "Addımları gör"
   },
   "join": {
     "title": "Oyuna qoşul",

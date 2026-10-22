@@ -264,7 +264,8 @@
     "copyFailed": "Het spel kon niet worden gekopieerd",
     "notFoundTitle": "Deze link werkt niet",
     "notFoundDescription": "De eigenaar van het spel heeft het mogelijk uitgeschakeld of gereset.",
-    "backToGame": "Terug naar het spel"
+    "backToGame": "Terug naar het spel",
+    "viewSteps": "Stappen bekijken"
   },
   "join": {
     "title": "Meedoen aan een spel",

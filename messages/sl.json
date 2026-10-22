@@ -264,7 +264,8 @@
     "copyFailed": "Igre ni bilo mogoče kopirati",
     "notFoundTitle": "Ta povezava ne deluje",
     "notFoundDescription": "Lastnik igre jo je morda izklopil ali ponastavil.",
-    "backToGame": "Nazaj k igri"
+    "backToGame": "Nazaj k igri",
+    "viewSteps": "Poglej korake"
   },
   "join": {
     "title": "Pridružite se igri",

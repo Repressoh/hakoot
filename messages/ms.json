@@ -264,7 +264,8 @@
     "copyFailed": "Tidak dapat menyalin permainan",
     "notFoundTitle": "Pautan ini tidak berfungsi",
     "notFoundDescription": "Pemilik permainan mungkin telah menamatkannya atau menetapkan semula.",
-    "backToGame": "Kembali ke permainan"
+    "backToGame": "Kembali ke permainan",
+    "viewSteps": "Lihat langkah"
   },
   "join": {
     "title": "Sertailah permainan",

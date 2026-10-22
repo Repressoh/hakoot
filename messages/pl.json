@@ -264,7 +264,8 @@
     "copyFailed": "Nie udało się skopiować gry",
     "notFoundTitle": "Ten link nie działa",
     "notFoundDescription": "Właściciel gry mógł ją wyłączyć lub zresetować.",
-    "backToGame": "Powrót do gry"
+    "backToGame": "Powrót do gry",
+    "viewSteps": "Wyświetl etapy"
   },
   "join": {
     "title": "Dołącz do gry",

@@ -264,7 +264,8 @@
     "copyFailed": "无法复制该游戏",
     "notFoundTitle": "此链接无法访问",
     "notFoundDescription": "游戏所有者可能已将其关闭或重置。",
-    "backToGame": "返回游戏"
+    "backToGame": "返回游戏",
+    "viewSteps": "查看步骤"
   },
   "join": {
     "title": "加入游戏",

@@ -264,7 +264,8 @@
     "copyFailed": "Non se puido copiar o xogo",
     "notFoundTitle": "Esta ligazón non funciona",
     "notFoundDescription": "O propietario do xogo pode que o desactivase ou reiniciase.",
-    "backToGame": "Volver ao xogo"
+    "backToGame": "Volver ao xogo",
+    "viewSteps": "Ver pasos"
   },
   "join": {
     "title": "Unirte a un xogo",

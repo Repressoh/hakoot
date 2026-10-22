@@ -264,7 +264,8 @@
     "copyFailed": "ゲームをコピーできませんでした",
     "notFoundTitle": "このリンクは機能しません",
     "notFoundDescription": "ゲームの所有者がゲームを停止したか、リセットした可能性があります。",
-    "backToGame": "ゲームに戻る"
+    "backToGame": "ゲームに戻る",
+    "viewSteps": "手順を表示"
   },
   "join": {
     "title": "試合に参加する",

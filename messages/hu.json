@@ -264,7 +264,8 @@
     "copyFailed": "A játék másolása nem sikerült",
     "notFoundTitle": "Ez a link nem működik",
     "notFoundDescription": "Lehet, hogy a játék tulajdonosa kikapcsolta vagy visszaállította a játékot.",
-    "backToGame": "Vissza a játékhoz"
+    "backToGame": "Vissza a játékhoz",
+    "viewSteps": "Lépések megtekintése"
   },
   "join": {
     "title": "Csatlakozzon egy játékhoz",

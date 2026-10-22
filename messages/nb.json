@@ -264,7 +264,8 @@
     "copyFailed": "Kunne ikke kopiere spillet",
     "notFoundTitle": "Denne lenken fungerer ikke",
     "notFoundDescription": "Spillets eier kan ha slått det av eller tilbakestilt det.",
-    "backToGame": "Tilbake til spillet"
+    "backToGame": "Tilbake til spillet",
+    "viewSteps": "Vis trinn"
   },
   "join": {
     "title": "Bli med i et spill",

@@ -264,7 +264,8 @@
     "copyFailed": "Manam pukllaytaqa qillqayta atikunchu",
     "notFoundTitle": "Kay t'inkiqa manam llamk'anchu",
     "notFoundDescription": "Pukllaypa dueñonqa ichapas wañuchisqa utaq qallarimantapacha churasqa.",
-    "backToGame": "Pukllayman kutiy"
+    "backToGame": "Pukllayman kutiy",
+    "viewSteps": "Ruraykunata qhaway"
   },
   "join": {
     "title": "Pukllayman haykuy",

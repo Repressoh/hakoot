@@ -264,7 +264,8 @@
     "copyFailed": "Se pòt pas copiar lo jòc",
     "notFoundTitle": "Aqueste ligam fonciona pas",
     "notFoundDescription": "Lo proprietari del jòc l'a ben pogut desactivar o reinicializar.",
-    "backToGame": "Tornar al jòc"
+    "backToGame": "Tornar al jòc",
+    "viewSteps": "Veire los passes"
   },
   "join": {
     "title": "Rejonher una partida",
