@@ -189,7 +189,7 @@
     "correctAnswer": "Eyano ya solo",
     "timerLabel": "Ntango ya suka (soki olingi)",
     "timerOff": "Ntango ya suka ezali te",
-    "timerSeconds": "{seconds} {seconds}",
+    "timerSeconds": "Segɔnde {seconds}",
     "saving": "Kobomba...",
     "saved": "Mbongwana nyonso ebombami",
     "saveFailed": "Tokokaki te kobomba mbongwana na yo",

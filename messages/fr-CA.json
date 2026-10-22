@@ -189,7 +189,7 @@
     "correctAnswer": "Réponse correcte",
     "timerLabel": "Limite de temps (facultatif)",
     "timerOff": "Pas de limite de temps",
-    "timerSeconds": "{seconds} seconds",
+    "timerSeconds": "{seconds} secondes",
     "saving": "Enregistrement en cours...",
     "saved": "Toutes les modifications ont été sauvegardées",
     "saveFailed": "Impossible d'enregistrer vos modifications",

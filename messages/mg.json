@@ -189,7 +189,7 @@
     "correctAnswer": "Valiny marina",
     "timerLabel": "Fetra ara-potoana (tsy voatery)",
     "timerOff": "Tsy misy fetran'ny fotoana",
-    "timerSeconds": "{seconds} {seconds}",
+    "timerSeconds": "Segondra {seconds}",
     "saving": "Fitehirizana...",
     "saved": "Voatahiry avokoa ny fanovana rehetra",
     "saveFailed": "Tsy afaka nitahiry ny fanovanao",

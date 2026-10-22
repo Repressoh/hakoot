@@ -189,7 +189,7 @@
     "correctAnswer": "Tontu bu jub",
     "timerLabel": "Diirub waxtu (bu la neexee)",
     "timerOff": "Amul diggante waxtu",
-    "timerSeconds": "{seconds} {seconds}",
+    "timerSeconds": "{seconds} sekond",
     "saving": "Denc...",
     "saved": "Soppi yépp denc nañu",
     "saveFailed": "Mënul denc say coppite",

@@ -147,7 +147,7 @@
   },
   "stepEditor": {
     "theoryTitle": "Étape théorique",
-    "quizTitle": "Quiz Step",
+    "quizTitle": "Étape du quiz",
     "imageLabel": "Image (facultative)",
     "addImage": "Ajouter une image",
     "imageDropHint": "Déposez une image ici, ou cliquez pour en choisir une",
