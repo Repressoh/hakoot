@@ -264,7 +264,8 @@
     "copyFailed": "לא ניתן היה להעתיק את המשחק",
     "notFoundTitle": "הקישור הזה לא עובד",
     "notFoundDescription": "ייתכן שבעל המשחק כיבה אותו או איפס אותו.",
-    "backToGame": "חזרה למשחק"
+    "backToGame": "חזרה למשחק",
+    "viewSteps": "הצג שלבים"
   },
   "join": {
     "title": "הצטרף למשחק",

@@ -264,7 +264,8 @@
     "copyFailed": "Konn de Spill net kopéieren",
     "notFoundTitle": "Dëse Link funktionéiert net",
     "notFoundDescription": "De Besëtzer vum Spill huet et vläicht ausgeschalt oder zréckgesat.",
-    "backToGame": "Zréck zum Spill"
+    "backToGame": "Zréck zum Spill",
+    "viewSteps": "Schrëtt ugekucken"
   },
   "join": {
     "title": "Schléiss dech engem Spill un.",

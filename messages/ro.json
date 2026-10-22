@@ -264,7 +264,8 @@
     "copyFailed": "Nu s-a putut copia jocul",
     "notFoundTitle": "Acest link nu funcționează",
     "notFoundDescription": "Este posibil ca proprietarul jocului să-l fi dezactivat sau să-l fi resetat.",
-    "backToGame": "Înapoi la joc"
+    "backToGame": "Înapoi la joc",
+    "viewSteps": "Vizualizează pașii"
   },
   "join": {
     "title": "Participă la un joc",

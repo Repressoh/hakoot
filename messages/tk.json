@@ -264,7 +264,8 @@
     "copyFailed": "Oýny göçürip bolmady",
     "notFoundTitle": "Bu baglanyşyk işlemeýär",
     "notFoundDescription": "Oýunyň eýesi ony öçürip ýa-da gaýtadan sazlap bilýär.",
-    "backToGame": "Oýna gaýdyp barmak"
+    "backToGame": "Oýna gaýdyp barmak",
+    "viewSteps": "Adymy gör"
   },
   "join": {
     "title": "Oýna goşul",

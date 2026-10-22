@@ -264,7 +264,8 @@
     "copyFailed": "Akukwazanga ukukopa umdlalo",
     "notFoundTitle": "Eli khonkco alisebenzi",
     "notFoundDescription": "Umnini womdlalo usenokuba uwucimile okanye uwusetha kwakhona.",
-    "backToGame": "Buyela kumdlalo"
+    "backToGame": "Buyela kumdlalo",
+    "viewSteps": "Jonga amanyathelo"
   },
   "join": {
     "title": "Ngena kumdlalo",

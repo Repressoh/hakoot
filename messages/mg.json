@@ -264,7 +264,8 @@
     "copyFailed": "Tsy afaka naka ny lalao",
     "notFoundTitle": "Tsy miasa ity rohy ity",
     "notFoundDescription": "Mety efa nafindra toerana na naverina tamin'ny laoniny ny lalao.",
-    "backToGame": "Miverina amin'ny lalao"
+    "backToGame": "Miverina amin'ny lalao",
+    "viewSteps": "Hijery dingana"
   },
   "join": {
     "title": "Midira amin'ny lalao",

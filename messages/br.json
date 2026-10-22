@@ -264,7 +264,8 @@
     "copyFailed": "N'eo ket bet tu eilañ ar c'hoari",
     "notFoundTitle": "Ne ya ket al liamm-mañ en-dro",
     "notFoundDescription": "Perc'henn ar c'hoari en deus marteze e zizgoret pe adlañset anezhañ.",
-    "backToGame": "Distro d'ar c'hoari"
+    "backToGame": "Distro d'ar c'hoari",
+    "viewSteps": "Gwelet ar pazennoù"
   },
   "join": {
     "title": "Kemer perzh en ur c'hoari",

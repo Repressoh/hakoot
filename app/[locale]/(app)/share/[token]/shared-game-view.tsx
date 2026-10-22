@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useConvexAuth,
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,7 +11,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Link, useRouter } from "@/i18n/routing";
 import { saveHostToken } from "@/lib/host-token";
-import { SharedGameSteps } from "./shared-game-steps";
 
 interface ShareTokenProps {
   shareToken: string;
@@ -124,16 +118,11 @@ function CopySharedGame({ shareToken }: ShareTokenProps) {
   );
 }
 
-/** The shared game and its read-only steps, with actions to host or copy it. */
+/** Actions to view, host, or copy the shared game. */
 export function SharedGameView({ shareToken }: ShareTokenProps) {
   const t = useTranslations("sharing");
   const tDashboard = useTranslations("dashboard");
   const game = useQuery(api.sharing.getSharedGame, { shareToken });
-  const { results, status, loadMore } = usePaginatedQuery(
-    api.sharing.getSharedGameSteps,
-    { shareToken },
-    { initialNumItems: 10 }
-  );
 
   if (game === undefined) {
     return <SharedGameSkeleton />;
@@ -148,40 +137,39 @@ export function SharedGameView({ shareToken }: ShareTokenProps) {
   }
 
   return (
-    <>
-      <div className="surface-raised mx-auto max-w-md space-y-6 p-8">
-        <div className="space-y-2 text-center">
-          <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
-            {t("pageTitle")}
+    <div className="surface-raised mx-auto max-w-md space-y-6 p-8">
+      <div className="space-y-2 text-center">
+        <p className="font-display font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+          {t("pageTitle")}
+        </p>
+        <h1 className="font-display font-semibold text-2xl text-foreground">
+          {game.title}
+        </h1>
+        {game.description ? (
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {game.description}
           </p>
-          <h1 className="font-display font-semibold text-2xl text-foreground">
-            {game.title}
-          </h1>
-          {game.description ? (
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {game.description}
-            </p>
-          ) : null}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-            <span className="rounded-lg bg-muted/60 px-2.5 py-1 font-mono text-muted-foreground text-xs">
-              {tDashboard("steps", { count: game.stepCount })}
-            </span>
-            <span className="rounded-lg bg-muted/60 px-2.5 py-1 font-mono text-muted-foreground text-xs">
-              {t("quizCount", { count: game.quizCount })}
-            </span>
-          </div>
+        ) : null}
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+          <span className="rounded-lg bg-muted/60 px-2.5 py-1 font-mono text-muted-foreground text-xs">
+            {tDashboard("steps", { count: game.stepCount })}
+          </span>
+          <span className="rounded-lg bg-muted/60 px-2.5 py-1 font-mono text-muted-foreground text-xs">
+            {t("quizCount", { count: game.quizCount })}
+          </span>
         </div>
-
-        <HostSharedGame shareToken={shareToken} />
-        <Separator className="bg-border/60" />
-        <CopySharedGame shareToken={shareToken} />
       </div>
-      <SharedGameSteps
-        onLoadMore={() => loadMore(10)}
-        status={status}
-        stepCount={game.stepCount}
-        steps={results}
-      />
-    </>
+
+      <HostSharedGame shareToken={shareToken} />
+      <Separator className="bg-border/60" />
+      <Button
+        asChild
+        className="press-down h-11 w-full rounded-xl border-border bg-transparent font-semibold text-foreground hover:bg-muted/50"
+        variant="outline"
+      >
+        <Link href={`/share/${shareToken}/steps`}>{t("viewSteps")}</Link>
+      </Button>
+      <CopySharedGame shareToken={shareToken} />
+    </div>
   );
 }

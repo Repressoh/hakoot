@@ -264,7 +264,8 @@
     "copyFailed": "Methu copïo'r gêm",
     "notFoundTitle": "Nid yw'r ddolen hon yn gweithio",
     "notFoundDescription": "Efallai bod perchennog y gêm wedi ei ddiffodd neu ei ailosod.",
-    "backToGame": "Yn ôl i'r gêm"
+    "backToGame": "Yn ôl i'r gêm",
+    "viewSteps": "Gweld camau"
   },
   "join": {
     "title": "Ymunwch â gêm",

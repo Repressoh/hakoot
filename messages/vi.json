@@ -264,7 +264,8 @@
     "copyFailed": "Không thể sao chép trò chơi",
     "notFoundTitle": "Liên kết này không hoạt động",
     "notFoundDescription": "Chủ sở hữu trò chơi có thể đã tắt hoặc đặt lại trò chơi.",
-    "backToGame": "Quay lại trò chơi"
+    "backToGame": "Quay lại trò chơi",
+    "viewSteps": "Xem các bước"
   },
   "join": {
     "title": "Tham gia trò chơi",

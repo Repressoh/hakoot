@@ -22,7 +22,8 @@ Playful, direct, approachable. Follow the existing interface and its vocabulary.
 ## Anti-references
 
 Avoid decorative dashboards, unnecessary controls, and ambiguous editing states.
-Previewing someone else's lesson should never resemble editing your own copy.
+Viewing a shared lesson should feel familiar to the editor while showing only
+rendered content and navigation. Editing controls belong to the user's own copy.
 
 ## Design Principles
 

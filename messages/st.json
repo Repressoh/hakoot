@@ -264,7 +264,8 @@
     "copyFailed": "Ho sitiloe ho kopitsa papali",
     "notFoundTitle": "Sehokelo sena ha se sebetse",
     "notFoundDescription": "Mong'a papali a kanna a e timme kapa a e qala bocha.",
-    "backToGame": "Khutlela papaling"
+    "backToGame": "Khutlela papaling",
+    "viewSteps": "Sheba mehato"
   },
   "join": {
     "title": "Kena papaling",

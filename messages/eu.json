@@ -264,7 +264,8 @@
     "copyFailed": "Jokoa ezin izan da kopiatu",
     "notFoundTitle": "Esteka honek ez du funtzionatzen",
     "notFoundDescription": "Jokoaren jabeak agian desaktibatu edo berrezarri egin du.",
-    "backToGame": "Jokoara itzuli"
+    "backToGame": "Jokoara itzuli",
+    "viewSteps": "Ikusi urratsak"
   },
   "join": {
     "title": "Joko batean parte hartu",

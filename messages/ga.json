@@ -264,7 +264,8 @@
     "copyFailed": "Níorbh fhéidir an cluiche a chóipeáil",
     "notFoundTitle": "Ní oibríonn an nasc seo",
     "notFoundDescription": "D'fhéadfadh úinéir an chluiche é a bheith múchta nó athshocraithe.",
-    "backToGame": "Ar ais go dtí an cluiche"
+    "backToGame": "Ar ais go dtí an cluiche",
+    "viewSteps": "Féach ar na céimeanna"
   },
   "join": {
     "title": "Bí páirteach i gcluiche",

@@ -264,7 +264,8 @@
     "copyFailed": "گیم کاپی نہیں ہو سکی",
     "notFoundTitle": "یہ لنک کام نہیں کرتا",
     "notFoundDescription": "ممکن ہے کہ کھیل کے مالک نے اسے بند یا ری سیٹ کر دیا ہو۔",
-    "backToGame": "گیم پر واپس"
+    "backToGame": "گیم پر واپس",
+    "viewSteps": "مرحلے دیکھیں"
   },
   "join": {
     "title": "ایک کھیل میں شامل ہوں",

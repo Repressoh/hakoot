@@ -67,7 +67,10 @@ function SharedStepContent({ step }: { step: SharedStep }) {
             ? t("timerSeconds", { seconds: step.timeLimitSeconds })
             : t("timerOff")}
         </p>
-        <ul aria-label={t("choicesLabel")} className="space-y-2">
+        <ul
+          aria-label={t("choicesLabel")}
+          className="grid gap-3 sm:grid-cols-2"
+        >
           {(step.choices ?? []).map((choice, index) => (
             <li
               className={cn(
@@ -137,41 +140,45 @@ function SharedStepContent({ step }: { step: SharedStep }) {
   );
 }
 
-/** A disclosure, with no editor links, fields, or mutation controls. */
-function SharedStepPreview({
-  index,
-  step,
+/** Navigation only: no drag handles, forms, or editing actions. */
+function StepNavigation({
+  onSelect,
+  selectedId,
+  steps,
 }: {
-  index: number;
-  step: SharedStep;
+  onSelect: (id: SharedStep["_id"]) => void;
+  selectedId: SharedStep["_id"] | undefined;
+  steps: SharedStep[];
 }) {
   const t = useTranslations("stepEditor");
   const tEditor = useTranslations("gameEditor");
-  const [open, setOpen] = useState(false);
-  const title = t(step.type === "theory" ? "theoryTitle" : "quizTitle");
-  const preview = step.type === "quiz" ? step.question : step.markdownContent;
 
   return (
-    <li className="border-border/60 border-b last:border-0">
-      <details onToggle={(event) => setOpen(event.currentTarget.open)}>
-        <summary className="cursor-pointer rounded-lg px-2 py-4 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-          <span className="ms-2 font-mono text-muted-foreground text-xs">
-            {tEditor("stepOrder", { number: index + 1 })}
-          </span>
-          <span className="ms-3 font-medium text-sm">{title}</span>
-          {preview ? (
-            <span className="mt-1 block truncate ps-6 text-muted-foreground text-sm">
-              {preview}
+    <ol className="flex gap-2 overflow-x-auto pb-1 md:block md:max-h-[calc(100svh-18rem)] md:space-y-2 md:overflow-y-auto">
+      {steps.map((step, index) => (
+        <li className="w-44 shrink-0 md:w-auto" key={step._id}>
+          <button
+            aria-controls="shared-step-content"
+            aria-current={selectedId === step._id ? "step" : undefined}
+            className={cn(
+              "w-full rounded-xl border px-4 py-3 text-start transition-colors focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
+              selectedId === step._id
+                ? "border-primary/40 bg-primary/10 text-foreground"
+                : "border-border/60 bg-card/80 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            )}
+            onClick={() => onSelect(step._id)}
+            type="button"
+          >
+            <span className="block font-mono text-xs">
+              {tEditor("stepOrder", { number: index + 1 })}
             </span>
-          ) : null}
-        </summary>
-        {open ? (
-          <div className="wrap-anywhere min-w-0 px-2 pt-1 pb-6 sm:px-6">
-            <SharedStepContent step={step} />
-          </div>
-        ) : null}
-      </details>
-    </li>
+            <span className="mt-1 block truncate font-medium text-sm">
+              {t(step.type === "theory" ? "theoryTitle" : "quizTitle")}
+            </span>
+          </button>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -187,35 +194,65 @@ export function SharedGameSteps({
   steps: SharedStep[];
 }) {
   const t = useTranslations();
+  const [selectedStepId, setSelectedStepId] = useState<
+    SharedStep["_id"] | null
+  >(null);
+  const selectedStep =
+    steps.find((step) => step._id === selectedStepId) ?? steps[0];
 
   return (
-    <section aria-labelledby="shared-steps-heading" className="space-y-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 className="font-semibold text-lg" id="shared-steps-heading">
+    <div className="grid min-w-0 gap-6 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-8">
+      <nav
+        aria-labelledby="shared-steps-heading"
+        className="min-w-0 space-y-3 md:sticky md:top-6 md:self-start"
+      >
+        <h2 className="font-semibold text-base" id="shared-steps-heading">
           {t("dashboard.steps", { count: stepCount })}
         </h2>
-        <Badge variant="outline">{t("stepEditor.previewTab")}</Badge>
-      </div>
-      <p className="text-muted-foreground text-sm">{t("sharing.copyHint")}</p>
-      {status === "LoadingFirstPage" ? (
-        <Skeleton className="h-20 w-full" />
-      ) : (
-        <ol className="min-w-0">
-          {steps.map((step, index) => (
-            <SharedStepPreview index={index} key={step._id} step={step} />
-          ))}
-        </ol>
-      )}
-      {status === "CanLoadMore" || status === "LoadingMore" ? (
-        <Button
-          className="w-full"
-          disabled={status === "LoadingMore"}
-          onClick={onLoadMore}
-          variant="outline"
-        >
-          {t(status === "LoadingMore" ? "common.loading" : "common.next")}
-        </Button>
-      ) : null}
-    </section>
+        {status === "LoadingFirstPage" ? (
+          <Skeleton className="h-20 w-full" />
+        ) : (
+          <StepNavigation
+            onSelect={setSelectedStepId}
+            selectedId={selectedStep?._id}
+            steps={steps}
+          />
+        )}
+        {status === "CanLoadMore" || status === "LoadingMore" ? (
+          <Button
+            className="w-full"
+            disabled={status === "LoadingMore"}
+            onClick={onLoadMore}
+            variant="outline"
+          >
+            {t(status === "LoadingMore" ? "common.loading" : "common.next")}
+          </Button>
+        ) : null}
+      </nav>
+      <section
+        aria-labelledby={selectedStep ? "shared-step-title" : undefined}
+        className="min-w-0"
+        id="shared-step-content"
+      >
+        {status === "LoadingFirstPage" ? (
+          <Skeleton className="h-64 w-full rounded-2xl" />
+        ) : null}
+        {selectedStep ? (
+          <div className="wrap-anywhere space-y-6 rounded-2xl border border-border/60 bg-card/80 p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-border/60 border-b pb-4">
+              <h2 className="font-semibold text-xl" id="shared-step-title">
+                {t(
+                  selectedStep.type === "theory"
+                    ? "stepEditor.theoryTitle"
+                    : "stepEditor.quizTitle"
+                )}
+              </h2>
+              <Badge variant="outline">{t("stepEditor.previewTab")}</Badge>
+            </div>
+            <SharedStepContent key={selectedStep._id} step={selectedStep} />
+          </div>
+        ) : null}
+      </section>
+    </div>
   );
 }

@@ -264,7 +264,8 @@
     "copyFailed": "Impossibile copiare il gioco",
     "notFoundTitle": "Questo link non funziona",
     "notFoundDescription": "Il proprietario del gioco potrebbe averlo disattivato o resettato.",
-    "backToGame": "Torna al gioco"
+    "backToGame": "Torna al gioco",
+    "viewSteps": "Visualizza i passi"
   },
   "join": {
     "title": "Partecipa a una partita",

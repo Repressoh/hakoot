@@ -264,7 +264,8 @@
     "copyFailed": "Hru se nepodařilo zkopírovat",
     "notFoundTitle": "Tento odkaz nefunguje",
     "notFoundDescription": "Vlastník hry ji možná deaktivoval nebo resetoval.",
-    "backToGame": "Zpět do hry"
+    "backToGame": "Zpět do hry",
+    "viewSteps": "Zobrazit kroky"
   },
   "join": {
     "title": "Připojte se ke hře",

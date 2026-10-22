@@ -264,7 +264,8 @@
     "copyFailed": "Ne eblis kopii la ludon",
     "notFoundTitle": "Ĉi tiu ligilo ne funkcias",
     "notFoundDescription": "La posedanto de la ludo eble malŝaltis ĝin aŭ restarigis ĝin.",
-    "backToGame": "Reen al la ludo"
+    "backToGame": "Reen al la ludo",
+    "viewSteps": "Vidi paŝojn"
   },
   "join": {
     "title": "Aliĝu al ludo",

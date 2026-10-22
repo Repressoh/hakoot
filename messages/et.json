@@ -264,7 +264,8 @@
     "copyFailed": "Mängu ei õnnestunud kopeerida",
     "notFoundTitle": "See link ei tööta",
     "notFoundDescription": "Mängu omanik on selle võib-olla välja lülitanud või taastanud.",
-    "backToGame": "Tagasi mängu"
+    "backToGame": "Tagasi mängu",
+    "viewSteps": "Vaata samme"
   },
   "join": {
     "title": "Liitu mänguga",

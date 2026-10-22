@@ -264,7 +264,8 @@
     "copyFailed": "Hindi nakopya ang laro",
     "notFoundTitle": "Hindi gumagana ang link na ito",
     "notFoundDescription": "Maaaring pinatay o na-reset ng may-ari ng laro ito.",
-    "backToGame": "Bumalik sa laro"
+    "backToGame": "Bumalik sa laro",
+    "viewSteps": "Tingnan ang mga hakbang"
   },
   "join": {
     "title": "Sumali sa laro",

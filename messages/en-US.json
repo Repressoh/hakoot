@@ -264,7 +264,8 @@
     "copyFailed": "Couldn't copy the game",
     "notFoundTitle": "This link doesn't work",
     "notFoundDescription": "The game's owner may have turned it off or reset it.",
-    "backToGame": "Back to game"
+    "backToGame": "Back to game",
+    "viewSteps": "View steps"
   },
   "join": {
     "title": "Join a game",

@@ -264,7 +264,8 @@
     "copyFailed": "ไม่สามารถคัดลอกเกมได้",
     "notFoundTitle": "ลิงก์นี้ไม่ทำงาน",
     "notFoundDescription": "เจ้าของเกมอาจได้ปิดเกมหรือรีเซ็ตเกมแล้ว",
-    "backToGame": "กลับสู่เกม"
+    "backToGame": "กลับสู่เกม",
+    "viewSteps": "ดูขั้นตอน"
   },
   "join": {
     "title": "เข้าร่วมเกม",

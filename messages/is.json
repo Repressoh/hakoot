@@ -264,7 +264,8 @@
     "copyFailed": "Ekki var hægt að afrita leikinn",
     "notFoundTitle": "Þessi hlekkur virkar ekki",
     "notFoundDescription": "Eigendur leiksins kunna að hafa slökkt á honum eða endurstillt hann.",
-    "backToGame": "Aftur í leikinn"
+    "backToGame": "Aftur í leikinn",
+    "viewSteps": "Skoða skref"
   },
   "join": {
     "title": "Taktu þátt í leik",

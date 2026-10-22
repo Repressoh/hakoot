@@ -264,7 +264,8 @@
     "copyFailed": "Nije moguće kopirati igru",
     "notFoundTitle": "Ova poveznica ne radi",
     "notFoundDescription": "Vlasnik igre možda ju je isključio ili resetirao.",
-    "backToGame": "Povratak na igru"
+    "backToGame": "Povratak na igru",
+    "viewSteps": "Prikaži korake"
   },
   "join": {
     "title": "Pridruži se igri",
