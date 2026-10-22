@@ -1,4 +1,8 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import {
+  paginationOptsValidator,
+  paginationResultValidator,
+} from "convex/server";
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
@@ -28,6 +32,31 @@ const END_BATCH_SIZE = 100;
 const ABANDONED_LOBBY_MS = 24 * 60 * 60 * 1000;
 /** Abandoned lobbies deleted per run (each schedules the deletion of its rows). */
 const CLEANUP_BATCH_SIZE = 100;
+
+const sharedStepValidator = v.object({
+  _id: v.id("gameSteps"),
+  choices: v.optional(
+    v.array(v.object({ isCorrect: v.boolean(), text: v.string() }))
+  ),
+  codeBlock: v.optional(
+    v.object({
+      annotations: v.array(
+        v.object({
+          explanation: v.string(),
+          label: v.string(),
+          lines: v.array(v.number()),
+          linesText: v.optional(v.string()),
+        })
+      ),
+      code: v.string(),
+      language: v.string(),
+    })
+  ),
+  markdownContent: v.optional(v.string()),
+  question: v.optional(v.string()),
+  timeLimitSeconds: v.optional(v.number()),
+  type: v.union(v.literal("theory"), v.literal("quiz")),
+});
 
 /** The game whose enabled share link is `shareToken`, or null. */
 async function getSharedGameDoc(ctx: QueryCtx, shareToken: string) {
@@ -97,6 +126,36 @@ export const getSharedGame = query({
       title: game.title,
     };
   },
+});
+
+/** Read-only lesson content, in play order. Every page requires an active share link. */
+export const getSharedGameSteps = query({
+  args: { paginationOpts: paginationOptsValidator, shareToken: v.string() },
+  handler: async (ctx, args) => {
+    const game = await getSharedGameDoc(ctx, args.shareToken);
+    if (!game) {
+      return { continueCursor: "", isDone: true, page: [] };
+    }
+
+    const result = await ctx.db
+      .query("gameSteps")
+      .withIndex("by_game_and_order", (q) => q.eq("gameId", game._id))
+      .paginate(args.paginationOpts);
+
+    return {
+      ...result,
+      page: result.page.map((step) => ({
+        _id: step._id,
+        choices: step.choices,
+        codeBlock: step.codeBlock,
+        markdownContent: step.markdownContent,
+        question: step.question,
+        timeLimitSeconds: step.timeLimitSeconds,
+        type: step.type,
+      })),
+    };
+  },
+  returns: paginationResultValidator(sharedStepValidator),
 });
 
 // ─── Mutations ──────────────────────────────────────────────────────────

@@ -794,6 +794,188 @@ describe("turning a link off or resetting it", () => {
   });
 });
 
+describe("previewing shared steps", () => {
+  test("visitors can read every step in play order, including code and quiz answers", async () => {
+    const t = newTest();
+    const { shareToken } = await seedSharedGame(t);
+    const first = await t.query(api.sharing.getSharedGameSteps, {
+      paginationOpts: { cursor: null, numItems: 2 },
+      shareToken,
+    });
+
+    expect(first.isDone).toBe(false);
+    expect(first.page).toEqual([
+      {
+        _id: expect.any(String),
+        markdownContent: "# Types",
+        type: "theory",
+      },
+      {
+        _id: expect.any(String),
+        codeBlock: {
+          annotations: [
+            { explanation: "A number", label: "n", lines: [1], linesText: "1" },
+          ],
+          code: "const n = 1;",
+          language: "typescript",
+        },
+        markdownContent: "Code",
+        type: "theory",
+      },
+    ]);
+
+    const last = await t.query(api.sharing.getSharedGameSteps, {
+      paginationOpts: { cursor: first.continueCursor, numItems: 2 },
+      shareToken,
+    });
+    expect(last.isDone).toBe(true);
+    expect(last.page).toEqual([
+      {
+        _id: expect.any(String),
+        choices: [
+          { isCorrect: false, text: "string" },
+          { isCorrect: true, text: "number" },
+        ],
+        question: "Type of 1?",
+        timeLimitSeconds: 20,
+        type: "quiz",
+      },
+    ]);
+  });
+
+  test("a share link grants no editing rights to visitors or other accounts", async () => {
+    const t = newTest();
+    const { gameId, shareToken } = await seedSharedGame(t);
+    const bea = await signUp(t, "preview@x.test");
+    const args = { paginationOpts: { cursor: null, numItems: 10 }, shareToken };
+    const anonymous = await t.query(api.sharing.getSharedGameSteps, args);
+    const signedIn = await bea.as.query(api.sharing.getSharedGameSteps, args);
+    expect(signedIn.page).toEqual(anonymous.page);
+    const theoryId = anonymous.page[0]._id;
+    const quizId = anonymous.page[2]._id;
+
+    await Promise.all(
+      [t, bea.as].map(async (visitor) => {
+        expect(
+          await visitor.query(api.games.getEditorView, { gameId })
+        ).toBeNull();
+        expect(
+          await visitor.query(api.steps.get, { stepId: theoryId })
+        ).toBeNull();
+        await expect(
+          visitor.mutation(api.steps.updateTheory, {
+            markdownContent: "Changed",
+            stepId: theoryId,
+          })
+        ).rejects.toThrow();
+        await expect(
+          visitor.mutation(api.steps.updateQuiz, {
+            question: "Changed",
+            stepId: quizId,
+          })
+        ).rejects.toThrow();
+        await expect(
+          visitor.mutation(api.steps.remove, { stepId: theoryId })
+        ).rejects.toThrow();
+        await expect(
+          visitor.mutation(api.steps.move, {
+            direction: "down",
+            stepId: theoryId,
+          })
+        ).rejects.toThrow();
+        await expect(
+          visitor.mutation(api.steps.createTheory, { gameId })
+        ).rejects.toThrow();
+        await expect(
+          visitor.mutation(api.steps.reorder, {
+            gameId,
+            orderedIds: anonymous.page.map((step) => step._id),
+          })
+        ).rejects.toThrow();
+      })
+    );
+    expect((await t.query(api.sharing.getSharedGameSteps, args)).page).toEqual(
+      anonymous.page
+    );
+  });
+
+  test("disabled, reset, and deleted links stop returning steps, even with an existing cursor", async () => {
+    const t = newTest();
+    const { gameId, owner, shareToken } = await seedSharedGame(t);
+    const first = await t.query(api.sharing.getSharedGameSteps, {
+      paginationOpts: { cursor: null, numItems: 1 },
+      shareToken,
+    });
+    const next = {
+      paginationOpts: { cursor: first.continueCursor, numItems: 1 },
+      shareToken,
+    };
+    await owner.as.mutation(api.sharing.setShareEnabled, {
+      enabled: false,
+      gameId,
+    });
+    expect((await t.query(api.sharing.getSharedGameSteps, next)).page).toEqual(
+      []
+    );
+
+    await owner.as.mutation(api.sharing.setShareEnabled, {
+      enabled: true,
+      gameId,
+    });
+    await owner.as.mutation(api.sharing.resetShareLink, { gameId });
+    expect((await t.query(api.sharing.getSharedGameSteps, next)).page).toEqual(
+      []
+    );
+    const newToken = await currentShareToken(owner.as, gameId);
+    expect(
+      (
+        await t.query(api.sharing.getSharedGameSteps, {
+          paginationOpts: { cursor: null, numItems: 10 },
+          shareToken: newToken,
+        })
+      ).page
+    ).toHaveLength(3);
+
+    await owner.as.mutation(api.games.remove, { gameId });
+    expect(
+      (
+        await t.query(api.sharing.getSharedGameSteps, {
+          paginationOpts: { cursor: null, numItems: 10 },
+          shareToken: newToken,
+        })
+      ).page
+    ).toEqual([]);
+  });
+
+  test("invalid tokens and empty games have no steps", async () => {
+    const t = newTest();
+    await Promise.all(
+      ["", "x", "0".repeat(32), "a".repeat(5000)].map(async (shareToken) => {
+        expect(
+          await t.query(api.sharing.getSharedGameSteps, {
+            paginationOpts: { cursor: null, numItems: 10 },
+            shareToken,
+          })
+        ).toMatchObject({ isDone: true, page: [] });
+      })
+    );
+    const owner = await signUp(t, "empty@x.test");
+    const gameId = await owner.as.mutation(api.games.create, {
+      title: "Empty",
+    });
+    await owner.as.mutation(api.sharing.setShareEnabled, {
+      enabled: true,
+      gameId,
+    });
+    expect(
+      await t.query(api.sharing.getSharedGameSteps, {
+        paginationOpts: { cursor: null, numItems: 10 },
+        shareToken: await currentShareToken(owner.as, gameId),
+      })
+    ).toMatchObject({ isDone: true, page: [] });
+  });
+});
+
 describe("copying a shared game", () => {
   test("a signed-in user gets their own private copy with every step", async () => {
     const t = newTest();

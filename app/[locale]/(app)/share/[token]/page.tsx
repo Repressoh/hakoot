@@ -26,7 +26,7 @@ export default async function SharedGamePage({
         <div className="absolute right-1/4 bottom-1/4 size-48 rounded-full bg-accent/6 blur-3xl" />
       </div>
 
-      <main className="relative w-full max-w-md space-y-8">
+      <main className="relative w-full max-w-3xl space-y-8 py-6 sm:py-10">
         <div className="text-center">
           <span className="font-black font-display text-4xl text-glow text-primary tracking-tight">
             Hakoot
