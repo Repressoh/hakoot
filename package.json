@@ -63,7 +63,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.2",
+    "@biomejs/biome": "2.5.15",
     "@edge-runtime/vm": "^5.0.0",
     "@formatjs/icu-messageformat-parser": "^3.5.22",
     "@tailwindcss/postcss": "^4.3.3",

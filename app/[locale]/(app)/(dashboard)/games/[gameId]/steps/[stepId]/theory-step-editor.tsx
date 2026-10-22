@@ -284,7 +284,7 @@ export function TheoryStepEditor({ step }: Props) {
 
       {/* Markdown editor */}
       <div className="space-y-2">
-        <Label>{t("markdownLabel")}</Label>
+        <Label htmlFor="markdown">{t("markdownLabel")}</Label>
         <Tabs defaultValue="edit">
           <TabsList>
             <TabsTrigger value="edit">{t("editTab")}</TabsTrigger>
@@ -293,6 +293,7 @@ export function TheoryStepEditor({ step }: Props) {
           <TabsContent value="edit">
             <Textarea
               className="min-h-[200px] font-mono text-sm"
+              id="markdown"
               onChange={(e) =>
                 dispatch({ type: "SET_MARKDOWN", value: e.target.value })
               }
@@ -366,7 +367,9 @@ export function TheoryStepEditor({ step }: Props) {
           {/* Annotations */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>{t("annotationsLabel")}</Label>
+              <p className="font-medium text-sm leading-none">
+                {t("annotationsLabel")}
+              </p>
               <Button
                 onClick={addAnnotation}
                 size="sm"
@@ -399,11 +402,15 @@ export function TheoryStepEditor({ step }: Props) {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-xs">
+                    <Label
+                      className="text-xs"
+                      htmlFor={`annotation-${ann.id}-lines`}
+                    >
                       {t("annotationLinesLabel")}
                     </Label>
                     <Input
                       className="h-8 text-sm"
+                      id={`annotation-${ann.id}-lines`}
                       onChange={(e) =>
                         updateAnnotation(i, "linesInput", e.target.value)
                       }
@@ -412,11 +419,15 @@ export function TheoryStepEditor({ step }: Props) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">
+                    <Label
+                      className="text-xs"
+                      htmlFor={`annotation-${ann.id}-label`}
+                    >
                       {t("annotationLabelLabel")}
                     </Label>
                     <Input
                       className="h-8 text-sm"
+                      id={`annotation-${ann.id}-label`}
                       onChange={(e) =>
                         updateAnnotation(i, "label", e.target.value)
                       }
@@ -427,11 +438,15 @@ export function TheoryStepEditor({ step }: Props) {
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-xs">
+                  <Label
+                    className="text-xs"
+                    htmlFor={`annotation-${ann.id}-explanation`}
+                  >
                     {t("annotationExplanationLabel")}
                   </Label>
                   <Textarea
                     className="text-sm"
+                    id={`annotation-${ann.id}-explanation`}
                     onChange={(e) =>
                       updateAnnotation(i, "explanation", e.target.value)
                     }
@@ -447,9 +462,9 @@ export function TheoryStepEditor({ step }: Props) {
           {/* Preview */}
           {code ? (
             <div className="space-y-1.5">
-              <Label className="text-muted-foreground text-xs">
+              <p className="font-medium text-muted-foreground text-xs leading-none">
                 {t("previewTab")}
-              </Label>
+              </p>
               <ClientCodeBlock code={code} language={language} />
             </div>
           ) : null}

@@ -167,6 +167,7 @@ function _DropdownMenuLabel({
   inset?: boolean;
 }) {
   return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: Radix renders a menu group heading as a div.
     <DropdownMenuPrimitive.Label
       className={cn(
         "px-1.5 py-1 font-medium text-muted-foreground text-xs data-inset:ps-7",

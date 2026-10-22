@@ -118,8 +118,10 @@ export function QuizStepEditor({ step }: Props) {
       <StepImageField image={step.image} stepId={step._id} />
 
       {/* Choices */}
-      <div className="space-y-3">
-        <Label>{t("choicesLabel")}</Label>
+      <fieldset className="space-y-3">
+        <legend className="font-medium text-sm leading-none">
+          {t("choicesLabel")}
+        </legend>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {choices.map((choice, i) => (
             <div
@@ -167,7 +169,7 @@ export function QuizStepEditor({ step }: Props) {
             {t("noCorrectAnswer")}
           </p>
         )}
-      </div>
+      </fieldset>
 
       {/* Timer */}
       <div className="space-y-1.5">

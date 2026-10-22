@@ -114,6 +114,7 @@ export function StepImageField({ image, stepId }: Props) {
   const [pending, setPending] = useState<"remove" | "upload" | null>(null);
   const busy = pending !== null;
   const hintId = useId();
+  const inputId = useId();
 
   async function upload(file: File) {
     if (!token) {
@@ -150,7 +151,7 @@ export function StepImageField({ image, stepId }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <Label>{t("imageLabel")}</Label>
+        <Label htmlFor={inputId}>{t("imageLabel")}</Label>
         {image ? (
           <div className="flex gap-2">
             <Button
@@ -212,6 +213,7 @@ export function StepImageField({ image, stepId }: Props) {
               : "absolute inset-0 size-full cursor-pointer opacity-0 disabled:cursor-progress"
           }
           disabled={busy}
+          id={inputId}
           onChange={(event) => {
             const [file] = event.target.files ?? [];
             // Cleared so choosing the same file again uploads it again.

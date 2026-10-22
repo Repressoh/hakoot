@@ -1,4 +1,6 @@
 {
+  // Ultracite 8.0.2 uses nursery/useSortedClasses, so keep Biome pinned to 2.5.15
+  // until the preset supports the rule's rename in Biome 2.6.
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": [
     "ultracite/biome/core",

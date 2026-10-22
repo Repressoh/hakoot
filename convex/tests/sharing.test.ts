@@ -130,6 +130,19 @@ async function getSession(t: TestConvex, sessionId: Id<"gameSessions">) {
   return await t.run(async (ctx) => await ctx.db.get(sessionId));
 }
 
+/** Advance the test clock to the quiz's persisted answer start time. */
+async function finishReadingPhase(
+  t: TestConvex,
+  sessionId: Id<"gameSessions">
+) {
+  const session = await getSession(t, sessionId);
+  if (session?.stepStartedAt === undefined) {
+    throw new Error("expected a timed quiz");
+  }
+  // Convex transaction time can run ahead of a frozen test clock.
+  vi.advanceTimersByTime(Math.max(0, session.stepStartedAt - Date.now()));
+}
+
 /** Join a session as a player by its invite code. */
 async function joinAs(
   t: TestConvex,
@@ -390,7 +403,14 @@ describe("hosting from a share link", () => {
       currentStep: { question: "Type of 1?" },
       session: { currentStepIndex: 2, status: "in_progress" },
     });
-    vi.advanceTimersByTime(10_000);
+    await expect(
+      t.mutation(api.sessions.submitAnswer, {
+        choiceIndex: 1,
+        participantToken: ada,
+        sessionId,
+      })
+    ).rejects.toThrow("Reading phase still active");
+    await finishReadingPhase(t, sessionId);
     await t.mutation(api.sessions.submitAnswer, {
       choiceIndex: 1,
       participantToken: ada,
@@ -563,7 +583,7 @@ describe("hosting from a share link", () => {
     await repeat(3, () =>
       owner.as.mutation(api.sessions.advance, { sessionId: ownSessionId })
     );
-    vi.advanceTimersByTime(10_000);
+    await finishReadingPhase(t, ownSessionId);
     await t.mutation(api.sessions.submitAnswer, {
       choiceIndex: 1,
       participantToken: ada,
@@ -1323,7 +1343,7 @@ describe("a game played many times from its link", () => {
     await repeat(3, () =>
       owner.as.mutation(api.sessions.advance, { sessionId })
     );
-    vi.advanceTimersByTime(10_000);
+    await finishReadingPhase(t, sessionId);
     await t.mutation(api.sessions.submitAnswer, {
       choiceIndex: 1,
       participantToken: ada,

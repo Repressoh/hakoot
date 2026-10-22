@@ -109,6 +109,7 @@ function _SelectLabel({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Label>) {
   return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: Radix renders a select group heading as a div.
     <SelectPrimitive.Label
       className={cn("px-1.5 py-1 text-muted-foreground text-xs", className)}
       data-slot="select-label"
