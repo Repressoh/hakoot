@@ -189,6 +189,27 @@ describe("shared game step pagination", () => {
     }
   );
 
+  test("continues loading after reactive pages become empty", async () => {
+    await render();
+    await click(container.querySelectorAll<HTMLButtonElement>("ol button")[5]);
+    expect(onLoadMore).not.toHaveBeenCalled();
+
+    await render("CanLoadMore", 0);
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+    expect(observers[0].disconnect).toHaveBeenCalled();
+    await render("LoadingMore", 0);
+    expect(onLoadMore).toHaveBeenCalledTimes(1);
+    await render("CanLoadMore", 0);
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+
+    await render("Exhausted", 5);
+    expect(selectedQuestion()).toBe("Question 1");
+    expect(button("Next").disabled).toBe(false);
+    await click(button("Next"));
+    expect(selectedQuestion()).toBe("Question 2");
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
   test("disconnects the scroll observer on unmount", async () => {
     await render();
     await act(() => root.render(null));

@@ -212,12 +212,13 @@ export function SharedGameSteps({
   const navigationRef = useRef<HTMLOListElement>(null);
 
   useEffect(() => {
-    if (status !== "CanLoadMore" || steps.length === 0) {
+    if (status !== "CanLoadMore") {
       return;
     }
     // Keep a page ready before the reader reaches the last loaded step.
     const preloadIndex = Math.max(0, steps.length - 3);
-    if (selectedIndex >= preloadIndex) {
+    // Reactive pages can empty after deletions while later steps still exist.
+    if (steps.length === 0 || selectedIndex >= preloadIndex) {
       onLoadMore();
       return;
     }
