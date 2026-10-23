@@ -77,6 +77,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+/** Apply a reactive pagination update without remounting the reader or resetting its selection. */
 async function render(status: Status = "CanLoadMore", count = 10) {
   await act(() => {
     root.render(
@@ -92,6 +93,7 @@ async function render(status: Status = "CanLoadMore", count = 10) {
   });
 }
 
+/** Find a translated navigation control independently of its position. */
 function button(label: string) {
   const found = [...container.querySelectorAll("button")].find(
     (element) => element.textContent === label
@@ -102,10 +104,12 @@ function button(label: string) {
   return found;
 }
 
+/** Flush state updates and pagination effects caused by a reader action. */
 async function click(element: HTMLButtonElement) {
   await act(() => element.click());
 }
 
+/** Read the selected step's question without matching navigation labels. */
 function selectedQuestion() {
   return container.querySelector("#shared-step-content p")?.textContent;
 }

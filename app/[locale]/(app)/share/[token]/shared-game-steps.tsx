@@ -187,6 +187,7 @@ function StepNavigation({
   );
 }
 
+/** Read shared steps with prefetching near the loaded boundary and persistent navigation. */
 export function SharedGameSteps({
   onLoadMore,
   status,
