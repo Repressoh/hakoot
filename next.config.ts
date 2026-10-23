@@ -18,11 +18,11 @@ const withNextIntl = createNextIntlPlugin({
 });
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["hakoot-dev.albertocaserta.it"],
   // cacheComponents requires next-intl to support next/root-params
   // See: https://github.com/amannn/next-intl/issues/2229
   // cacheComponents: true,
-  compress : false,
-  allowedDevOrigins: ["hakoot-dev.albertocaserta.it"],
+  compress: false,
   experimental: {
     // The stylesheet is inlined in the HTML. Linked, it competes for
     // bandwidth with a dozen JavaScript chunks requested at the same moment,

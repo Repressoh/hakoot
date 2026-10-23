@@ -3,7 +3,7 @@
 import type { FunctionReturnType } from "convex/server";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type Ref, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -142,10 +142,12 @@ function SharedStepContent({ step }: { step: SharedStep }) {
 
 /** Navigation only: no drag handles, forms, or editing actions. */
 function StepNavigation({
+  navigationRef,
   onSelect,
   selectedId,
   steps,
 }: {
+  navigationRef: Ref<HTMLOListElement>;
   onSelect: (id: SharedStep["_id"]) => void;
   selectedId: SharedStep["_id"] | undefined;
   steps: SharedStep[];
@@ -154,7 +156,10 @@ function StepNavigation({
   const tEditor = useTranslations("gameEditor");
 
   return (
-    <ol className="flex gap-2 overflow-x-auto pb-1 md:block md:max-h-[calc(100svh-18rem)] md:space-y-2 md:overflow-y-auto">
+    <ol
+      className="flex gap-2 overflow-x-auto pb-1 md:block md:max-h-[calc(100svh-18rem)] md:space-y-2 md:overflow-y-auto"
+      ref={navigationRef}
+    >
       {steps.map((step, index) => (
         <li className="w-44 shrink-0 md:w-auto" key={step._id}>
           <button
@@ -182,6 +187,7 @@ function StepNavigation({
   );
 }
 
+/** Read shared steps with prefetching near the loaded boundary and persistent navigation. */
 export function SharedGameSteps({
   onLoadMore,
   status,
@@ -199,6 +205,43 @@ export function SharedGameSteps({
   >(null);
   const selectedStep =
     steps.find((step) => step._id === selectedStepId) ?? steps[0];
+  const selectedIndex = steps.findIndex(
+    (step) => step._id === selectedStep?._id
+  );
+  const previousStep = steps[selectedIndex - 1];
+  const nextStep = steps[selectedIndex + 1];
+  const navigationRef = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    if (status !== "CanLoadMore") {
+      return;
+    }
+    // Keep a page ready before the reader reaches the last loaded step.
+    const preloadIndex = Math.max(0, steps.length - 3);
+    // Reactive pages can empty after deletions while later steps still exist.
+    if (steps.length === 0 || selectedIndex >= preloadIndex) {
+      onLoadMore();
+      return;
+    }
+    const navigation = navigationRef.current;
+    if (!navigation || typeof IntersectionObserver === "undefined") {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          onLoadMore();
+        }
+      },
+      { root: navigation }
+    );
+    // A fast swipe can skip the first preload row entirely.
+    for (const target of Array.from(navigation.children).slice(preloadIndex)) {
+      observer.observe(target);
+    }
+    return () => observer.disconnect();
+  }, [onLoadMore, selectedIndex, status, steps.length]);
 
   return (
     <div className="grid min-w-0 gap-6 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-8">
@@ -213,21 +256,36 @@ export function SharedGameSteps({
           <Skeleton className="h-20 w-full" />
         ) : (
           <StepNavigation
+            navigationRef={navigationRef}
             onSelect={setSelectedStepId}
             selectedId={selectedStep?._id}
             steps={steps}
           />
         )}
-        {status === "CanLoadMore" || status === "LoadingMore" ? (
+        <div className="flex gap-2">
           <Button
-            className="w-full"
-            disabled={status === "LoadingMore"}
-            onClick={onLoadMore}
+            aria-controls="shared-step-content"
+            className="min-w-0 flex-1"
+            disabled={!previousStep}
+            onClick={() => previousStep && setSelectedStepId(previousStep._id)}
             variant="outline"
           >
-            {t(status === "LoadingMore" ? "common.loading" : "common.next")}
+            {t("common.previous")}
           </Button>
-        ) : null}
+          <Button
+            aria-controls="shared-step-content"
+            className="min-w-0 flex-1"
+            disabled={!nextStep}
+            onClick={() => nextStep && setSelectedStepId(nextStep._id)}
+            variant="outline"
+          >
+            {t(
+              !nextStep && status === "LoadingMore"
+                ? "common.loading"
+                : "common.next"
+            )}
+          </Button>
+        </div>
       </nav>
       <section
         aria-labelledby={selectedStep ? "shared-step-title" : undefined}
