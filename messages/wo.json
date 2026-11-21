@@ -25,7 +25,8 @@
     "dashboard": "Taabalukaay",
     "emailLists": "Limu imel yi",
     "hostSignIn": "Dalal? Dugg",
-    "accountSettings": "Tànneefi kont bi"
+    "accountSettings": "Tànneefi kont bi",
+    "tryDemo": "Try Demo"
   },
   "settings": {
     "title": "Tànneefi kont bi",
@@ -94,7 +95,8 @@
     "connecting": "Di jokkoo...",
     "enterMatch": "Dugg ci match bi",
     "metaTitle": "Hakoot - Dalub laaj-ak-tontu bu interaktif",
-    "metaDescription": "Defaral te fo ak say seetaan-kat ay quiz yu interaktif ci kodd."
+    "metaDescription": "Defaral te fo ak say seetaan-kat ay quiz yu interaktif ci kodd.",
+    "tryDemoCta": "Try Interactive Open-Day Demo (no login)"
   },
   "auth": {
     "signInTitle": "Dalal ak jàmm",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Yokk",
     "removeEntryFailed": "Mënul dindi kontak bi"
+  },
+  "demo": {
+    "metaTitle": "Interactive Demo — Hakoot",
+    "metaDescription": "Try Hakoot live with a side-by-side host and player open-day simulator. No account needed.",
+    "badge": "Open Day Demo",
+    "heading": "Live Classroom Simulator",
+    "subheading": "Drive the lesson on the Host screen and answer in real time on the Player device.",
+    "viewModeLabel": "Demo view mode",
+    "viewMode": {
+      "split": "Split View",
+      "host": "Host",
+      "player": "Player"
+    },
+    "restartDemo": "Restart Demo",
+    "hostScreenLabel": "Host Screen",
+    "playerScreenLabel": "Player Device",
+    "statusLobby": "Lobby",
+    "statusFinished": "Finished",
+    "stepProgress": "Step {current} / {total}",
+    "inviteCodeLabel": "Demo Invite Code",
+    "playersJoined": "{count} players in lobby",
+    "defaultVisitorName": "Guest",
+    "youTag": "You",
+    "startSession": "Start Demo Session",
+    "theoryLabel": "Theory & Code",
+    "quizLabel": "Live Quiz",
+    "codeNotesLabel": "Click a line to inspect",
+    "nextStep": "Next Step",
+    "finishSession": "Show Final Results",
+    "revealAnswer": "Reveal Answer",
+    "answersReceived": "{answered} / {total} answered",
+    "correctBadge": "Correct",
+    "liveLeaderboard": "Live Leaderboard",
+    "finalLeaderboard": "Final Leaderboard",
+    "finishedSubtitle": "That is a complete Hakoot lesson — ready to reset for the next visitor.",
+    "createOwnGame": "Create Your Own Game",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Your display name",
+    "visitorNamePlaceholder": "Enter your name",
+    "joinedLobbyTitle": "You are in the lobby!",
+    "joinedLobbyHint": "Press Start Demo Session on the Host screen to launch the lesson.",
+    "connectedCode": "Connected to room {code}",
+    "answerLockedTitle": "Answer locked in!",
+    "answerLockedHint": "Press Reveal Answer on the Host screen to see scores and the leaderboard.",
+    "resultCorrect": "Correct!",
+    "resultIncorrect": "Not quite!",
+    "pointsEarned": "+{points} points",
+    "yourFinalRank": "Your Final Rank",
+    "finalStats": "{points} pts · {correct} / {total} correct",
+    "playAgain": "Play Again",
+    "timeUpTitle": "Time’s up!",
+    "timeUpHint": "Press Reveal Answer on the Host screen to see the solution and leaderboard."
   }
 }

@@ -25,7 +25,8 @@
     "dashboard": "கட்டுப்பாட்டுப் பலகை",
     "emailLists": "மின்னஞ்சல் பட்டியல்கள்",
     "hostSignIn": "உள்ளிருத்தல்? உள்நுழைக",
-    "accountSettings": "கணக்கு அமைப்புகள்"
+    "accountSettings": "கணக்கு அமைப்புகள்",
+    "tryDemo": "Try Demo"
   },
   "settings": {
     "title": "கணக்கு அமைப்புகள்",
@@ -94,7 +95,8 @@
     "connecting": "இணைக்கப்படுகிறது...",
     "enterMatch": "போட்டியில் நுழையவும்",
     "metaTitle": "ஹகூட் - ஊடாடும் வினாடி வினா தளம்",
-    "metaDescription": "உங்கள் பார்வையாளர்களுடன் ஊடாடும் குறியீட்டு வினாடி வினாக்களை உருவாக்கி விளையாடுங்கள்"
+    "metaDescription": "உங்கள் பார்வையாளர்களுடன் ஊடாடும் குறியீட்டு வினாடி வினாக்களை உருவாக்கி விளையாடுங்கள்",
+    "tryDemoCta": "Try Interactive Open-Day Demo (no login)"
   },
   "auth": {
     "signInTitle": "மீண்டும் நல்வரவு",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "சேர்",
     "removeEntryFailed": "தொடர்பை நீக்கத் தவறியது"
+  },
+  "demo": {
+    "metaTitle": "Interactive Demo — Hakoot",
+    "metaDescription": "Try Hakoot live with a side-by-side host and player open-day simulator. No account needed.",
+    "badge": "Open Day Demo",
+    "heading": "Live Classroom Simulator",
+    "subheading": "Drive the lesson on the Host screen and answer in real time on the Player device.",
+    "viewModeLabel": "Demo view mode",
+    "viewMode": {
+      "split": "Split View",
+      "host": "Host",
+      "player": "Player"
+    },
+    "restartDemo": "Restart Demo",
+    "hostScreenLabel": "Host Screen",
+    "playerScreenLabel": "Player Device",
+    "statusLobby": "Lobby",
+    "statusFinished": "Finished",
+    "stepProgress": "Step {current} / {total}",
+    "inviteCodeLabel": "Demo Invite Code",
+    "playersJoined": "{count} players in lobby",
+    "defaultVisitorName": "Guest",
+    "youTag": "You",
+    "startSession": "Start Demo Session",
+    "theoryLabel": "Theory & Code",
+    "quizLabel": "Live Quiz",
+    "codeNotesLabel": "Click a line to inspect",
+    "nextStep": "Next Step",
+    "finishSession": "Show Final Results",
+    "revealAnswer": "Reveal Answer",
+    "answersReceived": "{answered} / {total} answered",
+    "correctBadge": "Correct",
+    "liveLeaderboard": "Live Leaderboard",
+    "finalLeaderboard": "Final Leaderboard",
+    "finishedSubtitle": "That is a complete Hakoot lesson — ready to reset for the next visitor.",
+    "createOwnGame": "Create Your Own Game",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Your display name",
+    "visitorNamePlaceholder": "Enter your name",
+    "joinedLobbyTitle": "You are in the lobby!",
+    "joinedLobbyHint": "Press Start Demo Session on the Host screen to launch the lesson.",
+    "connectedCode": "Connected to room {code}",
+    "answerLockedTitle": "Answer locked in!",
+    "answerLockedHint": "Press Reveal Answer on the Host screen to see scores and the leaderboard.",
+    "resultCorrect": "Correct!",
+    "resultIncorrect": "Not quite!",
+    "pointsEarned": "+{points} points",
+    "yourFinalRank": "Your Final Rank",
+    "finalStats": "{points} pts · {correct} / {total} correct",
+    "playAgain": "Play Again",
+    "timeUpTitle": "Time’s up!",
+    "timeUpHint": "Press Reveal Answer on the Host screen to see the solution and leaderboard."
   }
 }

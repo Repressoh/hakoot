@@ -10,6 +10,7 @@ const PAGES: {
   priority: number;
 }[] = [
   { changeFrequency: "weekly", path: "", priority: 1 },
+  { changeFrequency: "monthly", path: "/demo", priority: 0.9 },
   { changeFrequency: "monthly", path: "/join", priority: 0.8 },
   { changeFrequency: "monthly", path: "/sign-in", priority: 0.6 },
   { changeFrequency: "monthly", path: "/sign-up", priority: 0.6 },
