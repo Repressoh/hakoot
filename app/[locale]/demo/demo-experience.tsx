@@ -13,7 +13,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { ClientCodeBlock } from "@/components/game/client-code-block";
 import { MarkdownViewer } from "@/components/game/markdown-viewer";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -246,21 +246,23 @@ function HostPanel({
           />
         )}
 
-        {state.status === "in_progress" && currentStep?.type === "quiz" && (
-          <HostQuizContent
-            answerCount={getStepAnswerCount(state, currentStep.id)}
-            answerRevealed={state.answerRevealed}
-            isLastStep={state.currentStepIndex === lesson.steps.length - 1}
-            key={currentStep.id}
-            leaderboard={leaderboard}
-            onAdvance={onAdvance}
-            onReveal={onReveal}
-            participantCount={state.participants.length}
-            step={currentStep}
-            stepStartedAt={state.stepStartedAt ?? Date.now()}
-            visitorName={visitorName}
-          />
-        )}
+        {state.status === "in_progress" &&
+          currentStep?.type === "quiz" &&
+          state.stepStartedAt !== null && (
+            <HostQuizContent
+              answerCount={getStepAnswerCount(state, currentStep.id)}
+              answerRevealed={state.answerRevealed}
+              isLastStep={state.currentStepIndex === lesson.steps.length - 1}
+              key={currentStep.id}
+              leaderboard={leaderboard}
+              onAdvance={onAdvance}
+              onReveal={onReveal}
+              participantCount={state.participants.length}
+              step={currentStep}
+              stepStartedAt={state.stepStartedAt}
+              visitorName={visitorName}
+            />
+          )}
 
         {state.status === "finished" && (
           <div className="flex flex-1 flex-col justify-between gap-5">
@@ -591,18 +593,20 @@ function PlayerPanel({
           </div>
         )}
 
-        {state.status === "in_progress" && currentStep?.type === "quiz" && (
-          <PlayerQuizContent
-            answerRevealed={state.answerRevealed}
-            key={currentStep.id}
-            leaderboard={leaderboard}
-            onSubmitAnswer={onSubmitAnswer}
-            step={currentStep}
-            stepStartedAt={state.stepStartedAt ?? Date.now()}
-            visitorAnswer={visitor?.answers[currentStep.id]}
-            visitorName={visitor?.name ?? ""}
-          />
-        )}
+        {state.status === "in_progress" &&
+          currentStep?.type === "quiz" &&
+          state.stepStartedAt !== null && (
+            <PlayerQuizContent
+              answerRevealed={state.answerRevealed}
+              key={`${currentStep.id}-${state.stepStartedAt}`}
+              leaderboard={leaderboard}
+              onSubmitAnswer={onSubmitAnswer}
+              step={currentStep}
+              stepStartedAt={state.stepStartedAt}
+              visitorAnswer={visitor?.answers[currentStep.id]}
+              visitorName={visitor?.name ?? ""}
+            />
+          )}
 
         {state.status === "finished" && (
           <div className="flex flex-1 flex-col justify-between gap-5">
@@ -679,21 +683,16 @@ function PlayerQuizContent({
   visitorName,
 }: PlayerQuizContentProps) {
   const t = useTranslations("demo");
-  const [isTimeUp, setIsTimeUp] = useState(
-    () => Date.now() - stepStartedAt >= step.timeLimitSeconds * 1000
-  );
+  const [isTimeUp, setIsTimeUp] = useState(false);
 
   useEffect(() => {
     if (answerRevealed) {
       return;
     }
-    const remainingMs =
-      stepStartedAt + step.timeLimitSeconds * 1000 - Date.now();
-    if (remainingMs <= 0) {
-      setIsTimeUp(true);
-      return;
-    }
-    setIsTimeUp(false);
+    const remainingMs = Math.max(
+      0,
+      stepStartedAt + step.timeLimitSeconds * 1000 - Date.now()
+    );
     const timer = setTimeout(() => {
       setIsTimeUp(true);
     }, remainingMs);
@@ -809,14 +808,80 @@ function PlayerQuizContent({
   );
 }
 
+type DemoSessionAction =
+  | { type: "start"; now: number }
+  | { type: "advance"; lesson: ReturnType<typeof getDemoLesson>; now: number }
+  | { type: "reveal"; lesson: ReturnType<typeof getDemoLesson> }
+  | {
+      type: "answer";
+      lesson: ReturnType<typeof getDemoLesson>;
+      participantId: string;
+      choiceIndex: number;
+      now: number;
+    }
+  | {
+      type: "botAnswers";
+      lesson: ReturnType<typeof getDemoLesson>;
+      entries: Array<{ botId: string; choiceIndex: number }>;
+      now: number;
+    }
+  | { type: "rename"; name: string }
+  | { type: "restart"; defaultVisitorName: string };
+
+function demoSessionReducer(
+  state: DemoSessionState,
+  action: DemoSessionAction
+): DemoSessionState {
+  switch (action.type) {
+    case "start":
+      return startDemoSession(state, action.now);
+    case "advance":
+      return advanceDemoStep(state, action.lesson, action.now);
+    case "reveal":
+      return revealDemoAnswer(state, action.lesson);
+    case "answer":
+      return submitDemoAnswer(
+        state,
+        action.lesson,
+        action.participantId,
+        action.choiceIndex,
+        action.now
+      );
+    case "botAnswers":
+      return action.entries.reduce(
+        (acc, item) =>
+          submitDemoAnswer(
+            acc,
+            action.lesson,
+            item.botId,
+            item.choiceIndex,
+            action.now
+          ),
+        state
+      );
+    case "rename":
+      return renameDemoVisitor(state, action.name);
+    case "restart": {
+      const currentName =
+        state.participants.find((p) => p.id === DEMO_VISITOR_ID)?.name ||
+        action.defaultVisitorName;
+      return createInitialDemoState(currentName);
+    }
+    default:
+      return state;
+  }
+}
+
 export function DemoExperience() {
   const locale = useLocale();
   const t = useTranslations("demo");
   const lesson = getDemoLesson(locale);
 
   const [viewMode, setViewMode] = useState<ViewMode>("split");
-  const [state, setState] = useState<DemoSessionState>(() =>
-    createInitialDemoState(t("defaultVisitorName"))
+  const [state, dispatch] = useReducer(
+    demoSessionReducer,
+    t("defaultVisitorName"),
+    createInitialDemoState
   );
 
   const currentStep = getCurrentDemoStep(state, lesson);
@@ -832,60 +897,66 @@ export function DemoExperience() {
       return;
     }
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    for (const bot of DEMO_BOTS) {
+    const scheduled = DEMO_BOTS.flatMap((bot) => {
       const scripted = bot.answers[currentStepId];
-      if (!scripted) {
-        continue;
-      }
-      const timer = setTimeout(() => {
-        setState((prev) =>
-          submitDemoAnswer(
-            prev,
-            lesson,
-            bot.id,
-            scripted.choiceIndex,
-            Date.now()
-          )
-        );
-      }, scripted.delayMs);
-      timers.push(timer);
+      return scripted ? [{ botId: bot.id, ...scripted }] : [];
+    });
+
+    if (scheduled.length === 0) {
+      return;
     }
 
-    return () => {
-      for (const timer of timers) {
-        clearTimeout(timer);
+    const startedAt = Date.now();
+    const submitted = new Set<string>();
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - startedAt;
+      const due = scheduled.filter(
+        (item) => !submitted.has(item.botId) && elapsed >= item.delayMs
+      );
+      if (due.length === 0) {
+        return;
       }
-    };
+      for (const item of due) {
+        submitted.add(item.botId);
+      }
+      dispatch({ entries: due, lesson, now, type: "botAnswers" });
+      if (submitted.size === scheduled.length) {
+        clearInterval(interval);
+      }
+    }, 250);
+
+    return () => clearInterval(interval);
   }, [currentStepId, isQuizActive, lesson]);
 
   function handleStart() {
-    setState((prev) => startDemoSession(prev, Date.now()));
+    dispatch({ now: Date.now(), type: "start" });
   }
 
   function handleAdvance() {
-    setState((prev) => advanceDemoStep(prev, lesson, Date.now()));
+    dispatch({ lesson, now: Date.now(), type: "advance" });
   }
 
   function handleReveal() {
-    setState((prev) => revealDemoAnswer(prev, lesson));
+    dispatch({ lesson, type: "reveal" });
   }
 
   function handleSubmitAnswer(choiceIndex: number) {
-    setState((prev) =>
-      submitDemoAnswer(prev, lesson, DEMO_VISITOR_ID, choiceIndex, Date.now())
-    );
+    dispatch({
+      choiceIndex,
+      lesson,
+      now: Date.now(),
+      participantId: DEMO_VISITOR_ID,
+      type: "answer",
+    });
   }
 
   function handleRenameVisitor(name: string) {
-    setState((prev) => renameDemoVisitor(prev, name));
+    dispatch({ name, type: "rename" });
   }
 
   function handleRestart() {
-    const currentName =
-      state.participants.find((p) => p.id === DEMO_VISITOR_ID)?.name ||
-      t("defaultVisitorName");
-    setState(createInitialDemoState(currentName));
+    dispatch({ defaultVisitorName: t("defaultVisitorName"), type: "restart" });
   }
 
   return (
