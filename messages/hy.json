@@ -25,7 +25,8 @@
     "dashboard": "Դեշբորդ",
     "emailLists": "Էլփոստային ցուցակներ",
     "hostSignIn": "Հյուրընկալող? Մուտք գործեք",
-    "accountSettings": "Հաշվի կարգավորումներ"
+    "accountSettings": "Հաշվի կարգավորումներ",
+    "tryDemo": "Փորձարկել դեմոն"
   },
   "settings": {
     "title": "Հաշվի կարգավորումներ",
@@ -94,7 +95,8 @@
     "connecting": "Համակցվում է...",
     "enterMatch": "Մուտք գործել խաղ",
     "metaTitle": "Հակութ - ինտերակտիվ քվիզ հարթակ",
-    "metaDescription": "Ստեղծեք և խաղացեք ինտերակտիվ ծրագրավորման քվիզեր ձեր հանդիսատեսի հետ"
+    "metaDescription": "Ստեղծեք և խաղացեք ինտերակտիվ ծրագրավորման քվիզեր ձեր հանդիսատեսի հետ",
+    "tryDemoCta": "Փորձեք ինտերակտիվ բացօրյա դեմոն (առանց մուտք գործելու)"
   },
   "auth": {
     "signInTitle": "Բարի վերադարձ",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Ավելացնել",
     "removeEntryFailed": "Կապը հեռացնել չի հաջողվել"
+  },
+  "demo": {
+    "metaTitle": "Ինտերակտիվ ցուցադրություն — Hakoot",
+    "metaDescription": "Փորձեք Hakoot-ը կենդանի ռեժիմում՝ հյուրընկալողի և խաղացողի կողք կողքի բաց օրերի սիմուլյատորով։ Հաշիվ չի պահանջվում։",
+    "badge": "Բաց օրվա ցուցադրություն",
+    "heading": "Ուղիղ դասասենյակի սիմուլյատոր",
+    "subheading": "Դասընթացը վարեք հյուրընկալողի էկրանին և իրական ժամանակում պատասխանեք խաղացողի սարքում։",
+    "viewModeLabel": "Դեմո դիտման ռեժիմ",
+    "viewMode": {
+      "split": "Բաժանված դիտում",
+      "host": "Հյուրընկալող",
+      "player": "Խաղացող"
+    },
+    "restartDemo": "Վերսկսել ցուցադրությունը",
+    "hostScreenLabel": "Հյուրընկալողի էկրան",
+    "playerScreenLabel": "Խաղացողի սարք",
+    "statusLobby": "Լոբբի",
+    "statusFinished": "Ավարտված",
+    "stepProgress": "Քայլ {current}/ {total}",
+    "inviteCodeLabel": "Դեմո հրավեր կոդ",
+    "playersJoined": "{count} խաղացողներ լոբբիում",
+    "defaultVisitorName": "Հյուր",
+    "youTag": "Դու",
+    "startSession": "Սկսել ցուցադրական նիստը",
+    "theoryLabel": "Թեորիա և կոդ",
+    "quizLabel": "Ուղիղ քվիզ",
+    "codeNotesLabel": "Սեղմեք տողի վրա՝ ստուգելու համար",
+    "nextStep": "Հաջորդ քայլ",
+    "finishSession": "Ցուցադրել վերջնական արդյունքները",
+    "revealAnswer": "Բացահայտել պատասխանը",
+    "answersReceived": "{answered} / պատասխանված{total}",
+    "correctBadge": "Ճիշտ",
+    "liveLeaderboard": "Ուղիղ ցուցակ",
+    "finalLeaderboard": "Վերջնական առաջնորդության աղյուսակ",
+    "finishedSubtitle": "Սա ամբողջական Hakoot դաս է՝ պատրաստ հաջորդ այցելուի համար վերականգնվելու։",
+    "createOwnGame": "Ստեղծեք ձեր սեփական խաղը",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ձեր ցուցադրվող անունը",
+    "visitorNamePlaceholder": "Մուտքագրեք ձեր անունը",
+    "joinedLobbyTitle": "Դուք գտնվում եք լոբբիում։",
+    "joinedLobbyHint": "Սեղմեք «Սկսել ցուցադրական դասը» հյուրի էկրանին՝ դասը սկսելու համար։",
+    "connectedCode": "Միացված է սենյակին {code}",
+    "answerLockedTitle": "Պատասխանը կողպված է։",
+    "answerLockedHint": "Հյուրի էկրանին սեղմեք «Պատասխանը բացահայտել»՝ միավորներն ու առաջատարների ցուցակը տեսնելու համար։",
+    "resultCorrect": "Ճիշտ է!",
+    "resultIncorrect": "Չի ստացվում։",
+    "pointsEarned": "+{points} միավորներ",
+    "yourFinalRank": "Ձեր վերջնական դասը",
+    "finalStats": "{points} միավորներ · {correct}/ ճիշտ{total}",
+    "playAgain": "Կրկին խաղալ",
+    "timeUpTitle": "Ժամանակը սպառված է!",
+    "timeUpHint": "Հյուրի էկրանին սեղմեք «Բացահայտել պատասխանը»՝ լուծումը և առաջատարների ցուցակը տեսնելու համար։"
   }
 }

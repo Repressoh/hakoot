@@ -25,7 +25,8 @@
     "dashboard": "Mga kontrol at indikador ng sasakyan",
     "emailLists": "Mga Listaan ng Email",
     "hostSignIn": "Magtatag? Mag-sign in",
-    "accountSettings": "Mga Setting ng Account"
+    "accountSettings": "Mga Setting ng Account",
+    "tryDemo": "Subukan ang Demo"
   },
   "settings": {
     "title": "Mga Setting ng Account",
@@ -94,7 +95,8 @@
     "connecting": "Nakasugod...",
     "enterMatch": "Pumasok sa laban",
     "metaTitle": "Hakoot - Interaktibong Plataporma ng Kwiz",
-    "metaDescription": "Gumawa at maglaro ng mga interaktibong coding quiz kasama ang iyong madla."
+    "metaDescription": "Gumawa at maglaro ng mga interaktibong coding quiz kasama ang iyong madla.",
+    "tryDemoCta": "Subukan ang Interactive Open-Day Demo (hindi kailangan mag-login)"
   },
   "auth": {
     "signInTitle": "Maligayang pagbabalik",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Magdagdag",
     "removeEntryFailed": "Hindi natanggal ang kontak"
+  },
+  "demo": {
+    "metaTitle": "Interaktibong Demo — Hakoot",
+    "metaDescription": "Subukan ang Hakoot nang live gamit ang side-by-side na open-day simulator para sa host at player. Hindi kailangan ng account.",
+    "badge": "Demo sa Araw ng Pagbubukas",
+    "heading": "Live Classroom Simulator",
+    "subheading": "Patakbuhin ang aralin sa screen ng Host at sagutin nang real time sa device ng Player.",
+    "viewModeLabel": "Modo ng pagtingin sa demo",
+    "viewMode": {
+      "split": "Hinating Tanawin",
+      "host": "Host",
+      "player": "Manlalaro"
+    },
+    "restartDemo": "I-restart ang Demo",
+    "hostScreenLabel": "Iskrin ng Tagapag-host",
+    "playerScreenLabel": "Mga Kagamitang Paggamit ng Manlalaro",
+    "statusLobby": "Lobby",
+    "statusFinished": "Natapos",
+    "stepProgress": "Hakbang /{current} {total}",
+    "inviteCodeLabel": "Demo Invite Code",
+    "playersJoined": "{count} mga manlalaro sa lobby",
+    "defaultVisitorName": "Panauhin",
+    "youTag": "Ikaw",
+    "startSession": "Simulan ang Demo Session",
+    "theoryLabel": "Teorya at Kodigo",
+    "quizLabel": "Live Quiz",
+    "codeNotesLabel": "I-click ang linya upang suriin",
+    "nextStep": "Susunod na Hakbang",
+    "finishSession": "Ipakita ang Panghuling Mga Resulta",
+    "revealAnswer": "Ipakita ang Sagot",
+    "answersReceived": "{answered} / nasagot{total}",
+    "correctBadge": "Tama",
+    "liveLeaderboard": "Live Leaderboard",
+    "finalLeaderboard": "Pangwakas na Leaderboard",
+    "finishedSubtitle": "Iyon ang isang kumpletong aralin sa Hakoot — handa nang i-reset para sa susunod na bisita.",
+    "createOwnGame": "Gumawa ng Sariling Laro",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ang iyong pangalan sa display",
+    "visitorNamePlaceholder": "Ipasok ang iyong pangalan",
+    "joinedLobbyTitle": "Nasa lobby ka!",
+    "joinedLobbyHint": "Pindutin ang 'Start Demo Session' sa screen ng Host upang simulan ang aralin.",
+    "connectedCode": "Konektado sa silid {code}",
+    "answerLockedTitle": "Naka-lock na ang sagot!",
+    "answerLockedHint": "Pindutin ang Ipakita ang Sagot sa screen ng Tagapag-host upang makita ang mga puntos at ang leaderboard.",
+    "resultCorrect": "Tama!",
+    "resultIncorrect": "Hindi pa tama!",
+    "pointsEarned": "+{points} puntos",
+    "yourFinalRank": "Ang Iyong Panghuling Ranggo",
+    "finalStats": "{points} pts · {correct}/ tama{total}",
+    "playAgain": "Maglaro Muli",
+    "timeUpTitle": "Natapos na ang oras!",
+    "timeUpHint": "Pindutin ang Ipakita ang Sagot sa screen ng Tagapag-host upang makita ang solusyon at ang leaderboard."
   }
 }

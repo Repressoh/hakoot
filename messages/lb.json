@@ -25,7 +25,8 @@
     "dashboard": "Dashboard",
     "emailLists": "E-Mail-Lëschten",
     "hostSignIn": "Wirt? Aschreiwen",
-    "accountSettings": "Kontastellungen"
+    "accountSettings": "Kontastellungen",
+    "tryDemo": "Demo ausprobéieren"
   },
   "settings": {
     "title": "Kontastellungen",
@@ -94,7 +95,8 @@
     "connecting": "Verbindung...",
     "enterMatch": "Gitt an de Match",
     "metaTitle": "Hakoot - Interaktiv Quiz-Plattform",
-    "metaDescription": "Erstellt a spillt interaktiv Coding-Quiz mat ärem Publikum."
+    "metaDescription": "Erstellt a spillt interaktiv Coding-Quiz mat ärem Publikum.",
+    "tryDemoCta": "Interaktiv Open-Day-Demo ausprobéieren (keen Login)"
   },
   "auth": {
     "signInTitle": "Wëllkomm zréck",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "derbäisetzen",
     "removeEntryFailed": "Kontakt net ewechgeholl"
+  },
+  "demo": {
+    "metaTitle": "Interaktiv Demo — Hakoot",
+    "metaDescription": "Probéiert Hakoot live mam Side-by-Side-Host- a Spiller-Open-Day-Simulator. Kee Kont néideg.",
+    "badge": "Demo vum Opentag",
+    "heading": "Live-Klassenzëmmer-Simulator",
+    "subheading": "Steiert d'Lektioun um Host-Bildschierm a äntwert an Echtzäit um Player-Apparat.",
+    "viewModeLabel": "Demo-Vue-Modus",
+    "viewMode": {
+      "split": "Opgedeelt Vue",
+      "host": "Host",
+      "player": "Spiller"
+    },
+    "restartDemo": "Demo nei starten",
+    "hostScreenLabel": "Host-Bildschierm",
+    "playerScreenLabel": "Spiller-Apparat",
+    "statusLobby": "Lobby",
+    "statusFinished": "Fäerdeg",
+    "stepProgress": "Schrëtt {current}/ {total}",
+    "inviteCodeLabel": "Demo-Invitatiounscode",
+    "playersJoined": "{count} Spiller am Lobby",
+    "defaultVisitorName": "Gäscht",
+    "youTag": "Dir",
+    "startSession": "Demo-Sessioun starten",
+    "theoryLabel": "Theorie & Code",
+    "quizLabel": "Live-Quiz",
+    "codeNotesLabel": "Klickt op eng Zeil fir se z'iwwerpréiwen",
+    "nextStep": "Nächst Schrëtt",
+    "finishSession": "Weise d'Endresultater",
+    "revealAnswer": "Äntwert weisen",
+    "answersReceived": "{answered} / beäntwert{total}",
+    "correctBadge": "Korrekt",
+    "liveLeaderboard": "Liewens-Leaderboard",
+    "finalLeaderboard": "End-Leaderboard",
+    "finishedSubtitle": "Dat ass eng komplett Hakoot-Lektioun — prett fir fir de nächste Besucher nees opzestellen.",
+    "createOwnGame": "Maacht Äert eegent Spill",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ären Display-Numm",
+    "visitorNamePlaceholder": "Gitt Ären Numm an",
+    "joinedLobbyTitle": "Dir sidd am Foyer!",
+    "joinedLobbyHint": "Dréckt op \"Demo-Sessioun starten\" um Host-Bildschierm, fir d'Lektioun ze starten.",
+    "connectedCode": "Mat dem Raum verbonnen {code}",
+    "answerLockedTitle": "Äntwert gespaart!",
+    "answerLockedHint": "Dréckt op der Host-Bildschierm op \"Äntwert weisen\", fir d'Punkten an d'Leaderboard ze gesinn.",
+    "resultCorrect": "Richteg!",
+    "resultIncorrect": "Net ganz!",
+    "pointsEarned": "+{points} Punkten",
+    "yourFinalRank": "Äre Schlussrang",
+    "finalStats": "{points} pts · {correct}/ korrekt{total}",
+    "playAgain": "Nees spillen",
+    "timeUpTitle": "D'Zäit ass eriwwer!",
+    "timeUpHint": "Dréckt op \"Äntwert weisen\" um Host-Bildschierm, fir d'Léisung an d'Leaderboard ze gesinn."
   }
 }

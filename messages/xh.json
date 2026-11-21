@@ -25,7 +25,8 @@
     "dashboard": "Iphaneli yokulawula",
     "emailLists": "Uluhlu lwee-imeyile",
     "hostSignIn": "Umnini? Ngena",
-    "accountSettings": "Iisetingi zeakhawunti"
+    "accountSettings": "Iisetingi zeakhawunti",
+    "tryDemo": "Zama iDemo"
   },
   "settings": {
     "title": "Iisetingi zeakhawunti",
@@ -94,7 +95,8 @@
     "connecting": "Kudityaniswa...",
     "enterMatch": "Ngena kumdlalo",
     "metaTitle": "Hakoot - Iqonga leMibuzo eNtshukumo",
-    "metaDescription": "Yenza kwaye udlale iikwizi zekhowudi ezisebenzisanayo nabaphulaphuli bakho."
+    "metaDescription": "Yenza kwaye udlale iikwizi zekhowudi ezisebenzisanayo nabaphulaphuli bakho.",
+    "tryDemoCta": "Zama iDemo yoSuku oluVulelekileyo eNxibelelanayo (akukho kungena)"
   },
   "auth": {
     "signInTitle": "Wamkelekile kwakhona",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Yongeza",
     "removeEntryFailed": "Akuphumelelanga ukususa uqhagamshelwano"
+  },
+  "demo": {
+    "metaTitle": "IDemo Esebenzisanayo — Hakoot",
+    "metaDescription": "Zama iHakoot ngqo kunye nesilinganisi sosuku lokuvula somphathi nomdlali abakufuphi. Akukho mfuneko yeakhawunti.",
+    "badge": "I-Demo yoSuku oluVulelekileyo",
+    "heading": "Isilinganisi seKlasi ePhilayo",
+    "subheading": "Qhuba isifundo kwiscreen se-Host uphendule ngexesha lokwenyani kwisixhobo se-Player.",
+    "viewModeLabel": "Imbonakalo yedemo",
+    "viewMode": {
+      "split": "Imbonakalo eYahlulweyo",
+      "host": "Umququzeleli",
+      "player": "Umdlali"
+    },
+    "restartDemo": "Qalisa Kwakhona iDemo",
+    "hostScreenLabel": "Isikrini soMququzeleli",
+    "playerScreenLabel": "Isixhobo somdlali",
+    "statusLobby": "Iholo",
+    "statusFinished": "Gqityiwe",
+    "stepProgress": "Inyathelo /{current} {total}",
+    "inviteCodeLabel": "IKhowudi Yomemo Yedemo",
+    "playersJoined": "{count} abadlali abakwilobi",
+    "defaultVisitorName": "Undwendwe",
+    "youTag": "Wena",
+    "startSession": "Qalisa iSeshoni yeDemo",
+    "theoryLabel": "Ithiyori neKhowudi",
+    "quizLabel": "Uvavanyo Oluphilayo",
+    "codeNotesLabel": "Cofa umgca ukuze uhlolisise",
+    "nextStep": "Inyathelo Elilandelayo",
+    "finishSession": "Bonisa Iziphumo Zokugqibela",
+    "revealAnswer": "Tyhila Impendulo",
+    "answersReceived": "{answered} / iphenduliwe{total}",
+    "correctBadge": "Chanekile",
+    "liveLeaderboard": "Ibhentshi yamanqaku ebukhoma",
+    "finalLeaderboard": "Ibhentshi yamagqibela",
+    "finishedSubtitle": "Leso isifundo seHakoot esipheleleyo — sikulungele ukusetwa ngokutsha kumtyeleli olandelayo.",
+    "createOwnGame": "Yenza Umdlalo Wakho",
+    "pointsPill": "{points} amanqaku",
+    "visitorNameLabel": "Igama lakho eliboniswayo",
+    "visitorNamePlaceholder": "Faka igama lakho",
+    "joinedLobbyTitle": "Ukuselobhini!",
+    "joinedLobbyHint": "Cofa u-Qalisa iSeshoni yeDemo kwiscreen soMququzeleli ukuqalisa isifundo.",
+    "connectedCode": "Uqhagamshelwe kwigumbi {code}",
+    "answerLockedTitle": "Impendulo itshixwe!",
+    "answerLockedHint": "Cofa u-Reveal Answer kwiscreen soMququzeleli ukuze ubone amanqaku kunye nelebhodi yamanqaku.",
+    "resultCorrect": "Kuchanekile!",
+    "resultIncorrect": "Akunjalo!",
+    "pointsEarned": "+{points} amanqaku",
+    "yourFinalRank": "Isikhundla Sakho Sokugqibela",
+    "finalStats": "{points} amanqaku · {correct}/ {total} echanekileyo",
+    "playAgain": "Dlala Kwakhona",
+    "timeUpTitle": "Ixesha liphelile!",
+    "timeUpHint": "Cofa u-Reveal Answer kwiscreen soMququzeleli ukuze ubone isisombululo kunye ne-leaderboard."
   }
 }

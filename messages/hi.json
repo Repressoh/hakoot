@@ -25,7 +25,8 @@
     "dashboard": "डैशबोर्ड",
     "emailLists": "ईमेल सूचियाँ",
     "hostSignIn": "मेज़बान? साइन इन करें",
-    "accountSettings": "खाता सेटिंग्स"
+    "accountSettings": "खाता सेटिंग्स",
+    "tryDemo": "डेमो आज़माएँ"
   },
   "settings": {
     "title": "खाता सेटिंग्स",
@@ -94,7 +95,8 @@
     "connecting": "जुड़ रहा है...",
     "enterMatch": "मैच में प्रवेश करें",
     "metaTitle": "हकूट - इंटरैक्टिव क्विज़ प्लेटफ़ॉर्म",
-    "metaDescription": "अपने दर्शकों के साथ इंटरैक्टिव कोडिंग क्विज़ बनाएँ और खेलें"
+    "metaDescription": "अपने दर्शकों के साथ इंटरैक्टिव कोडिंग क्विज़ बनाएँ और खेलें",
+    "tryDemoCta": "इंटरैक्टिव ओपन-डे डेमो आज़माएँ (कोई लॉगिन नहीं)"
   },
   "auth": {
     "signInTitle": "फिर से स्वागत है",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "जोड़ें",
     "removeEntryFailed": "संपर्क हटाने में असफल"
+  },
+  "demo": {
+    "metaTitle": "इंटरैक्टिव डेमो — हकूट",
+    "metaDescription": "एक साथ-साथ होस्ट और प्लेयर ओपन-डे सिम्युलेटर के साथ हकूट को लाइव आज़माएँ। किसी खाते की आवश्यकता नहीं।",
+    "badge": "ओपन डे डेमो",
+    "heading": "लाइव क्लासरूम सिम्युलेटर",
+    "subheading": "होस्ट स्क्रीन पर पाठ चलाएँ और प्लेयर डिवाइस पर वास्तविक समय में उत्तर दें।",
+    "viewModeLabel": "डेमो व्यू मोड",
+    "viewMode": {
+      "split": "विभाजित दृश्य",
+      "host": "होस्ट",
+      "player": "प्लेयर"
+    },
+    "restartDemo": "डेमो फिर से शुरू करें",
+    "hostScreenLabel": "होस्ट स्क्रीन",
+    "playerScreenLabel": "प्लेयर डिवाइस",
+    "statusLobby": "लॉबी",
+    "statusFinished": "समाप्त",
+    "stepProgress": "चरण /{current} {total}",
+    "inviteCodeLabel": "डेमो निमंत्रण कोड",
+    "playersJoined": "{count} लॉबी में खिलाड़ी",
+    "defaultVisitorName": "अतिथि",
+    "youTag": "आप",
+    "startSession": "डेमो सत्र शुरू करें",
+    "theoryLabel": "सिद्धांत और कोड",
+    "quizLabel": "लाइव क्विज़",
+    "codeNotesLabel": "निरीक्षण के लिए किसी पंक्ति पर क्लिक करें",
+    "nextStep": "अगला कदम",
+    "finishSession": "अंतिम परिणाम दिखाएँ",
+    "revealAnswer": "उत्तर प्रकट करें",
+    "answersReceived": "{answered} / उत्तर {total}दिया गया",
+    "correctBadge": "सही",
+    "liveLeaderboard": "लाइव लीडरबोर्ड",
+    "finalLeaderboard": "अंतिम लीडरबोर्ड",
+    "finishedSubtitle": "यह एक पूरा Hakoot पाठ है — अगले आगंतुक के लिए रीसेट करने के लिए तैयार।",
+    "createOwnGame": "अपना खुद का गेम बनाएँ",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "आपका डिस्प्ले नाम",
+    "visitorNamePlaceholder": "अपना नाम दर्ज करें",
+    "joinedLobbyTitle": "आप लॉबी में हैं!",
+    "joinedLobbyHint": "पाठ शुरू करने के लिए होस्ट स्क्रीन पर 'स्टार्ट डेमो सेशन' दबाएँ।",
+    "connectedCode": "कमरे से जुड़ा {code}",
+    "answerLockedTitle": "उत्तर लॉक हो गया!",
+    "answerLockedHint": "स्कोर और लीडरबोर्ड देखने के लिए होस्ट स्क्रीन पर 'उत्तर प्रकट करें' दबाएँ।",
+    "resultCorrect": "सही!",
+    "resultIncorrect": "ठीक नहीं!",
+    "pointsEarned": "+{points} अंक",
+    "yourFinalRank": "आपकी अंतिम रैंक",
+    "finalStats": "{points} pts · {correct}/ सही{total}",
+    "playAgain": "फिर से खेलें",
+    "timeUpTitle": "समय समाप्त!",
+    "timeUpHint": "समाधान और लीडरबोर्ड देखने के लिए होस्ट स्क्रीन पर 'उत्तर प्रकट करें' दबाएँ।"
   }
 }

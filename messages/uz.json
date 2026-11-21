@@ -25,7 +25,8 @@
     "dashboard": "Boshqaruv paneli",
     "emailLists": "Elektron pochta ro'yxatlari",
     "hostSignIn": "Mezbun? Tizimga kirish",
-    "accountSettings": "Hisob sozlamalari"
+    "accountSettings": "Hisob sozlamalari",
+    "tryDemo": "Demoningizni sinab ko'ring"
   },
   "settings": {
     "title": "Hisob sozlamalari",
@@ -94,7 +95,8 @@
     "connecting": "Ulanmoqda...",
     "enterMatch": "Bellashuvga kirish",
     "metaTitle": "Hakoot - interaktiv viktorina platformasi",
-    "metaDescription": "Tomoshabinlaringiz bilan interaktiv kodlash viktorinalarini yarating va o'ynang"
+    "metaDescription": "Tomoshabinlaringiz bilan interaktiv kodlash viktorinalarini yarating va o'ynang",
+    "tryDemoCta": "Interaktiv ochiq kun demosini sinab ko'ring (kirish talab qilinmaydi)"
   },
   "auth": {
     "signInTitle": "Yana xush kelibsiz",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Qo'sh",
     "removeEntryFailed": "Kontaktni olib tashlash muvaffaqiyatsiz bo'ldi"
+  },
+  "demo": {
+    "metaTitle": "Interaktiv demo — Hakoot",
+    "metaDescription": "Hakoot'ni jonli tarzda, yonma-yon host va o'yinchi ochiq kun simulyatori bilan sinab ko'ring. Hisob yaratish shart emas.",
+    "badge": "Ochiq kun demonstratsiyasi",
+    "heading": "Jonli sinf xonasi simulyatori",
+    "subheading": "Darsni Host ekranida boshqaring va Player qurilmasida real vaqtda javob bering.",
+    "viewModeLabel": "Demo ko'rish rejimi",
+    "viewMode": {
+      "split": "Ajratilgan ko'rinish",
+      "host": "Mezbun",
+      "player": "O'yinchi"
+    },
+    "restartDemo": "Namoyishni qayta boshlash",
+    "hostScreenLabel": "Mehmon ekrani",
+    "playerScreenLabel": "O'yinchi qurilmasi",
+    "statusLobby": "Lobby",
+    "statusFinished": "Tugadi",
+    "stepProgress": "Qadam /{current} {total}",
+    "inviteCodeLabel": "Demo taklif kodi",
+    "playersJoined": "{count} lobbidagi o'yinchilar",
+    "defaultVisitorName": "Mehmon",
+    "youTag": "Siz",
+    "startSession": "Demo sessiyasini boshlang",
+    "theoryLabel": "Nazariya va Kod",
+    "quizLabel": "Jonli viktorina",
+    "codeNotesLabel": "Tekshirish uchun satrni bosing",
+    "nextStep": "Keyingi qadam",
+    "finishSession": "Yakuniy natijalarni ko'rsating",
+    "revealAnswer": "Javobni ko'rsatish",
+    "answersReceived": "{answered} / javob berildi{total}",
+    "correctBadge": "To'g'ri",
+    "liveLeaderboard": "Jonli peshqadamlar taxtasi",
+    "finalLeaderboard": "Yakuniy reyting",
+    "finishedSubtitle": "Bu to'liq Hakoot darsi — keyingi tashrif buyuruvchi uchun qayta tiklashga tayyor.",
+    "createOwnGame": "O'zingizning o'yiningizni yarating",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Sizning ko'rinadigan ismingiz",
+    "visitorNamePlaceholder": "O'zingizning ismingizni kiriting",
+    "joinedLobbyTitle": "Siz lobbidasiz!",
+    "joinedLobbyHint": "Darsni boshlash uchun Mezbon ekrani ustidan \"Demo sessiyasini boshlash\" tugmasini bosing.",
+    "connectedCode": "Xonaga ulanish {code}",
+    "answerLockedTitle": "Javob qulflangan!",
+    "answerLockedHint": "Mehmon ekrani ustidagi \"Javobni ochish\" tugmasini bosing, ballar va peshqadamlar ro'yxatini ko'rish uchun.",
+    "resultCorrect": "To'g'ri!",
+    "resultIncorrect": "To'g'ri emas!",
+    "pointsEarned": "+{points} ballar",
+    "yourFinalRank": "Sizning yakuniy reytingingiz",
+    "finalStats": "{points} pts · {correct}/ to'g'ri{total}",
+    "playAgain": "Yana o'ynash",
+    "timeUpTitle": "Vaqt tugadi!",
+    "timeUpHint": "Echim va yetakchi taxtani ko'rish uchun Mezbon ekrani ustidagi \"Javobni ochish\" tugmasini bosing."
   }
 }

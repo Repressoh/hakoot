@@ -25,7 +25,8 @@
     "dashboard": "ਡੈਸ਼ਬੋਰਡ",
     "emailLists": "ਈਮੇਲ ਸੂਚੀਆਂ",
     "hostSignIn": "ਮੇਜ਼ਬਾਨ? ਸਾਈਨ ਇਨ",
-    "accountSettings": "ਖਾਤਾ ਸੈਟਿੰਗਾਂ"
+    "accountSettings": "ਖਾਤਾ ਸੈਟਿੰਗਾਂ",
+    "tryDemo": "ਡੈਮੋ ਅਜ਼ਮਾਓ"
   },
   "settings": {
     "title": "ਖਾਤਾ ਸੈਟਿੰਗਾਂ",
@@ -94,7 +95,8 @@
     "connecting": "ਜੁੜ ਰਿਹਾ ਹੈ...",
     "enterMatch": "ਮੈਚ ਵਿੱਚ ਦਾਖਲ ਹੋਵੋ",
     "metaTitle": "ਹਕੂਟ - ਇੰਟਰਐਕਟਿਵ ਕੁਇਜ਼ ਪਲੇਟਫਾਰਮ",
-    "metaDescription": "ਆਪਣੇ ਦਰਸ਼ਕਾਂ ਨਾਲ ਇੰਟਰਐਕਟਿਵ ਕੋਡਿੰਗ ਕੁਇਜ਼ ਬਣਾਓ ਅਤੇ ਖੇਡੋ।"
+    "metaDescription": "ਆਪਣੇ ਦਰਸ਼ਕਾਂ ਨਾਲ ਇੰਟਰਐਕਟਿਵ ਕੋਡਿੰਗ ਕੁਇਜ਼ ਬਣਾਓ ਅਤੇ ਖੇਡੋ।",
+    "tryDemoCta": "ਇੰਟਰਐਕਟਿਵ ਓਪਨ-ਡੇ ਡੈਮੋ ਅਜ਼ਮਾਓ (ਕੋਈ ਲੌਗਇਨ ਨਹੀਂ)"
   },
   "auth": {
     "signInTitle": "ਫਿਰ ਤੋਂ ਸਵਾਗਤ ਹੈ",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "ਜੋੜੋ",
     "removeEntryFailed": "ਸੰਪਰਕ ਹਟਾਉਣ ਵਿੱਚ ਅਸਫਲ"
+  },
+  "demo": {
+    "metaTitle": "ਇੰਟਰਐਕਟਿਵ ਡੈਮੋ — ਹਕੂਟ",
+    "metaDescription": "ਇੱਕ ਸਾਈਡ-ਬਾਈ-ਸਾਈਡ ਹੋਸਟ ਅਤੇ ਖਿਡਾਰੀ ਓਪਨ-ਡੇ ਸਿਮੂਲੇਟਰ ਨਾਲ ਹਕੂਟ ਨੂੰ ਲਾਈਵ ਅਜ਼ਮਾਓ। ਕੋਈ ਖਾਤਾ ਲੋੜੀਂਦਾ ਨਹੀਂ।",
+    "badge": "ਓਪਨ ਡੇ ਡੈਮੋ",
+    "heading": "ਲਾਈਵ ਕਲਾਸਰੂਮ ਸਿਮੂਲੇਟਰ",
+    "subheading": "ਹੋਸਟ ਸਕ੍ਰੀਨ 'ਤੇ ਪਾਠ ਚਲਾਓ ਅਤੇ ਪਲੇਅਰ ਡਿਵਾਈਸ 'ਤੇ ਅਸਲ ਸਮੇਂ ਵਿੱਚ ਜਵਾਬ ਦਿਓ।",
+    "viewModeLabel": "ਡੈਮੋ ਵਿਊ ਮੋਡ",
+    "viewMode": {
+      "split": "ਵੰਡਿਆ ਹੋਇਆ ਦ੍ਰਿਸ਼",
+      "host": "ਮੇਜ਼ਬਾਨ",
+      "player": "ਖਿਡਾਰੀ"
+    },
+    "restartDemo": "ਡੈਮੋ ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ",
+    "hostScreenLabel": "ਮੇਜ਼ਬਾਨ ਸਕ੍ਰੀਨ",
+    "playerScreenLabel": "ਖਿਡਾਰੀ ਡਿਵਾਈਸ",
+    "statusLobby": "ਲਾਬੀ",
+    "statusFinished": "ਪੂਰਾ ਹੋਇਆ",
+    "stepProgress": "ਕਦਮ {current}/ {total}",
+    "inviteCodeLabel": "ਡੈਮੋ ਸੱਦਾ ਕੋਡ",
+    "playersJoined": "{count} ਲੌਬੀ ਵਿੱਚ ਖਿਡਾਰੀ",
+    "defaultVisitorName": "ਮਹਿਮਾਨ",
+    "youTag": "ਤੁਸੀਂ",
+    "startSession": "ਡੈਮੋ ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ",
+    "theoryLabel": "ਸਿਧਾਂਤ ਅਤੇ ਕੋਡ",
+    "quizLabel": "ਲਾਈਵ ਕਵਿਜ਼",
+    "codeNotesLabel": "ਜਾਂਚਣ ਲਈ ਕਿਸੇ ਲਾਈਨ 'ਤੇ ਕਲਿੱਕ ਕਰੋ",
+    "nextStep": "ਅਗਲਾ ਕਦਮ",
+    "finishSession": "ਅੰਤਿਮ ਨਤੀਜੇ ਦਿਖਾਓ",
+    "revealAnswer": "ਜਵਾਬ ਦਿਖਾਓ",
+    "answersReceived": "{answered} / ਜਵਾਬ ਦਿੱਤਾ{total} ਗਿਆ",
+    "correctBadge": "ਸਹੀ",
+    "liveLeaderboard": "ਲਾਈਵ ਲੀਡਰਬੋਰਡ",
+    "finalLeaderboard": "ਅੰਤਿਮ ਲੀਡਰਬੋਰਡ",
+    "finishedSubtitle": "ਇਹ ਇੱਕ ਪੂਰਾ Hakoot ਪਾਠ ਹੈ — ਅਗਲੇ ਵਿਜ਼ਿਟਰ ਲਈ ਰੀਸੈੱਟ ਕਰਨ ਲਈ ਤਿਆਰ।",
+    "createOwnGame": "ਆਪਣਾ ਖੇਡ ਬਣਾਓ",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "ਤੁਹਾਡਾ ਡਿਸਪਲੇ ਨਾਮ",
+    "visitorNamePlaceholder": "ਆਪਣਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+    "joinedLobbyTitle": "ਤੁਸੀਂ ਲਾਬੀ ਵਿੱਚ ਹੋ!",
+    "joinedLobbyHint": "ਪਾਠ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਹੋਸਟ ਸਕ੍ਰੀਨ 'ਤੇ 'ਸਟਾਰਟ ਡੈਮੋ ਸੈਸ਼ਨ' ਦਬਾਓ।",
+    "connectedCode": "ਕਮਰੇ ਨਾਲ ਜੁੜਿਆ {code}",
+    "answerLockedTitle": "ਜਵਾਬ ਲਾਕ ਹੋ ਗਿਆ!",
+    "answerLockedHint": "ਸਕੋਰ ਅਤੇ ਲੀਡਰਬੋਰਡ ਵੇਖਣ ਲਈ ਹੋਸਟ ਸਕ੍ਰੀਨ 'ਤੇ 'ਉੱਤਰ ਦਿਖਾਓ' ਦਬਾਓ।",
+    "resultCorrect": "ਸਹੀ!",
+    "resultIncorrect": "ਠੀਕ ਨਹੀਂ!",
+    "pointsEarned": "+{points} ਅੰਕ",
+    "yourFinalRank": "ਤੁਹਾਡੀ ਅੰਤਿਮ ਰੈਂਕ",
+    "finalStats": "{points} pts · {correct}/ ਸਹੀ{total}",
+    "playAgain": "ਫਿਰ ਖੇਡੋ",
+    "timeUpTitle": "ਸਮਾਂ ਖਤਮ!",
+    "timeUpHint": "ਹੋਸਟ ਸਕ੍ਰੀਨ 'ਤੇ 'Reveal Answer' ਦਬਾਓ ਤਾਂ ਜੋ ਹੱਲ ਅਤੇ ਲੀਡਰਬੋਰਡ ਵੇਖ ਸਕੋ।"
   }
 }

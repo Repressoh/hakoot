@@ -25,7 +25,8 @@
     "dashboard": "Tablero de a bordo",
     "emailLists": "Listas de correu electronico",
     "hostSignIn": "Anfitrión? Iniciar sesión",
-    "accountSettings": "Aconfiguración d'a cuenta"
+    "accountSettings": "Aconfiguración d'a cuenta",
+    "tryDemo": "Prebar a demo"
   },
   "settings": {
     "title": "Aconfiguración d'a cuenta",
@@ -94,7 +95,8 @@
     "connecting": "Connectando...",
     "enterMatch": "Dentrar en o partiu",
     "metaTitle": "Hakoot - Plataforma interactiva de preguntas y respuestas",
-    "metaDescription": "Crea y chuga a quizi interactivos de programación con o tuyo publico."
+    "metaDescription": "Crea y chuga a quizi interactivos de programación con o tuyo publico.",
+    "tryDemoCta": "Preba a demo interactiva d'o Día Ubierto (sin iniciar sesión)"
   },
   "auth": {
     "signInTitle": "Bienvenius de tornada",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Adhibir",
     "removeEntryFailed": "No s'ha puesto eliminar o contacto"
+  },
+  "demo": {
+    "metaTitle": "Demo interactiva — Hakoot",
+    "metaDescription": "Preba Hakoot en directo con un simulador d'open-day de presentador y chugador costau a costau. No cal cuenta.",
+    "badge": "Demo d'Día Ubierto",
+    "heading": "Simulador d'aula en directo",
+    "subheading": "Diriche a lección en a pantalla de l'Anfitrión y responde en tiempo real en o dispositivo d'o Chugador.",
+    "viewModeLabel": "Modo de visualización de demostración",
+    "viewMode": {
+      "split": "Vista dividida",
+      "host": "Anfitrión",
+      "player": "Chugador"
+    },
+    "restartDemo": "Reiniciar a demo",
+    "hostScreenLabel": "Pantalla de l'amfitrión",
+    "playerScreenLabel": "Dispositivo d'o chugador",
+    "statusLobby": "Sala d'espera",
+    "statusFinished": "Rematau",
+    "stepProgress": "Paso /{current} {total}",
+    "inviteCodeLabel": "Codigo d'invitación d'a demo",
+    "playersJoined": "{count} chugadors en l'atrio",
+    "defaultVisitorName": "Convidau",
+    "youTag": "Tu",
+    "startSession": "Prencipiar sesión de demostración",
+    "theoryLabel": "Teoría y Codigo",
+    "quizLabel": "Quiz en directo",
+    "codeNotesLabel": "Punche en una linia pa inspeccionar",
+    "nextStep": "Paso siguient",
+    "finishSession": "Amostrar os resultaus finals",
+    "revealAnswer": "Descubrir a respuesta",
+    "answersReceived": "{answered} / respondiu{total}",
+    "correctBadge": "Correcto",
+    "liveLeaderboard": "Tablero de clasificación en directo",
+    "finalLeaderboard": "Clasificación final",
+    "finishedSubtitle": "Ixa ye una lección completa de Hakoot — presta pa reiniciar-se pa o siguient vesitant.",
+    "createOwnGame": "Crea o tuyo propio chuego",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "O tuyo nombre d'afiche",
+    "visitorNamePlaceholder": "Escribe o tuyo nombre",
+    "joinedLobbyTitle": "Yes en o vestíbulo!",
+    "joinedLobbyHint": "Preta en \"Prencipiar sesión de demostración\" en a pantalla de l'amfitrión pa lanzar a lección.",
+    "connectedCode": "Connectau a la sala {code}",
+    "answerLockedTitle": "Respuesta zarrada!",
+    "answerLockedHint": "Preta en \"Revelar respuesta\" en a pantalla de l'amfitrión pa veyer as puntuacions y a tabla de clasificación.",
+    "resultCorrect": "Correcto!",
+    "resultIncorrect": "No ye correcto!",
+    "pointsEarned": "+{points} puntos",
+    "yourFinalRank": "O tuyo rango final",
+    "finalStats": "{points} pts · {correct}/ correcto{total}",
+    "playAgain": "Tornar a chugar",
+    "timeUpTitle": "O tiempo s'ha rematau!",
+    "timeUpHint": "Preta en \"Revelar respuesta\" en a pantalla de l'amfitrión pa veyer a solución y a tabla de clasificación."
   }
 }

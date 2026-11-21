@@ -25,7 +25,8 @@
     "dashboard": "Панэли идоракунӣ",
     "emailLists": "Рӯйхатҳои почтаи электронӣ",
     "hostSignIn": "Меҳмон? Ворид шавед",
-    "accountSettings": "Танзимоти ҳисоб"
+    "accountSettings": "Танзимоти ҳисоб",
+    "tryDemo": "Озмоишро санҷед"
   },
   "settings": {
     "title": "Танзимоти ҳисоб",
@@ -94,7 +95,8 @@
     "connecting": "Пайвастшавӣ...",
     "enterMatch": "Ба мусобиқа ворид шавед",
     "metaTitle": "Ҳакут - Платформаи интерактивии викторина",
-    "metaDescription": "Бо шунавандагони худ викторинаҳои интерактивии барномасозиро эҷод ва бозӣ кунед"
+    "metaDescription": "Бо шунавандагони худ викторинаҳои интерактивии барномасозиро эҷод ва бозӣ кунед",
+    "tryDemoCta": "Демои рӯзи кушод интерактивиро санҷед (бе воридшавӣ)"
   },
   "auth": {
     "signInTitle": "Боз хуш омадед",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Илова кунед",
     "removeEntryFailed": "Ҳазфи тамос ноком шуд"
+  },
+  "demo": {
+    "metaTitle": "Намоиши интерактивӣ — Ҳакут",
+    "metaDescription": "Ҳакутро дар режими зинда бо симулятори рӯзи кушод барои мизбон ва бозингар паҳлӯ ба паҳлӯ санҷед. Барои ин ҳисоби корбарӣ лозим нест.",
+    "badge": "Демои рӯзи кушод",
+    "heading": "Модели синфии зинда",
+    "subheading": "Дар экрани Host дарсро пеш баред ва дар экрани Player дар вақти воқеӣ посух диҳед.",
+    "viewModeLabel": "Режими намоиши демо",
+    "viewMode": {
+      "split": "Намоиши тақсимшуда",
+      "host": "Меҳмон",
+      "player": "Бозингар"
+    },
+    "restartDemo": "Деморо аз нав оғоз кунед",
+    "hostScreenLabel": "Экрани мизбон",
+    "playerScreenLabel": "Мошини бозингар",
+    "statusLobby": "Лобби",
+    "statusFinished": "Анҷом ёфт",
+    "stepProgress": "Қадам /{current} {total}",
+    "inviteCodeLabel": "Коди даъвати демо",
+    "playersJoined": "{count} бозингарон дар лобби",
+    "defaultVisitorName": "Меҳмон",
+    "youTag": "Шумо",
+    "startSession": "Оғози сессияи намоишӣ",
+    "theoryLabel": "Назария ва Код",
+    "quizLabel": "Квиз зинда",
+    "codeNotesLabel": "Барои тафтиш як сатрро клик кунед",
+    "nextStep": "Қадами оянда",
+    "finishSession": "Натиҷаҳои ниҳоиро нишон диҳед",
+    "revealAnswer": "Ҷавобро нишон диҳед",
+    "answersReceived": "{answered} / ҷавоб дода шуд{total}",
+    "correctBadge": "Дуруст",
+    "liveLeaderboard": "Рӯйхати зинда",
+    "finalLeaderboard": "Рӯйхати ниҳоӣ",
+    "finishedSubtitle": "Ин дарси пурраи Hakoot аст — омода аст барои меҳмони нав аз нав танзим шавад.",
+    "createOwnGame": "Бозии худро эҷод кунед",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Номи намоишии шумо",
+    "visitorNamePlaceholder": "Номи худро ворид кунед",
+    "joinedLobbyTitle": "Шумо дар лобби ҳастед!",
+    "joinedLobbyHint": "Барои оғоз кардани дарс, дар экрани Мизбон тугмаи «Оғози сессияи намоишӣ»-ро пахш кунед.",
+    "connectedCode": "Пайваст ба ҳуҷра {code}",
+    "answerLockedTitle": "Ҷавоб баста шуд!",
+    "answerLockedHint": "Дар экрани Мизбон тугмаи «Намоиши ҷавоб»-ро пахш кунед, то холҳо ва ҷадвали пешсафонро бинед.",
+    "resultCorrect": "Дуруст!",
+    "resultIncorrect": "Не чандон дуруст!",
+    "pointsEarned": "+{points} холҳо",
+    "yourFinalRank": "Ранги ниҳоии шумо",
+    "finalStats": "{points} имтиёзҳо · {correct}/ дуруст{total}",
+    "playAgain": "Боз бозӣ кунед",
+    "timeUpTitle": "Вақт тамом шуд!",
+    "timeUpHint": "Дар экрани Мизбон тугмаи «Намоиши ҷавоб»-ро пахш кунед, то ҳалли масъала ва ҷадвали пешсафонро бинед."
   }
 }

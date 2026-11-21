@@ -25,7 +25,8 @@
     "dashboard": "Mælaborð",
     "emailLists": "Póstlistar",
     "hostSignIn": "Gestgjafi? Skrá inn",
-    "accountSettings": "Aðgerðir reiknings"
+    "accountSettings": "Aðgerðir reiknings",
+    "tryDemo": "Reyndu sýnishorn"
   },
   "settings": {
     "title": "Aðgerðir reiknings",
@@ -94,7 +95,8 @@
     "connecting": "Að tengjast...",
     "enterMatch": "Farðu inn í leikinn",
     "metaTitle": "Hakoot - gagnvirkt spurningaleikjavettvangur",
-    "metaDescription": "Búðu til og spilaðu gagnvirk forritunarspurningaleiki með áhorfendum þínum."
+    "metaDescription": "Búðu til og spilaðu gagnvirk forritunarspurningaleiki með áhorfendum þínum.",
+    "tryDemoCta": "Reyndu gagnvirkt sýningardæmi opnunardagsins (engin innskráning)"
   },
   "auth": {
     "signInTitle": "Velkomin aftur",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Bæta við",
     "removeEntryFailed": "Misheppnað að fjarlægja tengilið"
+  },
+  "demo": {
+    "metaTitle": "Í gagnvirkri kynningu — Hakoot",
+    "metaDescription": "Reyndu Hakoot í beinni með hlið við hlið opnum degi fyrir gestgjafa og spilara. Engin reikningsskráning nauðsynleg.",
+    "badge": "Opnunardagsdemó",
+    "heading": "Lífkennslustofnahermi",
+    "subheading": "Stjórnaðu kennslustundinni á Host-skjánum og svaraðu í rauntíma á Player-tækinu.",
+    "viewModeLabel": "Sýningarskoðunarhamur",
+    "viewMode": {
+      "split": "Skiptur glampi",
+      "host": "Gestgjafi",
+      "player": "Spilari"
+    },
+    "restartDemo": "Endurræsa kynningu",
+    "hostScreenLabel": "Skjámynd gestgjafa",
+    "playerScreenLabel": "Tæki spilara",
+    "statusLobby": "Biðsalur",
+    "statusFinished": "Lokið",
+    "stepProgress": "Skref /{current} {total}",
+    "inviteCodeLabel": "Sýningarkóði",
+    "playersJoined": "{count} leikmenn í biðstofu",
+    "defaultVisitorName": "Gestur",
+    "youTag": "Þú",
+    "startSession": "Ræsa kynningarfund",
+    "theoryLabel": "Kenning og kóði",
+    "quizLabel": "Líflegur spurningaleikur",
+    "codeNotesLabel": "Smelltu á línu til að skoða",
+    "nextStep": "Næsta skref",
+    "finishSession": "Sýna lokaniðurstöður",
+    "revealAnswer": "Birta svar",
+    "answersReceived": "{answered} / svarað{total}",
+    "correctBadge": "Rétt",
+    "liveLeaderboard": "Bein stigatöfl",
+    "finalLeaderboard": "Lokaleiðtogatöflan",
+    "finishedSubtitle": "Þetta er fullkomin Hakoot-kennslustund — tilbúin til að endurstilla fyrir næsta gest.",
+    "createOwnGame": "Búðu til þitt eigið leik",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Birta nafn þitt",
+    "visitorNamePlaceholder": "Sláið inn nafn þitt",
+    "joinedLobbyTitle": "Þú ert í biðstofunni!",
+    "joinedLobbyHint": "Smelltu á \"Ræsa kynningarfund\" á gestastjórnborðinu til að hefja kennslustundina.",
+    "connectedCode": "Tengdur við herbergi {code}",
+    "answerLockedTitle": "Svar læst!",
+    "answerLockedHint": "Smelltu á \"Birta svar\" á gestastjórnborðinu til að sjá stig og stigatöfluna.",
+    "resultCorrect": "Rétta!",
+    "resultIncorrect": "Ekki alveg!",
+    "pointsEarned": "+{points} stig",
+    "yourFinalRank": "Þitt loka stöðugildi",
+    "finalStats": "{points} stig · {correct}/ rétt{total}",
+    "playAgain": "Spila aftur",
+    "timeUpTitle": "Tíminn er búinn!",
+    "timeUpHint": "Smelltu á \"Birta svar\" á gestastjórnborðinu til að sjá lausnina og forystuskrána."
   }
 }

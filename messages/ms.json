@@ -25,7 +25,8 @@
     "dashboard": "Papan pemuka",
     "emailLists": "Senarai E-mel",
     "hostSignIn": "Tuan rumah? Log masuk",
-    "accountSettings": "Tetapan Akaun"
+    "accountSettings": "Tetapan Akaun",
+    "tryDemo": "Cuba Demo"
   },
   "settings": {
     "title": "Tetapan Akaun",
@@ -94,7 +95,8 @@
     "connecting": "MENYAMBUNG...",
     "enterMatch": "MASUK PERLAWANAN",
     "metaTitle": "Hakoot - Platform Kuiz Interaktif",
-    "metaDescription": "Buat dan main kuiz pengaturcaraan interaktif dengan penonton anda"
+    "metaDescription": "Buat dan main kuiz pengaturcaraan interaktif dengan penonton anda",
+    "tryDemoCta": "Cuba Demo Hari Terbuka Interaktif (tanpa log masuk)"
   },
   "auth": {
     "signInTitle": "Selamat kembali",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Tambah",
     "removeEntryFailed": "Gagal membuang kenalan"
+  },
+  "demo": {
+    "metaTitle": "Demonstrasi Interaktif — Hakoot",
+    "metaDescription": "Cuba Hakoot secara langsung dengan simulator hari terbuka hos dan pemain bersebelahan. Tiada akaun diperlukan.",
+    "badge": "Demo Hari Terbuka",
+    "heading": "Pengemula Bilik Darjah Langsung",
+    "subheading": "Pandukan pelajaran pada skrin Host dan jawab secara masa nyata pada peranti Player.",
+    "viewModeLabel": "Mod paparan demo",
+    "viewMode": {
+      "split": "Paparan Terpisah",
+      "host": "Host",
+      "player": "Pemain"
+    },
+    "restartDemo": "Mulakan Semula Demo",
+    "hostScreenLabel": "Skrin Host",
+    "playerScreenLabel": "Peranti Pemain",
+    "statusLobby": "Lobi",
+    "statusFinished": "Selesai",
+    "stepProgress": "Langkah /{current} {total}",
+    "inviteCodeLabel": "Kod Jemputan Demo",
+    "playersJoined": "{count} pemain di lobi",
+    "defaultVisitorName": "Tamu",
+    "youTag": "Anda",
+    "startSession": "Mulakan Sesi Demo",
+    "theoryLabel": "Teori & Kod",
+    "quizLabel": "Kuiz Langsung",
+    "codeNotesLabel": "Klik baris untuk memeriksa",
+    "nextStep": "Langkah Seterusnya",
+    "finishSession": "Tunjukkan Keputusan Akhir",
+    "revealAnswer": "Pendedahan Jawapan",
+    "answersReceived": "{answered} / telah dijawab{total}",
+    "correctBadge": "Betul",
+    "liveLeaderboard": "Papan Pemimpin Langsung",
+    "finalLeaderboard": "Papan Pemimpin Akhir",
+    "finishedSubtitle": "Itulah pelajaran Hakoot yang lengkap — sedia untuk diset semula untuk pelawat seterusnya.",
+    "createOwnGame": "Buat Permainan Anda Sendiri",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Nama paparan anda",
+    "visitorNamePlaceholder": "Masukkan nama anda",
+    "joinedLobbyTitle": "Anda berada di lobi!",
+    "joinedLobbyHint": "Tekan Mula Sesi Demo pada skrin Host untuk memulakan pelajaran.",
+    "connectedCode": "Disambungkan ke bilik {code}",
+    "answerLockedTitle": "Jawapan terkunci!",
+    "answerLockedHint": "Tekan Tunjukkan Jawapan pada skrin Host untuk melihat skor dan papan pendahulu.",
+    "resultCorrect": "Betul!",
+    "resultIncorrect": "Bukan begitu!",
+    "pointsEarned": "+{points} mata",
+    "yourFinalRank": "Peringkat Akhir Anda",
+    "finalStats": "{points} pts · {correct}/ betul{total}",
+    "playAgain": "Main Semula",
+    "timeUpTitle": "Masa habis!",
+    "timeUpHint": "Tekan Tunjukkan Jawapan pada skrin Host untuk melihat penyelesaian dan papan pendahulu."
   }
 }

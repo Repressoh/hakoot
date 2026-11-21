@@ -25,7 +25,8 @@
     "dashboard": "Etanda ya bilembo",
     "emailLists": "Liste ya ba email",
     "hostSignIn": "Moyambi? Kɔtá",
-    "accountSettings": "Bongisi ya compte"
+    "accountSettings": "Bongisi ya compte",
+    "tryDemo": "Meka Demo"
   },
   "settings": {
     "title": "Bongisi ya compte",
@@ -94,7 +95,8 @@
     "connecting": "Kokangama...",
     "enterMatch": "Kɔtɔ na match",
     "metaTitle": "Hakoot - Esika ya masano ya mituna ya kosolola",
-    "metaDescription": "Bɔngisá mpe bɛtá ba quiz ya codage interactif elongo na bayoki na yo."
+    "metaDescription": "Bɔngisá mpe bɛtá ba quiz ya codage interactif elongo na bayoki na yo.",
+    "tryDemoCta": "Meka Démonstration ya Mokolo ya Kofungwama ya Interactif (kozala na compte esengeli te)"
   },
   "auth": {
     "signInTitle": "Boyeyi bolamu",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Bakisa",
     "removeEntryFailed": "Elongaki te kolongola contact"
+  },
+  "demo": {
+    "metaTitle": "Démonstration Interactif — Hakoot",
+    "metaDescription": "Meka Hakoot na direct na simulator ya mokolo ya kofungola, elongo na host mpe mosani pembeni na pembeni. Esengi compte te.",
+    "badge": "Démonstration ya Mokolo ya Kofungola",
+    "heading": "Esaleli ya komekola kelasi ya mbala moko",
+    "subheading": "Kamba liteya na écran ya Host mpe yanola na ntango mpenza na aparɛyi ya Player.",
+    "viewModeLabel": "Lolenge ya komonisa ya demo",
+    "viewMode": {
+      "split": "Etaleli ya kokabola",
+      "host": "Mokambi",
+      "player": "Mosani"
+    },
+    "restartDemo": "Zongisa Démonstration",
+    "hostScreenLabel": "Ekran ya Moyambi",
+    "playerScreenLabel": "Esaleli ya Mosani",
+    "statusLobby": "Esika ya kozela",
+    "statusFinished": "Esili",
+    "stepProgress": "Etapɛ {current}/ {total}",
+    "inviteCodeLabel": "Kode ya Libyangi ya Demo",
+    "playersJoined": "{count} basani na esika ya kozela",
+    "defaultVisitorName": "Mopaya",
+    "youTag": "Yo",
+    "startSession": "Banda session ya demo",
+    "theoryLabel": "Teorie & Code",
+    "quizLabel": "Quiz na ngonga moko",
+    "codeNotesLabel": "Finá na molongo mpo na kotala",
+    "nextStep": "Etapɛ elandi",
+    "finishSession": "Lakisa ba résultats ya suka",
+    "revealAnswer": "Monisa Eyano",
+    "answersReceived": "{answered} / eyano {total}epesami",
+    "correctBadge": "Ya solo",
+    "liveLeaderboard": "Etanda ya bakonzi ya mbala moko",
+    "finalLeaderboard": "Liste ya suka ya bakonzi",
+    "finishedSubtitle": "Yango ezali liteya mobimba ya Hakoot — elingi kobongolama lisusu mpo na moyei oyo akolanda.",
+    "createOwnGame": "Salá Lisano na Yo Moko",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Nkombo na yo ya komonana",
+    "visitorNamePlaceholder": "Kɔtisa nkombo na yo",
+    "joinedLobbyTitle": "Ozali na esika ya kozela!",
+    "joinedLobbyHint": "Finá na 'Banda Session ya Demo' na écran ya Host mpo na kobanda liteya.",
+    "connectedCode": "Akomi na salle {code}",
+    "answerLockedTitle": "Eyano ekangami!",
+    "answerLockedHint": "Finá na \"Reveal Answer\" na écran ya Host mpo na komona ba points mpe liste ya ba gagnants.",
+    "resultCorrect": "Eza malamu!",
+    "resultIncorrect": "Ezali malamu te!",
+    "pointsEarned": "+{points} ba points",
+    "yourFinalRank": "Eteni na yo ya suka",
+    "finalStats": "{points} pts · {correct}/ ya malamu{total}",
+    "playAgain": "Bɛtá lisusu",
+    "timeUpTitle": "Ntango esili!",
+    "timeUpHint": "Finá na \"Reveal Answer\" na écran ya Host mpo na komona eyano mpe liste ya bakonzi."
   }
 }

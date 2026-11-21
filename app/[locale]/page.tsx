@@ -52,8 +52,16 @@ export default async function LandingPage() {
               HAKOOT<span className="animate-glow-pulse text-primary">_</span>
             </span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <LocaleSwitcher variant="light" />
+            <Button
+              asChild
+              className="press-down hidden rounded-full border border-border/80 bg-surface-soft/80 font-bold text-foreground text-xs uppercase tracking-widest backdrop-blur-md hover:border-primary/60 hover:bg-primary/10 sm:inline-flex"
+              size="sm"
+              variant="ghost"
+            >
+              <Link href="/demo">{t("nav.tryDemo")}</Link>
+            </Button>
             <Button
               asChild
               className="hover:glow-border press-down rounded-full border-2 border-primary/40 bg-background/50 font-bold text-primary text-sm uppercase tracking-widest backdrop-blur-md hover:border-primary hover:bg-primary/10"
@@ -98,10 +106,18 @@ export default async function LandingPage() {
           </div>
 
           <div
-            className="relative z-20 w-full animate-float"
+            className="relative z-20 flex w-full animate-float flex-col items-center gap-4"
             style={{ animationDelay: "0.2s" }}
           >
             <JoinCard />
+            <Button
+              asChild
+              className="press-down rounded-full border border-primary/40 bg-background/70 px-6 font-bold font-display text-primary text-sm backdrop-blur-md hover:border-primary hover:bg-primary/15"
+              size="lg"
+              variant="outline"
+            >
+              <Link href="/demo">{t("landing.tryDemoCta")}</Link>
+            </Button>
           </div>
 
           <p className="relative z-10 mt-8 text-center font-mono text-muted-foreground text-sm">

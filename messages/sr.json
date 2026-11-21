@@ -25,7 +25,8 @@
     "dashboard": "Табла",
     "emailLists": "Листе електронске поште",
     "hostSignIn": "Домаћин? Пријавите се",
-    "accountSettings": "Подешавања налога"
+    "accountSettings": "Подешавања налога",
+    "tryDemo": "Пробај демо"
   },
   "settings": {
     "title": "Подешавања налога",
@@ -94,7 +95,8 @@
     "connecting": "ПОВЕЗИВАЊЕ...",
     "enterMatch": "Уђите у меч",
     "metaTitle": "Хакут - интерактивна платформа за квизове",
-    "metaDescription": "Креирајте и играјте интерактивне квизове из програмирања са својом публиком"
+    "metaDescription": "Креирајте и играјте интерактивне квизове из програмирања са својом публиком",
+    "tryDemoCta": "Испробајте интерактивну демонстрацију Дана отворених врата (без пријаве)"
   },
   "auth": {
     "signInTitle": "Добродошли назад",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Додај",
     "removeEntryFailed": "Није успело да се уклони контакт"
+  },
+  "demo": {
+    "metaTitle": "Интерактивна демонстрација — Хакут",
+    "metaDescription": "Испробајте Hakoot уживо уз симулатор отвореног дана за хоста и играча један поред другог. Није потребан налог.",
+    "badge": "Демо за Дан отворених врата",
+    "heading": "Симулатор учионице уживо",
+    "subheading": "Водите час на екрану домаћина и одговарајте у реалном времену на уређају играча.",
+    "viewModeLabel": "Демо режим приказа",
+    "viewMode": {
+      "split": "Подељени приказ",
+      "host": "Домаћин",
+      "player": "Играч"
+    },
+    "restartDemo": "Поново покрени демонстрацију",
+    "hostScreenLabel": "Екран домаћина",
+    "playerScreenLabel": "Уређај играча",
+    "statusLobby": "Лоби",
+    "statusFinished": "Завршено",
+    "stepProgress": "Корак /{current} {total}",
+    "inviteCodeLabel": "Демо позивни код",
+    "playersJoined": "{count} играчи у лобију",
+    "defaultVisitorName": "Гост",
+    "youTag": "Ви",
+    "startSession": "Покрени демонстрациону сесију",
+    "theoryLabel": "Теорија и код",
+    "quizLabel": "Квиз уживо",
+    "codeNotesLabel": "Кликните на ред да бисте га прегледали",
+    "nextStep": "Следећи корак",
+    "finishSession": "Прикажи коначне резултате",
+    "revealAnswer": "Откриј одговор",
+    "answersReceived": "{answered} / одговорено{total}",
+    "correctBadge": "Тачно",
+    "liveLeaderboard": "Ливе лидерборд",
+    "finalLeaderboard": "Коначна табла",
+    "finishedSubtitle": "То је комплетан Hakoot час — спреман за ресетовање за следећег посетиоца.",
+    "createOwnGame": "Креирајте своју игру",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ваше приказано име",
+    "visitorNamePlaceholder": "Унесите своје име",
+    "joinedLobbyTitle": "Налазите се у лобију!",
+    "joinedLobbyHint": "Притисните \"Покрени демонстрациону сесију\" на екрану домаћина да бисте покренули час.",
+    "connectedCode": "Повезан са собом {code}",
+    "answerLockedTitle": "Одговор закључан!",
+    "answerLockedHint": "Притисните \"Откриј одговор\" на екрану домаћина да бисте видели резултате и таблу са рангирањем.",
+    "resultCorrect": "Тачно!",
+    "resultIncorrect": "Није баш тако!",
+    "pointsEarned": "+{points} поена",
+    "yourFinalRank": "Ваш коначани ранг",
+    "finalStats": "{points} пт · {correct}/ исправно{total}",
+    "playAgain": "Поново играј",
+    "timeUpTitle": "Време је истекло!",
+    "timeUpHint": "Притисните \"Покажи одговор\" на екрану домаћина да бисте видели решење и таблу са резултатима."
   }
 }

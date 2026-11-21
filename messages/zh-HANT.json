@@ -25,7 +25,8 @@
     "dashboard": "儀表板",
     "emailLists": "電子郵件清單",
     "hostSignIn": "主持人？登入",
-    "accountSettings": "帳戶設定"
+    "accountSettings": "帳戶設定",
+    "tryDemo": "試用示範"
   },
   "settings": {
     "title": "帳戶設定",
@@ -94,7 +95,8 @@
     "connecting": "連接...",
     "enterMatch": "輸入匹配",
     "metaTitle": "Hakoot - 互動問答平台",
-    "metaDescription": "與您的觀眾建立和玩互動式編碼測驗"
+    "metaDescription": "與您的觀眾建立和玩互動式編碼測驗",
+    "tryDemoCta": "試用互動式開放日示範（無需登入）"
   },
   "auth": {
     "signInTitle": "歡迎回來",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "新增",
     "removeEntryFailed": "移除觸點失敗"
+  },
+  "demo": {
+    "metaTitle": "互動式示範 — Hakoot",
+    "metaDescription": "透過 Hakoot 的「主持人與玩家並列」開放日模擬器，親身體驗 Hakoot 的實況運作。無需註冊帳號。",
+    "badge": "開放日示範",
+    "heading": "即時教室模擬器",
+    "subheading": "在「主持人」畫面中引導課程，並在「學員」裝置上即時作答。",
+    "viewModeLabel": "示範檢視模式",
+    "viewMode": {
+      "split": "分屏視圖",
+      "host": "主持人",
+      "player": "Player"
+    },
+    "restartDemo": "重新啟動示範",
+    "hostScreenLabel": "主持人畫面",
+    "playerScreenLabel": "玩家裝置",
+    "statusLobby": "等候室",
+    "statusFinished": "已完成",
+    "stepProgress": "步驟 {current} / {total}",
+    "inviteCodeLabel": "示範邀請碼",
+    "playersJoined": "{count} 等候室中的玩家",
+    "defaultVisitorName": "訪客",
+    "youTag": "您",
+    "startSession": "開始示範課程",
+    "theoryLabel": "理論與程式碼",
+    "quizLabel": "即時測驗",
+    "codeNotesLabel": "點擊一行以檢視",
+    "nextStep": "下一步",
+    "finishSession": "顯示最終結果",
+    "revealAnswer": "顯示答案",
+    "answersReceived": "{answered} / {total} 已回答",
+    "correctBadge": "正確",
+    "liveLeaderboard": "即時排行榜",
+    "finalLeaderboard": "最終排行榜",
+    "finishedSubtitle": "這是一堂完整的 Hakoot 課程——已準備好重置，以迎接下一位訪客。",
+    "createOwnGame": "建立您自己的遊戲",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "您的顯示名稱",
+    "visitorNamePlaceholder": "請輸入您的姓名",
+    "joinedLobbyTitle": "您已進入等候室！",
+    "joinedLobbyHint": "請在主持人畫面中按下「開始示範課程」，以啟動課程。",
+    "connectedCode": "已連線至會議室 {code}",
+    "answerLockedTitle": "答案已鎖定！",
+    "answerLockedHint": "請在主持人畫面中按下「顯示答案」，即可查看分數和排行榜。",
+    "resultCorrect": "正確！",
+    "resultIncorrect": "還差一點！",
+    "pointsEarned": "+{points} 積分",
+    "yourFinalRank": "您的最終排名",
+    "finalStats": "{points} 分數 · {correct} / {total} 正確",
+    "playAgain": "再玩一次",
+    "timeUpTitle": "時間到了！",
+    "timeUpHint": "請在主持人畫面中按下「顯示答案」，即可查看解法與排行榜。"
   }
 }

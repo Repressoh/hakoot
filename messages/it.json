@@ -25,7 +25,8 @@
     "dashboard": "Cruscotto",
     "emailLists": "Elenchi di e-mail",
     "hostSignIn": "Sei un host? Accedi",
-    "accountSettings": "Impostazioni dell'account"
+    "accountSettings": "Impostazioni dell'account",
+    "tryDemo": "Prova la Demo"
   },
   "settings": {
     "title": "Impostazioni dell'account",
@@ -94,7 +95,8 @@
     "connecting": "COLLEGAMENTO...",
     "enterMatch": "INSERIMENTO DELLA PARTITA",
     "metaTitle": "Hakoot - Piattaforma di quiz interattivi",
-    "metaDescription": "Creare e giocare con il pubblico a quiz interattivi sul coding"
+    "metaDescription": "Creare e giocare con il pubblico a quiz interattivi sul coding",
+    "tryDemoCta": "Prova la Demo Open Day (nessun account)"
   },
   "auth": {
     "signInTitle": "Bentornato",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Aggiungi",
     "removeEntryFailed": "Impossibile rimuovere il contatto"
+  },
+  "demo": {
+    "metaTitle": "Demo Interattiva — Hakoot",
+    "metaDescription": "Prova Hakoot dal vivo con il simulatore Host e Giocatore per Open Day. Nessun account richiesto.",
+    "badge": "Demo Open Day",
+    "heading": "Simulatore di Classe dal Vivo",
+    "subheading": "Guida la lezione dallo schermo Host e rispondi in tempo reale dal dispositivo Giocatore.",
+    "viewModeLabel": "Modalità visualizzazione demo",
+    "viewMode": {
+      "split": "Vista Divisa",
+      "host": "Host",
+      "player": "Giocatore"
+    },
+    "restartDemo": "Riavvia Demo",
+    "hostScreenLabel": "Schermo Host",
+    "playerScreenLabel": "Dispositivo Giocatore",
+    "statusLobby": "Lobby",
+    "statusFinished": "Terminata",
+    "stepProgress": "Passo {current} / {total}",
+    "inviteCodeLabel": "Codice Invito Demo",
+    "playersJoined": "{count} giocatori in lobby",
+    "defaultVisitorName": "Ospite",
+    "youTag": "Tu",
+    "startSession": "Avvia Sessione Demo",
+    "theoryLabel": "Teoria e Codice",
+    "quizLabel": "Quiz dal Vivo",
+    "codeNotesLabel": "Clicca una riga per approfondire",
+    "nextStep": "Passo Successivo",
+    "finishSession": "Mostra Risultati Finali",
+    "revealAnswer": "Rivela Risposta",
+    "answersReceived": "{answered} / {total} risposte",
+    "correctBadge": "Corretta",
+    "liveLeaderboard": "Classifica dal Vivo",
+    "finalLeaderboard": "Classifica Finale",
+    "finishedSubtitle": "Questa è una lezione Hakoot completa — pronta da riavviare per il prossimo visitatore.",
+    "createOwnGame": "Crea il Tuo Gioco",
+    "pointsPill": "{points} pt",
+    "visitorNameLabel": "Il tuo nome",
+    "visitorNamePlaceholder": "Inserisci il tuo nome",
+    "joinedLobbyTitle": "Sei nella lobby!",
+    "joinedLobbyHint": "Premi Avvia Sessione Demo sullo schermo Host per iniziare la lezione.",
+    "connectedCode": "Connesso alla stanza {code}",
+    "answerLockedTitle": "Risposta inviata!",
+    "answerLockedHint": "Premi Rivela Risposta sullo schermo Host per vedere punteggi e classifica.",
+    "resultCorrect": "Esatto!",
+    "resultIncorrect": "Non proprio!",
+    "pointsEarned": "+{points} punti",
+    "yourFinalRank": "La Tua Posizione Finale",
+    "finalStats": "{points} pt · {correct} / {total} corrette",
+    "playAgain": "Gioca Ancora",
+    "timeUpTitle": "Tempo scaduto!",
+    "timeUpHint": "Premi Rivela Risposta sullo schermo Host per vedere la soluzione e la classifica."
   }
 }

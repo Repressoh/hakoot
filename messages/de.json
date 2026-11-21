@@ -25,7 +25,8 @@
     "dashboard": "Dashboard",
     "emailLists": "E-Mail-Listen",
     "hostSignIn": "Gastgeber? Eintragen",
-    "accountSettings": "Kontoeinstellungen"
+    "accountSettings": "Kontoeinstellungen",
+    "tryDemo": "Demo ausprobieren"
   },
   "settings": {
     "title": "Kontoeinstellungen",
@@ -94,7 +95,8 @@
     "connecting": "VERBINDEN...",
     "enterMatch": "MATCH EINGEBEN",
     "metaTitle": "Hakoot - Interaktive Quiz-Plattform",
-    "metaDescription": "Erstellen und spielen Sie mit Ihrem Publikum interaktive Codierungsquizze"
+    "metaDescription": "Erstellen und spielen Sie mit Ihrem Publikum interaktive Codierungsquizze",
+    "tryDemoCta": "Interaktive Demo zum Tag der offenen Tür ausprobieren (keine Anmeldung erforderlich)"
   },
   "auth": {
     "signInTitle": "Willkommen zurück",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "hinzufügen",
     "removeEntryFailed": "Kontakt konnte nicht entfernt werden"
+  },
+  "demo": {
+    "metaTitle": "Interaktive Demo – Hakoot",
+    "metaDescription": "Probieren Sie Hakoot live mit einem Simulator für den Tag der offenen Tür aus, bei dem Moderator und Spieler nebeneinander angezeigt werden. Kein Konto erforderlich.",
+    "badge": "Demo zum Tag der offenen Tür",
+    "heading": "Live-Klassenzimmer-Simulator",
+    "subheading": "Steuern Sie die Unterrichtseinheit auf dem Moderator-Bildschirm und beantworten Sie die Fragen in Echtzeit auf dem Teilnehmergerät.",
+    "viewModeLabel": "Demo-Ansichtsmodus",
+    "viewMode": {
+      "split": "Split View",
+      "host": "Moderator",
+      "player": "Player"
+    },
+    "restartDemo": "Demo neu starten",
+    "hostScreenLabel": "Moderatorenbildschirm",
+    "playerScreenLabel": "Gerät des Spielers",
+    "statusLobby": "Lobby",
+    "statusFinished": "Beendet",
+    "stepProgress": "Schritt {current} / {total}",
+    "inviteCodeLabel": "Demo-Einladungscode",
+    "playersJoined": "{count} Teilnehmer in der Lobby",
+    "defaultVisitorName": "Gast",
+    "youTag": "Du",
+    "startSession": "Demo-Sitzung starten",
+    "theoryLabel": "Theorie & Code",
+    "quizLabel": "Live-Quiz",
+    "codeNotesLabel": "Klicken Sie auf eine Zeile, um sie zu überprüfen",
+    "nextStep": "Nächster Schritt",
+    "finishSession": "Endergebnisse anzeigen",
+    "revealAnswer": "Antwort anzeigen",
+    "answersReceived": "{answered} / {total} beantwortet",
+    "correctBadge": "Richtig",
+    "liveLeaderboard": "Live-Rangliste",
+    "finalLeaderboard": "Endgültige Rangliste",
+    "finishedSubtitle": "Das ist eine vollständige Hakoot-Lektion – bereit, für den nächsten Besucher zurückgesetzt zu werden.",
+    "createOwnGame": "Erstelle dein eigenes Spiel",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ihr Anzeigename",
+    "visitorNamePlaceholder": "Geben Sie Ihren Namen ein",
+    "joinedLobbyTitle": "Du befindest dich in der Lobby!",
+    "joinedLobbyHint": "Klicken Sie auf dem Moderator-Bildschirm auf „Demo-Sitzung starten“, um die Lektion zu starten.",
+    "connectedCode": "Mit dem Raum verbunden {code}",
+    "answerLockedTitle": "Antwort gespeichert!",
+    "answerLockedHint": "Klicken Sie auf dem Moderator-Bildschirm auf „Antwort anzeigen“, um die Punktestände und die Rangliste anzuzeigen.",
+    "resultCorrect": "Richtig!",
+    "resultIncorrect": "Nicht ganz richtig!",
+    "pointsEarned": "+{points} Punkte",
+    "yourFinalRank": "Dein Endrang",
+    "finalStats": "{points} Punkte · {correct} / {total} richtig",
+    "playAgain": "Noch einmal spielen",
+    "timeUpTitle": "Die Zeit ist um!",
+    "timeUpHint": "Klicken Sie auf dem Moderator-Bildschirm auf „Antwort anzeigen“, um die Lösung und die Rangliste zu sehen."
   }
 }

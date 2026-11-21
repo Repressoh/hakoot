@@ -25,7 +25,8 @@
     "dashboard": "Műszerfal",
     "emailLists": "Email listák",
     "hostSignIn": "Házigazda? Bejelentkezés",
-    "accountSettings": "Fiókbeállítások"
+    "accountSettings": "Fiókbeállítások",
+    "tryDemo": "Próbáld ki a demót"
   },
   "settings": {
     "title": "Fiókbeállítások",
@@ -94,7 +95,8 @@
     "connecting": "KAPCSOLAT...",
     "enterMatch": "ENTER MATCH",
     "metaTitle": "Hakoot - Interaktív kvíz platform",
-    "metaDescription": "Interaktív kódolási kvízek létrehozása és lejátszása a közönséggel"
+    "metaDescription": "Interaktív kódolási kvízek létrehozása és lejátszása a közönséggel",
+    "tryDemoCta": "Próbálja ki az interaktív nyílt nap bemutatóját (bejelentkezés nélkül)"
   },
   "auth": {
     "signInTitle": "Üdvözöljük újra",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Add",
     "removeEntryFailed": "Nem sikerült eltávolítani a kapcsolatot"
+  },
+  "demo": {
+    "metaTitle": "Interaktív bemutató — Hakoot",
+    "metaDescription": "Próbálja ki a Hakootot élőben a műsorvezető és a játékos egymás mellett megjelenő nyíltnapi szimulátorával. Fiók létrehozása nem szükséges.",
+    "badge": "Nyílt nap bemutató",
+    "heading": "Élő tantermi szimulátor",
+    "subheading": "Vezesse az órát a Műsorvezető képernyőjén, és válaszoljon valós időben a Játékos eszközén.",
+    "viewModeLabel": "Bemutató nézet mód",
+    "viewMode": {
+      "split": "Osztott nézet",
+      "host": "Műsorvezető",
+      "player": "Játékos"
+    },
+    "restartDemo": "A bemutató újraindítása",
+    "hostScreenLabel": "Műsorvezető képernyő",
+    "playerScreenLabel": "Játékos eszköze",
+    "statusLobby": "Lobby",
+    "statusFinished": "Befejezve",
+    "stepProgress": "Lépés {current} / {total}",
+    "inviteCodeLabel": "Bemutató meghívó kód",
+    "playersJoined": "{count} játékosok a váróteremben",
+    "defaultVisitorName": "Vendég",
+    "youTag": "You",
+    "startSession": "Demo-ülés indítása",
+    "theoryLabel": "Elmélet és kód",
+    "quizLabel": "Élő kvíz",
+    "codeNotesLabel": "Kattintson egy sorra a megtekintéshez",
+    "nextStep": "Következő lépés",
+    "finishSession": "Végső eredmények megjelenítése",
+    "revealAnswer": "Válasz megjelenítése",
+    "answersReceived": "{answered} / {total} megválaszolt",
+    "correctBadge": "Helyes",
+    "liveLeaderboard": "Élő ranglista",
+    "finalLeaderboard": "Végső ranglista",
+    "finishedSubtitle": "Ez egy teljes Hakoot-óra – készen áll a következő látogató számára történő visszaállításra.",
+    "createOwnGame": "Készítsd el a saját játékodat!",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "A megjelenített neved",
+    "visitorNamePlaceholder": "Írja be a nevét",
+    "joinedLobbyTitle": "A váróteremben vagy!",
+    "joinedLobbyHint": "A lecke elindításához nyomja meg a „Start Demo Session” gombot a műsorvezető képernyőjén.",
+    "connectedCode": "Csatlakozott a teremhez {code}",
+    "answerLockedTitle": "A válasz rögzítve!",
+    "answerLockedHint": "Nyomja meg a „Válasz megjelenítése” gombot a műsorvezető képernyőjén a pontszámok és az eredménytábla megtekintéséhez.",
+    "resultCorrect": "Helyes!",
+    "resultIncorrect": "Nem egészen!",
+    "pointsEarned": "+{points} pontok",
+    "yourFinalRank": "A végső helyezésed",
+    "finalStats": "{points} pts · {correct} / {total} helyes",
+    "playAgain": "Újrajátszás",
+    "timeUpTitle": "Lejárt az idő!",
+    "timeUpHint": "Nyomja meg a „Válasz megjelenítése” gombot a műsorvezető képernyőjén a megoldás és az eredménytábla megtekintéséhez."
   }
 }

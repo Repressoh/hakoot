@@ -25,7 +25,8 @@
     "dashboard": "ダッシュボード",
     "emailLists": "Eメールリスト",
     "hostSignIn": "ホストですか？サインイン",
-    "accountSettings": "アカウント設定"
+    "accountSettings": "アカウント設定",
+    "tryDemo": "デモを試す"
   },
   "settings": {
     "title": "アカウント設定",
@@ -94,7 +95,8 @@
     "connecting": "つながる...",
     "enterMatch": "マッチ入力",
     "metaTitle": "Hakoot - インタラクティブ・クイズ・プラットフォーム",
-    "metaDescription": "インタラクティブなコーディングクイズを作成し、視聴者と一緒にプレイできます。"
+    "metaDescription": "インタラクティブなコーディングクイズを作成し、視聴者と一緒にプレイできます。",
+    "tryDemoCta": "インタラクティブなオープンデーデモをお試しください（ログイン不要）"
   },
   "auth": {
     "signInTitle": "おかえりなさい",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "追加",
     "removeEntryFailed": "コンタクトの除去に失敗"
+  },
+  "demo": {
+    "metaTitle": "インタラクティブデモ — Hakoot",
+    "metaDescription": "ホストとプレイヤーが並列で操作できる「Hakoot」の体験版シミュレーターをお試しください。アカウント登録は不要です。",
+    "badge": "オープンデー・デモ",
+    "heading": "ライブ教室シミュレーター",
+    "subheading": "ホスト画面でレッスンを進行し、プレイヤー端末でリアルタイムに回答してください。",
+    "viewModeLabel": "デモ表示モード",
+    "viewMode": {
+      "split": "分割表示",
+      "host": "ホスト",
+      "player": "プレイヤー"
+    },
+    "restartDemo": "デモを再起動",
+    "hostScreenLabel": "ホスト画面",
+    "playerScreenLabel": "プレイヤーのデバイス",
+    "statusLobby": "ロビー",
+    "statusFinished": "完了",
+    "stepProgress": "ステップ {current} / {total}",
+    "inviteCodeLabel": "デモ招待コード",
+    "playersJoined": "{count} ロビーにいるプレイヤー",
+    "defaultVisitorName": "ゲスト",
+    "youTag": "You",
+    "startSession": "デモセッションを開始",
+    "theoryLabel": "理論とコード",
+    "quizLabel": "ライブクイズ",
+    "codeNotesLabel": "行をクリックして詳細を確認",
+    "nextStep": "次のステップ",
+    "finishSession": "最終結果を表示",
+    "revealAnswer": "解答を表示",
+    "answersReceived": "{answered} / {total} 回答済み",
+    "correctBadge": "Correct",
+    "liveLeaderboard": "ライブリーダーボード",
+    "finalLeaderboard": "最終リーダーボード",
+    "finishedSubtitle": "これでHakootのレッスンがすべて完了し、次の訪問者のためにリセットする準備が整いました。",
+    "createOwnGame": "自分だけのゲームを作ろう",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "表示名",
+    "visitorNamePlaceholder": "名前を入力してください",
+    "joinedLobbyTitle": "ロビーに入室しました！",
+    "joinedLobbyHint": "ホスト画面の「デモセッションを開始」を押して、レッスンを開始してください。",
+    "connectedCode": "ルームに接続済み {code}",
+    "answerLockedTitle": "回答がロックされました！",
+    "answerLockedHint": "ホスト画面の「答えを表示」を押すと、スコアとランキングを確認できます。",
+    "resultCorrect": "正解！",
+    "resultIncorrect": "惜しい！",
+    "pointsEarned": "+{points} ポイント",
+    "yourFinalRank": "あなたの最終順位",
+    "finalStats": "{points} pts · {correct} / {total} 正解数",
+    "playAgain": "もう一度プレイ",
+    "timeUpTitle": "時間切れ！",
+    "timeUpHint": "ホスト画面の「解答を表示」をタップすると、解答とランキングを確認できます。"
   }
 }

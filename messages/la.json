@@ -25,7 +25,8 @@
     "dashboard": "Tabula instrumentorum",
     "emailLists": "Indexes Electronici",
     "hostSignIn": "Hospes? Intra",
-    "accountSettings": "Configurationes Rationis"
+    "accountSettings": "Configurationes Rationis",
+    "tryDemo": "Experire Demonstrationem"
   },
   "settings": {
     "title": "Configurationes Rationis",
@@ -94,7 +95,8 @@
     "connecting": "Coniungens...",
     "enterMatch": "INTRA IN CONTENDAM",
     "metaTitle": "Hakoot - Scaena Quaestionum Interactiva",
-    "metaDescription": "Crea et lude quaestiunculas interactivas de programmando cum auditoribus tuis."
+    "metaDescription": "Crea et lude quaestiunculas interactivas de programmando cum auditoribus tuis.",
+    "tryDemoCta": "Experire Demonstrationem Interactivam Diei Aperti (sine initio sessionis)"
   },
   "auth": {
     "signInTitle": "Bene rediisti",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Adde",
     "removeEntryFailed": "Contactum removere non potuit"
+  },
+  "demo": {
+    "metaTitle": "Demonstratio Interactiva — Hakoot",
+    "metaDescription": "Experire Hakoot in directo cum simulatore diei aperti hospitis lusorisque latus ad latus. Ratio non requiritur.",
+    "badge": "Demonstratio Diei Aperti",
+    "heading": "Simulator Classis Viventis",
+    "subheading": "Duce lectionem in monitorio hospitis et responde in tempore reali in instrumento lusoris.",
+    "viewModeLabel": "Modus visificus demonstrativus",
+    "viewMode": {
+      "split": "Prospectus Divisus",
+      "host": "Hospes",
+      "player": "Lusor"
+    },
+    "restartDemo": "Demo denuo incipe",
+    "hostScreenLabel": "Tabula Hospitis",
+    "playerScreenLabel": "Instrumentum Lusoris",
+    "statusLobby": "Exedra",
+    "statusFinished": "Perfectum",
+    "stepProgress": "Gradus /{current} {total}",
+    "inviteCodeLabel": "Codex Invitationis Demonstrationis",
+    "playersJoined": "{count} ludentes in atrio",
+    "defaultVisitorName": "Hospes",
+    "youTag": "Tu",
+    "startSession": "Incipe Sessionem Demonstrativam",
+    "theoryLabel": "Theoria et Codex",
+    "quizLabel": "Quiz Vīvus",
+    "codeNotesLabel": "Preme lineam ut inspicias",
+    "nextStep": "Gradus Proximus",
+    "finishSession": "Monstra Exitus Finales",
+    "revealAnswer": "Responde",
+    "answersReceived": "{answered} / responsum{total}",
+    "correctBadge": "Rectum",
+    "liveLeaderboard": "Tabula Ducum in Vivo",
+    "finalLeaderboard": "Tabula Honorum Finalis",
+    "finishedSubtitle": "Haec est lectio Hakootensis integra — parata ad reficiendum pro proximo visitatore.",
+    "createOwnGame": "Creā Ludum Tuum",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Nomen tuum exhibendum",
+    "visitorNamePlaceholder": "Inscribe nomen tuum",
+    "joinedLobbyTitle": "In atrio es!",
+    "joinedLobbyHint": "Preme \"Incipe Sessionem Demonstrativam\" in tabula hospitis ut lectionem incipias.",
+    "connectedCode": "Coniunctus ad conclave {code}",
+    "answerLockedTitle": "Responsum obseratum!",
+    "answerLockedHint": "Preme \"Revela Responsum\" in tabula hospitis ut puncta et tabulam principum videas.",
+    "resultCorrect": "Recte!",
+    "resultIncorrect": "Non prorsus!",
+    "pointsEarned": "+{points} puncta",
+    "yourFinalRank": "Ordo Tuus Ultimus",
+    "finalStats": "{points} ptb · {correct}/ recte{total}",
+    "playAgain": "Iterum Ludere",
+    "timeUpTitle": "Tempus exiit!",
+    "timeUpHint": "Preme \"Revela Responsum\" in tabula hospitis ut solutionem et tabulam ducum videas."
   }
 }

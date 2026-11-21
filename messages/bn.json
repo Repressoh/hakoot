@@ -25,7 +25,8 @@
     "dashboard": "ড্যাশবোর্ড",
     "emailLists": "ইমেইল তালিকা",
     "hostSignIn": "হোস্ট? সাইন ইন",
-    "accountSettings": "অ্যাকাউন্ট সেটিংস"
+    "accountSettings": "অ্যাকাউন্ট সেটিংস",
+    "tryDemo": "ডেমো চেষ্টা করুন"
   },
   "settings": {
     "title": "অ্যাকাউন্ট সেটিংস",
@@ -94,7 +95,8 @@
     "connecting": "সংযোগ হচ্ছে...",
     "enterMatch": "ম্যাচে প্রবেশ করুন",
     "metaTitle": "হাকুট - ইন্টারেক্টিভ কুইজ প্ল্যাটফর্ম",
-    "metaDescription": "আপনার দর্শকদের সাথে ইন্টারেক্টিভ কোডিং কুইজ তৈরি করুন এবং খেলুন"
+    "metaDescription": "আপনার দর্শকদের সাথে ইন্টারেক্টিভ কোডিং কুইজ তৈরি করুন এবং খেলুন",
+    "tryDemoCta": "ইন্টার‌্যাক্টিভ ওপেন-ডে ডেমো চেষ্টা করুন (লগইন ছাড়া)"
   },
   "auth": {
     "signInTitle": "আবার স্বাগতম",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "যোগ করুন",
     "removeEntryFailed": "যোগাযোগ অপসারণে ব্যর্থ"
+  },
+  "demo": {
+    "metaTitle": "ইন্টার‌্যাক্টিভ ডেমো — হাকুট",
+    "metaDescription": "হাকুট লাইভ চেষ্টা করুন হোস্ট এবং প্লেয়ারের পাশাপাশি ওপেন-ডে সিমুলেটরের সাথে। কোনো অ্যাকাউন্টের প্রয়োজন নেই।",
+    "badge": "ওপেন ডে ডেমো",
+    "heading": "লাইভ ক্লাসরুম সিমুলেটর",
+    "subheading": "হোস্ট স্ক্রিনে পাঠটি পরিচালনা করুন এবং প্লেয়ার ডিভাইসে রিয়েল-টাইমে উত্তর দিন।",
+    "viewModeLabel": "ডেমো ভিউ মোড",
+    "viewMode": {
+      "split": "বিভক্ত ভিউ",
+      "host": "হোস্ট",
+      "player": "খেলোয়াড়"
+    },
+    "restartDemo": "ডেমো পুনরায় শুরু করুন",
+    "hostScreenLabel": "হোস্ট স্ক্রিন",
+    "playerScreenLabel": "খেলোয়াড়ের ডিভাইস",
+    "statusLobby": "লবি",
+    "statusFinished": "সম্পন্ন",
+    "stepProgress": "ধাপ /{current} {total}",
+    "inviteCodeLabel": "ডেমো আমন্ত্রণ কোড",
+    "playersJoined": "{count} লবিতে খেলোয়াড়রা",
+    "defaultVisitorName": "অতিথি",
+    "youTag": "আপনি",
+    "startSession": "ডেমো সেশন শুরু করুন",
+    "theoryLabel": "তত্ত্ব ও কোড",
+    "quizLabel": "লাইভ কুইজ",
+    "codeNotesLabel": "পরিদর্শনের জন্য একটি লাইনে ক্লিক করুন",
+    "nextStep": "পরবর্তী ধাপ",
+    "finishSession": "চূড়ান্ত ফলাফল দেখান",
+    "revealAnswer": "উত্তর প্রকাশ করুন",
+    "answersReceived": "{answered} / উত্তর দেওয়া{total} হয়েছে",
+    "correctBadge": "সঠিক",
+    "liveLeaderboard": "লাইভ লিডারবোর্ড",
+    "finalLeaderboard": "চূড়ান্ত লিডারবোর্ড",
+    "finishedSubtitle": "এটি একটি সম্পূর্ণ Hakoot পাঠ — পরবর্তী ভিজিটরের জন্য রিসেট করার জন্য প্রস্তুত।",
+    "createOwnGame": "আপনার নিজস্ব গেম তৈরি করুন",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "আপনার প্রদর্শন নাম",
+    "visitorNamePlaceholder": "আপনার নাম লিখুন",
+    "joinedLobbyTitle": "আপনি লবিতে আছেন!",
+    "joinedLobbyHint": "পাঠ শুরু করতে হোস্ট স্ক্রিনে 'স্টার্ট ডেমো সেশন' চাপুন।",
+    "connectedCode": "রুমে সংযুক্ত {code}",
+    "answerLockedTitle": "উত্তর লক করা হয়েছে!",
+    "answerLockedHint": "হোস্ট স্ক্রিনে 'উত্তরের উন্মোচন' (Reveal Answer) চাপুন স্কোর এবং লিডারবোর্ড দেখতে।",
+    "resultCorrect": "সঠিক!",
+    "resultIncorrect": "ঠিক নয়!",
+    "pointsEarned": "+{points} পয়েন্ট",
+    "yourFinalRank": "আপনার চূড়ান্ত র‌্যাঙ্ক",
+    "finalStats": "{points} পয়েন্ট · {correct}/ সঠিক{total}",
+    "playAgain": "আবার খেলুন",
+    "timeUpTitle": "সময় শেষ!",
+    "timeUpHint": "সমাধান এবং লিডারবোর্ড দেখতে হোস্ট স্ক্রিনে 'উত্তরের প্রকাশ' (Reveal Answer) চাপুন।"
   }
 }

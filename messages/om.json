@@ -25,7 +25,8 @@
     "dashboard": "Gabatee to'annoo",
     "emailLists": "Tarree Imeelii",
     "hostSignIn": "Keessummeessaa? Seeni",
-    "accountSettings": "Qindaa'ina Akkaawuntii"
+    "accountSettings": "Qindaa'ina Akkaawuntii",
+    "tryDemo": "Demo Yaali"
   },
   "settings": {
     "title": "Qindaa'ina Akkaawuntii",
@@ -94,7 +95,8 @@
     "connecting": "Wal qunnamaa jira...",
     "enterMatch": "Gara Dorgommii Seeni",
     "metaTitle": "Hakoot - Madalii Gaaffii fi Deebii Wal-qunnamsiisaa",
-    "metaDescription": "Dhaggeeffattoota keessan waliin gaaffii fi deebii koodii wal-qunnamsiisaa uumaatii taphadhaa."
+    "metaDescription": "Dhaggeeffattoota keessan waliin gaaffii fi deebii koodii wal-qunnamsiisaa uumaatii taphadhaa.",
+    "tryDemoCta": "Demo Banaa Wal-qunnamtii Yaali (seenuu hin barbaachisu)"
   },
   "auth": {
     "signInTitle": "Baga deebitan",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Dabali",
     "removeEntryFailed": "Quunnamtii balleessuun hin milkoofne"
+  },
+  "demo": {
+    "metaTitle": "Agarsiisa Wal-qunnamtii — Haakuut",
+    "metaDescription": "Hakoot kallattiin simuleetara guyyaa banaa kan qopheessaa fi taphataa cinaa-cinatti banuun yaalaa. Akkaawuntiin hin barbaachisu.",
+    "badge": "Agarsiisa Guyyaa Banaa",
+    "heading": "Fakkii Kutaa Barnootaa Kallattii",
+    "subheading": "Barnoota iskiriinii Keessummeessaa irratti gaggeessi, meeshaa Taphataa irratti immoo yeroodhaan deebisi.",
+    "viewModeLabel": "Moodii agarsiisaa",
+    "viewMode": {
+      "split": "Mul'ata Qoodame",
+      "host": "Keessummeessaa",
+      "player": "Taphataa"
+    },
+    "restartDemo": "Agarsiisa Irra Deebi'i",
+    "hostScreenLabel": "Iskiriinii Keessummeessaa",
+    "playerScreenLabel": "Meeshaa Taphataa",
+    "statusLobby": "Lobby",
+    "statusFinished": "Xumurame",
+    "stepProgress": "Tarkaanfii {current}/ {total}",
+    "inviteCodeLabel": "Koodii Afeerraa Demo",
+    "playersJoined": "{count} Taphataan kutaa eeggumsaa keessa jiran",
+    "defaultVisitorName": "Keessummaa",
+    "youTag": "Ati",
+    "startSession": "Yeroo Agarsiisaa Jalqabi",
+    "theoryLabel": "Yaad-rimee & Koodii",
+    "quizLabel": "Gaaffii fi Deebii Kallattiin",
+    "codeNotesLabel": "Sarara tokko qorachuuf cuqaasi",
+    "nextStep": "Tarkaanfii Itti Aanu",
+    "finishSession": "Bu'aa Xumuraa Agarsiisi",
+    "revealAnswer": "Deebii Saaxili",
+    "answersReceived": "{answered} / deebifame{total}",
+    "correctBadge": "Sirrii",
+    "liveLeaderboard": "Tarree Sadarkaa Kallattiin",
+    "finalLeaderboard": "Tarree Goolii Xumuraa",
+    "finishedSubtitle": "Kun barumsa Haakuut guutuu dha — daawwata itti aanuuf irra deebiin qopheessuuf qophaa'aadha.",
+    "createOwnGame": "Tapha Kee Uumi",
+    "pointsPill": "{points} qabxii",
+    "visitorNameLabel": "Maqaa kee kan agarsiifamu",
+    "visitorNamePlaceholder": "Maqaa kee galchi",
+    "joinedLobbyTitle": "Ati galma keessa jirta!",
+    "joinedLobbyHint": "Barnoota jalqabsiisuuf, iskiriinii Keessummeessaa irratti 'Anii Mul'isaa Jalqabi' cuqaasi.",
+    "connectedCode": "Kutaatti walqabsiifame {code}",
+    "answerLockedTitle": "Deebiin cufameera!",
+    "answerLockedHint": "Qabxiiwwanii fi gabatee warra dursaa arguuf, iskiriinii Keessummeessaa irratti 'Deebii Mul'isi' cuqaasi.",
+    "resultCorrect": "Sirriidha!",
+    "resultIncorrect": "Sirrii miti!",
+    "pointsEarned": "+{points} qabxii",
+    "yourFinalRank": "Sadarkaa Keessan Isa Xumuraa",
+    "finalStats": "{points} qabxiiwwan · {correct}/ sirrii{total}",
+    "playAgain": "Irra Deebi'ii Taphadhu",
+    "timeUpTitle": "Yeroon xumurameera!",
+    "timeUpHint": "Furmaataafi gabatee sadarkaa argachuuf, iskiriinii Keessummeessituu irratti 'Deebii Mul'isi' cuqaasi."
   }
 }

@@ -25,7 +25,8 @@
     "dashboard": "दृश्यपटलम्",
     "emailLists": "ईमेल्-सूचयः",
     "hostSignIn": "आयोजकः? प्रवेशं कुरु",
-    "accountSettings": "खाता-विन्यासाः"
+    "accountSettings": "खाता-विन्यासाः",
+    "tryDemo": "प्रदर्शनम् परीक्ष्यताम्"
   },
   "settings": {
     "title": "खाता-विन्यासाः",
@@ -94,7 +95,8 @@
     "connecting": "संयोज्यते...",
     "enterMatch": "स्पर्धायाम् प्रवेशः",
     "metaTitle": "हकूत् - अन्तरक्रियात्मक प्रश्नोत्तरी मंचम्",
-    "metaDescription": "तव श्रोतृभिः सह अन्तरक्रियात्मक-कोडिङ्-प्रश्नोत्तरीणि सृजतु तथा क्रीडतु।"
+    "metaDescription": "तव श्रोतृभिः सह अन्तरक्रियात्मक-कोडिङ्-प्रश्नोत्तरीणि सृजतु तथा क्रीडतु।",
+    "tryDemoCta": "परस्परक्रियात्मकं मुक्तदिवसप्रदर्शनम् परीक्ष्यताम् (प्रवेशविहीनम्)"
   },
   "auth": {
     "signInTitle": "पुनरागमनं स्वागतम्",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "योजयतु",
     "removeEntryFailed": "संपर्कं अपसारयितुं असफलः"
+  },
+  "demo": {
+    "metaTitle": "संवादात्मकदर्शनी — हकूट्",
+    "metaDescription": "समीपस्थित-होस्ट्-प्लेयर् युग्म-ओपन-डे-सिमुलेटरसहितं हकूट् प्रत्यक्षं परीक्षस्व। खाता आवश्यकः नास्ति।",
+    "badge": "उद्घाटन-दिवस-प्रदर्शनम्",
+    "heading": "प्रत्यक्ष-कक्षा-अनुकरणकः",
+    "subheading": "होस्ट्-पटलस्य पाठं सञ्चालयतु तथा प्लेयर्-यन्त्रे प्रत्यक्षकाले उत्तरं ददातु।",
+    "viewModeLabel": "प्रदर्शनदर्शनप्रकारः",
+    "viewMode": {
+      "split": "विभक्तदृश्यम्",
+      "host": "आयोजकः",
+      "player": "क्रीडकः"
+    },
+    "restartDemo": "प्रदर्शनपुनरारम्भः",
+    "hostScreenLabel": "आयोजकपटलम्",
+    "playerScreenLabel": "क्रीडकयन्त्रम्",
+    "statusLobby": "लॉबी",
+    "statusFinished": "समाप्तम्",
+    "stepProgress": "चरणम् {current}/ {total}",
+    "inviteCodeLabel": "प्रदर्शन-आमन्त्रण-कोड्",
+    "playersJoined": "{count} प्रतीक्षालयस्थिताः क्रीडकाः",
+    "defaultVisitorName": "अतिथि",
+    "youTag": "त्वं",
+    "startSession": "प्रदर्शन-सत्रारम्भः",
+    "theoryLabel": "सिद्धान्तः च कोडः",
+    "quizLabel": "प्रत्यक्षप्रश्नोत्तरी",
+    "codeNotesLabel": "पङ्क्तिं स्पृशतु निरीक्षणार्थम्",
+    "nextStep": "अनन्तरपदम्",
+    "finishSession": "अन्तिमफलानि प्रदर्शयतु",
+    "revealAnswer": "उत्तरं प्रकटीकुरु",
+    "answersReceived": "{answered} / उत्तरितम्{total}",
+    "correctBadge": "सम्यक्",
+    "liveLeaderboard": "प्रत्यक्ष-नेतृपट्टिका",
+    "finalLeaderboard": "अन्तिम-नेतृपट्टिका",
+    "finishedSubtitle": "एतत् पूर्णं हकूटक-पाठः — आगामिनि आगन्तुकस्य पुनरारम्भाय सज्जम्।",
+    "createOwnGame": "स्वकीयं क्रीडां सृज",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "तव प्रदर्शननाम",
+    "visitorNamePlaceholder": "तव नाम प्रविष्टयतु",
+    "joinedLobbyTitle": "त्वं लॉबीमध्ये असि।",
+    "joinedLobbyHint": "पाठस्य आरम्भाय होस्ट्-पटले 'प्रारम्भ-प्रदर्शन-सत्रम्' इति बटनम् दबयतु।",
+    "connectedCode": "कक्षे सम्बद्धः {code}",
+    "answerLockedTitle": "उत्तरं बद्धम्!",
+    "answerLockedHint": "होस्ट्-पटले 'उत्तरं प्रकटीकुरु' इति बटनं दब्य स्कोर् तथा लीडरबोर्ड् पश्यन्तु।",
+    "resultCorrect": "सम्यक्!",
+    "resultIncorrect": "पूर्णतया न!",
+    "pointsEarned": "+{points} अङ्काः",
+    "yourFinalRank": "तव अन्तिमपदवी",
+    "finalStats": "{points} अङ्काः · {correct}/ सम्यक्{total}",
+    "playAgain": "पुनरपि क्रीडतु",
+    "timeUpTitle": "समयः समाप्तः!",
+    "timeUpHint": "होस्ट्-पटले 'उत्तरं प्रकटय' इति बटनं दबय, समाधानं च शीर्षपटलं च पश्य।"
   }
 }

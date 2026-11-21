@@ -25,7 +25,8 @@
     "dashboard": "לוח המחוונים",
     "emailLists": "רשימות תפוצה",
     "hostSignIn": "מנהל? התחבר",
-    "accountSettings": "הגדרות חשבון"
+    "accountSettings": "הגדרות חשבון",
+    "tryDemo": "נסה את ההדגמה"
   },
   "settings": {
     "title": "הגדרות חשבון",
@@ -94,7 +95,8 @@
     "connecting": "מתחבר...",
     "enterMatch": "הכנס את המשחק",
     "metaTitle": "Hakoot - פלטפורמת חידונים אינטראקטיבית",
-    "metaDescription": "צרו והציגו חידוני תכנות אינטראקטיביים לקהל שלכם"
+    "metaDescription": "צרו והציגו חידוני תכנות אינטראקטיביים לקהל שלכם",
+    "tryDemoCta": "נסה הדגמה אינטראקטיבית ליום הפתוח (ללא צורך בהתחברות)"
   },
   "auth": {
     "signInTitle": "ברוכים השבים",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "הוסף",
     "removeEntryFailed": "לא הצליח להסיר את איש הקשר"
+  },
+  "demo": {
+    "metaTitle": "הדגמה אינטראקטיבית — Hakoot",
+    "metaDescription": "נסו את Hakoot בשידור חי באמצעות סימולטור \"יום פתוח\" המציג את המנחה והמשתתף זה לצד זה. אין צורך בחשבון.",
+    "badge": "הדגמה ביום הפתוח",
+    "heading": "סימולטור כיתה חיה",
+    "subheading": "נהל את השיעור במסך המנחה וענה בזמן אמת במכשיר השחקן.",
+    "viewModeLabel": "מצב תצוגת הדגמה",
+    "viewMode": {
+      "split": "תצוגה מפוצלת",
+      "host": "מנחה",
+      "player": "Player"
+    },
+    "restartDemo": "הפעל מחדש את ההדגמה",
+    "hostScreenLabel": "מסך המנחה",
+    "playerScreenLabel": "מכשיר השחקן",
+    "statusLobby": "לובי",
+    "statusFinished": "הסתיים",
+    "stepProgress": "שלב {current} / {total}",
+    "inviteCodeLabel": "קוד הזמנה לדמו",
+    "playersJoined": "{count} שחקנים בלובי",
+    "defaultVisitorName": "אורח",
+    "youTag": "אתה",
+    "startSession": "התחל מפגש הדגמה",
+    "theoryLabel": "תיאוריה וקוד",
+    "quizLabel": "חידון בשידור חי",
+    "codeNotesLabel": "לחץ על שורה כדי לבחון אותה",
+    "nextStep": "השלב הבא",
+    "finishSession": "הצג תוצאות סופיות",
+    "revealAnswer": "חשיפת התשובה",
+    "answersReceived": "{answered} / {total} ענה",
+    "correctBadge": "נכון",
+    "liveLeaderboard": "לוח דירוג בשידור חי",
+    "finalLeaderboard": "טבלת המובילים הסופית",
+    "finishedSubtitle": "זהו שיעור Hakoot שלם — מוכן לאיפוס לקראת המשתמש הבא.",
+    "createOwnGame": "צרו משחק משלכם",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "שם התצוגה שלך",
+    "visitorNamePlaceholder": "הזן את שמך",
+    "joinedLobbyTitle": "אתם נמצאים בלובי!",
+    "joinedLobbyHint": "לחצו על \"התחל מפגש הדגמה\" במסך המארח כדי להפעיל את השיעור.",
+    "connectedCode": "מחובר לחדר {code}",
+    "answerLockedTitle": "התשובה ננעלה!",
+    "answerLockedHint": "לחצו על \"חשוף תשובה\" במסך המנחה כדי לראות את הציונים ואת טבלת המובילים.",
+    "resultCorrect": "נכון!",
+    "resultIncorrect": "לא בדיוק!",
+    "pointsEarned": "+{points} נקודות",
+    "yourFinalRank": "הדירוג הסופי שלך",
+    "finalStats": "{points} נקודות · {correct} / {total} נכון",
+    "playAgain": "שחק שוב",
+    "timeUpTitle": "הזמן נגמר!",
+    "timeUpHint": "לחצו על \"חשוף תשובה\" במסך המנחה כדי לראות את הפתרון ואת טבלת המובילים."
   }
 }

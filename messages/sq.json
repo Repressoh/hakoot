@@ -25,7 +25,8 @@
     "dashboard": "Paneli i instrumenteve",
     "emailLists": "Listat e postës elektronike",
     "hostSignIn": "Mikpritës? Hyni",
-    "accountSettings": "Caktimet e llogarisë"
+    "accountSettings": "Caktimet e llogarisë",
+    "tryDemo": "Provo demonstrimin"
   },
   "settings": {
     "title": "Caktimet e llogarisë",
@@ -94,7 +95,8 @@
     "connecting": "Po lidhet...",
     "enterMatch": "HYNI NË NDESHJE",
     "metaTitle": "Hakoot - Platforma interaktive e kuizeve",
-    "metaDescription": "Krijoni dhe luani kuize interaktive kodimi me audiencën tuaj"
+    "metaDescription": "Krijoni dhe luani kuize interaktive kodimi me audiencën tuaj",
+    "tryDemoCta": "Provoni demonstrimin interaktiv të Ditës së Hapur (pa hyrje)"
   },
   "auth": {
     "signInTitle": "Mirë se keni ardhur përsëri",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Shto",
     "removeEntryFailed": "Dështoi të hiqet kontakti"
+  },
+  "demo": {
+    "metaTitle": "Demonstrim interaktiv — Hakoot",
+    "metaDescription": "Provoni Hakoot live me një simulator ditë-hapjeje për mikpritës dhe lojtar krah për krah. Nuk kërkohet llogari.",
+    "badge": "Demo e Ditës së Hapur",
+    "heading": "Simulatori i Klasës së Drejtpërdrejtë",
+    "subheading": "Drejto mësimin në ekranin e Host-it dhe përgjigju në kohë reale në pajisjen Player.",
+    "viewModeLabel": "Modi i shikimit të demonstrimit",
+    "viewMode": {
+      "split": "Pamje e ndarë",
+      "host": "Mikpritës",
+      "player": "Lojtar"
+    },
+    "restartDemo": "Rinis Demonstrimin",
+    "hostScreenLabel": "Ekrani i mikpritësit",
+    "playerScreenLabel": "Pajisja e lojtarit",
+    "statusLobby": "Holli",
+    "statusFinished": "Përfunduar",
+    "stepProgress": "Hapi /{current} {total}",
+    "inviteCodeLabel": "Kodi i ftesës për demonstrim",
+    "playersJoined": "{count} lojtarët në holl",
+    "defaultVisitorName": "Mysafir",
+    "youTag": "Ju",
+    "startSession": "Filloni seancën demo",
+    "theoryLabel": "Teoria & Kodi",
+    "quizLabel": "Quiz i drejtpërdrejtë",
+    "codeNotesLabel": "Klikoni një rresht për ta inspektuar",
+    "nextStep": "Hapi tjetër",
+    "finishSession": "Shfaq Rezultatet Finale",
+    "revealAnswer": "Zbulo Përgjigjen",
+    "answersReceived": "{answered} / u përgjigj{total}",
+    "correctBadge": "E saktë",
+    "liveLeaderboard": "Tabela e klasifikimit live",
+    "finalLeaderboard": "Tabela përfundimtare",
+    "finishedSubtitle": "Kjo është një mësim i plotë në Hakoot — gati për t'u rivendosur për vizitorin e ardhshëm.",
+    "createOwnGame": "Krijo lojën tënde",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Emri juaj i shfaqjes",
+    "visitorNamePlaceholder": "Futni emrin tuaj",
+    "joinedLobbyTitle": "Jeni në holl!",
+    "joinedLobbyHint": "Shtypni Nis Seancën Demo në ekranin e nikoqirit për të nisur mësimin.",
+    "connectedCode": "I lidhur me dhomën {code}",
+    "answerLockedTitle": "Përgjigjja e kyçur!",
+    "answerLockedHint": "Shtypni Zbulo Përgjigjen në ekranin e nikoqirit për të parë rezultatet dhe tabelën e klasifikimit.",
+    "resultCorrect": "Saktë!",
+    "resultIncorrect": "Jo saktësisht!",
+    "pointsEarned": "+{points} pikë",
+    "yourFinalRank": "Ranga juaj përfundimtare",
+    "finalStats": "{points} pts · {correct}/ e saktë{total}",
+    "playAgain": "Luaj përsëri",
+    "timeUpTitle": "Koha ka mbaruar!",
+    "timeUpHint": "Shtypni Zbulo Përgjigjen në ekranin e nikoqirit për të parë zgjidhjen dhe tabelën e klasifikimit."
   }
 }

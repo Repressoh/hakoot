@@ -25,7 +25,8 @@
     "dashboard": "Uñjaw pampa",
     "emailLists": "Chaski qillqa listanaka",
     "hostSignIn": "Uñjiri? Mantaña",
-    "accountSettings": "Kuntuñan Kamachinakapa"
+    "accountSettings": "Kuntuñan Kamachinakapa",
+    "tryDemo": "Uñacht'äwi Yant'aña"
   },
   "settings": {
     "title": "Kuntuñan Kamachinakapa",
@@ -94,7 +95,8 @@
     "connecting": "Chikt'asiskiwa...",
     "enterMatch": "Anatañaru mantaña",
     "metaTitle": "Hakoot - Jiskt'asiñataki uñt'asiñ llik'a",
-    "metaDescription": "Uñjirinakamampi chikaw interactivo codificación jiskt'awinaka lurasma ukat anatasma."
+    "metaDescription": "Uñjirinakamampi chikaw interactivo codificación jiskt'awinaka lurasma ukat anatasma.",
+    "tryDemoCta": "Yant'am Interactivo Justu Uñacht'äwi (janiw mantañax wakiskiti)"
   },
   "auth": {
     "signInTitle": "Kutinkapxäta",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Yapaña",
     "removeEntryFailed": "Jan uñt'at apsuñax janiw atiskänti."
+  },
+  "demo": {
+    "metaTitle": "Uñacht'äwi Interactivo — Hakoot",
+    "metaDescription": "Hakoot jichpach yant'am, mä irpirimpi ukhamarak anatañirimpi uñkatasisa jist'arat uru yant'añampi. Janiw qillqantasiñax wakiskiti.",
+    "badge": "Uñacht'äwi Urupa",
+    "heading": "Jakäwi Yatichäwi Uñtasiri",
+    "subheading": "Yatichäwi Host pantalla ukan apnaqam ukat Player aparato ukan pachpachan jaysam.",
+    "viewModeLabel": "Uñacht'äwi uñjañ thakhi",
+    "viewMode": {
+      "split": "Pä Tuqir Jaljata",
+      "host": "Irpiri",
+      "player": "Anatañiri"
+    },
+    "restartDemo": "Uñacht'äwi Wasitat Qalltaña",
+    "hostScreenLabel": "Irpirin Pantalla",
+    "playerScreenLabel": "Anatañatak Aparatu",
+    "statusLobby": "Suyäwi",
+    "statusFinished": "Tukuyata",
+    "stepProgress": "Thakhi /{current} {total}",
+    "inviteCodeLabel": "Uñacht'äwitak Jawillt'äwi Chimpu",
+    "playersJoined": "{count} Sallqirinaka suyäwin",
+    "defaultVisitorName": "Jilata/Kullaka",
+    "youTag": "Jumax",
+    "startSession": "Uñacht'äwi Tantachäwi Qalltaña",
+    "theoryLabel": "Teoría ukat Código",
+    "quizLabel": "Jakäwinkir Yant'awi",
+    "codeNotesLabel": "Mä siqiru llap'taña uñakipañataki",
+    "nextStep": "Jutir Thakhi",
+    "finishSession": "Tukuyäwinaka Uñacht'ayaña",
+    "revealAnswer": "Jaysäwi Uñacht'ayaña",
+    "answersReceived": "{answered} / jaysata{total}",
+    "correctBadge": "Chiqapa",
+    "liveLeaderboard": "Jichhapach P'iqinchiri",
+    "finalLeaderboard": "Tukuyir Atipirinakan Sutinakap",
+    "finishedSubtitle": "Ukax mä tukuyat Hakoot yatichäwiwa — qhipa puririntak wasitat qalltañataki wakicht'atawa.",
+    "createOwnGame": "Juman Pachpa Anatañama Uñstayam",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Uñacht'ayañ sutima",
+    "visitorNamePlaceholder": "Sutima qillqt'am",
+    "joinedLobbyTitle": "Jumax suyäwin jikxatasta!",
+    "joinedLobbyHint": "Yatichirin uñjawipanxa, Yant'äwi Qalltaña llimxatt'am, yatichäwi qalltayañataki.",
+    "connectedCode": "Uta tuqir chikt'ata {code}",
+    "answerLockedTitle": "Jaysäwix jist'antatawa!",
+    "answerLockedHint": "Anatañ P'iqinchirin pantallapanxa, \"Jaysäwi Uñstayaña\" ñit'am, puntunaka ukat nayrar sartirinakan sutinakapa uñjañataki.",
+    "resultCorrect": "Walikiwa!",
+    "resultIncorrect": "Janiw ukhamäkiti!",
+    "pointsEarned": "+{points} chimpunaka",
+    "yourFinalRank": "Juman Tukuyir Rangum",
+    "finalStats": "{points} pts · {correct}/ chiqapa{total}",
+    "playAgain": "Wastat Anataña",
+    "timeUpTitle": "Pachax tukusxiwa!",
+    "timeUpHint": "Host pantalla ukanxa, \"Reveal Answer\" ñit'aña, ukhamata askichäwipa ukat nayraqat saririnakan sutinakapa uñjañataki."
   }
 }

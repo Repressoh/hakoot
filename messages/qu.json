@@ -25,7 +25,8 @@
     "dashboard": "Tablero",
     "emailLists": "Chaski Llikakuna",
     "hostSignIn": "Warmichiq? Yaykuy",
-    "accountSettings": "Riqsichina Allichaykuna"
+    "accountSettings": "Riqsichina Allichaykuna",
+    "tryDemo": "Qhawarinapaq"
   },
   "settings": {
     "title": "Riqsichina Allichaykuna",
@@ -94,7 +95,8 @@
     "connecting": "T'inkikuchkan...",
     "enterMatch": "Atipanakuyman haykuy",
     "metaTitle": "Hakoot - Tapuykunawan Pukllana Pampa",
-    "metaDescription": "Uyarisqaykikunawan kuska interactivo programacionmanta tapuykunata ruway hinaspa pukllay."
+    "metaDescription": "Uyarisqaykikunawan kuska interactivo programacionmanta tapuykunata ruway hinaspa pukllay.",
+    "tryDemoCta": "Yachay T'inkinakuy Kichasqa P'unchaw Rikuchiyta (mana yaykunachu)"
   },
   "auth": {
     "signInTitle": "Allin kutimuykichik",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Yapay",
     "removeEntryFailed": "Mana atirqachu contactota hurquyta"
+  },
+  "demo": {
+    "metaTitle": "Hakoot: Ruraywan Rikuchiy",
+    "metaDescription": "Hakootta kikinpura llamk'achiy huk simulasqawan, maypichus pusaqpas pukllaqpas kuskalla kichasqa p'unchawpi llamk'achinku. Manam qillqaykukuyta munanchu.",
+    "badge": "Kichasqa P'unchaw Rikuchiy",
+    "heading": "Kawsaypi Yachay Wasi Qatichina",
+    "subheading": "Yachachiyta Yachachiqpa qhawanapi pusay, hinaspa Pukllaqpa llamk'anapi kikin pachapi kutichiy.",
+    "viewModeLabel": "Rikuchina qhawana",
+    "viewMode": {
+      "split": "Rak'isqa Rikuy",
+      "host": "Waqyakuq",
+      "player": "Pukllaq"
+    },
+    "restartDemo": "Demo Musuqmanta Qallarichiy",
+    "hostScreenLabel": "Qurpachaqpa Pantallan",
+    "playerScreenLabel": "Pukllaqpa Aparin",
+    "statusLobby": "Suyana",
+    "statusFinished": "Tukusqa",
+    "stepProgress": "Pata /{current} {total}",
+    "inviteCodeLabel": "Rikuchinapaq Waqyana Yupa",
+    "playersJoined": "{count} Sallqa wasipi pukllaqkuna",
+    "defaultVisitorName": "Waturi",
+    "youTag": "Qam",
+    "startSession": "Qallariy Rikuchina Huñunakuyta",
+    "theoryLabel": "Yachay & Qillqa",
+    "quizLabel": "Kawsaypi Tapukuy",
+    "codeNotesLabel": "Huk siq'ita ñit'iy qhawanaykipaq",
+    "nextStep": "Qatiq Ñan",
+    "finishSession": "Tukusqa Taripaykunata Qhawachiy",
+    "revealAnswer": "Kutichiyta Rikuchiy",
+    "answersReceived": "{answered} / kutichisqa{total}",
+    "correctBadge": "Allin",
+    "liveLeaderboard": "Kawsaypi P'anqa",
+    "finalLeaderboard": "Puchukay Llañu",
+    "finishedSubtitle": "Chayqa huk hunt'asqa Hakoot yachachikuymi — qatiq watukuqpaq musuqmanta wakichinapaqña.",
+    "createOwnGame": "Kikiykipa Pukllayniykita Kamariy",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Rikuchikunayki suti",
+    "visitorNamePlaceholder": "Sutiykita qillqay",
+    "joinedLobbyTitle": "Qamqa suyana ukupim kachkanki!",
+    "joinedLobbyHint": "Yachachikuqpa qhawanapampanpi 'Qallariy Rikuchina Yachayta' ñit'iy yachachiyta qallarichinapaq.",
+    "connectedCode": "Ukhuman t'inkisqa {code}",
+    "answerLockedTitle": "Kutichiy wichq'asqa!",
+    "answerLockedHint": "Qhawaqpa qhawanapin ñit'iy Kutichiyta Rikuchiy nisqata, puntukunata hinallataq punta kaqkunap sutin qillqatapas rikunaykipaq.",
+    "resultCorrect": "Chaninchu!",
+    "resultIncorrect": "Manaraqmi!",
+    "pointsEarned": "+{points} puntokuna",
+    "yourFinalRank": "Qhipa Sayayniyki",
+    "finalStats": "{points} pts · {correct}/ chanin{total}",
+    "playAgain": "Wasan Pukllay",
+    "timeUpTitle": "Pacha tukukunña!",
+    "timeUpHint": "Qhawaqpa qhawanapin ñit'iy \"Kutichiyta Rikuchiy\" nisqata, kutichiyta hinallataq puntaje qillqatapas rikunaykipaq."
   }
 }

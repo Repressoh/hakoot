@@ -25,7 +25,8 @@
     "dashboard": "Instrumentpanelo",
     "emailLists": "Retpoŝtaj listoj",
     "hostSignIn": "Gazeto? Ensalutu",
-    "accountSettings": "Konto-agordoj"
+    "accountSettings": "Konto-agordoj",
+    "tryDemo": "Provu la demonstracion"
   },
   "settings": {
     "title": "Konto-agordoj",
@@ -94,7 +95,8 @@
     "connecting": "Konektiĝas...",
     "enterMatch": "Eniru matĉon",
     "metaTitle": "Hakoot - Interaga Kvizplatformo",
-    "metaDescription": "Kreu kaj ludu interagajn kodigajn kvizojn kun via publiko."
+    "metaDescription": "Kreu kaj ludu interagajn kodigajn kvizojn kun via publiko.",
+    "tryDemoCta": "Provu la interagan malfermitagan demonstracion (sen ensaluto)"
   },
   "auth": {
     "signInTitle": "Bonvenon reen",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Aldoni",
     "removeEntryFailed": "Malsukcesis forigi kontakton"
+  },
+  "demo": {
+    "metaTitle": "Interaga Demonstraĵo — Hakoot",
+    "metaDescription": "Provu Hakoot vive per flanko-al-flanka gastiganto-ludanto malfermitaga simulilo. Ne necesas konto.",
+    "badge": "Demonstraĵo por Malferma Tago",
+    "heading": "Simulilo de viva klasĉambro",
+    "subheading": "Gvidu la lecionon sur la gastiganta ekrano kaj respondu en reala tempo sur la ludanta aparato.",
+    "viewModeLabel": "Demonstra vidreĝimo",
+    "viewMode": {
+      "split": "Disigita Vido",
+      "host": "Gazdanto",
+      "player": "Ludanto"
+    },
+    "restartDemo": "Reekzekuti Demonstraĵon",
+    "hostScreenLabel": "Ekrano de gastiganto",
+    "playerScreenLabel": "Ludanta Aparato",
+    "statusLobby": "Atendĉambro",
+    "statusFinished": "Finita",
+    "stepProgress": "Paŝo /{current} {total}",
+    "inviteCodeLabel": "Demonstra Invita Kodo",
+    "playersJoined": "{count} ludantoj en la vestiblo",
+    "defaultVisitorName": "Gasto",
+    "youTag": "Vi",
+    "startSession": "Komencu demonstraĵan sesion",
+    "theoryLabel": "Teorio kaj Kodo",
+    "quizLabel": "Viva Kvizo",
+    "codeNotesLabel": "Alklaku linion por inspekti",
+    "nextStep": "Sekva Paŝo",
+    "finishSession": "Montri finajn rezultojn",
+    "revealAnswer": "Malkaŝi Respondon",
+    "answersReceived": "{answered} / respondita{total}",
+    "correctBadge": "Ĝusta",
+    "liveLeaderboard": "Viva gvidtabulo",
+    "finalLeaderboard": "Fina gvidtabelo",
+    "finishedSubtitle": "Tio estas kompleta Hakoot-leciono — preta por rekomenci por la sekva vizitanto.",
+    "createOwnGame": "Kreu Vian Propran Ludon",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Via montra nomo",
+    "visitorNamePlaceholder": "Enigu vian nomon",
+    "joinedLobbyTitle": "Vi estas en la vestiblo!",
+    "joinedLobbyHint": "Premu \"Start Demo Session\" sur la ekrano de la gastiganto por lanĉi la lecionon.",
+    "connectedCode": "Konektita al ĉambro {code}",
+    "answerLockedTitle": "Respondo ŝlosita!",
+    "answerLockedHint": "Premu \"Malkaŝi Respondon\" sur la ekrano de la gastiganto por vidi poentojn kaj la gvidotabulon.",
+    "resultCorrect": "Ĝusta!",
+    "resultIncorrect": "Ne tute!",
+    "pointsEarned": "+{points} poentoj",
+    "yourFinalRank": "Via fina rango",
+    "finalStats": "{points} poentoj · {correct}/ ĝustaj{total}",
+    "playAgain": "Re-ludi",
+    "timeUpTitle": "La tempo finiĝis!",
+    "timeUpHint": "Premu \"Reveal Answer\" sur la gastiganta ekrano por vidi la solvon kaj la gvidotabulon."
   }
 }

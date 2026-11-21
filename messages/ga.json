@@ -25,7 +25,8 @@
     "dashboard": "Cianbhord",
     "emailLists": "Liostaí Ríomhphoist",
     "hostSignIn": "Óstach? Logáil isteach",
-    "accountSettings": "Socruithe Cuntais"
+    "accountSettings": "Socruithe Cuntais",
+    "tryDemo": "Bain triail as an taispeántas"
   },
   "settings": {
     "title": "Socruithe Cuntais",
@@ -94,7 +95,8 @@
     "connecting": "Ag nascadh...",
     "enterMatch": "Rachaigí isteach sa chluiche",
     "metaTitle": "Hakoot - Ardán Tráth na gCeist Idirghníomhach",
-    "metaDescription": "Cruthaigh agus imir tráth na gceist códaithe idirghníomhach le do lucht féachana."
+    "metaDescription": "Cruthaigh agus imir tráth na gceist códaithe idirghníomhach le do lucht féachana.",
+    "tryDemoCta": "Bain triail as an Léiriú Idirghníomhach don Lá Oscailte (gan logáil isteach)"
   },
   "auth": {
     "signInTitle": "Fáilte ar ais",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Cuir leis",
     "removeEntryFailed": "Theip ar bhaint an teagmhálaí"
+  },
+  "demo": {
+    "metaTitle": "Taispeántas Idirghníomhach — Hakoot",
+    "metaDescription": "Bain triail as Hakoot beo le haon-láithreoir agus aon-imreoir insamhlóir lae oscailte taobh le taobh. Níl cuntas ag teastáil.",
+    "badge": "Taispeántas an Lae Oscailte",
+    "heading": "Aithriseoir Seomra Ranga Beo",
+    "subheading": "Tiomáin an ceacht ar scáileán an Óstaigh agus tabhair freagra i bhfíor-am ar ghléas an Imreora.",
+    "viewModeLabel": "Mód radhairc taispeántais",
+    "viewMode": {
+      "split": "Léargas Scoilte",
+      "host": "Óstach",
+      "player": "Imreoir"
+    },
+    "restartDemo": "Athchuir an Taispeántas",
+    "hostScreenLabel": "Scáileán an Óstaigh",
+    "playerScreenLabel": "Gléas an Imreora",
+    "statusLobby": "Liobha",
+    "statusFinished": "Críochnaithe",
+    "stepProgress": "Céim {current}/ {total}",
+    "inviteCodeLabel": "Cód Cuir-i-gCéill an Taispeántais",
+    "playersJoined": "{count} imreoirí sa stocaireacht",
+    "defaultVisitorName": "Aoi",
+    "youTag": "Tú",
+    "startSession": "Cuir Tús le Seisiún Taispeántais",
+    "theoryLabel": "Teoiric & Cód",
+    "quizLabel": "Tráth na gceist Beo",
+    "codeNotesLabel": "Cliceáil ar líne chun í a scrúdú",
+    "nextStep": "An Chéad Chéim Eile",
+    "finishSession": "Taispeáin na Torthaí Deiridh",
+    "revealAnswer": "Nocht an Freagra",
+    "answersReceived": "{answered} / freagartha{total}",
+    "correctBadge": "Ceart",
+    "liveLeaderboard": "Clár Ceannais Beo",
+    "finalLeaderboard": "Clár Ceannais Deiridh",
+    "finishedSubtitle": "Sin ceacht iomlán Hakoot — réidh le hathshocrú don chéad chuairteoir eile.",
+    "createOwnGame": "Cruthaigh Do Chluiche Féin",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "D'ainm taispeána",
+    "visitorNamePlaceholder": "Cuir isteach d'ainm",
+    "joinedLobbyTitle": "Tá tú sa stocaireacht!",
+    "joinedLobbyHint": "Brúigh Seisiún Taispeántais a Chur ar Siúl ar scáileán an Óstaigh chun an ceacht a sheoladh.",
+    "connectedCode": "Ceangailte leis an seomra {code}",
+    "answerLockedTitle": "Freagra faoi ghlas!",
+    "answerLockedHint": "Brúigh Nochta Freagra ar scáileán an Óstach chun na scóir agus an ceannairechlár a fheiceáil.",
+    "resultCorrect": "Corréict!",
+    "resultIncorrect": "Ní hé sin go díreach!",
+    "pointsEarned": "+{points} pointí",
+    "yourFinalRank": "Do Rang Deiridh",
+    "finalStats": "{points} pts · {correct}/ ceart{total}",
+    "playAgain": "Imir Arís",
+    "timeUpTitle": "Tá an t-am caite!",
+    "timeUpHint": "Brúigh Nochta Freagra ar scáileán an Óstach chun an réiteach agus an ceannairechlár a fheiceáil."
   }
 }

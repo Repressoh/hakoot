@@ -25,7 +25,8 @@
     "dashboard": "ڈیش بورڈ",
     "emailLists": "ای میل فہرستیں",
     "hostSignIn": "میزبان؟ سائن ان کریں",
-    "accountSettings": "اکاؤنٹ کی ترتیبات"
+    "accountSettings": "اکاؤنٹ کی ترتیبات",
+    "tryDemo": "ڈیمو آزمائیں"
   },
   "settings": {
     "title": "اکاؤنٹ کی ترتیبات",
@@ -94,7 +95,8 @@
     "connecting": "جُڑ رہا ہے...",
     "enterMatch": "میچ میں داخل ہوں",
     "metaTitle": "ہکوٹ - انٹرایکٹو کوئز پلیٹ فارم",
-    "metaDescription": "اپنے ناظرین کے ساتھ تعاملی کوڈنگ کوئز بنائیں اور کھیلیں۔"
+    "metaDescription": "اپنے ناظرین کے ساتھ تعاملی کوڈنگ کوئز بنائیں اور کھیلیں۔",
+    "tryDemoCta": "انٹرایکٹیو اوپن ڈے ڈیمو آزمائیں (لاگ ان کی ضرورت نہیں)"
   },
   "auth": {
     "signInTitle": "واپسی پر خوش آمدید",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "شامل کریں",
     "removeEntryFailed": "رابطہ ہٹانے میں ناکام"
+  },
+  "demo": {
+    "metaTitle": "انٹرایکٹو ڈیمو — ہکوٹ",
+    "metaDescription": "Hakoot کو لائیو آزمائیں، ایک ساتھ کھلاڑی اور میزبان کے لیے اوپن ڈے سمیلیٹر کے ساتھ۔ اکاؤنٹ کی ضرورت نہیں۔",
+    "badge": "اوپن ڈے ڈیمو",
+    "heading": "لائو کلاسی روم سمیلیٹر",
+    "subheading": "ہوسٹ اسکرین پر سبق چلائیں اور پلیئر ڈیوائس پر حقیقی وقت میں جواب دیں۔",
+    "viewModeLabel": "ڈیمو ویو موڈ",
+    "viewMode": {
+      "split": "منقسم منظر",
+      "host": "میزبان",
+      "player": "کھلاڑی"
+    },
+    "restartDemo": "ڈیمو دوبارہ شروع کریں",
+    "hostScreenLabel": "میزبان اسکرین",
+    "playerScreenLabel": "کھلاڑی کا آلہ",
+    "statusLobby": "لاؤنج",
+    "statusFinished": "مکمل",
+    "stepProgress": "مرحلہ {current}/ {total}",
+    "inviteCodeLabel": "ڈیمو دعوت کوڈ",
+    "playersJoined": "{count} لاؤنج میں کھلاڑی",
+    "defaultVisitorName": "مہمان",
+    "youTag": "آپ",
+    "startSession": "ڈیمو سیشن شروع کریں",
+    "theoryLabel": "نظریہ اور کوڈ",
+    "quizLabel": "لائو کیوز",
+    "codeNotesLabel": "معائنہ کرنے کے لیے کسی لائن پر کلک کریں",
+    "nextStep": "اگلا قدم",
+    "finishSession": "حتمی نتائج دکھائیں",
+    "revealAnswer": "جواب ظاہر کریں",
+    "answersReceived": "{answered} / جواب دیا{total} گیا",
+    "correctBadge": "صحیح",
+    "liveLeaderboard": "لائو لیڈر بورڈ",
+    "finalLeaderboard": "حتمی لیڈر بورڈ",
+    "finishedSubtitle": "یہ ایک مکمل Hakoot سبق ہے — اگلے زائر کے لیے دوبارہ ترتیب دینے کے لیے تیار۔",
+    "createOwnGame": "اپنا کھیل خود بنائیں",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "آپ کا ڈسپلے نام",
+    "visitorNamePlaceholder": "اپنا نام درج کریں",
+    "joinedLobbyTitle": "آپ لابی میں ہیں!",
+    "joinedLobbyHint": "سبق شروع کرنے کے لیے ہوسٹ کی اسکرین پر 'اسٹارٹ ڈیمو سیشن' دبائیں۔",
+    "connectedCode": "کمرے سے منسلک {code}",
+    "answerLockedTitle": "جواب لاک ہو گیا!",
+    "answerLockedHint": "ہوسٹ اسکرین پر 'جواب دکھائیں' پر کلک کریں تاکہ اسکورز اور لیڈر بورڈ دیکھ سکیں۔",
+    "resultCorrect": "صحیح!",
+    "resultIncorrect": "بالکل درست نہیں!",
+    "pointsEarned": "+{points} پوائنٹس",
+    "yourFinalRank": "آپ کی حتمی رینک",
+    "finalStats": "{points} pts · {correct}/ صحیح{total}",
+    "playAgain": "دوبارہ کھیلیں",
+    "timeUpTitle": "وقت ختم ہو گیا!",
+    "timeUpHint": "حل اور لیڈر بورڈ دیکھنے کے لیے ہوسٹ اسکرین پر 'جواب دکھائیں' پر کلک کریں۔"
   }
 }
