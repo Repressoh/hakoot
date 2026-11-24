@@ -40,15 +40,12 @@ import {
 } from "@/lib/demo-engine";
 import {
   DEMO_BOTS,
-  type DemoCodeAnnotation,
   type DemoLesson,
   type DemoQuizStep,
   type DemoTheoryStep,
   getDemoLesson,
 } from "@/lib/demo-lesson";
 import { cn } from "@/lib/utils";
-
-type ViewMode = "split" | "host" | "player";
 
 const CHOICE_BUTTON_STYLES = [
   "border-choice-red/40 bg-choice-red/15 text-foreground hover:bg-choice-red/25",
@@ -63,56 +60,6 @@ const CHOICE_ICON_BG = [
   "bg-choice-yellow text-black",
   "bg-choice-green text-black",
 ] as const;
-
-interface AnnotationExplorerProps {
-  annotations: DemoCodeAnnotation[];
-  label: string;
-}
-
-function AnnotationExplorer({ annotations, label }: AnnotationExplorerProps) {
-  const [selectedId, setSelectedId] = useState<string>(
-    annotations[0]?.id ?? ""
-  );
-
-  const selected =
-    annotations.find((item) => item.id === selectedId) ?? annotations[0];
-
-  if (!selected) {
-    return null;
-  }
-
-  return (
-    <div className="space-y-2 rounded-xl border border-border/70 bg-surface-soft/70 p-3">
-      <p className="font-mono text-muted-foreground text-xs uppercase tracking-wider">
-        {label}
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {annotations.map((annotation) => {
-          const isActive = annotation.id === selected.id;
-          return (
-            <button
-              aria-pressed={isActive}
-              className={cn(
-                "rounded-lg border px-2.5 py-1 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                isActive
-                  ? "border-primary bg-primary/15 font-semibold text-primary"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
-              )}
-              key={annotation.id}
-              onClick={() => setSelectedId(annotation.id)}
-              type="button"
-            >
-              {annotation.lineLabel}
-            </button>
-          );
-        })}
-      </div>
-      <p className="text-foreground text-sm leading-relaxed">
-        {selected.explanation}
-      </p>
-    </div>
-  );
-}
 
 interface HostPanelProps {
   lesson: DemoLesson;
@@ -177,9 +124,6 @@ function HostPanel({
                 <h2 className="font-bold font-display text-xl tracking-tight">
                   {lesson.title}
                 </h2>
-                <p className="mt-1 text-muted-foreground text-sm">
-                  {lesson.description}
-                </p>
               </div>
 
               <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-center">
@@ -271,9 +215,6 @@ function HostPanel({
                 <h2 className="font-bold font-display text-xl">
                   {t("finalLeaderboard")}
                 </h2>
-                <p className="mt-1 text-muted-foreground text-sm">
-                  {t("finishedSubtitle")}
-                </p>
               </div>
               <Leaderboard
                 entries={leaderboard.map((entry) => ({
@@ -332,10 +273,6 @@ function HostTheoryContent({
         <ClientCodeBlock
           code={step.codeBlock.code}
           language={step.codeBlock.language}
-        />
-        <AnnotationExplorer
-          annotations={step.codeBlock.annotations}
-          label={t("codeNotesLabel")}
         />
       </div>
 
@@ -586,10 +523,6 @@ function PlayerPanel({
               code={currentStep.codeBlock.code}
               language={currentStep.codeBlock.language}
             />
-            <AnnotationExplorer
-              annotations={currentStep.codeBlock.annotations}
-              label={t("codeNotesLabel")}
-            />
           </div>
         )}
 
@@ -725,9 +658,6 @@ function PlayerQuizContent({
           <p className="font-display font-semibold text-primary">
             {t("answerLockedTitle")}
           </p>
-          <p className="mt-1 text-muted-foreground text-sm">
-            {t("answerLockedHint")}
-          </p>
         </div>
       ) : null}
 
@@ -735,9 +665,6 @@ function PlayerQuizContent({
         <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-center">
           <p className="font-display font-semibold text-destructive">
             {t("timeUpTitle")}
-          </p>
-          <p className="mt-1 text-muted-foreground text-sm">
-            {t("timeUpHint")}
           </p>
         </div>
       ) : null}
@@ -877,7 +804,6 @@ export function DemoExperience() {
   const t = useTranslations("demo");
   const lesson = getDemoLesson(locale);
 
-  const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [state, dispatch] = useReducer(
     demoSessionReducer,
     t("defaultVisitorName"),
@@ -974,30 +900,7 @@ export function DemoExperience() {
                 <span className="font-bold font-display text-base">Hakoot</span>
               </Link>
             </Button>
-            <Badge variant="secondary">{t("badge")}</Badge>
           </div>
-
-          <fieldset
-            aria-label={t("viewModeLabel")}
-            className="flex items-center rounded-lg border border-border bg-surface-soft p-0.5"
-          >
-            {(["split", "host", "player"] as const).map((mode) => (
-              <button
-                aria-pressed={viewMode === mode}
-                className={cn(
-                  "rounded-md px-3 py-1.5 font-medium text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  viewMode === mode
-                    ? "bg-primary font-semibold text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                type="button"
-              >
-                {t(`viewMode.${mode}`)}
-              </button>
-            ))}
-          </fieldset>
 
           <div className="flex items-center gap-2">
             <Button onClick={handleRestart} size="sm" variant="outline">
@@ -1014,40 +917,22 @@ export function DemoExperience() {
       </header>
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h1 className="font-bold font-display text-2xl tracking-tight">
-              {t("heading")}
-            </h1>
-            <p className="text-muted-foreground text-sm">{t("subheading")}</p>
-          </div>
-        </div>
-
-        <div
-          className={cn(
-            "grid flex-1 gap-6",
-            viewMode === "split" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"
-          )}
-        >
-          {viewMode === "player" ? null : (
-            <HostPanel
-              lesson={lesson}
-              onAdvance={handleAdvance}
-              onRestart={handleRestart}
-              onReveal={handleReveal}
-              onStart={handleStart}
-              state={state}
-            />
-          )}
-          {viewMode === "host" ? null : (
-            <PlayerPanel
-              lesson={lesson}
-              onRenameVisitor={handleRenameVisitor}
-              onRestart={handleRestart}
-              onSubmitAnswer={handleSubmitAnswer}
-              state={state}
-            />
-          )}
+        <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2">
+          <HostPanel
+            lesson={lesson}
+            onAdvance={handleAdvance}
+            onRestart={handleRestart}
+            onReveal={handleReveal}
+            onStart={handleStart}
+            state={state}
+          />
+          <PlayerPanel
+            lesson={lesson}
+            onRenameVisitor={handleRenameVisitor}
+            onRestart={handleRestart}
+            onSubmitAnswer={handleSubmitAnswer}
+            state={state}
+          />
         </div>
       </main>
     </div>
