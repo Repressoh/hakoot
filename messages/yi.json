@@ -25,7 +25,8 @@
     "dashboard": "קאָנטראָל־טאָוול",
     "emailLists": "אימעיל־ליסטעס",
     "hostSignIn": "האָסט? זיך אײַנלאָגירן",
-    "accountSettings": "חשבון־אײַנשטעלונגען"
+    "accountSettings": "חשבון־אײַנשטעלונגען",
+    "tryDemo": "פּרוּווט דעם דעמאָ"
   },
   "settings": {
     "title": "חשבון־אײַנשטעלונגען",
@@ -94,7 +95,8 @@
     "connecting": "פֿאַרבינדט זיך...",
     "enterMatch": "טרעט אַרײַן אין קאַמף",
     "metaTitle": "האַקוט - אינטעראַקטיווע קוויז־פּלאַטפאָרמע",
-    "metaDescription": "שאַפֿט און שפּילט אינטעראַקטיווע קאָדירונג־קוויזן מיט אײַער עולם"
+    "metaDescription": "שאַפֿט און שפּילט אינטעראַקטיווע קאָדירונג־קוויזן מיט אײַער עולם",
+    "tryDemoCta": "פּרוּווט די אינטעראַקטיווע אָפֿן־טאָג דעמאָ (אָן לאָגין)"
   },
   "auth": {
     "signInTitle": "ברוכים־הבאים צוריק",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "צוגעבן",
     "removeEntryFailed": "געפֿאַלן צו באַזייַטיקן קאָנטאַקט"
+  },
+  "demo": {
+    "metaTitle": "אינטעראַקטיווע דעמאָ — האַקוט",
+    "metaDescription": "פּרוּווט האַקוט לעבעדיק מיט אַ זײַט־צו־זײַט האָסט־און־שפּילער אָפֿן־טאָג סימולאַטאָר. קיין חשבון ניט נייטיק.",
+    "badge": "אָפֿן־טאָג דעמאָ",
+    "heading": "לייוו קלאַסצימער סימולאַטאָר",
+    "subheading": "פֿירט דעם לעקציע אויפֿן האָסט־בילדשירעם און ענטפֿערט אין אמת־צײַט אויפֿן שפּילער־מיטל.",
+    "viewModeLabel": "דעמאָ־אַנזיכט־מאָדוס",
+    "viewMode": {
+      "split": "געטיילטער אויסקוק",
+      "host": "האָסט",
+      "player": "שפּילער"
+    },
+    "restartDemo": "איבערפֿאַנגען דעמאָ",
+    "hostScreenLabel": "האָסט־בילדשירעם",
+    "playerScreenLabel": "שפּילער־מיטל",
+    "statusLobby": "לאָבי",
+    "statusFinished": "פֿאַרענדיקט",
+    "stepProgress": "שריט {current}/ {total}",
+    "inviteCodeLabel": "דעמאָ איינלאַדונג־קאָד",
+    "playersJoined": "{count} שפּילערס אין לאָביע",
+    "defaultVisitorName": "געסט",
+    "youTag": "דו",
+    "startSession": "אָנהייבן דעמאָ־סעסיע",
+    "theoryLabel": "טעאָריע און קאָד",
+    "quizLabel": "לייוו־קוויז",
+    "codeNotesLabel": "קליקט אויף אַ שורה צו דורכקוקן",
+    "nextStep": "נעקסטער שריט",
+    "finishSession": "ווײַז די ענדגילטיקע רעזולטאַטן",
+    "revealAnswer": "אַנטפּלעקן ענטפֿער",
+    "answersReceived": "{answered} / ענטפֿערט{total}",
+    "correctBadge": "ריכטיק",
+    "liveLeaderboard": "לעבעדיקער פירער־טאָוול",
+    "finalLeaderboard": "ענדגילטיקער פירער־טאָוול",
+    "finishedSubtitle": "דאָס איז אַ גאַנץ האַקוט־לעקציע — גרייט צו ריסעטן פֿאַרן קומענדיקן באַזוכער.",
+    "createOwnGame": "שאַפֿט אײַער אייגענעם שפּיל",
+    "pointsPill": "{points} פּונקטן",
+    "visitorNameLabel": "דײַן אַרויסווײַז־נאָמען",
+    "visitorNamePlaceholder": "שרײַבט אײַער נאָמען",
+    "joinedLobbyTitle": "איר זענט אין דער לאָביע!",
+    "joinedLobbyHint": "דריק אויף \"Start Demo Session\" אויף דעם האָסט־בילדשירעם צו אָנהייבן די לעקציע.",
+    "connectedCode": "פֿאַרבונדן צום צימער {code}",
+    "answerLockedTitle": "ענטפֿער פֿאַרשלאָסן!",
+    "answerLockedHint": "דריקן \"אַנטפּלעקן ענטפֿער\" אויפֿן האָסט־עקראַן כּדי צו זען די פּונקטן און דעם פֿירער־טאָוול.",
+    "resultCorrect": "ריכטיק!",
+    "resultIncorrect": "נישט גאַנץ!",
+    "pointsEarned": "+{points} פּונקטן",
+    "yourFinalRank": "אייער לעצטער ראַנג",
+    "finalStats": "{points} פּונקטן · {correct}/ ריכטיק{total}",
+    "playAgain": "שפּיל ווידער",
+    "timeUpTitle": "די צײַט איז אויס!",
+    "timeUpHint": "דריקן \"אַנטפּלעקן ענטפֿער\" אויפֿן האָסט־עקראַן כּדי צו זען די לייזונג און דעם פֿירער־טאָוול."
   }
 }

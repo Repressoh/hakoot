@@ -25,7 +25,8 @@
     "dashboard": "მართვის პანელი",
     "emailLists": "ელფოსტის სიები",
     "hostSignIn": "მასპინძელი? ავტორიზაცია",
-    "accountSettings": "ანგარიშის პარამეტრები"
+    "accountSettings": "ანგარიშის პარამეტრები",
+    "tryDemo": "სცადეთ დემო"
   },
   "settings": {
     "title": "ანგარიშის პარამეტრები",
@@ -94,7 +95,8 @@
     "connecting": "დაკავშირება...",
     "enterMatch": "შესვლა მატჩში",
     "metaTitle": "ჰაკუთი - ინტერაქტიული ვიქტორინის პლატფორმა",
-    "metaDescription": "შექმენით და ითამაშეთ ინტერაქტიული კოდირების ვიქტორინები თქვენს აუდიტორიასთან ერთად"
+    "metaDescription": "შექმენით და ითამაშეთ ინტერაქტიული კოდირების ვიქტორინები თქვენს აუდიტორიასთან ერთად",
+    "tryDemoCta": "სცადეთ ინტერაქტიული ღია დღის დემო (ავტორიზაციის გარეშე)"
   },
   "auth": {
     "signInTitle": "კვლავ გელოდებით",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "დამატება",
     "removeEntryFailed": "კონტაქტის წაშლა ვერ მოხერხდა"
+  },
+  "demo": {
+    "metaTitle": "ინტერაქტიული დემო — ჰაკუთი",
+    "metaDescription": "სცადეთ Hakoot ცოცხლად მასპინძლისა და მოთამაშის გვერდიგვერდ გახსნილი სიმულატორით. ანგარიში არ არის საჭირო.",
+    "badge": "ღია დღის დემო",
+    "heading": "პირდაპირი კლასის სიმულატორი",
+    "subheading": "წარმართეთ გაკვეთილი მასპინძლის ეკრანზე და უპასუხეთ რეალურ დროში მოთამაშის მოწყობილობაზე.",
+    "viewModeLabel": "დემო რეჟიმი",
+    "viewMode": {
+      "split": "ნაწილებად დაყოფა",
+      "host": "მასპინძელი",
+      "player": "მოთამაშე"
+    },
+    "restartDemo": "დემოს გადატვირთვა",
+    "hostScreenLabel": "მასპინძლის ეკრანი",
+    "playerScreenLabel": "მოთამაშის მოწყობილობა",
+    "statusLobby": "ლობი",
+    "statusFinished": "დასრულებული",
+    "stepProgress": "ნაბიჯი {current}/ {total}",
+    "inviteCodeLabel": "დემო-სასწავლო კოდი",
+    "playersJoined": "{count} ლობიში მყოფი მოთამაშეები",
+    "defaultVisitorName": "სტუმარი",
+    "youTag": "თქვენ",
+    "startSession": "დემო სესიის დაწყება",
+    "theoryLabel": "თეორია და კოდი",
+    "quizLabel": "ლაივ-კვიზი",
+    "codeNotesLabel": "დააწკაპუნეთ სტრიქონზე შესამოწმებლად",
+    "nextStep": "შემდეგი ნაბიჯი",
+    "finishSession": "საბოლოო შედეგების ჩვენება",
+    "revealAnswer": "პასუხის გამხელა",
+    "answersReceived": "{answered} / {total} პასუხი გაცემულია",
+    "correctBadge": "სწორი",
+    "liveLeaderboard": "პირდაპირი ეთერის ლიდერბორდი",
+    "finalLeaderboard": "საბოლოო ლიდერბორდი",
+    "finishedSubtitle": "ეს არის Hakoot-ის სრული გაკვეთილი — მზად არის გადატვირთვისთვის შემდეგი ვიზიტორისთვის.",
+    "createOwnGame": "შექმენი საკუთარი თამაში",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "თქვენი ეკრანის სახელი",
+    "visitorNamePlaceholder": "შეიყვანეთ თქვენი სახელი",
+    "joinedLobbyTitle": "თქვენ ლობიში ხართ!",
+    "joinedLobbyHint": "გაკვეთილის დასაწყებად მასპინძლის ეკრანზე დააჭირეთ ღილაკს \"დემო სესიის დაწყება\".",
+    "connectedCode": "დაკავშირებულია ოთახთან {code}",
+    "answerLockedTitle": "პასუხი დაბლოკილია!",
+    "answerLockedHint": "მასპინძლის ეკრანზე დააჭირეთ ღილაკს \"პასუხის გამხელა\", რომ ნახოთ ქულები და ლიდერბორდი.",
+    "resultCorrect": "სწორია!",
+    "resultIncorrect": "არა სრულად!",
+    "pointsEarned": "+{points} ქულები",
+    "yourFinalRank": "თქვენი საბოლოო რანგი",
+    "finalStats": "{points} ქულები · {correct}/ სწორი{total}",
+    "playAgain": "კიდევ ერთხელ",
+    "timeUpTitle": "დრო ამოიწურა!",
+    "timeUpHint": "მასპინძლის ეკრანზე დააჭირეთ ღილაკს \"პასუხის გამხელა\", რომ ნახოთ პასუხი და ლიდერბორდი."
   }
 }

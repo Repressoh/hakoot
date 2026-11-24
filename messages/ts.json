@@ -25,7 +25,8 @@
     "dashboard": "Bodo ra swikombiso",
     "emailLists": "Swilethisana swa ti-imeyili",
     "hostSignIn": "N'wini? Nghena",
-    "accountSettings": "Swilunghiselelo swa Akhawunti"
+    "accountSettings": "Swilunghiselelo swa Akhawunti",
+    "tryDemo": "Ringeta Demo"
   },
   "settings": {
     "title": "Swilunghiselelo swa Akhawunti",
@@ -94,7 +95,8 @@
     "connecting": "Ku hlanganisa...",
     "enterMatch": "Ngena eka ntlangu",
     "metaTitle": "Hakoot - Pulatifomo ya Swivutiso leswi hlanganyelaka",
-    "metaDescription": "Tumbuluxa ni ku tlanga swikambelwana swa khodingi leswi hlanganyelaka ni vayingiseri va wena."
+    "metaDescription": "Tumbuluxa ni ku tlanga swikambelwana swa khodingi leswi hlanganyelaka ni vayingiseri va wena.",
+    "tryDemoCta": "Ringeta Demo ya Siku ro Pfula leyi Tirhisanaka (a ku laveki ku nghena)"
   },
   "auth": {
     "signInTitle": "Ha mi amukela nakambe",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Engetela",
     "removeEntryFailed": "Ku tsandzekile ku susa vuxokoxoko bya vutihlanganisi"
+  },
+  "demo": {
+    "metaTitle": "Xikombiso xo Tirhisana — Hakoot",
+    "metaDescription": "Ringeta Hakoot hi ku kongoma hi xikombiso xa siku ro pfuleka xa muhaxi na mutlangi lava nga kusuhi. A ku laveki akawunti.",
+    "badge": "Nkombiso wa Siku ro Pfula",
+    "heading": "Xikombiso xa Tlilasi ya Xiviri",
+    "subheading": "Fambisa dyondzo eka xikirini xa Muhaxi naswona u hlamula hi nkarhi wolowo eka xitirhisiwa xa Mutlangi.",
+    "viewModeLabel": "Muxaka wo languta wa demo",
+    "viewMode": {
+      "split": "Xivono lexi Avanyisiweke",
+      "host": "Muhaxi",
+      "player": "Mutlangi"
+    },
+    "restartDemo": "Sungula Nakambe Demo",
+    "hostScreenLabel": "Xikirini xa Muhaxi",
+    "playerScreenLabel": "Xitirhisiwa xa Mutlangi",
+    "statusLobby": "Lobi",
+    "statusFinished": "Hetisekile",
+    "stepProgress": "Goza /{current} {total}",
+    "inviteCodeLabel": "Khodi yo Rhamba ya Demo",
+    "playersJoined": "{count} vatlangi lava nga eka lobby",
+    "defaultVisitorName": "Muendzi",
+    "youTag": "Wena",
+    "startSession": "Sungula Xiyimiso xa Demo",
+    "theoryLabel": "Dyondzo & Khodi",
+    "quizLabel": "Kviz ya Ximangu",
+    "codeNotesLabel": "Tlhoma ntsengo ku kambisisa",
+    "nextStep": "Goza Leri Landzelaka",
+    "finishSession": "Kombisa Mbuyelo wa Makumu",
+    "revealAnswer": "Paluxa Nhlamulo",
+    "answersReceived": "{answered} / hlamuriwile{total}",
+    "correctBadge": "Lulamile",
+    "liveLeaderboard": "Jaha ra Vafambisi laha ku Nga na Vona",
+    "finalLeaderboard": "Lepulibodo ro hetelela",
+    "finishedSubtitle": "Lexi i dyondzo leyi hetisekeke ya Hakoot — yi lunghekele ku vuyiseriwa eka muendzi la landzelaka.",
+    "createOwnGame": "Tumbuluxa Ntlangu wa Wena",
+    "pointsPill": "{points} ts",
+    "visitorNameLabel": "Vito ra wena leri kombisiwaka",
+    "visitorNamePlaceholder": "Nghenisa vito ra wena",
+    "joinedLobbyTitle": "U le lobbini!",
+    "joinedLobbyHint": "Tshikelela 'Start Demo Session' eka xikirini xa Muhaxi ku sungula dyondzo.",
+    "connectedCode": "Ku nghenile ekamareni {code}",
+    "answerLockedTitle": "Nhlavutelo yi pfaleriwile!",
+    "answerLockedHint": "Tlhoma Reveal Answer eka xikirini xa Muhaxi leswaku u vona swikoro na lehibodo.",
+    "resultCorrect": "I lulamile!",
+    "resultIncorrect": "A swi tano!",
+    "pointsEarned": "+{points} tinhla",
+    "yourFinalRank": "Xiyimo xa wena xa makumu",
+    "finalStats": "{points} tsh. · {correct}/ lulamile{total}",
+    "playAgain": "Tlanga Nakambe",
+    "timeUpTitle": "Nkarhi wu herile!",
+    "timeUpHint": "Tlhoma Reveal Answer eka xikirini xa Host ku vona nhlamulo na leaderboard."
   }
 }

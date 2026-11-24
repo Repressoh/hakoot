@@ -25,7 +25,8 @@
     "dashboard": "داشبورد",
     "emailLists": "فهرست‌های ایمیلی",
     "hostSignIn": "میزبان؟ ورود",
-    "accountSettings": "تنظیمات حساب"
+    "accountSettings": "تنظیمات حساب",
+    "tryDemo": "آزمایش دمو"
   },
   "settings": {
     "title": "تنظیمات حساب",
@@ -94,7 +95,8 @@
     "connecting": "در حال اتصال...",
     "enterMatch": "ورود به مسابقه",
     "metaTitle": "هاکوت - پلتفرم آزمون تعاملی",
-    "metaDescription": "با مخاطبان خود آزمون‌های تعاملی کدنویسی بسازید و بازی کنید"
+    "metaDescription": "با مخاطبان خود آزمون‌های تعاملی کدنویسی بسازید و بازی کنید",
+    "tryDemoCta": "دموی روز باز تعاملی را امتحان کنید (بدون نیاز به ورود)"
   },
   "auth": {
     "signInTitle": "خوش آمدید",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "افزودن",
     "removeEntryFailed": "حذف مخاطب ناموفق بود"
+  },
+  "demo": {
+    "metaTitle": "دموی تعاملی — هاکوت",
+    "metaDescription": "Hakoot را به‌صورت زنده با شبیه‌ساز روز باز میزبان و بازیکن در کنار هم امتحان کنید. نیازی به حساب کاربری نیست.",
+    "badge": "دموی روز باز",
+    "heading": "شبیه‌ساز کلاس زنده",
+    "subheading": "درس را در صفحهٔ میزبان پیش ببرید و به‌صورت زنده در دستگاه بازیکن پاسخ دهید.",
+    "viewModeLabel": "حالت نمایش دمو",
+    "viewMode": {
+      "split": "نمای تقسیم‌شده",
+      "host": "میزبان",
+      "player": "بازیکن"
+    },
+    "restartDemo": "راه‌اندازی مجدد دمو",
+    "hostScreenLabel": "صفحه میزبان",
+    "playerScreenLabel": "دستگاه بازیکن",
+    "statusLobby": "لابی",
+    "statusFinished": "تکمیل شد",
+    "stepProgress": "مرحله /{current} {total}",
+    "inviteCodeLabel": "کد دعوت دمو",
+    "playersJoined": "{count} بازیکنان در لابی",
+    "defaultVisitorName": "مهمان",
+    "youTag": "شما",
+    "startSession": "شروع جلسهٔ نمایشی",
+    "theoryLabel": "نظریه و کد",
+    "quizLabel": "کویز زنده",
+    "codeNotesLabel": "روی یک خط کلیک کنید تا بررسی شود",
+    "nextStep": "گام بعدی",
+    "finishSession": "نمایش نتایج نهایی",
+    "revealAnswer": "پاسخ را نمایش دهید",
+    "answersReceived": "{answered} / پاسخ داده شد{total}",
+    "correctBadge": "صحیح",
+    "liveLeaderboard": "جدول رده‌بندی زنده",
+    "finalLeaderboard": "جدول رده‌بندی نهایی",
+    "finishedSubtitle": "این یک درس کامل در Hakoot است — آمادهٔ ریست شدن برای بازدیدکنندهٔ بعدی.",
+    "createOwnGame": "بازی خود را بسازید",
+    "pointsPill": "{points} امتیازات",
+    "visitorNameLabel": "نام نمایشی شما",
+    "visitorNamePlaceholder": "نام خود را وارد کنید",
+    "joinedLobbyTitle": "شما در لابی هستید!",
+    "joinedLobbyHint": "برای راه‌اندازی درس، روی «شروع جلسه نمایشی» در صفحه میزبان ضربه بزنید.",
+    "connectedCode": "متصل به اتاق {code}",
+    "answerLockedTitle": "پاسخ قفل شد!",
+    "answerLockedHint": "روی «نمایش پاسخ» در صفحهٔ میزبان ضربه بزنید تا امتیازها و جدول رده‌بندی را ببینید.",
+    "resultCorrect": "درست!",
+    "resultIncorrect": "کاملاً درست نیست!",
+    "pointsEarned": "+{points} امتیاز",
+    "yourFinalRank": "رتبه نهایی شما",
+    "finalStats": "{points} امتیازات · {correct}/ صحیح{total}",
+    "playAgain": "دوباره بازی کن",
+    "timeUpTitle": "زمان تمام شد!",
+    "timeUpHint": "روی «نمایش پاسخ» در صفحهٔ میزبان ضربه بزنید تا راه‌حل و جدول امتیازات را ببینید."
   }
 }

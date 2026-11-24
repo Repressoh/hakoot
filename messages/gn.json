@@ -25,7 +25,8 @@
     "dashboard": "Tabléro",
     "emailLists": "Ñe'ẽveve Rysýi",
     "hostSignIn": "Mbohapehára? Eike",
-    "accountSettings": "Kuenta Ñemboheko"
+    "accountSettings": "Kuenta Ñemboheko",
+    "tryDemo": "Eha'ã pe techaukarã"
   },
   "settings": {
     "title": "Kuenta Ñemboheko",
@@ -94,7 +95,8 @@
     "connecting": "Oñembojoajúvo...",
     "enterMatch": "Eike ñembosaráipe",
     "metaTitle": "Hakoot - Porandu ñembosaráiha oñondivegua",
-    "metaDescription": "Ejapo ha eñembosarái porandu mbohekorã interactivo ne renduharakuéra ndive."
+    "metaDescription": "Ejapo ha eñembosarái porandu mbohekorã interactivo ne renduharakuéra ndive.",
+    "tryDemoCta": "Eiporavo Mbohechauka Ojehechaukáva Ára Ojepe'ávape (ndaikotevẽi reike)"
   },
   "auth": {
     "signInTitle": "Pejujey porãite",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Moĩve",
     "removeEntryFailed": "Ndojeipe'ái contacto"
+  },
+  "demo": {
+    "metaTitle": "Jehechauka Oñondivegua — Hakoot",
+    "metaDescription": "Eiporavo Hakoot en vivo peteĩ simulador ára ojepe'ávape g̃uarã, oĩháme oñondive mbo'ehára ha oha'ãva. Ndoikotevẽi reikéva réra.",
+    "badge": "Demo Ára Ojepe'áva",
+    "heading": "Mbo'ehao Oikóva Mbojojahaha",
+    "subheading": "Emyatyrõ mbo'epy Host ohechahápe ha embohovái upe javete Player oipurúvape.",
+    "viewModeLabel": "Jehechauka mbohechaha",
+    "viewMode": {
+      "split": "Jehecha Mokõime",
+      "host": "Moakãhára",
+      "player": "Ñembosaráihára"
+    },
+    "restartDemo": "Ñepyrũjey Jehechauka",
+    "hostScreenLabel": "Tendota Ta'angaha",
+    "playerScreenLabel": "Ñembosaráihára Rembiporu",
+    "statusLobby": "Ñeha'arõha",
+    "statusFinished": "Opa",
+    "stepProgress": "Pehẽngue /{current} {total}",
+    "inviteCodeLabel": "Kódigo Ñehenói Jehechaukarã",
+    "playersJoined": "{count} Ñembosaráihára oha'arõháme",
+    "defaultVisitorName": "Mbohupa",
+    "youTag": "Nde",
+    "startSession": "Eñepyrũ Ñeha'ã Jehechaukarã",
+    "theoryLabel": "Teoría ha Código",
+    "quizLabel": "Porandu Ko'ag̃agua",
+    "codeNotesLabel": "Ejopy peteĩ tysýi rehecha hag̃ua",
+    "nextStep": "Tembiapo Oúva",
+    "finishSession": "Ehechauka Tembiapo Paha",
+    "revealAnswer": "Ehechauka Mbohovái",
+    "answersReceived": "{answered} / oñembohovái{total}",
+    "correctBadge": "Oĩ porã",
+    "liveLeaderboard": "Tendota Ojehecháva Ko'ag̃aite",
+    "finalLeaderboard": "Tendota Rysýi Pahague",
+    "finishedSubtitle": "Upéva ha'e peteĩ mbo'epy Hakoot-pegua ipaháva — oĩmbámava oñemoñepyrũ jey hag̃ua pe oúva upe rire g̃uarã.",
+    "createOwnGame": "Ejapo Nde Ñembosarái",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Nde réra ojehechaukáva",
+    "visitorNamePlaceholder": "Ehai nde réra",
+    "joinedLobbyTitle": "Reime koty ñeha'ãrõháme!",
+    "joinedLobbyHint": "Eikutu \"Ñepyrũ Mbo'epy Jehechauka\" Mbo'ehára ta'angápe emoñepyrũ hag̃ua mbo'epy.",
+    "connectedCode": "Oñembojoaju kotýpe {code}",
+    "answerLockedTitle": "Mbohovái oñembotyma!",
+    "answerLockedHint": "Eikutu \"Ehechauka Mbohovái\" Moakãhára tendápe rehecha hag̃ua umi puntaje ha pe tabla oĩháme tenonderã.",
+    "resultCorrect": "Oĩ porã!",
+    "resultIncorrect": "Nda'upéichai!",
+    "pointsEarned": "+{points} puntokuéra",
+    "yourFinalRank": "Ne Rangue Paha",
+    "finalStats": "{points} pts · {correct}/ hekopete{total}",
+    "playAgain": "Eñembosarái Jey",
+    "timeUpTitle": "Opa ára!",
+    "timeUpHint": "Eikutu \"Reveal Answer\" pe Host ohechahápe rehecha hag̃ua mba'éichapa ojejapo ha pe marcador."
   }
 }

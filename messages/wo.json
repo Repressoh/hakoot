@@ -25,7 +25,8 @@
     "dashboard": "Taabalukaay",
     "emailLists": "Limu imel yi",
     "hostSignIn": "Dalal? Dugg",
-    "accountSettings": "Tànneefi kont bi"
+    "accountSettings": "Tànneefi kont bi",
+    "tryDemo": "Jéemal Demo"
   },
   "settings": {
     "title": "Tànneefi kont bi",
@@ -94,7 +95,8 @@
     "connecting": "Di jokkoo...",
     "enterMatch": "Dugg ci match bi",
     "metaTitle": "Hakoot - Dalub laaj-ak-tontu bu interaktif",
-    "metaDescription": "Defaral te fo ak say seetaan-kat ay quiz yu interaktif ci kodd."
+    "metaDescription": "Defaral te fo ak say seetaan-kat ay quiz yu interaktif ci kodd.",
+    "tryDemoCta": "Jéemal Demo Open-Day bu interaktif (soxlawul koneksiyoŋ)"
   },
   "auth": {
     "signInTitle": "Dalal ak jàmm",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Yokk",
     "removeEntryFailed": "Mënul dindi kontak bi"
+  },
+  "demo": {
+    "metaTitle": "Wone bu interaktif — Hakoot",
+    "metaDescription": "Jéemal Hakoot ci direct ak ab simulateur open-day bu boole boroom ak jëfandikukat ci wetante. Soppali lañu kont.",
+    "badge": "Woneb Bésu Ubbe",
+    "heading": "Royukaay bu niru Kër-jàng bu Dëgg",
+    "subheading": "Yilifal jàng mi ci ekran Host bi te tontu ci saa si ci aparey Player bi.",
+    "viewModeLabel": "Gis-gis bu wone",
+    "viewMode": {
+      "split": "Séét bu Ñu Séddale",
+      "host": "Ki dalal",
+      "player": "Po-kat"
+    },
+    "restartDemo": "Delloosi Demo",
+    "hostScreenLabel": "Ekranu Ki Taxawal",
+    "playerScreenLabel": "Jumtukaayu poñkat bi",
+    "statusLobby": "Saal d'attendu",
+    "statusFinished": "Jeex na",
+    "stepProgress": "Jéego /{current} {total}",
+    "inviteCodeLabel": "Koodu Wóote ngir Demo",
+    "playersJoined": "{count} poñkat yi ci néegu xaar bi",
+    "defaultVisitorName": "Ganaay",
+    "youTag": "Yaw",
+    "startSession": "Door Jàngale bu Demo",
+    "theoryLabel": "Xalaat & Kod",
+    "quizLabel": "Quiz bu Direk",
+    "codeNotesLabel": "Bësal ci benn rëdd ngir seetlu ko",
+    "nextStep": "Jéego bi ci topp",
+    "finishSession": "Wone Nattal yu Mujj",
+    "revealAnswer": "Wone Tontu",
+    "answersReceived": "{answered} / {total}tontu na",
+    "correctBadge": "Dëgg",
+    "liveLeaderboard": "Tablo bu Weex",
+    "finalLeaderboard": "Tablo bu mujj",
+    "finishedSubtitle": "Loolu mooy benn lesoŋ Hakoot bu mat sëkk — pare na ngir ñu tàmbalaat ko ngir gan gu topp gi.",
+    "createOwnGame": "Sàkkal sa po bu bopp",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Sa turu wonekaay",
+    "visitorNamePlaceholder": "Duggalal sa tur",
+    "joinedLobbyTitle": "Ya ngi ci néegu xaar bi!",
+    "joinedLobbyHint": "Bësal \"Start Demo Session\" ci ekran Host bi ngir tambali njàng mi.",
+    "connectedCode": "Bokk na ci néeg bi {code}",
+    "answerLockedTitle": "Tontu bi tëju na!",
+    "answerLockedHint": "Bësal \"Wone Tontu\" ci ekran bi Host bi di yor ngir gis poñ yi ak limu ñi jiitu.",
+    "resultCorrect": "Dëgg la!",
+    "resultIncorrect": "Du noonu sax!",
+    "pointsEarned": "+{points} poñ",
+    "yourFinalRank": "Sa Rang bu Mujj",
+    "finalStats": "{points} pts · {correct}/ ju baax{total}",
+    "playAgain": "Foo Waat",
+    "timeUpTitle": "Waxtu wi jeex na!",
+    "timeUpHint": "Bësal \"Wone Tontu\" ci ekran bi Host bi di yor ngir gis tontu bi ak limu ñi jiitu."
   }
 }

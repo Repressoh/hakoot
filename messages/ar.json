@@ -25,7 +25,8 @@
     "dashboard": "لوحة التحكم",
     "emailLists": "قوائم البريد الإلكتروني",
     "hostSignIn": "المضيف؟ تسجيل الدخول",
-    "accountSettings": "إعدادات الحساب"
+    "accountSettings": "إعدادات الحساب",
+    "tryDemo": "جرب العرض التوضيحي"
   },
   "settings": {
     "title": "إعدادات الحساب",
@@ -94,7 +95,8 @@
     "connecting": "الاتصال...",
     "enterMatch": "أدخل المطابقة",
     "metaTitle": "هاكوت - منصة الاختبارات التفاعلية",
-    "metaDescription": "أنشئ اختبارات البرمجة التفاعلية وقم بتشغيلها مع جمهورك"
+    "metaDescription": "أنشئ اختبارات البرمجة التفاعلية وقم بتشغيلها مع جمهورك",
+    "tryDemoCta": "جرب العرض التوضيحي التفاعلي ليوم الأبواب المفتوحة (بدون تسجيل دخول)"
   },
   "auth": {
     "signInTitle": "مرحباً بعودتك",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "إضافة",
     "removeEntryFailed": "فشل في إزالة الملامس"
+  },
+  "demo": {
+    "metaTitle": "عرض توضيحي تفاعلي — Hakoot",
+    "metaDescription": "جرب Hakoot مباشرةً من خلال محاكي «اليوم المفتوح» الذي يعرض المضيف واللاعب جنبًا إلى جنب. لا حاجة إلى إنشاء حساب.",
+    "badge": "عرض توضيحي في يوم الأبواب المفتوحة",
+    "heading": "محاكي الفصل الدراسي المباشر",
+    "subheading": "قم بتقديم الدرس على شاشة المضيف وأجب في الوقت الفعلي على جهاز اللاعب.",
+    "viewModeLabel": "وضع عرض العرض التوضيحي",
+    "viewMode": {
+      "split": "العرض المقسم",
+      "host": "المضيف",
+      "player": "اللاعب"
+    },
+    "restartDemo": "إعادة تشغيل العرض التوضيحي",
+    "hostScreenLabel": "شاشة المضيف",
+    "playerScreenLabel": "جهاز اللاعب",
+    "statusLobby": "الردهة",
+    "statusFinished": "انتهى",
+    "stepProgress": "الخطوة {current} / {total}",
+    "inviteCodeLabel": "رمز دعوة العرض التوضيحي",
+    "playersJoined": "{count} اللاعبون في الردهة",
+    "defaultVisitorName": "ضيف",
+    "youTag": "أنت",
+    "startSession": "بدء جلسة العرض التوضيحي",
+    "theoryLabel": "النظرية والكود",
+    "quizLabel": "اختبار مباشر",
+    "codeNotesLabel": "انقر على سطر لفحصه",
+    "nextStep": "الخطوة التالية",
+    "finishSession": "عرض النتائج النهائية",
+    "revealAnswer": "الكشف عن الإجابة",
+    "answersReceived": "{answered} / {total} تم الرد عليها",
+    "correctBadge": "صحيح",
+    "liveLeaderboard": "لوحة المتصدرين المباشرة",
+    "finalLeaderboard": "لوحة المتصدرين النهائية",
+    "finishedSubtitle": "هذا درس كامل على Hakoot — جاهز لإعادة الضبط من أجل الزائر التالي.",
+    "createOwnGame": "أنشئ لعبتك الخاصة",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "اسم العرض الخاص بك",
+    "visitorNamePlaceholder": "أدخل اسمك",
+    "joinedLobbyTitle": "أنت الآن في الردهة!",
+    "joinedLobbyHint": "اضغط على «بدء جلسة العرض التوضيحي» في شاشة المضيف لبدء الدرس.",
+    "connectedCode": "متصل بالغرفة {code}",
+    "answerLockedTitle": "تم قفل الإجابة!",
+    "answerLockedHint": "اضغط على «الكشف عن الإجابة» على شاشة المضيف للاطلاع على النتائج ولوحة المتصدرين.",
+    "resultCorrect": "صحيح!",
+    "resultIncorrect": "ليس تمامًا!",
+    "pointsEarned": "+{points} نقاط",
+    "yourFinalRank": "ترتيبك النهائي",
+    "finalStats": "{points} نقاط · {correct} / {total} صحيح",
+    "playAgain": "العب مرة أخرى",
+    "timeUpTitle": "انتهى الوقت!",
+    "timeUpHint": "اضغط على «الكشف عن الإجابة» على شاشة المضيف للاطلاع على الحل ولوحة المتصدرين."
   }
 }

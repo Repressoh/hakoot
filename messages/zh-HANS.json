@@ -25,7 +25,8 @@
     "dashboard": "仪表板",
     "emailLists": "电子邮件列表",
     "hostSignIn": "主机？登录",
-    "accountSettings": "账户设置"
+    "accountSettings": "账户设置",
+    "tryDemo": "试用演示"
   },
   "settings": {
     "title": "账户设置",
@@ -94,7 +95,8 @@
     "connecting": "连接...",
     "enterMatch": "输入匹配",
     "metaTitle": "Hakoot - 互动问答平台",
-    "metaDescription": "创建并与受众进行互动式编码测验"
+    "metaDescription": "创建并与受众进行互动式编码测验",
+    "tryDemoCta": "试用交互式开放日演示（无需登录）"
   },
   "auth": {
     "signInTitle": "欢迎回来",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "添加",
     "removeEntryFailed": "移除触点失败"
+  },
+  "demo": {
+    "metaTitle": "交互式演示 — Hakoot",
+    "metaDescription": "通过并排展示的主办方与学员开放日模拟器，亲身体验 Hakoot。无需注册账号。",
+    "badge": "开放日演示",
+    "heading": "实时课堂模拟器",
+    "subheading": "在“主持人”界面引导课程，并在“学员”设备上实时作答。",
+    "viewModeLabel": "演示视图模式",
+    "viewMode": {
+      "split": "分屏视图",
+      "host": "主持人",
+      "player": "Player"
+    },
+    "restartDemo": "重新启动演示",
+    "hostScreenLabel": "主持人界面",
+    "playerScreenLabel": "玩家设备",
+    "statusLobby": "等候室",
+    "statusFinished": "已完成",
+    "stepProgress": "步骤 {current} / {total}",
+    "inviteCodeLabel": "演示邀请码",
+    "playersJoined": "{count} 候场区的玩家",
+    "defaultVisitorName": "访客",
+    "youTag": "You",
+    "startSession": "开始演示会话",
+    "theoryLabel": "理论与代码",
+    "quizLabel": "实时测验",
+    "codeNotesLabel": "点击一行代码进行查看",
+    "nextStep": "下一步",
+    "finishSession": "显示最终结果",
+    "revealAnswer": "显示答案",
+    "answersReceived": "{answered} / {total} 已作答",
+    "correctBadge": "正确",
+    "liveLeaderboard": "实时排行榜",
+    "finalLeaderboard": "最终排行榜",
+    "finishedSubtitle": "这就是一堂完整的 Hakoot 课程——已准备好重置，等待下一位访客。",
+    "createOwnGame": "创建自己的游戏",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "您的显示名称",
+    "visitorNamePlaceholder": "请输入您的姓名",
+    "joinedLobbyTitle": "您已进入等候室！",
+    "joinedLobbyHint": "在主持人界面点击“开始演示会话”以启动课程。",
+    "connectedCode": "已连接至会议室 {code}",
+    "answerLockedTitle": "答案已锁定！",
+    "answerLockedHint": "点击主持人屏幕上的“显示答案”按钮，即可查看分数和排行榜。",
+    "resultCorrect": "正确！",
+    "resultIncorrect": "差一点！",
+    "pointsEarned": "+{points} 积分",
+    "yourFinalRank": "您的最终排名",
+    "finalStats": "{points} 分 · {correct} / {total} 正确",
+    "playAgain": "再次播放",
+    "timeUpTitle": "时间到了！",
+    "timeUpHint": "在主持人屏幕上点击“显示答案”，即可查看解答和排行榜。"
   }
 }

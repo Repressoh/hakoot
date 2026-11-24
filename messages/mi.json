@@ -25,7 +25,8 @@
     "dashboard": "Paepae whakahaere",
     "emailLists": "Rārangi īmēra",
     "hostSignIn": "Kaiwhakarato? Takiuru",
-    "accountSettings": "Tautuhinga Pūkete"
+    "accountSettings": "Tautuhinga Pūkete",
+    "tryDemo": "Whakamātauria te Whakaaturanga"
   },
   "settings": {
     "title": "Tautuhinga Pūkete",
@@ -94,7 +95,8 @@
     "connecting": "Kei te hono...",
     "enterMatch": "Tomo ki te kēmu",
     "metaTitle": "Hakoot - Papanga Uiui Whakawhitiwhiti",
-    "metaDescription": "Waihangahia, ā, tākaro i ngā pātai hōtaka pāhekoheko me tō hunga whakarongo"
+    "metaDescription": "Waihangahia, ā, tākaro i ngā pātai hōtaka pāhekoheko me tō hunga whakarongo",
+    "tryDemoCta": "Whakamātauria te Whakaaturanga Rā Whakatuwhera Whakauru (kāore he takiuru)"
   },
   "auth": {
     "signInTitle": "Nau mai anō",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Tāpiri",
     "removeEntryFailed": "Kāore i taea te tango i te kōntaka"
+  },
+  "demo": {
+    "metaTitle": "Whakaaturanga Whakauru — Hakoot",
+    "metaDescription": "Whakamātauria a Hakoot ora me te kaitū me te kaitākaro i te simulator rā tuwhera taha-ki-taha. Kāore he pūkete e hiahiatia.",
+    "badge": "Whakaaturanga Rā Tuwhera",
+    "heading": "Kaiwhakakārahanga Akomanga Ora",
+    "subheading": "Whakahaerehia te akoranga i runga i te mata o te Kaiwhakarite, ā, whakautua i te wā tūturu i runga i te pūrere o te Kaitākaro.",
+    "viewModeLabel": "Aratau tirohanga whakaaturanga",
+    "viewMode": {
+      "split": "Tirohanga Wehea",
+      "host": "Kaiwhakahaere",
+      "player": "Kaitākaro"
+    },
+    "restartDemo": "Tīmatahia Anō te Whakaaturanga",
+    "hostScreenLabel": "Tere Whakahaere",
+    "playerScreenLabel": "Pūrere Kaitākaro",
+    "statusLobby": "Rūma tatari",
+    "statusFinished": "Kua oti",
+    "stepProgress": "Hipanga /{current} {total}",
+    "inviteCodeLabel": "Waehere Whakauru Whakaaturanga",
+    "playersJoined": "{count} ngā kaitākaro kei te rūma tatari",
+    "defaultVisitorName": "Manuhiri",
+    "youTag": "Ko koe",
+    "startSession": "Tīmatahia te Wāhanga Whakaaturanga",
+    "theoryLabel": "Teorema me te Waehere",
+    "quizLabel": "Whakamātautau Ora",
+    "codeNotesLabel": "Pāwhiritia tētahi rārangi kia tirohia",
+    "nextStep": "Te Hipanga e Whai ake",
+    "finishSession": "Whakaaturia ngā hua whakamutunga",
+    "revealAnswer": "Whakaatuhia te Whakautu",
+    "answersReceived": "{answered} / kua whakautua{total}",
+    "correctBadge": "Pono",
+    "liveLeaderboard": "Rārangi Rangatira Ora",
+    "finalLeaderboard": "Rārangi Rangatira Whakamutunga",
+    "finishedSubtitle": "Koinei te akoranga Hakoot kua oti katoa — kua rite ki te tautuhi anō mō te manuhiri e whai ake nei.",
+    "createOwnGame": "Waihangahia tō kēmu ake",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Tō ingoa whakaatu",
+    "visitorNamePlaceholder": "Whakauruhia tō ingoa",
+    "joinedLobbyTitle": "Kei te rūma tatari koe!",
+    "joinedLobbyHint": "Pāwhiritia te \"Tīmatahia te Wāhanga Whakaaturanga\" i te mata o te Kaiwhakahaere kia tīmata ai te akoranga.",
+    "connectedCode": "Kua hono ki te rūma {code}",
+    "answerLockedTitle": "Kua raka te whakautu!",
+    "answerLockedHint": "Pāwhiritia te 'Whakaatuhia te Whakautu' i te mata o te Kaiwhakahaere kia kite i ngā tohu me te rārangi rangatira.",
+    "resultCorrect": "Pono!",
+    "resultIncorrect": "Ehara i te mea tika!",
+    "pointsEarned": "+{points} ngā tohu",
+    "yourFinalRank": "Tō Tūnga Whakamutunga",
+    "finalStats": "{points} pts · {correct}/ tika{total}",
+    "playAgain": "Tākaro Anō",
+    "timeUpTitle": "Kua pau te wā!",
+    "timeUpHint": "Pāwhiritia te 'Whakaatuhia te Whakautu' i te mata o te Kaiwhakahaere kia kite i te rongoā me te papa rangatira."
   }
 }

@@ -25,7 +25,8 @@
     "dashboard": "Басқару тақтасы",
     "emailLists": "Электрондық пошта тізімдері",
     "hostSignIn": "Қонақ? Жүйеге кіру",
-    "accountSettings": "Есептік жазба параметрлері"
+    "accountSettings": "Есептік жазба параметрлері",
+    "tryDemo": "Демоны сынап көру"
   },
   "settings": {
     "title": "Есептік жазба параметрлері",
@@ -94,7 +95,8 @@
     "connecting": "ҚОСЫЛУДА...",
     "enterMatch": "Жарысқа кіру",
     "metaTitle": "Хакут - интерактивті викторина платформасы",
-    "metaDescription": "Көрермендеріңізбен бірге интерактивті бағдарламалау викториналарын жасап, ойнаңыз"
+    "metaDescription": "Көрермендеріңізбен бірге интерактивті бағдарламалау викториналарын жасап, ойнаңыз",
+    "tryDemoCta": "Интерактивті ашық күн демонстрациясын сынап көріңіз (кіру талап етілмейді)"
   },
   "auth": {
     "signInTitle": "Қайта қош келдіңіз",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Қосу",
     "removeEntryFailed": "Контактты жою сәтсіз аяқталды"
+  },
+  "demo": {
+    "metaTitle": "Интерактивті демонстрация — Hakoot",
+    "metaDescription": "Host пен ойыншының қатар ашық күн симуляторымен Hakoot-ты тікелей сынап көріңіз. Тіркелгі қажет емес.",
+    "badge": "Ашық күн демонстрациясы",
+    "heading": "Тікелей сынып бөлмесінің симуляторы",
+    "subheading": "Host экранында сабақты жүргізіңіз және Player құрылғысында нақты уақыт режимінде жауап беріңіз.",
+    "viewModeLabel": "Демо көру режимі",
+    "viewMode": {
+      "split": "Бөлінген көрініс",
+      "host": "Ұйымдастырушы",
+      "player": "Ойыншы"
+    },
+    "restartDemo": "Демоны қайта іске қосу",
+    "hostScreenLabel": "Қонақ экраны",
+    "playerScreenLabel": "Ойыншының құрылғысы",
+    "statusLobby": "Лобби",
+    "statusFinished": "Аяқталды",
+    "stepProgress": "Қадам /{current} {total}",
+    "inviteCodeLabel": "Демо шақыру коды",
+    "playersJoined": "{count} лоббидегі ойыншылар",
+    "defaultVisitorName": "Қонақ",
+    "youTag": "Сіз",
+    "startSession": "Демо сессиясын бастау",
+    "theoryLabel": "Теория және код",
+    "quizLabel": "Тікелей эфирдегі викторина",
+    "codeNotesLabel": "Сызықты тексеру үшін басыңыз",
+    "nextStep": "Келесі қадам",
+    "finishSession": "Соңғы нәтижелерді көрсету",
+    "revealAnswer": "Жауапты көрсету",
+    "answersReceived": "{answered} / жауап берілді{total}",
+    "correctBadge": "Дұрыс",
+    "liveLeaderboard": "Тікелей көшбасшылар тақтасы",
+    "finalLeaderboard": "Соңғы лидерборд",
+    "finishedSubtitle": "Бұл толық Hakoot сабағы — келесі қонақ үшін қайта бастауға дайын.",
+    "createOwnGame": "Өз ойыныңызды жасаңыз",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Сіздің көрсетілетін атыңыз",
+    "visitorNamePlaceholder": "Атыңызды енгізіңіз",
+    "joinedLobbyTitle": "Сіз лоббидесіз!",
+    "joinedLobbyHint": "Сабақты бастау үшін Қабылдаушы экранында «Демо сессиясын бастау» түймесін басыңыз.",
+    "connectedCode": "Бөлмеге қосылған {code}",
+    "answerLockedTitle": "Жауап құлыпталды!",
+    "answerLockedHint": "Жүргізуші экранында «Жауапты көрсету» батырмасын басып, ұпайлар мен көшбасшылар тақтасын көріңіз.",
+    "resultCorrect": "Дұрыс!",
+    "resultIncorrect": "Дәл келмейді!",
+    "pointsEarned": "+{points} ұпайлар",
+    "yourFinalRank": "Сіздің соңғы ранкіңіз",
+    "finalStats": "{points} pts · {correct}/ дұрыс{total}",
+    "playAgain": "Тағы ойнату",
+    "timeUpTitle": "Уақыт таусылды!",
+    "timeUpHint": "Шешімді және көшбасшылар тақтасын көру үшін жүргізуші экранында «Жауапты көрсету» батырмасын басыңыз."
   }
 }

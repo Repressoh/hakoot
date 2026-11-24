@@ -25,7 +25,8 @@
     "dashboard": "แดชบอร์ด",
     "emailLists": "รายชื่ออีเมล",
     "hostSignIn": "โฮสต์? ลงชื่อเข้าใช้",
-    "accountSettings": "การตั้งค่าบัญชี"
+    "accountSettings": "การตั้งค่าบัญชี",
+    "tryDemo": "ลองเดโม"
   },
   "settings": {
     "title": "การตั้งค่าบัญชี",
@@ -94,7 +95,8 @@
     "connecting": "เชื่อมต่ออยู่...",
     "enterMatch": "เข้าสู่การแข่งขัน",
     "metaTitle": "Hakoot - แพลตฟอร์มแบบทดสอบโต้ตอบ",
-    "metaDescription": "สร้างและเล่นแบบทดสอบการเขียนโค้ดแบบโต้ตอบกับผู้ชมของคุณ"
+    "metaDescription": "สร้างและเล่นแบบทดสอบการเขียนโค้ดแบบโต้ตอบกับผู้ชมของคุณ",
+    "tryDemoCta": "ลองเดโมวันเปิดประตูแบบโต้ตอบ (ไม่ต้องลงทะเบียน)"
   },
   "auth": {
     "signInTitle": "ยินดีต้อนรับกลับมา",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "เพิ่ม",
     "removeEntryFailed": "ไม่สามารถลบผู้ติดต่อได้"
+  },
+  "demo": {
+    "metaTitle": "การสาธิตแบบโต้ตอบ — Hakoot",
+    "metaDescription": "ลองใช้ Hakoot แบบสดด้วยเครื่องมือจำลองวันเปิดประตูที่แสดงหน้าจอของผู้จัดและผู้เข้าร่วมแบบเคียงข้างกัน ไม่จำเป็นต้องมีบัญชี",
+    "badge": "การสาธิตในวันเปิดประตู",
+    "heading": "เครื่องจำลองห้องเรียนสด",
+    "subheading": "ดำเนินการบทเรียนบนหน้าจอผู้จัด และตอบคำถามแบบเรียลไทม์บนอุปกรณ์ของผู้เรียน",
+    "viewModeLabel": "โหมดดูเดโม",
+    "viewMode": {
+      "split": "โหมดแบ่งหน้าจอ",
+      "host": "ผู้จัด",
+      "player": "ผู้เล่น"
+    },
+    "restartDemo": "เริ่มใหม่เดโม",
+    "hostScreenLabel": "หน้าจอผู้จัด",
+    "playerScreenLabel": "อุปกรณ์ของผู้เล่น",
+    "statusLobby": "Lobby",
+    "statusFinished": "เสร็จแล้ว",
+    "stepProgress": "ขั้นตอน {current} / {total}",
+    "inviteCodeLabel": "รหัสเชิญทดลอง",
+    "playersJoined": "{count} ผู้เล่นในล็อบบี้",
+    "defaultVisitorName": "ผู้เยี่ยมชม",
+    "youTag": "You",
+    "startSession": "เริ่มเซสชันเดโม",
+    "theoryLabel": "ทฤษฎี & โค้ด",
+    "quizLabel": "แบบทดสอบสด",
+    "codeNotesLabel": "คลิกที่บรรทัดเพื่อตรวจสอบ",
+    "nextStep": "ขั้นตอนต่อไป",
+    "finishSession": "แสดงผลลัพธ์สุดท้าย",
+    "revealAnswer": "แสดงคำตอบ",
+    "answersReceived": "{answered} / {total} ตอบแล้ว",
+    "correctBadge": "ถูกต้อง",
+    "liveLeaderboard": "กระดานผู้นำแบบสด",
+    "finalLeaderboard": " bảngจัดอันดับสุดท้าย",
+    "finishedSubtitle": "นี่คือบทเรียน Hakoot ที่สมบูรณ์ — พร้อมที่จะรีเซ็ตสำหรับผู้เข้าชมคนต่อไป",
+    "createOwnGame": "สร้างเกมของคุณเอง",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "ชื่อที่แสดงของคุณ",
+    "visitorNamePlaceholder": "กรอกชื่อของคุณ",
+    "joinedLobbyTitle": "คุณอยู่ในล็อบบี้แล้ว!",
+    "joinedLobbyHint": "กด \"Start Demo Session\" บนหน้าจอผู้จัดเพื่อเริ่มบทเรียน",
+    "connectedCode": "เชื่อมต่อกับห้อง {code}",
+    "answerLockedTitle": "คำตอบถูกล็อกแล้ว!",
+    "answerLockedHint": "กด \"Reveal Answer\" บนหน้าจอผู้จัดเพื่อดูคะแนนและตารางอันดับ",
+    "resultCorrect": "ถูกต้อง!",
+    "resultIncorrect": "ยังไม่ถูกต้อง!",
+    "pointsEarned": "+{points} points",
+    "yourFinalRank": "อันดับสุดท้ายของคุณ",
+    "finalStats": "{points} คะแนน · {correct} / {total} ถูกต้อง",
+    "playAgain": "เล่นใหม่",
+    "timeUpTitle": "เวลาหมดแล้ว!",
+    "timeUpHint": "กด \"Reveal Answer\" บนหน้าจอผู้จัดเพื่อดูคำตอบและตารางอันดับ"
   }
 }

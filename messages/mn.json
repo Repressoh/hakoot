@@ -25,7 +25,8 @@
     "dashboard": "Шивээн самбар",
     "emailLists": "Имэйл жагсаалтууд",
     "hostSignIn": "Зочин? Нэвтрэх",
-    "accountSettings": "Аккаунтын тохиргоо"
+    "accountSettings": "Аккаунтын тохиргоо",
+    "tryDemo": "Демо турших"
   },
   "settings": {
     "title": "Аккаунтын тохиргоо",
@@ -94,7 +95,8 @@
     "connecting": "Холбогдож байна...",
     "enterMatch": "Тоглолтод орох",
     "metaTitle": "Хакуут - Интерактив асуулт хариултын платформ",
-    "metaDescription": "Үзэгчидтэйгээ хамт интерактив кодын асуулт хариултын тоглоом үүсгэж тоглоорой"
+    "metaDescription": "Үзэгчидтэйгээ хамт интерактив кодын асуулт хариултын тоглоом үүсгэж тоглоорой",
+    "tryDemoCta": "Интерактив Нээлттэй өдрийн демог туршаад үзээрэй (нэвтрэх шаардлагагүй)"
   },
   "auth": {
     "signInTitle": "Дахин тавтай морилно уу",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Нэмэх",
     "removeEntryFailed": "Холбоотыг арилгах боломжгүй боллоо"
+  },
+  "demo": {
+    "metaTitle": "Интерактив демо — Хакуут",
+    "metaDescription": "Хакоотыг ашиглагчийн болон тоглогчийн зэрэгцэн нээлттэй өдөрлөгийн симулятор ашиглан шууд туршаад үзээрэй. Бүртгэл шаардлагагүй.",
+    "badge": "Нээлттэй өдрийн демо",
+    "heading": "Шууд анги танхимын симулятор",
+    "subheading": "Host дэлгэц дээр хичээлийг удирдаж, Player төхөөрөмж дээр бодит цагт хариулт өгнө.",
+    "viewModeLabel": "Демо үзэх горим",
+    "viewMode": {
+      "split": "Хуваасан дэлгэц",
+      "host": "Зохион байгуулагч",
+      "player": "Тоглогч"
+    },
+    "restartDemo": "Демог дахин эхлүүлэх",
+    "hostScreenLabel": "Зочны дэлгэц",
+    "playerScreenLabel": "Тоглогчийн төхөөрөмж",
+    "statusLobby": "Лобби",
+    "statusFinished": "Дууссан",
+    "stepProgress": "Алхам /{current} {total}",
+    "inviteCodeLabel": "Демо урилга код",
+    "playersJoined": "{count} лобби дахь тоглогчид",
+    "defaultVisitorName": "Зочин",
+    "youTag": "Та",
+    "startSession": "Демо сесс эхлүүлэх",
+    "theoryLabel": "Теория ба Код",
+    "quizLabel": "Шууд сорилт",
+    "codeNotesLabel": "Мөр дээр дарж шалгах",
+    "nextStep": "Дараагийн алхам",
+    "finishSession": "Эцсийн үр дүнг харуулах",
+    "revealAnswer": "Хариултыг ил болгох",
+    "answersReceived": "{answered} / хариулсан{total}",
+    "correctBadge": "Зөв",
+    "liveLeaderboard": "Шууд онооны самбар",
+    "finalLeaderboard": "Эцсийн онооны жагсаалт",
+    "finishedSubtitle": "Энэ бол бүрэн Hakoot хичээл бөгөөд дараагийн зочинд зориулан дахин эхлүүлэхэд бэлэн байна.",
+    "createOwnGame": "Өөрийн тоглоомоо үүсгэх",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Таны харуулах нэр",
+    "visitorNamePlaceholder": "Өөрийн нэрийг оруулна уу",
+    "joinedLobbyTitle": "Та лоббид байна!",
+    "joinedLobbyHint": "Сургалтыг эхлэхийн тулд Зочдын дэлгэц дээр \"Демо сесс эхлүүлэх\" товчийг дарна уу.",
+    "connectedCode": "Өрөөнд холбогдсон {code}",
+    "answerLockedTitle": "Хариулт түгжигдлээ!",
+    "answerLockedHint": "Оноо болон лидер самбарыг харахын тулд Зочдын дэлгэц дээр \"Хариултыг илчлэх\" товчийг дарна уу.",
+    "resultCorrect": "Зөв!",
+    "resultIncorrect": "Яг тийм биш!",
+    "pointsEarned": "+{points} оноо",
+    "yourFinalRank": "Таны эцсийн зэрэг",
+    "finalStats": "{points} оноо · {correct}/ зөв{total}",
+    "playAgain": "Дахин тоглох",
+    "timeUpTitle": "Цаг дууслаа!",
+    "timeUpHint": "Зочны дэлгэц дээр \"Хариултыг илчлэх\" товчийг дарж шийдэл болон тэргүүлэгчдийн самбарыг үзнэ үү."
   }
 }

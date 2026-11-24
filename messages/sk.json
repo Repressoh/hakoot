@@ -25,7 +25,8 @@
     "dashboard": "Prístrojová doska",
     "emailLists": "Zoznamy e-mailov",
     "hostSignIn": "Hostiteľ? Prihláste sa",
-    "accountSettings": "Nastavenia účtu"
+    "accountSettings": "Nastavenia účtu",
+    "tryDemo": "Vyskúšajte demo"
   },
   "settings": {
     "title": "Nastavenia účtu",
@@ -94,7 +95,8 @@
     "connecting": "PRIPOJENIE...",
     "enterMatch": "VSTÚPIŤ DO ZÁPISU",
     "metaTitle": "Hakoot - Interaktívna kvízová platforma",
-    "metaDescription": "Vytvárajte a hrajte s publikom interaktívne kódovacie kvízy"
+    "metaDescription": "Vytvárajte a hrajte s publikom interaktívne kódovacie kvízy",
+    "tryDemoCta": "Vyskúšajte interaktívnu ukážku v rámci Dňa otvorených dverí (bez prihlásenia)"
   },
   "auth": {
     "signInTitle": "Vitajte späť",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Pridať",
     "removeEntryFailed": "Nepodarilo sa odstrániť kontakt"
+  },
+  "demo": {
+    "metaTitle": "Interaktívna ukážka — Hakoot",
+    "metaDescription": "Vyskúšajte Hakoot naživo pomocou simulátora dňa otvorených dverí, kde vedľa seba beží okno moderátora a okno hráča. Nie je potrebný účet.",
+    "badge": "Ukážka v rámci Dňa otvorených dverí",
+    "heading": "Simulátor živých hodín",
+    "subheading": "Vedenie lekcie prebieha na obrazovke hostiteľa a odpovede sa zadávajú v reálnom čase na zariadení hráča.",
+    "viewModeLabel": "Režim zobrazenia ukážky",
+    "viewMode": {
+      "split": "Rozdelené zobrazenie",
+      "host": "Moderátor",
+      "player": "Hráč"
+    },
+    "restartDemo": "Restartovať ukážku",
+    "hostScreenLabel": "Obrazovka organizátora",
+    "playerScreenLabel": "Zariadenie hráča",
+    "statusLobby": "Lobby",
+    "statusFinished": "Dokončené",
+    "stepProgress": "Krok {current} / {total}",
+    "inviteCodeLabel": "Demo pozývací kód",
+    "playersJoined": "{count} hráči v čakárni",
+    "defaultVisitorName": "Hosť",
+    "youTag": "You",
+    "startSession": "Spustiť ukážkovú reláciu",
+    "theoryLabel": "Teória a kód",
+    "quizLabel": "Kvíz naživo",
+    "codeNotesLabel": "Kliknutím na riadok ho môžete prezrieť",
+    "nextStep": "Ďalší krok",
+    "finishSession": "Zobraziť konečné výsledky",
+    "revealAnswer": "Zobraziť odpoveď",
+    "answersReceived": "{answered} / {total} odpovedané",
+    "correctBadge": "Správne",
+    "liveLeaderboard": "Živá tabuľka výsledkov",
+    "finalLeaderboard": "Konečné poradie",
+    "finishedSubtitle": "To je kompletná lekcia v Hakoot – pripravená na vynulovanie pre ďalšieho návštevníka.",
+    "createOwnGame": "Vytvorte si vlastnú hru",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Vaše zobrazené meno",
+    "visitorNamePlaceholder": "Zadajte svoje meno",
+    "joinedLobbyTitle": "Ste v čakárni!",
+    "joinedLobbyHint": "Na obrazovke organizátora stlačte tlačidlo „Spustiť ukážkovú reláciu“, aby ste spustili lekciu.",
+    "connectedCode": "Pripojené k miestnosti {code}",
+    "answerLockedTitle": "Odpoveď je uzamknutá!",
+    "answerLockedHint": "Na obrazovke organizátora stlačte tlačidlo „Zobraziť odpoveď“, aby ste videli skóre a rebríček.",
+    "resultCorrect": "Správne!",
+    "resultIncorrect": "Ešte to nie je celkom ono!",
+    "pointsEarned": "+{points} body",
+    "yourFinalRank": "Tvoje konečné umiestnenie",
+    "finalStats": "{points} bodov · {correct} / {total} správne",
+    "playAgain": "Zahrať znova",
+    "timeUpTitle": "Čas vypršal!",
+    "timeUpHint": "Stlačte tlačidlo „Zobraziť odpoveď“ na obrazovke organizátora, aby ste videli riešenie a rebríček."
   }
 }

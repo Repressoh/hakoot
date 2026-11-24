@@ -25,7 +25,8 @@
     "dashboard": "Tabilao fifehezana",
     "emailLists": "Lisitry ny mailaka",
     "hostSignIn": "Mpampiantrano? Midira",
-    "accountSettings": "Fikirana kaonty"
+    "accountSettings": "Fikirana kaonty",
+    "tryDemo": "Andramo ny Demo"
   },
   "settings": {
     "title": "Fikirana kaonty",
@@ -94,7 +95,8 @@
     "connecting": "Mifandray...",
     "enterMatch": "Midira amin'ny lalao",
     "metaTitle": "Hakoot - Sehatra Fitsapana Ifandrimbonana",
-    "metaDescription": "Mamoròna ary milalaova fanontaniana ifandrimbonana momba ny fandaharana miaraka amin'ny mpihainonao"
+    "metaDescription": "Mamoròna ary milalaova fanontaniana ifandrimbonana momba ny fandaharana miaraka amin'ny mpihainonao",
+    "tryDemoCta": "Andramo ny Demo Andro Misokatra Ifandrimbonana (tsy mila miditra)"
   },
   "auth": {
     "signInTitle": "Tonga soa indray",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Manampia",
     "removeEntryFailed": "Tsy voafafa ny fifandraisana"
+  },
+  "demo": {
+    "metaTitle": "Demô Interaktiva — Hakoot",
+    "metaDescription": "Andramo mivantana ny Hakoot miaraka amin'ny simulator andro misokatra ho an'ny mpampiantrano sy ny mpilalao mifanila. Tsy ilaina ny kaonty.",
+    "badge": "Demô Andro Misokatra",
+    "heading": "Mpampitovy ny Efitrano Fianarana Mivantana",
+    "subheading": "Tariho ny lesona eo amin'ny efijery Host ary valio amin'ny fotoana tena izy eo amin'ny fitaovana Player.",
+    "viewModeLabel": "Fomba fijery fampisehoana",
+    "viewMode": {
+      "split": "Fijery Mizara",
+      "host": "Mpampiantrano",
+      "player": "Mpilalao"
+    },
+    "restartDemo": "Avereno ny Demo",
+    "hostScreenLabel": "Sehatra ho an'ny Mpampiantrano",
+    "playerScreenLabel": "Fitaovan'ny mpilalao",
+    "statusLobby": "Loby",
+    "statusFinished": "Vita",
+    "stepProgress": "Dingana /{current} {total}",
+    "inviteCodeLabel": "Kaody Fanasana Fampisehoana",
+    "playersJoined": "{count} mpilalao ao amin'ny efitrano fiandrasana",
+    "defaultVisitorName": "Vahiny",
+    "youTag": "Ianao",
+    "startSession": "Atombohy ny Fampisehoana Demo",
+    "theoryLabel": "Teoria & Kaody",
+    "quizLabel": "Fanontaniana mivantana",
+    "codeNotesLabel": "Tsindrio andalana iray mba hijerena",
+    "nextStep": "Dingana Manaraka",
+    "finishSession": "Asehoy ny Vokatra Farany",
+    "revealAnswer": "Asehoy ny Valiny",
+    "answersReceived": "{answered} / {total}efa novaliana",
+    "correctBadge": "Marina",
+    "liveLeaderboard": "Tabilao filaharana mivantana",
+    "finalLeaderboard": "Filaharana Farany",
+    "finishedSubtitle": "Izany no lesona Hakoot feno — vonona ny haverina amin'ny laoniny ho an'ny mpitsidika manaraka.",
+    "createOwnGame": "Mamoròna ny Lalaonao Manokana",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ny anaranao aseho",
+    "visitorNamePlaceholder": "Ampidiro ny anaranao",
+    "joinedLobbyTitle": "Ao amin'ny efitrano fiandrasana ianao!",
+    "joinedLobbyHint": "Tsindrio ny \"Hanomboka Fotoam-pampisehoana\" eo amin'ny efijery Mpampiantrano mba hanombohana ny lesona.",
+    "connectedCode": "Mifandray amin'ny efitrano {code}",
+    "answerLockedTitle": "Voahidy ny valiny!",
+    "answerLockedHint": "Tsindrio ny \"Reveal Answer\" eo amin'ny efijery Mpampiantrano mba hahitana ny isa sy ny filaharana.",
+    "resultCorrect": "Marina!",
+    "resultIncorrect": "Tsy dia izany!",
+    "pointsEarned": "+{points} isa",
+    "yourFinalRank": "Ny laharana farany anao",
+    "finalStats": "{points} pts · {correct}/ marina{total}",
+    "playAgain": "Milalaova indray",
+    "timeUpTitle": "Tapitra ny fotoana!",
+    "timeUpHint": "Tsindrio ny \"Reveal Answer\" eo amin'ny efijerin'ny Mpampiantrano mba hahitana ny vahaolana sy ny filaharana."
   }
 }

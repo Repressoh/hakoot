@@ -25,7 +25,8 @@
     "dashboard": "Dangosfwrdd",
     "emailLists": "Rhestrau E-bost",
     "hostSignIn": "Cynnal? Mewngofnodi",
-    "accountSettings": "Gosodiadau Cyfrif"
+    "accountSettings": "Gosodiadau Cyfrif",
+    "tryDemo": "Prowf y Ddemo"
   },
   "settings": {
     "title": "Gosodiadau Cyfrif",
@@ -94,7 +95,8 @@
     "connecting": "YN CYSYLLTU...",
     "enterMatch": "Mynd i'r gêm",
     "metaTitle": "Hakoot - Platfform Cwis Rhyngweithiol",
-    "metaDescription": "Creu a chwarae cwisiau codio rhyngweithiol gyda'ch cynulleidfa"
+    "metaDescription": "Creu a chwarae cwisiau codio rhyngweithiol gyda'ch cynulleidfa",
+    "tryDemoCta": "Rhowch gynnig ar Ddemo Diwrnod Agored Rhyngweithiol (dim angen mewngofnodi)"
   },
   "auth": {
     "signInTitle": "Croeso'n ôl",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Ychwanegu",
     "removeEntryFailed": "Methodd â thynnu'r cyswllt"
+  },
+  "demo": {
+    "metaTitle": "Arddangosiad Rhyngweithiol — Hakoot",
+    "metaDescription": "Rhowch gynnig ar Hakoot yn fyw gyda efelychydd diwrnod agored i westeiwr a chwaraewr ochr yn ochr. Does dim angen cyfrif.",
+    "badge": "Arddangosiad Diwrnod Agored",
+    "heading": "Effeithydd Ystafell Ddosbarth Fyw",
+    "subheading": "Gyrrwch y wers ar sgrin y Westeiwr ac atebwch mewn amser real ar ddyfais y Chwaraewr.",
+    "viewModeLabel": "Modd golwg demo",
+    "viewMode": {
+      "split": "Golwg Wahanedig",
+      "host": "Gwesteiwr",
+      "player": "Chwaraewr"
+    },
+    "restartDemo": "Ailgychwyn y Dangosydd",
+    "hostScreenLabel": "Sgrin y Lletyolwr",
+    "playerScreenLabel": "Dyfais y Chwaraewr",
+    "statusLobby": "Lobi",
+    "statusFinished": "Gorffenedig",
+    "stepProgress": "Cam /{current} {total}",
+    "inviteCodeLabel": "Cod Gwahoddiad Arddangosfa",
+    "playersJoined": "{count} chwaraewyr yn y lobi",
+    "defaultVisitorName": "Gwestai",
+    "youTag": "Chi",
+    "startSession": "Cychwyn sesiwn arddangos",
+    "theoryLabel": "Theori a Chod",
+    "quizLabel": "Cwis Byw",
+    "codeNotesLabel": "Cliciwch llinell i archwilio",
+    "nextStep": "Y Cam Nesaf",
+    "finishSession": "Dangos Canlyniadau Terfynol",
+    "revealAnswer": "Datgelu'r Ateb",
+    "answersReceived": "{answered} / atebwyd{total}",
+    "correctBadge": "Cywir",
+    "liveLeaderboard": "Arweinlefel Fyw",
+    "finalLeaderboard": "Arweinlefel Derfynol",
+    "finishedSubtitle": "Dyna wers Hakoot gyflawn — yn barod i'w hailosod ar gyfer y ymwelydd nesaf.",
+    "createOwnGame": "Creu Eich Gêm Eich Hun",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Eich enw arddangos",
+    "visitorNamePlaceholder": "Rhowch eich enw",
+    "joinedLobbyTitle": "Rydych chi yn y lobi!",
+    "joinedLobbyHint": "Pwyswch Cychwyn Sesiyn Arddangos ar sgrin y Westeiwr i lansio'r wers.",
+    "connectedCode": "Wedi cysylltu i'r ystafell {code}",
+    "answerLockedTitle": "Ateb wedi'i gloi!",
+    "answerLockedHint": "Pwyswch Datgelu Ateb ar sgrin y Westeiwr i weld y sgoriau a'r bwrdd arweinwyr.",
+    "resultCorrect": "Cywir!",
+    "resultIncorrect": "Ddim yn hollol gywir!",
+    "pointsEarned": "+{points} pwyntiau",
+    "yourFinalRank": "Eich Radd Derfynol",
+    "finalStats": "{points} pwyntiau · {correct}/ cywir{total}",
+    "playAgain": "Chwarae Eto",
+    "timeUpTitle": "Mae'r amser i fyny!",
+    "timeUpHint": "Pwyswch 'Datgelu Ateb' ar sgrin y Cyflwynydd i weld yr ateb a'r bwrdd arweinwyr."
   }
 }

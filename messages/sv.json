@@ -25,7 +25,8 @@
     "dashboard": "Instrumentpanel",
     "emailLists": "E-postlistor",
     "hostSignIn": "Värd? Logga in",
-    "accountSettings": "Kontoinställningar"
+    "accountSettings": "Kontoinställningar",
+    "tryDemo": "Prova demo"
   },
   "settings": {
     "title": "Kontoinställningar",
@@ -94,7 +95,8 @@
     "connecting": "CONNECTING...",
     "enterMatch": "ENTER MATCH",
     "metaTitle": "Hakoot - Plattform för interaktiva frågesporter",
-    "metaDescription": "Skapa och spela interaktiva kodningsquiz med din publik"
+    "metaDescription": "Skapa och spela interaktiva kodningsquiz med din publik",
+    "tryDemoCta": "Prova den interaktiva öppet-hus-demonstrationen (ingen inloggning krävs)"
   },
   "auth": {
     "signInTitle": "Välkommen tillbaka",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Lägg till",
     "removeEntryFailed": "Lyckades inte ta bort kontakt"
+  },
+  "demo": {
+    "metaTitle": "Interaktiv demo — Hakoot",
+    "metaDescription": "Prova Hakoot live med en simulator för öppet hus där värd och deltagare visas sida vid sida. Inget konto krävs.",
+    "badge": "Demo på öppet hus",
+    "heading": "Simulator för liveundervisning",
+    "subheading": "Styr lektionen på värdskärmen och svara i realtid på deltagarens enhet.",
+    "viewModeLabel": "Demoläge",
+    "viewMode": {
+      "split": "Delad vy",
+      "host": "Värd",
+      "player": "Spelare"
+    },
+    "restartDemo": "Starta om demo",
+    "hostScreenLabel": "Värdskärm",
+    "playerScreenLabel": "Spelarens enhet",
+    "statusLobby": "Lobby",
+    "statusFinished": "Avslutad",
+    "stepProgress": "Steg {current} / {total}",
+    "inviteCodeLabel": "Demo-inbjudningskod",
+    "playersJoined": "{count} spelare i lobbyn",
+    "defaultVisitorName": "Gäst",
+    "youTag": "Du",
+    "startSession": "Starta demosession",
+    "theoryLabel": "Teori & kod",
+    "quizLabel": "Live-quiz",
+    "codeNotesLabel": "Klicka på en rad för att granska den",
+    "nextStep": "Nästa steg",
+    "finishSession": "Visa slutresultat",
+    "revealAnswer": "Visa svar",
+    "answersReceived": "{answered} / {total} besvarade",
+    "correctBadge": "Korrekt",
+    "liveLeaderboard": "Live-topplista",
+    "finalLeaderboard": "Slutlig resultattavla",
+    "finishedSubtitle": "Det är en färdig Hakoot-lektion – redo att återställas för nästa besökare.",
+    "createOwnGame": "Skapa ditt eget spel",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ditt visningsnamn",
+    "visitorNamePlaceholder": "Ange ditt namn",
+    "joinedLobbyTitle": "Du befinner dig i lobbyn!",
+    "joinedLobbyHint": "Tryck på Starta demosession på värdskärmen för att starta lektionen.",
+    "connectedCode": "Ansluten till rummet {code}",
+    "answerLockedTitle": "Svaret är låst!",
+    "answerLockedHint": "Tryck på ”Visa svar” på värdens skärm för att se poäng och topplistan.",
+    "resultCorrect": "Rätt!",
+    "resultIncorrect": "Inte riktigt!",
+    "pointsEarned": "+{points} poäng",
+    "yourFinalRank": "Din slutliga placering",
+    "finalStats": "{points} pts · {correct} / {total} rätt",
+    "playAgain": "Spela igen",
+    "timeUpTitle": "Tiden är ute!",
+    "timeUpHint": "Tryck på ”Visa svar” på värdens skärm för att se lösningen och resultatlistan."
   }
 }

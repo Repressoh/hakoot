@@ -25,7 +25,8 @@
     "dashboard": "Boto ea lisebelisoa",
     "emailLists": "Manane a Imeile",
     "hostSignIn": "Moamoheli? Kena",
-    "accountSettings": "Litlhophiso tsa Ak'haonte"
+    "accountSettings": "Litlhophiso tsa Ak'haonte",
+    "tryDemo": "Leka Demo"
   },
   "settings": {
     "title": "Litlhophiso tsa Ak'haonte",
@@ -94,7 +95,8 @@
     "connecting": "Ho hokela...",
     "enterMatch": "Kena papading",
     "metaTitle": "Hakoot - Sethala sa Lipotso tse Kopanetsoeng",
-    "metaDescription": "Theha le ho bapala lipotso tsa khoutu tse sebelisanang le bamameli ba hao."
+    "metaDescription": "Theha le ho bapala lipotso tsa khoutu tse sebelisanang le bamameli ba hao.",
+    "tryDemoCta": "Leka Demo e Kopanetsoeng ea Letsatsi le Bulehileng (ha ho hlokahale ho kena)"
   },
   "auth": {
     "signInTitle": "Le amohelehile hape",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Eketsa",
     "removeEntryFailed": "Ho hlolehile ho tlosa motho oa likhokahano"
+  },
+  "demo": {
+    "metaTitle": "Pontšo e Kopanetsoeng — Hakoot",
+    "metaDescription": "Leka Hakoot ka kotloloho ka moetsi le sebapali ba bapapisang. Ha ho hlokahale ak'haonte.",
+    "badge": "Pontšo ea Letsatsi le Bulehileng",
+    "heading": "Moetsisi oa Phaposi ea Borutelo e Phelang",
+    "subheading": "Tsamaisa thuto skrineng sa Moamoheli 'me u arabe ka nako ea sebele sesebelisoeng sa Sebapali.",
+    "viewModeLabel": "Mokhoa oa pono oa pontšo",
+    "viewMode": {
+      "split": "Pono e Arohaneng",
+      "host": "Moamoheli",
+      "player": "Sebapadi"
+    },
+    "restartDemo": "Qala Pontšo Bocha",
+    "hostScreenLabel": "Skrine sa Moamoheli",
+    "playerScreenLabel": "Sesebediswa sa Sebapadi",
+    "statusLobby": "Lobby",
+    "statusFinished": "E phethetsoe",
+    "stepProgress": "Mohato /{current} {total}",
+    "inviteCodeLabel": "Khoutu ea Phatlalatso ea Demo",
+    "playersJoined": "{count} libapali tse sebakeng sa boemelo",
+    "defaultVisitorName": "Moeti",
+    "youTag": "Uena",
+    "startSession": "Qala Seboka sa Pontšo",
+    "theoryLabel": "Kgopolo le Khoutu",
+    "quizLabel": "Quiz e Phelang",
+    "codeNotesLabel": "Tobetsa mola ho o hlahloba",
+    "nextStep": "Mohato o Latelang",
+    "finishSession": "Bontsha Diphetho tsa ho Qetela",
+    "revealAnswer": "Senola Karabo",
+    "answersReceived": "{answered} / e arabiloe{total}",
+    "correctBadge": "Nepahetse",
+    "liveLeaderboard": "Lethathamo la Baetapele la Nako ea Sebele",
+    "finalLeaderboard": "Lethathamo la Bahlodi la ho Qetela",
+    "finishedSubtitle": "Eo ke thuto e feletseng ea Hakoot — e loketse ho qaloa bocha bakeng sa moeti ea latelang.",
+    "createOwnGame": "Iketsetse Papali ea Hao",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Lebitso la hao le bontshwang",
+    "visitorNamePlaceholder": "Kenya lebitso la hao",
+    "joinedLobbyTitle": "U phaposing ea ho leta!",
+    "joinedLobbyHint": "Tobetsa Qala Ketsahalo ea Pontšo skrineng sa Moamoheli ho qala thuto.",
+    "connectedCode": "Kgokahane le phaposi {code}",
+    "answerLockedTitle": "Karabo e notletsoe!",
+    "answerLockedHint": "Tobetsa Bontsha Karabo skrineng sa Moamohedi ho bona dintlha le letlapa la baetapele.",
+    "resultCorrect": "Hantle!",
+    "resultIncorrect": "Ha ho hantle hakaalo!",
+    "pointsEarned": "+{points} lintlha",
+    "yourFinalRank": "Boemo ba Hao ba ho Qetela",
+    "finalStats": "{points} lintlha · {correct}/ e nepahetseng{total}",
+    "playAgain": "Bapala Hape",
+    "timeUpTitle": "Nako e felile!",
+    "timeUpHint": "Tobetsa 'Reveal Answer' skrineng sa Motsamaisi ho bona tharollo le lethathamo la ba ka sehloohong."
   }
 }

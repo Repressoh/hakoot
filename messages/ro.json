@@ -25,7 +25,8 @@
     "dashboard": "Tablou de bord",
     "emailLists": "Liste de e-mail",
     "hostSignIn": "Gazdă? Conectați-vă",
-    "accountSettings": "Setări cont"
+    "accountSettings": "Setări cont",
+    "tryDemo": "Încearcă demo-ul"
   },
   "settings": {
     "title": "Setări cont",
@@ -94,7 +95,8 @@
     "connecting": "CONECTARE...",
     "enterMatch": "ENTER MATCH",
     "metaTitle": "Hakoot - Platformă interactivă de chestionare",
-    "metaDescription": "Creați și jucați teste interactive de codare cu publicul dvs."
+    "metaDescription": "Creați și jucați teste interactive de codare cu publicul dvs.",
+    "tryDemoCta": "Încearcă demonstrația interactivă pentru Ziua Porților Deschise (fără autentificare)"
   },
   "auth": {
     "signInTitle": "Bine ați revenit",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Adaugă",
     "removeEntryFailed": "Nu a reușit să elimine contactul"
+  },
+  "demo": {
+    "metaTitle": "Demonstrație interactivă — Hakoot",
+    "metaDescription": "Încearcă Hakoot în timp real cu un simulator de zi a porților deschise, în care gazda și jucătorul sunt afișați unul lângă altul. Nu este necesar un cont.",
+    "badge": "Demonstrație în cadrul Zilei Porților Deschise",
+    "heading": "Simulator de clasă live",
+    "subheading": "Conduceți lecția pe ecranul gazdei și răspundeți în timp real pe dispozitivul jucătorului.",
+    "viewModeLabel": "Modul de vizualizare demo",
+    "viewMode": {
+      "split": "Vizualizare divizată",
+      "host": "Gazdă",
+      "player": "Jucător"
+    },
+    "restartDemo": "Repornire demo",
+    "hostScreenLabel": "Ecranul gazdei",
+    "playerScreenLabel": "Dispozitivul jucătorului",
+    "statusLobby": "Lobby",
+    "statusFinished": "Finalizat",
+    "stepProgress": "Etapă {current} / {total}",
+    "inviteCodeLabel": "Cod de invitație pentru demo",
+    "playersJoined": "{count} Jucători în lobby",
+    "defaultVisitorName": "Oaspete",
+    "youTag": "Tu",
+    "startSession": "Pornește sesiunea demo",
+    "theoryLabel": "Teorie și cod",
+    "quizLabel": "Test live",
+    "codeNotesLabel": "Faceți clic pe o linie pentru a o examina",
+    "nextStep": "Următorul pas",
+    "finishSession": "Afișează rezultatele finale",
+    "revealAnswer": "Afișează răspunsul",
+    "answersReceived": "{answered} / {total} răspuns",
+    "correctBadge": "Corect",
+    "liveLeaderboard": "Clasament în timp real",
+    "finalLeaderboard": "Clasamentul final",
+    "finishedSubtitle": "Aceasta este o lecție completă Hakoot — gata să fie resetată pentru următorul vizitator.",
+    "createOwnGame": "Creează-ți propriul joc",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Numele tău de afișare",
+    "visitorNamePlaceholder": "Introdu numele tău",
+    "joinedLobbyTitle": "Te afli în lobby!",
+    "joinedLobbyHint": "Apăsați butonul „Start Demo Session” (Porniți sesiunea demonstrativă) de pe ecranul gazdei pentru a lansa lecția.",
+    "connectedCode": "Conectat la cameră {code}",
+    "answerLockedTitle": "Răspunsul a fost înregistrat!",
+    "answerLockedHint": "Apăsați butonul „Afișează răspunsul” de pe ecranul gazdei pentru a vedea punctajele și clasamentul.",
+    "resultCorrect": "Corect!",
+    "resultIncorrect": "Nu chiar!",
+    "pointsEarned": "+{points} puncte",
+    "yourFinalRank": "Clasamentul tău final",
+    "finalStats": "{points} pts · {correct} / {total} corect",
+    "playAgain": "Joacă din nou",
+    "timeUpTitle": "Timpul a expirat!",
+    "timeUpHint": "Apăsați butonul „Reveal Answer” (Afișează răspunsul) de pe ecranul gazdei pentru a vedea soluția și clasamentul."
   }
 }

@@ -25,7 +25,8 @@
     "dashboard": "Jopo la udhibiti",
     "emailLists": "Orodha za Barua pepe",
     "hostSignIn": "Mwenyeji? Ingia",
-    "accountSettings": "Mipangilio ya Akaunti"
+    "accountSettings": "Mipangilio ya Akaunti",
+    "tryDemo": "Jaribu Demo"
   },
   "settings": {
     "title": "Mipangilio ya Akaunti",
@@ -94,7 +95,8 @@
     "connecting": "Inaunganisha...",
     "enterMatch": "INGIA MECHI",
     "metaTitle": "Hakoot - Jukwaa la Maswali ya Mwingiliano",
-    "metaDescription": "Tengeneza na uchezeshe maswali ya mwingiliano ya uandishi wa msimbo na hadhira yako"
+    "metaDescription": "Tengeneza na uchezeshe maswali ya mwingiliano ya uandishi wa msimbo na hadhira yako",
+    "tryDemoCta": "Jaribu Onyesho la Siku Wazi la Mwingiliano (bila kuingia)"
   },
   "auth": {
     "signInTitle": "Karibu tena",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Ongeza",
     "removeEntryFailed": "Imeshindwa kuondoa anwani"
+  },
+  "demo": {
+    "metaTitle": "Onyesho Linaloshirikisha — Hakoot",
+    "metaDescription": "Jaribu Hakoot moja kwa moja kwa kutumia simulator ya siku wazi ya mwenyeji na mchezaji kando kwa kando. Hakuna akaunti inayohitajika.",
+    "badge": "Onyesho la Siku Wazi",
+    "heading": "Kigezo cha Darasa la Moja kwa Moja",
+    "subheading": "Endesha somo kwenye skrini ya Mwenyeji na ujibu papo hapo kwenye kifaa cha Mchezaji.",
+    "viewModeLabel": "Mtazamo wa onyesho",
+    "viewMode": {
+      "split": "Mtazamo Uliogawanyika",
+      "host": "Mwenyeji",
+      "player": "Mchezaji"
+    },
+    "restartDemo": "Anzisha Upya Onyesho",
+    "hostScreenLabel": "Kichwa cha Skrini cha Mwenyeji",
+    "playerScreenLabel": "Kifaa cha Mchezaji",
+    "statusLobby": "Ukumbi",
+    "statusFinished": "Imekamilika",
+    "stepProgress": "Hatua /{current} {total}",
+    "inviteCodeLabel": "Msimbo wa Mwaliko wa Onyesho",
+    "playersJoined": "{count} wachezaji katika ukumbi wa kusubiri",
+    "defaultVisitorName": "Mgeni",
+    "youTag": "Wewe",
+    "startSession": "Anza Kikao cha Onyesho",
+    "theoryLabel": "Nadharia na Msimbo",
+    "quizLabel": "Jaribio la Moja kwa Moja",
+    "codeNotesLabel": "Bofya mstari ili kuukagua",
+    "nextStep": "Hatua Inayofuata",
+    "finishSession": "Onyesha Matokeo ya Mwisho",
+    "revealAnswer": "Fichua Jibu",
+    "answersReceived": "{answered} / imejibiwa{total}",
+    "correctBadge": "Sahihi",
+    "liveLeaderboard": "Jedwali la Uongozi Moja kwa Moja",
+    "finalLeaderboard": "Jedwali la Viongozi la Mwisho",
+    "finishedSubtitle": "Hiyo ni somo kamili la Hakoot — tayari kuweka upya kwa mgeni anayefuata.",
+    "createOwnGame": "Tengeneza Mchezo Wako Mwenyewe",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Jina lako linaloonyeshwa",
+    "visitorNamePlaceholder": "Weka jina lako",
+    "joinedLobbyTitle": "Uko katika ukumbi wa kusubiri!",
+    "joinedLobbyHint": "Bonyeza Anza Kikao cha Onyesho kwenye skrini ya Mwenyeji ili kuanzisha somo.",
+    "connectedCode": "Imeunganishwa na chumba {code}",
+    "answerLockedTitle": "Jibu limefungwa!",
+    "answerLockedHint": "Bonyeza Onyesha Jibu kwenye skrini ya Mwenyeji ili kuona alama na jedwali la viongozi.",
+    "resultCorrect": "Sahihi!",
+    "resultIncorrect": "Sio sahihi kabisa!",
+    "pointsEarned": "+{points} alama",
+    "yourFinalRank": "Cheo Chako cha Mwisho",
+    "finalStats": "{points} pts · {correct}/ sahihi{total}",
+    "playAgain": "Cheza Tena",
+    "timeUpTitle": "Muda umekwisha!",
+    "timeUpHint": "Bonyeza Onyesha Jibu kwenye skrini ya Mwenyeji ili kuona suluhisho na jedwali la viongozi."
   }
 }

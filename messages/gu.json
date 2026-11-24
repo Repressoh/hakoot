@@ -25,7 +25,8 @@
     "dashboard": "ડેશબોર્ડ",
     "emailLists": "ઇમેઇલ સૂચિઓ",
     "hostSignIn": "યજમાન? સાઇન ઇન",
-    "accountSettings": "ખાતાની સેટિંગ્સ"
+    "accountSettings": "ખાતાની સેટિંગ્સ",
+    "tryDemo": "ડિમો અજમાવો"
   },
   "settings": {
     "title": "ખાતાની સેટિંગ્સ",
@@ -94,7 +95,8 @@
     "connecting": "જોડાઈ રહ્યું છે...",
     "enterMatch": "મેચમાં પ્રવેશો",
     "metaTitle": "હાકૂટ - ઇન્ટરેક્ટિવ ક્વિઝ પ્લેટફોર્મ",
-    "metaDescription": "તમારા દર્શકો સાથે ઇન્ટરેક્ટિવ કોડિંગ ક્વિઝ બનાવો અને રમો"
+    "metaDescription": "તમારા દર્શકો સાથે ઇન્ટરેક્ટિવ કોડિંગ ક્વિઝ બનાવો અને રમો",
+    "tryDemoCta": "ઇન્ટરેક્ટિવ ઓપન-ડે ડેમો અજમાવો (લોગિન જરૂરી નથી)"
   },
   "auth": {
     "signInTitle": "ફરીથી સ્વાગત છે",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "ઉમેરો",
     "removeEntryFailed": "સંપર્ક દૂર કરવામાં નિષ્ફળ"
+  },
+  "demo": {
+    "metaTitle": "ઇન્ટરેક્ટિવ ડેમો — હાકૂટ",
+    "metaDescription": "Hakoot ને લાઇવ, બાજુ-બાજુ હોસ્ટ અને પ્લેયર ઓપન-ડે સિમ્યુલેટર સાથે અજમાવો. કોઈ એકાઉન્ટની જરૂર નથી.",
+    "badge": "ઓપન ડે ડેમો",
+    "heading": "લાઇવ ક્લાસરૂમ સિમ્યુલેટર",
+    "subheading": "હોસ્ટ સ્ક્રીન પર પાઠ ચલાવો અને પ્લેયર ડિવાઇસ પર વાસ્તવિક સમયે જવાબ આપો.",
+    "viewModeLabel": "ડેમો દૃશ્ય મોડ",
+    "viewMode": {
+      "split": "વિભાજિત દૃશ્ય",
+      "host": "હોસ્ટ",
+      "player": "પ્લેયર"
+    },
+    "restartDemo": "ડેમો ફરીથી શરૂ કરો",
+    "hostScreenLabel": "હોસ્ટ સ્ક્રીન",
+    "playerScreenLabel": "પ્લેયર ડિવાઇસ",
+    "statusLobby": "લોબી",
+    "statusFinished": "પૂર્ણ",
+    "stepProgress": "પગલું {current}/ {total}",
+    "inviteCodeLabel": "ડેમો આમંત્રણ કોડ",
+    "playersJoined": "{count} લોબીમાં ખેલાડીઓ",
+    "defaultVisitorName": "અતિથિ",
+    "youTag": "તમે",
+    "startSession": "ડેમો સત્ર શરૂ કરો",
+    "theoryLabel": "સિદ્ધાંત અને કોડ",
+    "quizLabel": "લાઇવ ક્વિઝ",
+    "codeNotesLabel": "પરીક્ષણ કરવા માટે કોઈપણ પંક્તિ પર ક્લિક કરો",
+    "nextStep": "આગળનું પગલું",
+    "finishSession": "અંતિમ પરિણામો બતાવો",
+    "revealAnswer": "જવાબ ખુલાસો કરો",
+    "answersReceived": "{answered} / જવાબ આપવામાં{total} આવ્યો",
+    "correctBadge": "સही",
+    "liveLeaderboard": "લાઇવ લીડરબોર્ડ",
+    "finalLeaderboard": "અંતિમ લીડરબોર્ડ",
+    "finishedSubtitle": "આ એક પૂર્ણ Hakoot પાઠ છે — આગામી મુલાકાતી માટે રીસેટ કરવા તૈયાર.",
+    "createOwnGame": "તમારું પોતાનું ગેમ બનાવો",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "તમારું ડિસ્પ્લે નામ",
+    "visitorNamePlaceholder": "તમારું નામ દાખલ કરો",
+    "joinedLobbyTitle": "તમે લોબીમાં છો!",
+    "joinedLobbyHint": "પાઠ શરૂ કરવા માટે હોસ્ટ સ્ક્રીન પર 'સ્ટાર્ટ ડેમો સેશન' દબાવો.",
+    "connectedCode": "રૂમ સાથે જોડાયેલ {code}",
+    "answerLockedTitle": "જવાબ લોક થઇ ગયો!",
+    "answerLockedHint": "હોસ્ટ સ્ક્રીન પર 'જવાબ ખુલાસો કરો' દબાવો, જેથી સ્કોર્સ અને લીડરબોર્ડ જોઈ શકાય.",
+    "resultCorrect": "સही!",
+    "resultIncorrect": "સરસ નથી!",
+    "pointsEarned": "+{points} પોઈન્ટ્સ",
+    "yourFinalRank": "તમારું અંતિમ રેન્ક",
+    "finalStats": "{points} pts · {correct}/ correct{total}",
+    "playAgain": "ફરીથી રમો",
+    "timeUpTitle": "સમય પૂરો!",
+    "timeUpHint": "હોસ્ટ સ્ક્રીન પર 'જવાબ દર્શાવો' દબાવો, ઉકેલ અને લીડરબોર્ડ જોવા માટે."
   }
 }

@@ -25,7 +25,8 @@
     "dashboard": "Dashboard",
     "emailLists": "E-mail lijsten",
     "hostSignIn": "Host? Aanmelden",
-    "accountSettings": "Accountinstellingen"
+    "accountSettings": "Accountinstellingen",
+    "tryDemo": "Probeer de demo"
   },
   "settings": {
     "title": "Accountinstellingen",
@@ -94,7 +95,8 @@
     "connecting": "VERBINDEN...",
     "enterMatch": "ENTER MATCH",
     "metaTitle": "Hakoot - Interactief quizplatform",
-    "metaDescription": "Maak en speel interactieve coderingsquizzen met je publiek"
+    "metaDescription": "Maak en speel interactieve coderingsquizzen met je publiek",
+    "tryDemoCta": "Probeer de interactieve open-dagdemo (geen aanmelding nodig)"
   },
   "auth": {
     "signInTitle": "Welkom terug",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Voeg  toe",
     "removeEntryFailed": "Contact niet verwijderd"
+  },
+  "demo": {
+    "metaTitle": "Interactieve demo — Hakoot",
+    "metaDescription": "Probeer Hakoot live uit met een simulator voor een open dag, waarbij de gastheer en de speler naast elkaar te zien zijn. Geen account nodig.",
+    "badge": "Demo op de open dag",
+    "heading": "Live klaslokaalsimulator",
+    "subheading": "Geef de les op het scherm van de gastheer en beantwoord de vragen in realtime op het apparaat van de speler.",
+    "viewModeLabel": "Demoweergavemodus",
+    "viewMode": {
+      "split": "Split View",
+      "host": "Gastheer",
+      "player": "Speler"
+    },
+    "restartDemo": "Demo opnieuw starten",
+    "hostScreenLabel": "Gastscherm",
+    "playerScreenLabel": "Apparaat van de speler",
+    "statusLobby": "Lobby",
+    "statusFinished": "Voltooid",
+    "stepProgress": "Stap {current} / {total}",
+    "inviteCodeLabel": "Demo-uitnodigingscode",
+    "playersJoined": "{count} spelers in de lobby",
+    "defaultVisitorName": "Gast",
+    "youTag": "Je",
+    "startSession": "Start demosessie",
+    "theoryLabel": "Theorie & Code",
+    "quizLabel": "Live quiz",
+    "codeNotesLabel": "Klik op een regel om deze te bekijken",
+    "nextStep": "Volgende stap",
+    "finishSession": "Eindresultaten weergeven",
+    "revealAnswer": "Antwoord onthullen",
+    "answersReceived": "{answered} / {total} beantwoord",
+    "correctBadge": "Correct",
+    "liveLeaderboard": "Live scorebord",
+    "finalLeaderboard": "Eindklassement",
+    "finishedSubtitle": "Dat is een complete Hakoot-les — klaar om te worden gereset voor de volgende bezoeker.",
+    "createOwnGame": "Maak je eigen spel",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Je weergavenaam",
+    "visitorNamePlaceholder": "Voer je naam in",
+    "joinedLobbyTitle": "Je bent in de lobby!",
+    "joinedLobbyHint": "Klik op ‘Start demosessie’ op het scherm van de gastheer om de les te starten.",
+    "connectedCode": "Verbonden met de ruimte {code}",
+    "answerLockedTitle": "Antwoord vergrendeld!",
+    "answerLockedHint": "Klik op ‘Antwoord weergeven’ op het scherm van de gastheer om de scores en het klassement te bekijken.",
+    "resultCorrect": "Juist!",
+    "resultIncorrect": "Niet helemaal!",
+    "pointsEarned": "+{points} punten",
+    "yourFinalRank": "Je eindklassering",
+    "finalStats": "{points} pts · {correct} / {total} correct",
+    "playAgain": "Opnieuw spelen",
+    "timeUpTitle": "De tijd is om!",
+    "timeUpHint": "Klik op ‘Antwoord weergeven’ op het scherm van de gastheer om de oplossing en het klassement te bekijken."
   }
 }

@@ -25,7 +25,8 @@
     "dashboard": "Boto ya ditshupo",
     "emailLists": "Lethathamo la di-imeile",
     "hostSignIn": "Moamogedi? Tsena",
-    "accountSettings": "Ditlhophiso tsa Akhaonto"
+    "accountSettings": "Ditlhophiso tsa Akhaonto",
+    "tryDemo": "Leka Demo"
   },
   "settings": {
     "title": "Ditlhophiso tsa Akhaonto",
@@ -94,7 +95,8 @@
     "connecting": "Go golagana...",
     "enterMatch": "Tsena mo kgaisanong",
     "metaTitle": "Hakoot - Sethala sa Dikebotlhoko tse di Tlhakanyang",
-    "metaDescription": "Tlhama le go tshameka di-quiz tsa khoutu tse di tsibogang le bareetsi ba gago."
+    "metaDescription": "Tlhama le go tshameka di-quiz tsa khoutu tse di tsibogang le bareetsi ba gago.",
+    "tryDemoCta": "Leka Demo ya Letsatsi le le Bulegileng e e Tlhakanyang (ga go tlhokafale go tsena)"
   },
   "auth": {
     "signInTitle": "Amogelesega gape",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Tsenya",
     "removeEntryFailed": "Go paletswe go tlosa motswakwa"
+  },
+  "demo": {
+    "metaTitle": "Pontsho e e Tlhakanyang — Hakoot",
+    "metaDescription": "Leka Hakoot ka go tshelela ka moetsi le motshameki ba ba bulegileng ba ba bapileng. Ga go tlhokafale akhaonto.",
+    "badge": "Pontsho ya Letsatsi le le Bulegileng",
+    "heading": "Moetsisi wa Phaposi ya Borutelo e e Tshelang",
+    "subheading": "Tsamaisa thuto mo sekirining sa Motsamaisi mme o arabe ka nako ya mmatota mo sedirisiweng sa Motsayakarolo.",
+    "viewModeLabel": "Mokgwa wa ponelo wa pontsho",
+    "viewMode": {
+      "split": "Pono e e Kgaogantsweng",
+      "host": "Moamogedi",
+      "player": "Motshameki"
+    },
+    "restartDemo": "Simolola Sesupo Gape",
+    "hostScreenLabel": "Sekirini sa Motsamaisi",
+    "playerScreenLabel": "Sedirisiwa sa Motshameki",
+    "statusLobby": "Phaposi ya boemelo",
+    "statusFinished": "Feditswe",
+    "stepProgress": "Kgato {current}/ {total}",
+    "inviteCodeLabel": "Khoutu ya Taletso ya Pontsho",
+    "playersJoined": "{count} batshameki mo phaposing ya boemelo",
+    "defaultVisitorName": "Moeng",
+    "youTag": "Wena",
+    "startSession": "Simolola Thuto ya Teko",
+    "theoryLabel": "Kakanyo & Khoutu",
+    "quizLabel": "Tlhatlhobo e e Tshelang",
+    "codeNotesLabel": "Tobetsa mola go o tlhatlhoba",
+    "nextStep": "Kgato e e Latelang",
+    "finishSession": "Bontsha Maduo a Bofelo",
+    "revealAnswer": "Senola Karabo",
+    "answersReceived": "{answered} / arabilwe{total}",
+    "correctBadge": "Tshwantshwa",
+    "liveLeaderboard": "Lethlapa la Baeteledipele la Tsa Pele",
+    "finalLeaderboard": "Lethathamo la Bofelo",
+    "finishedSubtitle": "Seo ke thuto e e feletseng ya Hakoot — e siametse go simololwa sesha mo moeng yo o latelang.",
+    "createOwnGame": "Itirele Motshameko wa Gago",
+    "pointsPill": "{points} dintlha",
+    "visitorNameLabel": "Leina la gago la pontsho",
+    "visitorNamePlaceholder": "Tsenya leina la gago",
+    "joinedLobbyTitle": "O mo phaposing ya boemelo!",
+    "joinedLobbyHint": "Tobetsa 'Start Demo Session' mo sekirining sa Motsamaisi go simolola thuto.",
+    "connectedCode": "O gokagantswe le phaposi {code}",
+    "answerLockedTitle": "Karabo e notletswe!",
+    "answerLockedHint": "Tobetsa Senola Karabo mo sekirining sa Motsamaisi go bona dintlha le lokwalo lwa ba ba kwa pele.",
+    "resultCorrect": "Tshwene!",
+    "resultIncorrect": "Ga go a siama sentle!",
+    "pointsEarned": "+{points} dintlha",
+    "yourFinalRank": "Maemo a Gago a Bofelo",
+    "finalStats": "{points} dintlha · {correct}/ tse{total} di nepagetseng",
+    "playAgain": "Tshameka Gape",
+    "timeUpTitle": "Nako e fedile!",
+    "timeUpHint": "Tobetsa 'Reveal Answer' mo sekirining sa Motsamaisi go bona tharabololo le letlapa la baeteledipele."
   }
 }

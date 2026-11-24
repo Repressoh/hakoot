@@ -25,7 +25,8 @@
     "dashboard": "Прыборная панэль",
     "emailLists": "Электронныя рассылкі",
     "hostSignIn": "Гаспадар? Увайсці",
-    "accountSettings": "Налады ўліковага запісу"
+    "accountSettings": "Налады ўліковага запісу",
+    "tryDemo": "Паспрабаваць дэма"
   },
   "settings": {
     "title": "Налады ўліковага запісу",
@@ -94,7 +95,8 @@
     "connecting": "Злучэнне...",
     "enterMatch": "УВАЙСЦІ Ў МАТЧ",
     "metaTitle": "Хакут - інтэрактыўная платформа для віктарын",
-    "metaDescription": "Стварайце і гуляйце ў інтэрактыўныя квізы па праграмаванні са сваёй аўдыторыяй"
+    "metaDescription": "Стварайце і гуляйце ў інтэрактыўныя квізы па праграмаванні са сваёй аўдыторыяй",
+    "tryDemoCta": "Паспрабуйце дэманстрацыю інтэрактыўнага дня адчыненых дзвярэй (без уваходу)"
   },
   "auth": {
     "signInTitle": "Зноў вітаем",
@@ -331,5 +333,57 @@
     "entryEmailPlaceholder": "contact@example.com",
     "addEntry": "Дадаць",
     "removeEntryFailed": "Не ўдалося выдаліць кантакт"
+  },
+  "demo": {
+    "metaTitle": "Інтэрактыўная дэманстрацыя — Хакут",
+    "metaDescription": "Паспрабуйце Hakoot ужывую з сімулятарам дня адчыненых дзвярэй для гаспадара і гульца побач. Рэгістрацыя не патрабуецца.",
+    "badge": "Дэманстрацыя дня адчыненых дзвярэй",
+    "heading": "Сімулятар жывой аўдыторыі",
+    "subheading": "Вядзіце ўрок на экране вядучага і адказвайце ў рэальным часе на прыладзе ўдзельніка.",
+    "viewModeLabel": "Рэжым прагляду дэма",
+    "viewMode": {
+      "split": "Раздзелены выгляд",
+      "host": "Вядучы",
+      "player": "Гулец"
+    },
+    "restartDemo": "Паўтор дэма",
+    "hostScreenLabel": "Экран вядучага",
+    "playerScreenLabel": "Прылада гульца",
+    "statusLobby": "Лоббі",
+    "statusFinished": "Завершана",
+    "stepProgress": "Крок /{current} {total}",
+    "inviteCodeLabel": "Дэма-код запрашэння",
+    "playersJoined": "{count} гульцы ў лабі",
+    "defaultVisitorName": "Госць",
+    "youTag": "Вы",
+    "startSession": "Пачаць дэма-сесію",
+    "theoryLabel": "Тэорыя і код",
+    "quizLabel": "Жывы квіз",
+    "codeNotesLabel": "Націсніце на радок, каб прагледзець",
+    "nextStep": "Наступны крок",
+    "finishSession": "Паказаць канчатковыя вынікі",
+    "revealAnswer": "Паказаць адказ",
+    "answersReceived": "{answered} / адказана{total}",
+    "correctBadge": "Правільна",
+    "liveLeaderboard": "Жывы лідарборд",
+    "finalLeaderboard": "Канчатковая табліца лідараў",
+    "finishedSubtitle": "Гэта поўны ўрок у Hakoot — гатовы да скіду для наступнага наведвальніка.",
+    "createOwnGame": "Стварыце ўласную гульню",
+    "pointsPill": "{points} pts",
+    "visitorNameLabel": "Ваша імя для адлюстравання",
+    "visitorNamePlaceholder": "Увядзіце ваша імя",
+    "joinedLobbyTitle": "Вы ў лабі!",
+    "joinedLobbyHint": "Націсніце «Запусціць дэма-сесію» на экране вядучага, каб запусціць урок.",
+    "connectedCode": "Злучана з пакоем {code}",
+    "answerLockedTitle": "Адказ заблакіраваны!",
+    "answerLockedHint": "Націсніце «Паказаць адказ» на экране вядучага, каб убачыць балы і табліцу лідараў.",
+    "resultCorrect": "Правільна!",
+    "resultIncorrect": "Не зусім так!",
+    "pointsEarned": "+{points} ачкоў",
+    "yourFinalRank": "Ваш канчатковы ранг",
+    "finalStats": "{points} балы · {correct}/ правільна{total}",
+    "playAgain": "Паўтарыць",
+    "timeUpTitle": "Час скончыўся!",
+    "timeUpHint": "Націсніце «Паказаць адказ» на экране вядучага, каб убачыць рашэнне і табліцу лідараў."
   }
 }
